@@ -6,4 +6,4 @@ AXES is an evidence standard; weaknesses in its integrity model, canonicalisatio
 
 **In scope:** hash-chain or canonicalisation weaknesses; redaction/tombstone bypasses; envelope spoofing or replay constructions; ways to make gamed or misleading evidence appear conformant; access-model leaks (including restriction metadata leaking restricted facts); reference-tooling vulnerabilities.
 
-**Also welcome (as public issues):** structural misuse concerns — surveillance risk, under-emission incentives, metric gaming — via the *Security / privacy concern* issue template. The [threat model](docs/11-threat-model.md) is the living home for these.
+**Also welcome (as public issues):** structural misuse concerns - surveillance risk, under-emission incentives, metric gaming - via the *Security / privacy concern* issue template. The [threat model](docs/11-threat-model.md) is the living home for these.

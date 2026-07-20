@@ -1,4 +1,4 @@
-# Audit & Control View — APRUN-2026-06-09-A
+# Audit & Control View - APRUN-2026-06-09-A
 
 ## 1. Controls relevant and evidenced
 Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-commit** for each instruction [env:0004 | controls.control_evaluation_phase]:
@@ -20,10 +20,10 @@ Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-c
 | 13 | SUP-013 | €5,230.95 | passed | passed (20.9%) | passed | not_required |
 | 14 | SUP-014 | €4,527.87 | passed | passed (18.1%) | passed | not_required |
 
-**Result: 42/42 control evaluations passed; 0 failed; 0 bypassed; 0 not_observed.** Approval was `not_required` under policy v3.2's rule for at-or-below-limit payments to approved beneficiaries [env:0004 | authority.approval_basis]; consequently no SoD/dual-control assertion is made or needed for this run — the control relied upon is the delegated-limit + approved-list pair, both evidenced above.
+**Result: 42/42 control evaluations passed; 0 failed; 0 bypassed; 0 not_observed.** Approval was `not_required` under policy v3.2's rule for at-or-below-limit payments to approved beneficiaries [env:0004 | authority.approval_basis]; consequently no SoD/dual-control assertion is made or needed for this run - the control relied upon is the delegated-limit + approved-list pair, both evidenced above.
 
 ## 2. Population and completeness (IPE basis)
-- Population definition: ERP approved-invoice queue at 08:55Z (14 due) reconciled against bank statement FMB-STMT-2026-06-09 (14 booked) — **independently reconciled**, not self-reported [env:0073 | reconciliation.population_basis].
+- Population definition: ERP approved-invoice queue at 08:55Z (14 due) reconciled against bank statement FMB-STMT-2026-06-09 (14 booked) - **independently reconciled**, not self-reported [env:0073 | reconciliation.population_basis].
 - Coverage: envelopes 14/14 (100%); tamper-evident 100% [env:0073 | reconciliation.evidence_coverage_ratio].
 - Sequence continuity: envelope sequence numbers 0001–0076 contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) [env:0009 | liveness.declared_heartbeat_interval_s].
 
@@ -31,7 +31,7 @@ Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-c
 - Origin/basis: runtime-observed; commit confirmations are **third-party confirmed** (pacs.002 ACSC per payment) and **source-system corroborated** (camt.053) [env:0007 | evidence_quality.corroboration_state] [env:0073 | evidence_quality.corroboration_state].
 - Corroboration coverage decomposition: anchored 100% · receipted 14/14 · provider-only 0.
 - Point-in-time validity: policy v3.2 effective from 2026-05-01, in force at every event [env:0007 | authority.policy_version]; delegation valid 2026-04-02 → 2026-12-31.
-- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped — *reproducible in distribution, not in instance* [env:0002 | model.sampling_parameters]; reasoning artifacts `provider_withheld` — disclosed, not silent [env:0002 | model.reasoning_artifact_availability].
+- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped - *reproducible in distribution, not in instance* [env:0002 | model.sampling_parameters]; reasoning artifacts `provider_withheld` - disclosed, not silent [env:0002 | model.reasoning_artifact_availability].
 
 ## 4. Findings register
-No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak per-payment utilisation 95.6% — recommend limit-headroom review for SUP-003. Owner: AP process owner. Due: next policy cycle.
+No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak per-payment utilisation 95.6% - recommend limit-headroom review for SUP-003. Owner: AP process owner. Due: next policy cycle.

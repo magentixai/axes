@@ -1,7 +1,7 @@
-# External Assurance / Regulator Evidence Pack — APRUN-2026-06-09-A
+# External Assurance / Regulator Evidence Pack - APRUN-2026-06-09-A
 
 ## 1. Scope of evidence
-Autonomous accounts-payable payment execution by Caldera Robotics Ltd, run APRUN-2026-06-09-A, 2026-06-09 09:00–09:11 UTC, settlement reconciliation T+0 EOD. Evidence bundle `bundle:APRUN-2026-06-09-A` [env:0076 | export.evidence_bundle_id] — 76 envelopes, 29 referenced artifacts.
+Autonomous accounts-payable payment execution by Caldera Robotics Ltd, run APRUN-2026-06-09-A, 2026-06-09 09:00–09:11 UTC, settlement reconciliation T+0 EOD. Evidence bundle `bundle:APRUN-2026-06-09-A` [env:0076 | export.evidence_bundle_id] - 76 envelopes, 29 referenced artifacts.
 
 ## 2. Systems involved (execution topology)
 agent:caldera/ap-pilot 2.4.1 → orchestrator:caldera/flowdeck 1.9 → model:anthropic/claude-sonnet-4-6 → gateway:caldera/toolproxy-3 → connector:openbank-gw 2.2.0 → provider:first-meridian-bank (SEPA Inst) · context source erp:ledgerworks/prod · runtime aws/eu-west-1 [env:0007 | actor]. One authority chain spans all nodes (AD-7844).
@@ -16,9 +16,9 @@ Coverage 14/14 against an independently reconciled population (ERP queue + bank 
 None. 14/14 committed; 0 exceptions; 0 human interventions; 0 control failures [env:0075 | summary].
 
 ## 6. Cryptographic sealing status
-SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), contiguous sequence 0001–0076; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile — disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope [env:0005 | privacy.redacted_fields].
+SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), contiguous sequence 0001–0076; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope [env:0005 | privacy.redacted_fields].
 
-## 7. Appendix A — artifact register (ISO 20022)
+## 7. Appendix A - artifact register (ISO 20022)
 | Artifact | SHA-256 |
 |---|---|
 | camt053_20260609.xml | `9f5f1a2529ee0d61…` |
@@ -51,7 +51,7 @@ SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), 
 | pain001_P13.xml | `f01e44097deef17c…` |
 | pain001_P14.xml | `2c53b3a315788a0f…` |
 
-## 8. Appendix B — anchor receipts
+## 8. Appendix B - anchor receipts
 | Receipt | Anchored at | Chain head |
 |---|---|---|
 | anch:001 | 2026-06-09T09:05:00.000Z | `41a6eea3a3406063…` |

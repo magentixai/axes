@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SE v0.1 Golden Trace Generator — "Caldera Robotics / AD-7844" (Pristine variant)
+SE v0.1 Golden Trace Generator - "Caldera Robotics / AD-7844" (Pristine variant)
 =================================================================================
 Generates a fully synthetic, deterministic, end-to-end Agentic Execution
 Evidence trace for the canonical scenario:
@@ -393,22 +393,22 @@ def write_reports(ch, rows, artifacts):
     n_env = len(ch.envelopes)
 
     # ---------------- Report A: Board assurance summary --------------------
-    A = f"""# Board Assurance Summary — Autonomous AP Payment Run APRUN-2026-06-09-A
-**Organisation:** Caldera Robotics Ltd · **Period:** 2026-06-09 09:00–09:11 UTC (settlement reconciled T+0 EOD) · **Assurance basis:** SE v0.1-draft evidence, scoped — see Reliance Boundary.
+    A = f"""# Board Assurance Summary - Autonomous AP Payment Run APRUN-2026-06-09-A
+**Organisation:** Caldera Robotics Ltd · **Period:** 2026-06-09 09:00–09:11 UTC (settlement reconciled T+0 EOD) · **Assurance basis:** SE v0.1-draft evidence, scoped - see Reliance Boundary.
 
 ## The assurance statement
-> **An authorised autonomous process executed 14 payment instructions under delegated authority AD-7844.** {cite(commit_ok[0],'authority.authority_context_id')} {cite(done,'summary.committed_count')} — all 14 commit events carry `authority_context_id = AD-7844` with delegation receipt `delrec:AD-7844/2026-04-02` granted by the CFO {cite(commit_ok[0],'authority.delegation_receipt_id')} {cite(commit_ok[0],'authority.delegator_id')} under payment policy v3.2 in force throughout {cite(commit_ok[0],'authority.policy_version')}.
+> **An authorised autonomous process executed 14 payment instructions under delegated authority AD-7844.** {cite(commit_ok[0],'authority.authority_context_id')} {cite(done,'summary.committed_count')} - all 14 commit events carry `authority_context_id = AD-7844` with delegation receipt `delrec:AD-7844/2026-04-02` granted by the CFO {cite(commit_ok[0],'authority.delegation_receipt_id')} {cite(commit_ok[0],'authority.delegator_id')} under payment policy v3.2 in force throughout {cite(commit_ok[0],'authority.policy_version')}.
 >
-> **All payments remained within approved policy boundaries.** Each of the 14 instructions passed three pre-commit policy checks — approved-beneficiary, per-payment limit, and duplicate-key — evaluated *before* execution, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. Peak single-payment authority utilisation was {peak:.1%} of the €25,000 limit (payment 3) {cite(policy[2],'controls.checks[1].observed.authority_utilisation_ratio')}; batch aggregate €{total:,.2f} used {batch_util:.1%} of the €150,000 batch limit {cite(done,'summary.batch_limit_utilisation_ratio')}.
+> **All payments remained within approved policy boundaries.** Each of the 14 instructions passed three pre-commit policy checks - approved-beneficiary, per-payment limit, and duplicate-key - evaluated *before* execution, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. Peak single-payment authority utilisation was {peak:.1%} of the €25,000 limit (payment 3) {cite(policy[2],'controls.checks[1].observed.authority_utilisation_ratio')}; batch aggregate €{total:,.2f} used {batch_util:.1%} of the €150,000 batch limit {cite(done,'summary.batch_limit_utilisation_ratio')}.
 >
 > **No exceptions requiring human intervention occurred.** Exception count 0, human-intervention count 0 {cite(done,'summary.exception_count')} {cite(done,'summary.human_intervention_count')}; no approval was required under the policy rule for at-limit payments to approved beneficiaries {cite(policy[0],'authority.approval_status')} {cite(policy[0],'authority.approval_basis')}.
 >
-> **Evidence integrity validated.** All {n_env} envelopes form an unbroken SHA-256 hash chain (re-verified at report generation), externally anchored at 5-minute intervals — {len(anchors)} anchor receipts {cite(anchors[0],'anchoring.anchor_receipt_id')}; emission ran fail-closed for commit-boundary actions throughout {cite(commit_ok[0],'emission.emission_fail_posture')}; liveness heartbeats present for every 60-second interval of the run with zero silent windows {cite(hbs[0],'liveness.liveness_status')}.
+> **Evidence integrity validated.** All {n_env} envelopes form an unbroken SHA-256 hash chain (re-verified at report generation), externally anchored at 5-minute intervals - {len(anchors)} anchor receipts {cite(anchors[0],'anchoring.anchor_receipt_id')}; emission ran fail-closed for commit-boundary actions throughout {cite(commit_ok[0],'emission.emission_fail_posture')}; liveness heartbeats present for every 60-second interval of the run with zero silent windows {cite(hbs[0],'liveness.liveness_status')}.
 >
 > **No cross-tenant data exposure detected.** Tenant-boundary and cross-customer exposure indicators are false, on the stated basis that runtime egress was limited to the bank API and ERP {cite(bound,'boundary_assessment.cross_tenant_exposure_indicator')} {cite(bound,'boundary_assessment.basis')}.
 
 ## What the board should know
-- **External confirmation, not self-assertion:** every payment carries a three-rung acknowledgment ladder — transport (HTTPS 200), protocol (bank API ACCEPTED), business (ISO 20022 pacs.002 status **ACSC** = settlement completed) {cite(commit_ok[0],'acknowledgments[*]')} — and the bank's end-of-day camt.053 statement reconciles **14 of 14** instructions {cite(recon,'reconciliation.statement_count_bank')}.
+- **External confirmation, not self-assertion:** every payment carries a three-rung acknowledgment ladder - transport (HTTPS 200), protocol (bank API ACCEPTED), business (ISO 20022 pacs.002 status **ACSC** = settlement completed) {cite(commit_ok[0],'acknowledgments[*]')} - and the bank's end-of-day camt.053 statement reconciles **14 of 14** instructions {cite(recon,'reconciliation.statement_count_bank')}.
 - **Completeness is measured, not asserted:** the in-scope population is independently defined (ERP approved-invoice queue: 14 due; bank statement: 14 booked) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% {cite(recon,'reconciliation.evidence_population_ref')} {cite(recon,'reconciliation.evidence_coverage_ratio')}.
 - **Leading indicator:** one payment ran at {peak:.1%} of its limit; nothing breached, but limit headroom on supplier SUP-003 invoices is worth a policy review.
 - **Recommended position:** continue autonomous operation at current scope; no restriction indicated by this run's evidence.
@@ -421,7 +421,7 @@ This report evidences this run only; it supports internal assurance and audit re
     ctl_rows = "\n".join(
         f"| {r['i']:02d} | {r['supplier_id']} | €{r['amount']:,.2f} | passed | passed ({r['utilisation']:.1%}) | passed | not_required |"
         for r in rows)
-    B = f"""# Audit & Control View — APRUN-2026-06-09-A
+    B = f"""# Audit & Control View - APRUN-2026-06-09-A
 
 ## 1. Controls relevant and evidenced
 Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-commit** for each instruction {cite(policy[0],'controls.control_evaluation_phase')}:
@@ -430,10 +430,10 @@ Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-c
 |---|---|---|---|---|---|---|
 {ctl_rows}
 
-**Result: 42/42 control evaluations passed; 0 failed; 0 bypassed; 0 not_observed.** Approval was `not_required` under policy v3.2's rule for at-or-below-limit payments to approved beneficiaries {cite(policy[0],'authority.approval_basis')}; consequently no SoD/dual-control assertion is made or needed for this run — the control relied upon is the delegated-limit + approved-list pair, both evidenced above.
+**Result: 42/42 control evaluations passed; 0 failed; 0 bypassed; 0 not_observed.** Approval was `not_required` under policy v3.2's rule for at-or-below-limit payments to approved beneficiaries {cite(policy[0],'authority.approval_basis')}; consequently no SoD/dual-control assertion is made or needed for this run - the control relied upon is the delegated-limit + approved-list pair, both evidenced above.
 
 ## 2. Population and completeness (IPE basis)
-- Population definition: ERP approved-invoice queue at 08:55Z (14 due) reconciled against bank statement FMB-STMT-2026-06-09 (14 booked) — **independently reconciled**, not self-reported {cite(recon,'reconciliation.population_basis')}.
+- Population definition: ERP approved-invoice queue at 08:55Z (14 due) reconciled against bank statement FMB-STMT-2026-06-09 (14 booked) - **independently reconciled**, not self-reported {cite(recon,'reconciliation.population_basis')}.
 - Coverage: envelopes 14/14 (100%); tamper-evident 100% {cite(recon,'reconciliation.evidence_coverage_ratio')}.
 - Sequence continuity: envelope sequence numbers 0001–{n_env:04d} contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) {cite(hbs[0],'liveness.declared_heartbeat_interval_s')}.
 
@@ -441,20 +441,20 @@ Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-c
 - Origin/basis: runtime-observed; commit confirmations are **third-party confirmed** (pacs.002 ACSC per payment) and **source-system corroborated** (camt.053) {cite(commit_ok[0],'evidence_quality.corroboration_state')} {cite(recon,'evidence_quality.corroboration_state')}.
 - Corroboration coverage decomposition: anchored 100% · receipted 14/14 · provider-only 0.
 - Point-in-time validity: policy v3.2 effective from 2026-05-01, in force at every event {cite(commit_ok[0],'authority.policy_version')}; delegation valid 2026-04-02 → 2026-12-31.
-- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped — *reproducible in distribution, not in instance* {cite(by_kind['context_retrieved'][0],'model.sampling_parameters')}; reasoning artifacts `provider_withheld` — disclosed, not silent {cite(by_kind['context_retrieved'][0],'model.reasoning_artifact_availability')}.
+- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped - *reproducible in distribution, not in instance* {cite(by_kind['context_retrieved'][0],'model.sampling_parameters')}; reasoning artifacts `provider_withheld` - disclosed, not silent {cite(by_kind['context_retrieved'][0],'model.reasoning_artifact_availability')}.
 
 ## 4. Findings register
-No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak per-payment utilisation {peak:.1%} — recommend limit-headroom review for SUP-003. Owner: AP process owner. Due: next policy cycle.
+No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak per-payment utilisation {peak:.1%} - recommend limit-headroom review for SUP-003. Owner: AP process owner. Due: next policy cycle.
 """
 
     # ---------------- Report C: Regulator / external pack -------------------
     art_rows = "\n".join(f"| {n} | `{h[:16]}…` |" for n, h in sorted(artifacts.items()))
     anch_rows = "\n".join(f"| {a['anchoring']['anchor_receipt_id']} | {a['anchoring']['anchored_at']} | `{a['anchoring']['chain_head_hash'][:16]}…` |"
                           for a in anchors)
-    C = f"""# External Assurance / Regulator Evidence Pack — APRUN-2026-06-09-A
+    C = f"""# External Assurance / Regulator Evidence Pack - APRUN-2026-06-09-A
 
 ## 1. Scope of evidence
-Autonomous accounts-payable payment execution by Caldera Robotics Ltd, run APRUN-2026-06-09-A, 2026-06-09 09:00–09:11 UTC, settlement reconciliation T+0 EOD. Evidence bundle `bundle:APRUN-2026-06-09-A` {cite(exported,'export.evidence_bundle_id')} — {n_env} envelopes, {len(artifacts)} referenced artifacts.
+Autonomous accounts-payable payment execution by Caldera Robotics Ltd, run APRUN-2026-06-09-A, 2026-06-09 09:00–09:11 UTC, settlement reconciliation T+0 EOD. Evidence bundle `bundle:APRUN-2026-06-09-A` {cite(exported,'export.evidence_bundle_id')} - {n_env} envelopes, {len(artifacts)} referenced artifacts.
 
 ## 2. Systems involved (execution topology)
 agent:caldera/ap-pilot 2.4.1 → orchestrator:caldera/flowdeck 1.9 → model:anthropic/claude-sonnet-4-6 → gateway:caldera/toolproxy-3 → connector:openbank-gw 2.2.0 → provider:first-meridian-bank (SEPA Inst) · context source erp:ledgerworks/prod · runtime aws/eu-west-1 {cite(commit_ok[0],'actor')}. One authority chain spans all nodes (AD-7844).
@@ -469,14 +469,14 @@ Coverage 14/14 against an independently reconciled population (ERP queue + bank 
 None. 14/14 committed; 0 exceptions; 0 human interventions; 0 control failures {cite(done,'summary')}.
 
 ## 6. Cryptographic sealing status
-SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), contiguous sequence 0001–{n_env:04d}; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile — disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope {cite(commit_ok[0] if False else by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
+SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), contiguous sequence 0001–{n_env:04d}; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope {cite(commit_ok[0] if False else by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
 
-## 7. Appendix A — artifact register (ISO 20022)
+## 7. Appendix A - artifact register (ISO 20022)
 | Artifact | SHA-256 |
 |---|---|
 {art_rows}
 
-## 8. Appendix B — anchor receipts
+## 8. Appendix B - anchor receipts
 | Receipt | Anchored at | Chain head |
 |---|---|---|
 {anch_rows}
@@ -487,12 +487,12 @@ Evidence supports: internal audit reliance; external review with re-verification
 
     # ---------------- Report D: Forensic execution pack ---------------------
     seq_rows = "\n".join(
-        f"| {e['sequence_number']:04d} | {e['event_kind']} | {e.get('payment_index','—')} | {e['occurred_at']} | `{e['integrity']['envelope_hash'][:12]}…` |"
+        f"| {e['sequence_number']:04d} | {e['event_kind']} | {e.get('payment_index',' - ')} | {e['occurred_at']} | `{e['integrity']['envelope_hash'][:12]}…` |"
         for e in ch.envelopes[:24])
     pay_rows = "\n".join(
         f"| {r['i']:02d} | {r['e2e']} | €{r['amount']:,.2f} | {r['supplier_id']} | {r['invoice']} | `{r['pain_hash'][:10]}…` | `{r['pacs_hash'][:10]}…` | {r['t_commit']} |"
         for r in rows)
-    D = f"""# Forensic Execution Pack — APRUN-2026-06-09-A
+    D = f"""# Forensic Execution Pack - APRUN-2026-06-09-A
 
 ## 1. Verification procedure (vendor-neutral)
 1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with sorted keys and compact separators; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64×'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Regulator Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1–4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.

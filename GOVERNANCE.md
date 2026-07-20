@@ -2,13 +2,13 @@
 
 ## Steward
 
-AXES is created and stewarded by **Magentix** (magentix.ai). Stewardship means: maintaining this repository, running the contribution process below, publishing versioned drafts, and funding the reference tooling. It does not mean privileged semantics: **conformance to AXES is defined by the published specification, the public validator and the public test vectors — never by the ingestion behaviour of any vendor's product, including Magentix's own ARBITR.**
+AXES is created and stewarded by **Magentix** (magentix.ai). Stewardship means: maintaining this repository, running the contribution process below, publishing versioned drafts, and funding the reference tooling. It does not mean privileged semantics: **conformance to AXES is defined by the published specification, the public validator and the public test vectors - never by the ingestion behaviour of any vendor's product, including Magentix's own ARBITR.**
 
 ## The open / proprietary boundary (stated plainly)
 
 The open standard defines **evidence capture** and **evidence semantics**: the envelope, its modules, controlled vocabularies, canonicalisation and hashing, conformance levels, the extension model, the minimum assurance-report profile, an open annex of basic derived fields, the reference emitter/validator, and test vectors.
 
-Evidence **interpretation** — scoring, narrative generation, report design, exception prioritisation, terminology mapping, benchmarking, client-specific control mappings — is implementation territory, where vendors (Magentix included, via ARBITR) compete. The standard is generous enough to be useful without any vendor; implementations must earn preference on interpretation quality alone.
+Evidence **interpretation** - scoring, narrative generation, report design, exception prioritisation, terminology mapping, benchmarking, client-specific control mappings - is implementation territory, where vendors (Magentix included, via ARBITR) compete. The standard is generous enough to be useful without any vendor; implementations must earn preference on interpretation quality alone.
 
 ## Decision process
 

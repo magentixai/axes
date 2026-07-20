@@ -1,4 +1,4 @@
-# Forensic Execution Pack — APRUN-2026-06-09-A
+# Forensic Execution Pack - APRUN-2026-06-09-A
 
 ## 1. Verification procedure (vendor-neutral)
 1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with sorted keys and compact separators; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64×'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Regulator Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1–4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
@@ -6,15 +6,15 @@
 ## 2. Envelope sequence (first 24 of 76; full stream in envelopes.jsonl)
 | Seq | event_kind | Pay# | occurred_at | envelope_hash |
 |---|---|---|---|---|
-| 0001 | execution_started | — | 2026-06-09T09:00:00.000Z | `06b5e40ae177…` |
-| 0002 | context_retrieved | — | 2026-06-09T09:00:04.000Z | `c45bf398955a…` |
-| 0003 | plan_created | — | 2026-06-09T09:00:09.000Z | `d5ba004f462b…` |
+| 0001 | execution_started |  -  | 2026-06-09T09:00:00.000Z | `06b5e40ae177…` |
+| 0002 | context_retrieved |  -  | 2026-06-09T09:00:04.000Z | `c45bf398955a…` |
+| 0003 | plan_created |  -  | 2026-06-09T09:00:09.000Z | `d5ba004f462b…` |
 | 0004 | policy_check_performed | 1 | 2026-06-09T09:00:12.000Z | `b1206830ecdb…` |
 | 0005 | commit_attempted | 1 | 2026-06-09T09:00:18.000Z | `37f43ef468fa…` |
 | 0006 | tool_invoked | 1 | 2026-06-09T09:00:19.000Z | `1f1a382ff7ac…` |
 | 0007 | commit_succeeded | 1 | 2026-06-09T09:00:21.000Z | `3676cba2056e…` |
 | 0008 | policy_check_performed | 2 | 2026-06-09T09:00:57.000Z | `ee890545177c…` |
-| 0009 | heartbeat_event | — | 2026-06-09T09:01:00.000Z | `fbcd1eb02740…` |
+| 0009 | heartbeat_event |  -  | 2026-06-09T09:01:00.000Z | `fbcd1eb02740…` |
 | 0010 | commit_attempted | 2 | 2026-06-09T09:01:03.000Z | `d36e6962fba0…` |
 | 0011 | tool_invoked | 2 | 2026-06-09T09:01:04.000Z | `a8516a896b1b…` |
 | 0012 | commit_succeeded | 2 | 2026-06-09T09:01:06.000Z | `30083260e8b8…` |
@@ -22,12 +22,12 @@
 | 0014 | commit_attempted | 3 | 2026-06-09T09:01:48.000Z | `ed4639eaf65b…` |
 | 0015 | tool_invoked | 3 | 2026-06-09T09:01:49.000Z | `975a3cb05778…` |
 | 0016 | commit_succeeded | 3 | 2026-06-09T09:01:51.000Z | `f06df8908d41…` |
-| 0017 | heartbeat_event | — | 2026-06-09T09:02:00.000Z | `896ec4f05690…` |
+| 0017 | heartbeat_event |  -  | 2026-06-09T09:02:00.000Z | `896ec4f05690…` |
 | 0018 | policy_check_performed | 4 | 2026-06-09T09:02:27.000Z | `7eabe561b7ca…` |
 | 0019 | commit_attempted | 4 | 2026-06-09T09:02:33.000Z | `a7f0b15d494f…` |
 | 0020 | tool_invoked | 4 | 2026-06-09T09:02:34.000Z | `856e190bd2ec…` |
 | 0021 | commit_succeeded | 4 | 2026-06-09T09:02:36.000Z | `152fa0b5e912…` |
-| 0022 | heartbeat_event | — | 2026-06-09T09:03:00.000Z | `b19a70816247…` |
+| 0022 | heartbeat_event |  -  | 2026-06-09T09:03:00.000Z | `b19a70816247…` |
 | 0023 | policy_check_performed | 5 | 2026-06-09T09:03:12.000Z | `b08c316b464f…` |
 | 0024 | commit_attempted | 5 | 2026-06-09T09:03:18.000Z | `22f88bedb6c9…` |
 

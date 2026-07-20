@@ -1,16 +1,16 @@
-# SE v0.1 — Master Requirements Register v0.1
+# SE v0.1 - Master Requirements Register v0.1
 
 **Generated:** 19 July 2026
 **Status:** First assembled register. Merges the six persona-wave requirement registers (REQ-*), the six gap analyses (GAP-*), the Standards close-out tracker (TRK-*), and the Programme Blind Spots actions (BLD-*). Every row is traceable to its source document. The REQ-EXEC series is BACKFILLED per BLD-023 (the Executive compression shipped without a formal register); each backfilled row cites its source section.
 **Epistemic tag (applies to all persona-sourced rows):** LLM-persona-derived, pending human confirmation (Blind Spots §1).
-**Naming (decided 20 July 2026):** the standard is **AXES — Autonomous eXecution Evidence Standard**; the envelope artifact remains the **Standards Envelope (SE)**. All SE references in this register are unchanged and correct.
-**Next consumer:** the Master Data Element Decision Register — each row receives a decision (accept-core / accept-conditional / accept-recommended / experimental / derived-only / arbitr-proprietary / presentation-only / defer / reject-with-reason).
+**Naming (decided 20 July 2026):** the standard is **AXES - Autonomous eXecution Evidence Standard**; the envelope artifact remains the **Standards Envelope (SE)**. All SE references in this register are unchanged and correct.
+**Next consumer:** the Master Data Element Decision Register - each row receives a decision (accept-core / accept-conditional / accept-recommended / experimental / derived-only / arbitr-proprietary / presentation-only / defer / reject-with-reason).
 
 **Layer key:** open_se = open SE envelope | derived = derived report layer | implementation_layer = interpretation-layer (implementation territory) layer | presentation = presentation/terminology layer | conformance_rule = normative rule, not a field | standards_package = spec/tooling/governance artifact | programme_action = backlog action, not schema content.
 
 ---
 
-## Part A — Primary requirements (persona-wave registers)
+## Part A - Primary requirements (persona-wave registers)
 
 ### A.1 Business Process Owners (REQ-BPO)
 Source: `SE_v0_1_Business_Process_Owners_Data_Element_Compression.md` §13
@@ -28,7 +28,7 @@ Source: `SE_v0_1_Business_Process_Owners_Data_Element_Compression.md` §13
 | REQ-BPO-009 | Surface evidence gaps at process-step and source-system confirmation level | High | open_se + derived | SEEvidenceQuality: evidence_completeness_status, evidence_gap indicator/type/location/reason/impact, reliance_boundary, source_system_confirmation_status, external_confirmation_ref, reconstruction_confidence |
 | REQ-BPO-010 | Provide recommended next business action with owner and due date | Medium | derived + implementation_layer | recommended_business_action, open_action_summary, decision_owner; ARBITR owns prioritisation/playbooks/routing |
 | REQ-BPO-011 | Support process-specific terminology mapping through Terminology Profile Registry | High | presentation | terminology_profile_id, client vocabulary mappings, audience/section-visibility profiles |
-| REQ-BPO-012 | Support domain profiles for payment, customer, HR, finance, and legal operations | High | open_se (optional profiles) | SEDomainProfile family: payment, legal (privilege/legal_hold), HR (sensitive_workforce_data_indicator), finance (ledger/posting) — profiles must stay optional (§14.5) |
+| REQ-BPO-012 | Support domain profiles for payment, customer, HR, finance, and legal operations | High | open_se (optional profiles) | SEDomainProfile family: payment, legal (privilege/legal_hold), HR (sensitive_workforce_data_indicator), finance (ledger/posting) - profiles must stay optional (§14.5) |
 | REQ-BPO-013 | Avoid implying process correctness, legal sufficiency, fairness, compliance, or finality beyond evidence | High | derived (report rule) | Report language rule; ties to reliance_boundary, known_limitations |
 | REQ-BPO-014 | Allow exportable evidence packs for operations, risk, compliance, audit, legal, security, technology, finance, customer teams | High | open_se + derived | SEEvidenceArtifactRef + report/export profile |
 
@@ -120,18 +120,18 @@ Source: `SE_v0_1_Technical_Group_Data_Element_Compression.md`
 | REQ-TECH-008 | Retries, timeouts, fallback, DLQ, replay, backfill status | Core/conditional | open_se | retry_count, timeout_indicator, fallback_event_id, dlq_indicator/ref, backpressure_indicator |
 | REQ-TECH-009 | Security signals as observations with refs and confidence, never attack verdicts | Core | open_se + derived | prompt_injection/credential_risk/privilege_expansion/sandbox_escape/data_exfiltration signals + confidence |
 | REQ-TECH-010 | Untrusted content exposure, taint source, taint propagation | Recommended | open_se | untrusted_content_exposure, taint_indicator/source_ref/propagation_ref, input/output_trust_classification |
-| REQ-TECH-011 | Prompt/context/RAG/output/guardrail/evaluation refs — no mandatory hidden chain-of-thought | Core | open_se | prompt_ref/hash, context_artifact_refs, rag_source_refs, visible_model_output_ref, guardrail_*, reasoning_artifact_ref only where safely emitted |
+| REQ-TECH-011 | Prompt/context/RAG/output/guardrail/evaluation refs - no mandatory hidden chain-of-thought | Core | open_se | prompt_ref/hash, context_artifact_refs, rag_source_refs, visible_model_output_ref, guardrail_*, reasoning_artifact_ref only where safely emitted |
 | REQ-TECH-012 | Data lineage, contract, schema version, quality checks, downstream dependencies | Conditional | open_se | data_contract_ref, data_quality_check_ref/result, source/target_dataset_id, transformation_ref, lineage_ref |
 | REQ-TECH-013 | Source event type, normalisation profile, mapping confidence, unmapped fields | Core (connector profile) | open_se | source_event_type/id/ref, normalisation_profile_id/version, mapping_confidence, unmapped_field_refs |
 | REQ-TECH-014 | Machine-readable export with hashes, signatures, verification instructions, raw envelope linkage | Core | mixed | NDJSON/JSON bundle export, verification_instructions_ref, evidence_pack_index |
-| REQ-TECH-015 | Support-session grants, scope, actions, ticket refs for ARBITR staff access | Recommended | implementation_layer | support_session_id, support_grant_ref, support_access_scope — not in raw envelopes |
+| REQ-TECH-015 | Support-session grants, scope, actions, ticket refs for ARBITR staff access | Recommended | implementation_layer | support_session_id, support_grant_ref, support_access_scope - not in raw envelopes |
 | REQ-TECH-016 | Redaction at source: profile, reason, effect on evidence quality | Core | mixed | redaction_applied(_at_source), redaction_profile_id, redaction_reason |
 | REQ-TECH-017 | Product/feature context connecting evidence to customer-facing surfaces | Recommended | mixed | product_area_ref, feature_ref, release_ref, feature_flag_ref, experiment_ref |
 | REQ-TECH-018 | Show whether findings rest on observed evidence, corroboration, self-attestation, reconstruction, or interpretation | Core | mixed | evidence_source, evidence_capture_method, capture_layer vocab, capture confidence |
 | REQ-TECH-019 | Connector delivery health inspectable: retries, queue, DLQ, ack status, replay | Core (connector profile) | open_se | connector_delivery/health_status, ingestion_ack_status/at, dedupe_status |
 | REQ-TECH-020 | Technical report sections: what changed, did it commit, who authorised, is evidence reliable enough to act | Core | presentation | Report profile technical sections |
 
-### A.6 Executive & Board Assurance (REQ-EXEC) — BACKFILLED register
+### A.6 Executive & Board Assurance (REQ-EXEC) - BACKFILLED register
 Source: `SE_v0_1_Executive_Board_Assurance_Data_Element_Compression.md`; register backfilled 19 July 2026 per BLD-023. Each row cites its source section.
 
 | ID | Requirement | Priority | Layer | Schema implication | Source §§ |
@@ -152,68 +152,68 @@ Source: `SE_v0_1_Executive_Board_Assurance_Data_Element_Compression.md`; registe
 | REQ-EXEC-014 | Conditional financial fields where agents touch money: value, currency, counterparty, account/ledger/payment/invoice refs, thresholds | P1 cond | mixed | monetary_value, currency, counterparty/beneficiary/account refs, financial_materiality_threshold_ref | 4.5, 5.9 |
 | REQ-EXEC-015 | Operational process conformance: process/workflow identity+version, expected-vs-actual steps, SLA, latency, escalation, intervention, resilience | P1 cond | mixed | process_id, workflow_id/version, expected_step_list_hash, process/sla_conformance_status, escalation/intervention event ids | 4.6, 5.10 |
 | REQ-EXEC-016 | Topology and cross-scope continuation: run/node refs, boundary type/crossings, continuation and handoff refs, source/target provider+tenant | P1 | open_se | topology_run_id, execution_node_id, boundary_type, boundary_exit/entry_event_id, continuation_ref, handoff_token_ref | 4.8, 5.17, 8.8 |
-| REQ-EXEC-017 | Prohibit guaranteed compliance/safety/correctness language; scoped assurance only | — | presentation | Report language rule; confidence + evidence-basis fields | 13.1 |
-| REQ-EXEC-018 | Draft controlled vocabularies early (13 domains) to prevent interpretation drift | — | open_se | event_kind, commit status/type, completeness/integrity, divergence, control outcome, appetite, assurance level, line of defence, materiality, reliance boundary | 6.1–6.13 |
-| REQ-EXEC-019 | Serve all twelve executive roles from one evidence object with role-specific report entry points | — | presentation | Role-to-section mapping; 18-section MVAR profile | 11, 14.3 |
-| REQ-EXEC-020 | Broad schema from v0.1 via maturity labels rather than omission | — | open_se | core/conditional/recommended/experimental/reserved/extension/deprecated per field | 12, 16 |
+| REQ-EXEC-017 | Prohibit guaranteed compliance/safety/correctness language; scoped assurance only | - | presentation | Report language rule; confidence + evidence-basis fields | 13.1 |
+| REQ-EXEC-018 | Draft controlled vocabularies early (13 domains) to prevent interpretation drift | - | open_se | event_kind, commit status/type, completeness/integrity, divergence, control outcome, appetite, assurance level, line of defence, materiality, reliance boundary | 6.1–6.13 |
+| REQ-EXEC-019 | Serve all twelve executive roles from one evidence object with role-specific report entry points | - | presentation | Role-to-section mapping; 18-section MVAR profile | 11, 14.3 |
+| REQ-EXEC-020 | Broad schema from v0.1 via maturity labels rather than omission | - | open_se | core/conditional/recommended/experimental/reserved/extension/deprecated per field | 12, 16 |
 | REQ-EXEC-021 | Minimum open SE field spine sufficient for a third party to generate a ~50%-credible report | P1 | open_se | ~70-field minimum set: identity/sequencing, org scope, actor, authority, action/target, commit, evidence, boundary, security | 8, 15.1, 16 |
-| REQ-EXEC-022 | Minimum derived report set — computable, explainable, traceable to SE evidence | P1 | derived | execution_summary, authority_assessment, materiality_rating, reconstruction_confidence, board_action_required | 9, 7.2, 15.2 |
-| REQ-EXEC-023 | Scoring, narratives, packs, terminology mapping, benchmarking, workflow stay implementation-layer | — | implementation_layer | Assurance/risk scores, pack generation, Terminology Profile Registry, benchmarking | 7.3, 15.3 |
-| REQ-EXEC-024 | Maintain a report-to-field requirements matrix mapping each report statement to required fields | — | mixed | Report-to-Field Requirements Matrix | 14.2 |
+| REQ-EXEC-022 | Minimum derived report set - computable, explainable, traceable to SE evidence | P1 | derived | execution_summary, authority_assessment, materiality_rating, reconstruction_confidence, board_action_required | 9, 7.2, 15.2 |
+| REQ-EXEC-023 | Scoring, narratives, packs, terminology mapping, benchmarking, workflow stay implementation-layer | - | implementation_layer | Assurance/risk scores, pack generation, Terminology Profile Registry, benchmarking | 7.3, 15.3 |
+| REQ-EXEC-024 | Maintain a report-to-field requirements matrix mapping each report statement to required fields | - | mixed | Report-to-Field Requirements Matrix | 14.2 |
 
 ---
 
-## Part B — Gap-derived requirements (GAP-*)
+## Part B - Gap-derived requirements (GAP-*)
 Source: the six second-eyes gap analyses. Tier-1 sourced gaps with schema/standard implications. "Dup" = clearly the same underlying item.
 
 ### B.1 Executive gap analysis (GAP-EXEC)
 
 | ID | Gap/requirement | Severity | Layer | Implication | Dup |
 |---|---|---|---|---|---|
-| GAP-EXEC-001 | Live vs simulated execution not expressible | HIGH | open_se | execution_mode: live/shadow/simulation/dry_run/test/replay | — |
-| GAP-EXEC-002 | Two-sided non-repudiation: our record vs counterparty acknowledgment | HIGH | open_se + derived | Acknowledgment ladder rungs 0–5: acknowledgment_refs[], ack_authenticity_basis, counterparty_evidence_strength; companion discovery/confirmation specs; scheme mapping registry | — |
-| GAP-EXEC-003 | Timestamp anchoring and multi-party custody | HIGH | open_se | time_anchor_ref + anchoring_method, witness_signature_refs, runtime_attestation_ref (experimental) | — |
-| GAP-EXEC-004 | Orchestrator missing as first-class actor | HIGH | open_se | orchestrator_id/version; divergence vocab additions (unexpected model/runtime/provider/orchestration change) | — |
-| GAP-EXEC-005 | Point-in-time policy/permission versioning; period-vs-point assurance marker | HIGH | open_se | policy_ref + policy_version_in_effect, effective_permissions_ref, assurance_period_type | — |
-| GAP-EXEC-006 | Quantified evidence coverage against a defined population | HIGH | open_se + derived | evidence_population_ref, evidence_coverage_ratio, tamper_evident_coverage_ratio | — |
-| GAP-EXEC-007 | Containment and autonomy state-change events absent from event_kind | MED-HIGH | open_se + derived | containment_action, authority_revoked/suspended, autonomy_state_changed event kinds; time_to_contain_seconds | — |
-| GAP-EXEC-008 | When controls were evaluated (prevention vs detection) | MED-HIGH | open_se | control_evaluation_phase (pre_commit/at_commit/post_hoc), precheck_results_ref | — |
-| GAP-EXEC-009 | Insurer audience omitted from reliance vocab, packs, report profile | MED-HIGH | derived + package | insurance_notification_support, insurance_relevance_indicator, insurer pack/report flavour | — |
-| GAP-EXEC-010 | Override, review attribution, recurrence, exception lifecycle fields | MEDIUM | derived | control_override_indicator, management_response_ref, reviewer_ref, prior_occurrence_count, exception_age/closure_status | — |
-| GAP-EXEC-011 | Reproducibility/inference configuration underweighted | MEDIUM | open_se + derived | model_parameters_ref → P2; random_seed_ref, environment_spec_ref, replay_recipe_ref | — |
-| GAP-EXEC-012 | Boundary proximity quantification (near-miss leading indicators) | MEDIUM | derived | authority_utilisation_ratio, guardrail_near_miss_count, threshold_proximity_band | — |
-| GAP-EXEC-013 | Redaction lacks privileged review path | MEDIUM | open_se | redaction_escrow_ref, redaction_clearance_level | — |
-| GAP-EXEC-014 | Absence of reasoning artifacts disclosable, not silent | MEDIUM | open_se | reasoning_artifact_availability (available/provider_withheld/not_captured/redacted) | — |
-| GAP-EXEC-015 | Infra-change scope field (CTO personas, 3 files) | LOW-MED | open_se | change_blast_radius | — |
-| GAP-EXEC-016 | SOX/ICFR relevance flags undefined | LOW-MED | derived | financial_statement_relevance_flag / icfr_relevance_indicator | — |
-| GAP-EXEC-017 | Graded input trust vs single boolean | LOW-MED | open_se + derived | input_sources[] with trust_classification; boolean becomes derived rollup | — |
-| GAP-EXEC-018 | Execution cost / token utilisation | LOW-MED | open_se | execution_cost_ref (P3 cond) | — |
-| GAP-EXEC-019 | Gap-reason vocab can't express cost-driven truncation or sampling | LOW-MED | open_se | Add cost_optimisation_truncation, sampling to gap-reason vocab | — |
-| GAP-EXEC-020 | Evidence bundle lacks identity/integrity fields | LOW-MED | open_se | evidence_bundle_id + bundle_manifest_hash | — |
+| GAP-EXEC-001 | Live vs simulated execution not expressible | HIGH | open_se | execution_mode: live/shadow/simulation/dry_run/test/replay | - |
+| GAP-EXEC-002 | Two-sided non-repudiation: our record vs counterparty acknowledgment | HIGH | open_se + derived | Acknowledgment ladder rungs 0–5: acknowledgment_refs[], ack_authenticity_basis, counterparty_evidence_strength; companion discovery/confirmation specs; scheme mapping registry | - |
+| GAP-EXEC-003 | Timestamp anchoring and multi-party custody | HIGH | open_se | time_anchor_ref + anchoring_method, witness_signature_refs, runtime_attestation_ref (experimental) | - |
+| GAP-EXEC-004 | Orchestrator missing as first-class actor | HIGH | open_se | orchestrator_id/version; divergence vocab additions (unexpected model/runtime/provider/orchestration change) | - |
+| GAP-EXEC-005 | Point-in-time policy/permission versioning; period-vs-point assurance marker | HIGH | open_se | policy_ref + policy_version_in_effect, effective_permissions_ref, assurance_period_type | - |
+| GAP-EXEC-006 | Quantified evidence coverage against a defined population | HIGH | open_se + derived | evidence_population_ref, evidence_coverage_ratio, tamper_evident_coverage_ratio | - |
+| GAP-EXEC-007 | Containment and autonomy state-change events absent from event_kind | MED-HIGH | open_se + derived | containment_action, authority_revoked/suspended, autonomy_state_changed event kinds; time_to_contain_seconds | - |
+| GAP-EXEC-008 | When controls were evaluated (prevention vs detection) | MED-HIGH | open_se | control_evaluation_phase (pre_commit/at_commit/post_hoc), precheck_results_ref | - |
+| GAP-EXEC-009 | Insurer audience omitted from reliance vocab, packs, report profile | MED-HIGH | derived + package | insurance_notification_support, insurance_relevance_indicator, insurer pack/report flavour | - |
+| GAP-EXEC-010 | Override, review attribution, recurrence, exception lifecycle fields | MEDIUM | derived | control_override_indicator, management_response_ref, reviewer_ref, prior_occurrence_count, exception_age/closure_status | - |
+| GAP-EXEC-011 | Reproducibility/inference configuration underweighted | MEDIUM | open_se + derived | model_parameters_ref → P2; random_seed_ref, environment_spec_ref, replay_recipe_ref | - |
+| GAP-EXEC-012 | Boundary proximity quantification (near-miss leading indicators) | MEDIUM | derived | authority_utilisation_ratio, guardrail_near_miss_count, threshold_proximity_band | - |
+| GAP-EXEC-013 | Redaction lacks privileged review path | MEDIUM | open_se | redaction_escrow_ref, redaction_clearance_level | - |
+| GAP-EXEC-014 | Absence of reasoning artifacts disclosable, not silent | MEDIUM | open_se | reasoning_artifact_availability (available/provider_withheld/not_captured/redacted) | - |
+| GAP-EXEC-015 | Infra-change scope field (CTO personas, 3 files) | LOW-MED | open_se | change_blast_radius | - |
+| GAP-EXEC-016 | SOX/ICFR relevance flags undefined | LOW-MED | derived | financial_statement_relevance_flag / icfr_relevance_indicator | - |
+| GAP-EXEC-017 | Graded input trust vs single boolean | LOW-MED | open_se + derived | input_sources[] with trust_classification; boolean becomes derived rollup | - |
+| GAP-EXEC-018 | Execution cost / token utilisation | LOW-MED | open_se | execution_cost_ref (P3 cond) | - |
+| GAP-EXEC-019 | Gap-reason vocab can't express cost-driven truncation or sampling | LOW-MED | open_se | Add cost_optimisation_truncation, sampling to gap-reason vocab | - |
+| GAP-EXEC-020 | Evidence bundle lacks identity/integrity fields | LOW-MED | open_se | evidence_bundle_id + bundle_manifest_hash | - |
 
 ### B.2 Technical gap analysis (GAP-TECH)
 
 | ID | Gap/requirement | Severity | Layer | Implication | Dup |
 |---|---|---|---|---|---|
 | GAP-TECH-001 | External evidence anchoring: chain must terminate outside the system under investigation | HIGH | open_se + derived | external_anchor_ref, anchoring_method, anchored_at, anchoring_latency_ms; anchoring_verification_summary, unanchored_envelope_register | GAP-EXEC-003 |
-| GAP-TECH-002 | execution_mode — second-wave confirmation, core status | HIGH | open_se | execution_mode (core) | GAP-EXEC-001 |
-| GAP-TECH-003 | Emission fail-posture unrecorded; defines evidentiary meaning of silence | HIGH | open_se + derived | emission_fail_posture (fail_closed/fail_open/mixed/unknown); fail_posture_window_summary | — |
+| GAP-TECH-002 | execution_mode - second-wave confirmation, core status | HIGH | open_se | execution_mode (core) | GAP-EXEC-001 |
+| GAP-TECH-003 | Emission fail-posture unrecorded; defines evidentiary meaning of silence | HIGH | open_se + derived | emission_fail_posture (fail_closed/fail_open/mixed/unknown); fail_posture_window_summary | - |
 | GAP-TECH-004 | Sampling/determinism parameters need defined structure | MED-HIGH | open_se | sampling_parameters block, random_seed_ref; "reproducible in distribution, not in instance" language | GAP-EXEC-011 |
-| GAP-TECH-005 | Corroboration family needs a named module | MED-HIGH | open_se | Corroboration module: corroboration_ref + source_type, cdc_correlation_ref, fail-posture, anchoring, ack_authenticity_basis | — |
-| GAP-TECH-006 | Dereference access control unowned | MED-HIGH | package + derived | Reference Resolution section; ref_resolution_status | — |
-| GAP-TECH-007 | Erasure vs immutability must be stated normatively | MED-HIGH | conformance_rule | Refs+hashes immutable; referenced content crypto-shreddable; content_erased resolution | — |
-| GAP-TECH-008 | Versioned conformance levels, open reference emitter, open test suite, conformance declaration; connector trust registry (open suite + implementation-side registry) | MED-HIGH | package + implementation | Open reference emitter + test suite; conformance_declaration_ref; implementation-side registry/badges | — |
-| GAP-TECH-009 | Idempotency key custody across boundaries | MEDIUM | open_se | idempotency_key_forwarded / per-hop custody | — |
-| GAP-TECH-010 | Consent linkage and shown-vs-actual divergence | MEDIUM | open_se + derived | consent_event_ref, user_disclosure_ref, shown_vs_actual_divergence | — |
+| GAP-TECH-005 | Corroboration family needs a named module | MED-HIGH | open_se | Corroboration module: corroboration_ref + source_type, cdc_correlation_ref, fail-posture, anchoring, ack_authenticity_basis | - |
+| GAP-TECH-006 | Dereference access control unowned | MED-HIGH | package + derived | Reference Resolution section; ref_resolution_status | - |
+| GAP-TECH-007 | Erasure vs immutability must be stated normatively | MED-HIGH | conformance_rule | Refs+hashes immutable; referenced content crypto-shreddable; content_erased resolution | - |
+| GAP-TECH-008 | Versioned conformance levels, open reference emitter, open test suite, conformance declaration; connector trust registry (open suite + implementation-side registry) | MED-HIGH | package + implementation | Open reference emitter + test suite; conformance_declaration_ref; implementation-side registry/badges | - |
+| GAP-TECH-009 | Idempotency key custody across boundaries | MEDIUM | open_se | idempotency_key_forwarded / per-hop custody | - |
+| GAP-TECH-010 | Consent linkage and shown-vs-actual divergence | MEDIUM | open_se + derived | consent_event_ref, user_disclosure_ref, shown_vs_actual_divergence | - |
 | GAP-TECH-011 | Structured Finding/Action and Timeline object models | MEDIUM | derived | Finding/Action object (id/severity/owner/confidence/action_status); Timeline entry object | GAP-EXEC-010 (partial) |
-| GAP-TECH-012 | Gateway identity missing from provenance | LOW-MED | open_se | tool_gateway_id, model_gateway_id | — |
-| GAP-TECH-013 | Policy bypass missing from security-signal vocab | LOW-MED | open_se | policy_bypass_signal | — |
-| GAP-TECH-014 | W3C Trace Context / OTel interop never stated | LOW-MED | package | SE trace identity SHOULD be W3C Trace Context compatible | — |
-| GAP-TECH-015 | Publish emission overhead characteristics per profile | LOW-MED | package | Overhead guidance artifact | — |
-| GAP-TECH-016 | Anti-sampling conformance rule for commit-boundary streams | LOW-MED | conformance_rule | No sampling/pre-aggregation of commit-boundary streams | — |
-| GAP-TECH-017 | Fault-domain attribution with confidence banding | LOW-MED | derived | fault_domain_indication | — |
-| GAP-TECH-018 | Replay side-effect safety assessment | LOW-MED | derived | replay_safety_assessment | — |
-| GAP-TECH-019 | Not-a-certification disclaimer | LOW-MED | derived | not_a_certification_notice | — |
+| GAP-TECH-012 | Gateway identity missing from provenance | LOW-MED | open_se | tool_gateway_id, model_gateway_id | - |
+| GAP-TECH-013 | Policy bypass missing from security-signal vocab | LOW-MED | open_se | policy_bypass_signal | - |
+| GAP-TECH-014 | W3C Trace Context / OTel interop never stated | LOW-MED | package | SE trace identity SHOULD be W3C Trace Context compatible | - |
+| GAP-TECH-015 | Publish emission overhead characteristics per profile | LOW-MED | package | Overhead guidance artifact | - |
+| GAP-TECH-016 | Anti-sampling conformance rule for commit-boundary streams | LOW-MED | conformance_rule | No sampling/pre-aggregation of commit-boundary streams | - |
+| GAP-TECH-017 | Fault-domain attribution with confidence banding | LOW-MED | derived | fault_domain_indication | - |
+| GAP-TECH-018 | Replay side-effect safety assessment | LOW-MED | derived | replay_safety_assessment | - |
+| GAP-TECH-019 | Not-a-certification disclaimer | LOW-MED | derived | not_a_certification_notice | - |
 
 ### B.3 Internal Assurance gap analysis (GAP-IA)
 
@@ -221,56 +221,56 @@ Source: the six second-eyes gap analyses. Tier-1 sourced gaps with schema/standa
 |---|---|---|---|---|---|
 | GAP-IA-001 | External anchoring + immutable-storage/retention proof (SEC 17a-4, MiFID II WORM) | HIGH | open_se | timestamp_authority_reference (RFC 3161), hash_anchor, envelope_signature_chain[], retention_immutable_flag, retention_immutability_ref | GAP-EXEC-003 |
 | GAP-IA-002 | Unified Access & Restriction Model incl. finding-level restriction (tipping-off) | HIGH | package + open_se | finding_access_class (…/tipping_off_restricted), restriction_basis_ref; restriction metadata must not leak | supersedes GAP-EXEC-013 + GAP-TECH-006 |
-| GAP-IA-003 | Per-action conformance ≠ assurance (compliant-fraud-instrument pattern) | HIGH | conformance_rule | Aggregate-pattern report section; absence-of-analysis disclosed as limitation | — |
-| GAP-IA-004 | Typed correlation-key family (six members) | MED-HIGH | open_se | correlation_keys[]: counterparty, data_subject (pseudonymous), incident, recovery_session, equivalent_input, attack_trace | — |
-| GAP-IA-005 | Privacy-by-design constraint: personal data by reference + pseudonymous subject key, never embedded | MED-HIGH | conformance_rule | Immutable envelopes + erasable content + separately-held subject keys | — |
-| GAP-IA-006 | Third-party touchpoint exhaustiveness; shadow-invocation detection | MEDIUM | conformance_rule + derived | third_party_touchpoint_set; shadow-dependency detection vs vendor register | — |
-| GAP-IA-007 | Interpretation outputs carry maintained-library versions | MEDIUM | derived + implementation | typology_library_version, obligation_taxonomy_version, etc. | — |
-| GAP-IA-008 | Granting principal of a delegation never captured | LOW-MED | open_se | delegator_user_id → canonical delegator_id | — |
+| GAP-IA-003 | Per-action conformance ≠ assurance (compliant-fraud-instrument pattern) | HIGH | conformance_rule | Aggregate-pattern report section; absence-of-analysis disclosed as limitation | - |
+| GAP-IA-004 | Typed correlation-key family (six members) | MED-HIGH | open_se | correlation_keys[]: counterparty, data_subject (pseudonymous), incident, recovery_session, equivalent_input, attack_trace | - |
+| GAP-IA-005 | Privacy-by-design constraint: personal data by reference + pseudonymous subject key, never embedded | MED-HIGH | conformance_rule | Immutable envelopes + erasable content + separately-held subject keys | - |
+| GAP-IA-006 | Third-party touchpoint exhaustiveness; shadow-invocation detection | MEDIUM | conformance_rule + derived | third_party_touchpoint_set; shadow-dependency detection vs vendor register | - |
+| GAP-IA-007 | Interpretation outputs carry maintained-library versions | MEDIUM | derived + implementation | typology_library_version, obligation_taxonomy_version, etc. | - |
+| GAP-IA-008 | Granting principal of a delegation never captured | LOW-MED | open_se | delegator_user_id → canonical delegator_id | - |
 | GAP-IA-009 | Override indicator on control evidence | LOW-MED | derived | override_indicator | GAP-EXEC-010 (partial) |
-| GAP-IA-010 | policy_violation_signal naming reconciliation | LOW-MED | open_se | Vocabulary harmonisation | — |
-| GAP-IA-011 | IPE reliability terminology in audit-facing profile | LOW-MED | package | Terminology profile entry | — |
-| GAP-IA-012 | SAR/case fields report-side under tipping-off restriction | LOW-MED | derived | sar_status (tipping_off_restricted); legal-hold cross-ref | — |
-| GAP-IA-013 | Delegation-scope serialisation format open question | LOW-MED | package | delegation_scope structure (scope_json) | — |
+| GAP-IA-010 | policy_violation_signal naming reconciliation | LOW-MED | open_se | Vocabulary harmonisation | - |
+| GAP-IA-011 | IPE reliability terminology in audit-facing profile | LOW-MED | package | Terminology profile entry | - |
+| GAP-IA-012 | SAR/case fields report-side under tipping-off restriction | LOW-MED | derived | sar_status (tipping_off_restricted); legal-hold cross-ref | - |
+| GAP-IA-013 | Delegation-scope serialisation format open question | LOW-MED | package | delegation_scope structure (scope_json) | - |
 
 ### B.4 BPO gap analysis (GAP-BPO)
 
 | ID | Gap/requirement | Severity | Layer | Implication | Dup |
 |---|---|---|---|---|---|
-| GAP-BPO-001 | Commitment/promise evidence: agent utterances as commit boundaries | HIGH | open_se + derived | commitment_made_indicator, commitment_detail_ref; promise_breach_indicator, commitment_policy_alignment_status | — |
-| GAP-BPO-002 | Identity verification and consent-authority matching | MED-HIGH | open_se + derived | identity_verification_ref/status; consent_authority_match | — |
-| GAP-BPO-003 | Cross-customer exposure within a tenant | MED-HIGH | derived | cross_customer_exposure_indicator; customer-scoped data-boundary semantics | — |
-| GAP-BPO-004 | Maker-checker / dual-control fields absent in all waves | MED-HIGH | open_se | dual_control_required_indicator, maker_ref/checker_ref, second_approver_ref; merge with sod_* cluster | — |
-| GAP-BPO-005 | Deadline/cut-off/value-date cluster | MEDIUM | open_se | deadline_ref + deadline_type + deadline_impact_indicator; payment profile value_date, settlement_date, scheme_rules_ref | — |
-| GAP-BPO-006 | Complaint linkage (regulated process) | MEDIUM | open_se + derived | complaint_ref; complaint_risk_indicator | — |
-| GAP-BPO-007 | Treatment-consistency indicator over equivalent_input_key | MEDIUM | derived | treatment_consistency_indicator (never asserts fairness as legal fact) | — |
-| GAP-BPO-008 | Per-action expected-vs-actual refs (harmonise with TG) | LOW-MED | open_se | expected_action_ref / actual_action_ref | — |
+| GAP-BPO-001 | Commitment/promise evidence: agent utterances as commit boundaries | HIGH | open_se + derived | commitment_made_indicator, commitment_detail_ref; promise_breach_indicator, commitment_policy_alignment_status | - |
+| GAP-BPO-002 | Identity verification and consent-authority matching | MED-HIGH | open_se + derived | identity_verification_ref/status; consent_authority_match | - |
+| GAP-BPO-003 | Cross-customer exposure within a tenant | MED-HIGH | derived | cross_customer_exposure_indicator; customer-scoped data-boundary semantics | - |
+| GAP-BPO-004 | Maker-checker / dual-control fields absent in all waves | MED-HIGH | open_se | dual_control_required_indicator, maker_ref/checker_ref, second_approver_ref; merge with sod_* cluster | - |
+| GAP-BPO-005 | Deadline/cut-off/value-date cluster | MEDIUM | open_se | deadline_ref + deadline_type + deadline_impact_indicator; payment profile value_date, settlement_date, scheme_rules_ref | - |
+| GAP-BPO-006 | Complaint linkage (regulated process) | MEDIUM | open_se + derived | complaint_ref; complaint_risk_indicator | - |
+| GAP-BPO-007 | Treatment-consistency indicator over equivalent_input_key | MEDIUM | derived | treatment_consistency_indicator (never asserts fairness as legal fact) | - |
+| GAP-BPO-008 | Per-action expected-vs-actual refs (harmonise with TG) | LOW-MED | open_se | expected_action_ref / actual_action_ref | - |
 | GAP-BPO-009 | Recommended timeframe on Action object | LOW-MED | derived | recommended_timeframe | GAP-TECH-011 (partial) |
-| GAP-BPO-010 | Employee representation/consultation evidence (HR profile) | LOW-MED | open_se | employee_consultation_ref | — |
-| GAP-BPO-011 | Minimum-set dependency statement for duplicate-payment detection | LOW-MED | package | State dependency on provider_id, idempotency_key, sequence_number, correlation_id, recorded_at | — |
+| GAP-BPO-010 | Employee representation/consultation evidence (HR profile) | LOW-MED | open_se | employee_consultation_ref | - |
+| GAP-BPO-011 | Minimum-set dependency statement for duplicate-payment detection | LOW-MED | package | State dependency on provider_id, idempotency_key, sequence_number, correlation_id, recorded_at | - |
 
 ### B.5 External Assurance gap analysis (GAP-EA)
 
 | ID | Gap/requirement | Severity | Layer | Implication | Dup |
 |---|---|---|---|---|---|
-| GAP-EA-001 | Field-level redaction-tolerant integrity structure — pre-JSON-Schema core decision | HIGH | package | How event_hash is computed (salted per-field hashes / Merkle envelopes); decides canonicalisation | — |
-| GAP-EA-002 | Agent disclosure marker | HIGH | open_se | agent_disclosure_status (+_ref), conditional on counterparty-facing actions | — |
+| GAP-EA-001 | Field-level redaction-tolerant integrity structure - pre-JSON-Schema core decision | HIGH | package | How event_hash is computed (salted per-field hashes / Merkle envelopes); decides canonicalisation | - |
+| GAP-EA-002 | Agent disclosure marker | HIGH | open_se | agent_disclosure_status (+_ref), conditional on counterparty-facing actions | - |
 | GAP-EA-003 | Transaction-time outbound receipt at commit | HIGH | open_se | outbound_receipt_ref/hash on commit events | GAP-EXEC-002 (partial) |
-| GAP-EA-004 | Courtroom authentication: records-custodian support, FRE 902 self-authentication path, append-only amendment model | HIGH | open_se + package + implementation | amendment_event_ref, supersedes_envelope_id, amendment_reason; custodian obligations; published verification procedure | — |
-| GAP-EA-005 | Underwriting representation conformance | MED-HIGH | open_se + derived | underwriting_representation_ref; representation_conformance_status | — |
-| GAP-EA-006 | Graded prompt-injection likelihood | LOW-MED | derived | prompt_injection_likelihood_indicator | — |
-| GAP-EA-007 | Jurisdiction terminology variants | LOW-MED | package | jurisdiction_terminology_variant in Terminology Profile Registry | — |
-| GAP-EA-008 | Triage ordering for evidence gaps | LOW-MED | derived | evidence_gap_priority | — |
-| GAP-EA-009 | Claim-cited narratives (per-sentence claim→evidence citation) | LOW-MED | implementation_layer | Narrative generator citation discipline; SEReportClaim | — |
+| GAP-EA-004 | Courtroom authentication: records-custodian support, FRE 902 self-authentication path, append-only amendment model | HIGH | open_se + package + implementation | amendment_event_ref, supersedes_envelope_id, amendment_reason; custodian obligations; published verification procedure | - |
+| GAP-EA-005 | Underwriting representation conformance | MED-HIGH | open_se + derived | underwriting_representation_ref; representation_conformance_status | - |
+| GAP-EA-006 | Graded prompt-injection likelihood | LOW-MED | derived | prompt_injection_likelihood_indicator | - |
+| GAP-EA-007 | Jurisdiction terminology variants | LOW-MED | package | jurisdiction_terminology_variant in Terminology Profile Registry | - |
+| GAP-EA-008 | Triage ordering for evidence gaps | LOW-MED | derived | evidence_gap_priority | - |
+| GAP-EA-009 | Claim-cited narratives (per-sentence claim→evidence citation) | LOW-MED | implementation_layer | Narrative generator citation discipline; SEReportClaim | - |
 
 ### B.6 Standards gap analysis (GAP-STD)
 
 | ID | Gap/requirement | Severity | Layer | Implication | Dup |
 |---|---|---|---|---|---|
-| GAP-STD-001 | IPR and patent posture is the adoption gate — decide before candidate draft | HIGH | package | Royalty-free patent pledge (SE core), CC-BY-4.0 spec, Apache-2.0 code, DCO/no-assignment; written boundary: ARBITR interpretation stays protectable | — |
+| GAP-STD-001 | IPR and patent posture is the adoption gate - decide before candidate draft | HIGH | package | Royalty-free patent pledge (SE core), CC-BY-4.0 spec, Apache-2.0 code, DCO/no-assignment; written boundary: ARBITR interpretation stays protectable | - |
 | GAP-STD-002 | Reference implementation wrongly placed proprietary; open layer must include emitter, validator, test vectors, Annex D basic derived fields | HIGH | package | Move to open layer | GAP-TECH-008 (partial) |
 | GAP-STD-003 | Boundary receipts supply side; corroboration coverage decomposition | HIGH | open_se + derived | Receipt slot with scoped semantics; corroboration_coverage_decomposition (anchored/receipted/co_emitted/provider_only) | GAP-EXEC-002 (partial) |
-| GAP-STD-004 | Tool manifest identity and conformance missing from MCP profile | MEDIUM | open_se + derived | tool_manifest_ref/hash; manifest_conformance_status | — |
+| GAP-STD-004 | Tool manifest identity and conformance missing from MCP profile | MEDIUM | open_se + derived | tool_manifest_ref/hash; manifest_conformance_status | - |
 | GAP-STD-005 | Redaction-tolerant hashing recorded as team design decision | note | package | Canonicalisation spec tombstone/hash-substitution rules | GAP-EA-001 |
 | GAP-STD-006 | ISO 20022 scheme mapping registry (synthesis recommendation) | note | package | Registry referencing ISO 20022/SWIFT/EDI/AS2 | GAP-EXEC-002 (partial) |
 | GAP-STD-007 | FRE 902 self-authentication as standards-recognition strategy | note | package | Standards-body recognition pathway | GAP-EA-004 (partial) |
@@ -278,29 +278,29 @@ Source: the six second-eyes gap analyses. Tier-1 sourced gaps with schema/standa
 
 ---
 
-## Part C — Consolidated programme close-out tracker (TRK-*)
+## Part C - Consolidated programme close-out tracker (TRK-*)
 Source: `SE_v0_1_Standards_Compression_Gap_Analysis.md` §4
 
 | ID | Item | Layer | Cross-refs |
 |---|---|---|---|
-| TRK-001 | External anchoring + witness chains + WORM proof (5-wave sourced) — elevate maturity | open_se | GAP-EXEC-003 / GAP-TECH-001 / GAP-IA-001 |
-| TRK-002 | execution_phase + execution_mode — EA two-field semantics adopted | open_se | GAP-EXEC-001 / GAP-TECH-002 |
+| TRK-001 | External anchoring + witness chains + WORM proof (5-wave sourced) - elevate maturity | open_se | GAP-EXEC-003 / GAP-TECH-001 / GAP-IA-001 |
+| TRK-002 | execution_phase + execution_mode - EA two-field semantics adopted | open_se | GAP-EXEC-001 / GAP-TECH-002 |
 | TRK-003 | Acknowledgment ladder + outbound receipts + receipt slot (demand/legal/supply validated) | open_se + derived | GAP-EXEC-002 / GAP-EA-003 / GAP-STD-003 |
-| TRK-004 | Access & Restriction Model — one normative section | package | GAP-IA-002 |
-| TRK-005 | Field-level redaction-tolerant hashing — decide before JSON Schema | package | GAP-EA-001 |
-| TRK-006 | Append-only amendment model — required for admissibility | open_se | GAP-EA-004 |
-| TRK-007 | Findings/Action object — restrictable, ageable, owned (5-wave confirmed) | derived | GAP-TECH-011 / GAP-EXEC-010 |
+| TRK-004 | Access & Restriction Model - one normative section | package | GAP-IA-002 |
+| TRK-005 | Field-level redaction-tolerant hashing - decide before JSON Schema | package | GAP-EA-001 |
+| TRK-006 | Append-only amendment model - required for admissibility | open_se | GAP-EA-004 |
+| TRK-007 | Findings/Action object - restrictable, ageable, owned (5-wave confirmed) | derived | GAP-TECH-011 / GAP-EXEC-010 |
 | TRK-008 | Commitment/promise evidence + contractual_commitment commit type (3-wave) | open_se + derived | GAP-BPO-001 |
-| TRK-009 | Agent disclosure marker — cheap to standardise now | open_se | GAP-EA-002 |
+| TRK-009 | Agent disclosure marker - cheap to standardise now | open_se | GAP-EA-002 |
 | TRK-010 | Correlation-key family | open_se | GAP-IA-004 |
-| TRK-011 | Aggregate-pattern principle — per-action conformance ≠ assurance (assurance-critical: envelope validity alone must never be presented as assurance) | conformance_rule | GAP-IA-003 |
+| TRK-011 | Aggregate-pattern principle - per-action conformance ≠ assurance (assurance-critical: envelope validity alone must never be presented as assurance) | conformance_rule | GAP-IA-003 |
 | TRK-012 | Population completeness: sequence continuity + source reconciliation, two proofs | open_se + derived | GAP-EXEC-006 |
-| TRK-013 | Emission fail-posture — adopt | open_se | GAP-TECH-003 |
+| TRK-013 | Emission fail-posture - adopt | open_se | GAP-TECH-003 |
 | TRK-014 | Inference/sampling parameters block + replay scoping (3-wave) | open_se | GAP-EXEC-011 / GAP-TECH-004 |
 | TRK-015 | Insurer audience + underwriting representation conformance | open_se + derived | GAP-EXEC-009 / GAP-EA-005 |
-| TRK-016 | Erasure vs immutability (crypto-shred + subject-key separation) — state once, normatively | conformance_rule | GAP-TECH-007 / GAP-IA-005 |
-| TRK-017 | IPR/patent posture — decide before publication | package | GAP-STD-001 |
-| TRK-018 | Open reference implementation + Annex D derived fields — move out of proprietary | package | GAP-STD-002 |
+| TRK-016 | Erasure vs immutability (crypto-shred + subject-key separation) - state once, normatively | conformance_rule | GAP-TECH-007 / GAP-IA-005 |
+| TRK-017 | IPR/patent posture - decide before publication | package | GAP-STD-001 |
+| TRK-018 | Open reference implementation + Annex D derived fields - move out of proprietary | package | GAP-STD-002 |
 | TRK-019 | Conformance ladder + test vectors + connector trust registry (open suite + implementation-side registry) | package + implementation | GAP-TECH-008 |
 | TRK-020 | Vocabulary harmonisation (4 event_kind variants, 4 commit_boundary variants, 3 provenance axes) | package | Harmonisation sheet |
 | TRK-021 | Tool manifest conformance | open_se + derived | GAP-STD-004 |
@@ -309,34 +309,34 @@ Source: `SE_v0_1_Standards_Compression_Gap_Analysis.md` §4
 
 ---
 
-## Part D — Programme blind spots & pre-catalogue actions (BLD-*)
+## Part D - Programme blind spots & pre-catalogue actions (BLD-*)
 Source: `SE_v0_1_Programme_Blind_Spots_and_Pre_Catalogue_Actions.md`
 
 | ID | Action/item | Layer | Cross-refs |
 |---|---|---|---|
-| BLD-001 | Recruit 3–5 human design partners (external auditor, E&O underwriter/claims, payment-ops lead) before candidate draft; test the golden sample report, not the schema | programme_action | — |
-| BLD-002 | Divergence log: persona requirement vs human-partner reaction, feeding priority scores | programme_action | — |
-| BLD-003 | Extend validation beyond report content: price tolerance, integration ceiling, buying centre, displacement | programme_action | — |
-| BLD-004 | Seventh mini-wave: Attacker, Opposing Counsel, Respondent Organisation, Affected Individual | programme_action | — |
-| BLD-005 | Threat model document in the standards package | standards_package | — |
+| BLD-001 | Recruit 3–5 human design partners (external auditor, E&O underwriter/claims, payment-ops lead) before candidate draft; test the golden sample report, not the schema | programme_action | - |
+| BLD-002 | Divergence log: persona requirement vs human-partner reaction, feeding priority scores | programme_action | - |
+| BLD-003 | Extend validation beyond report content: price tolerance, integration ceiling, buying centre, displacement | programme_action | - |
+| BLD-004 | Seventh mini-wave: Attacker, Opposing Counsel, Respondent Organisation, Affected Individual | programme_action | - |
+| BLD-005 | Threat model document in the standards package | standards_package | - |
 | BLD-006 | Human identifiers follow pseudonymous-key + payload-by-reference + access-restriction discipline (generalised subject-key separation) | conformance_rule | GAP-IA-005 |
 | BLD-007 | Employee-monitoring/works-council note in EU implementation guidance; employee_consultation_ref as hook | standards_package | GAP-BPO-010 |
-| BLD-008 | Positioning language re monitoring people, before a works council asks | programme_action | — |
-| BLD-009 | Heartbeat/liveness: detect silence when nothing arrives | open_se + derived | — |
+| BLD-008 | Positioning language re monitoring people, before a works council asks | programme_action | - |
+| BLD-009 | Heartbeat/liveness: detect silence when nothing arrives | open_se + derived | - |
 | BLD-010 | Document heartbeats + sequence continuity + fail-posture as one "silence semantics" cluster | standards_package | GAP-TECH-003 |
-| BLD-011 | approval_requested_at / approval_granted_at → approval_response_latency_ms | open_se | — |
+| BLD-011 | approval_requested_at / approval_granted_at → approval_response_latency_ms | open_se | - |
 | BLD-012 | Rubber-stamp pattern detection (implementation layer, scoped language only) | implementation_layer | BLD-011 |
-| BLD-013 | Report rule: approval-reliant assurance statements disclose approval-volume and latency context | conformance_rule | — |
+| BLD-013 | Report rule: approval-reliant assurance statements disclose approval-volume and latency context | conformance_rule | - |
 | BLD-014 | Evidence cost model per implementation profile | standards_package | GAP-TECH-015 |
-| BLD-015 | Dogfood: ARBITR emits SE evidence about its own pipeline, externally anchored; publishes own assurance pack | implementation_layer | — |
-| BLD-016 | ARBITR certifications roadmap (SOC 2 etc.) before enterprise sales need it | programme_action | — |
-| BLD-017 | agent_identity_assertion_ref (experimental) — slot for verifiable cross-org agent identity | open_se | — |
+| BLD-015 | Dogfood: ARBITR emits SE evidence about its own pipeline, externally anchored; publishes own assurance pack | implementation_layer | - |
+| BLD-016 | ARBITR certifications roadmap (SOC 2 etc.) before enterprise sales need it | programme_action | - |
+| BLD-017 | agent_identity_assertion_ref (experimental) - slot for verifiable cross-org agent identity | open_se | - |
 | BLD-018 | Standards-venue strategy decided as part of the IPR package (coupled decisions) | programme_action | GAP-STD-001/007 |
-| BLD-019 | Adjacent-standards watch (OTel GenAI, SCITT, C2PA, VC, NIST/OWASP agentic) with profile-or-differentiate decisions | programme_action | — |
-| BLD-020 | Golden trace as architecture test, test-vector seed, and third-party report test — **DONE** (APRUN-2026-06-09-A built; 6 schema findings fed back) | programme_action | — |
-| BLD-021 | Rejection/deferral register with rationale; nothing deleted, only staged | programme_action | — |
-| BLD-022 | Prioritisation function: waves-sourcing × report-statement dependency (A–D weighted) × implementability per profile | programme_action | — |
-| BLD-023 | Backfill REQ-EXEC and REQ-BPO registers before master merge — **REQ-EXEC done in this register (A.6); REQ-BPO existed** | programme_action | — |
+| BLD-019 | Adjacent-standards watch (OTel GenAI, SCITT, C2PA, VC, NIST/OWASP agentic) with profile-or-differentiate decisions | programme_action | - |
+| BLD-020 | Golden trace as architecture test, test-vector seed, and third-party report test - **DONE** (APRUN-2026-06-09-A built; 6 schema findings fed back) | programme_action | - |
+| BLD-021 | Rejection/deferral register with rationale; nothing deleted, only staged | programme_action | - |
+| BLD-022 | Prioritisation function: waves-sourcing × report-statement dependency (A–D weighted) × implementability per profile | programme_action | - |
+| BLD-023 | Backfill REQ-EXEC and REQ-BPO registers before master merge - **REQ-EXEC done in this register (A.6); REQ-BPO existed** | programme_action | - |
 | BLD-024 | Single master tracker: merge TRK + BLD into one backlog; five pre-schema decisions at its head | programme_action | TRK-023 |
 | BLD-025 | Heartbeat cluster fields (heartbeat_event, declared_heartbeat_interval, liveness_status, silent-window register) | open_se + derived | BLD-009 |
 | BLD-026 | approval_response_latency_ms + rubber-stamp detection | open_se + implementation_layer | BLD-011/012 |
@@ -348,7 +348,7 @@ Source: `SE_v0_1_Programme_Blind_Spots_and_Pre_Catalogue_Actions.md`
 ---
 
 ## Golden Trace feedback items (GT-*)
-Source: `Example_Golden_Report_Output/README.md` §"Schema findings" — practice-sourced, highest evidentiary weight (only non-LLM-derived rows in this register).
+Source: `Example_Golden_Report_Output/README.md` §"Schema findings" - practice-sourced, highest evidentiary weight (only non-LLM-derived rows in this register).
 
 | ID | Finding | Layer | Implication |
 |---|---|---|---|
@@ -362,4 +362,4 @@ Source: `Example_Golden_Report_Output/README.md` §"Schema findings" — practic
 ---
 
 **Register totals:** 113 primary REQ rows (14 BPO, 15 EXT, 15 IA, 25 STD, 20 TECH, 24 EXEC-backfilled) · 80 GAP rows · 23 TRK rows · 30 BLD rows · 6 GT rows.
-**Next step:** Master Data Element Decision Register — the multi-wave "settled adoptions" (TRK-001/002/003/010/013 etc.) can be accepted immediately; contested items route through the harmonisation sheet's canonical-key decisions.
+**Next step:** Master Data Element Decision Register - the multi-wave "settled adoptions" (TRK-001/002/003/010/013 etc.) can be accepted immediately; contested items route through the harmonisation sheet's canonical-key decisions.

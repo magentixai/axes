@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you reference the AXES standard, please cite it as below."
-title: "AXES — Autonomous eXecution Evidence Standard (SE v0.1 Public Working Draft)"
+title: "AXES - Autonomous eXecution Evidence Standard (SE v0.1 Public Working Draft)"
 type: dataset
 authors:
   - name: "Magentix (steward)"

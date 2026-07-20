@@ -22,4 +22,4 @@ labels: [framework-mapping-issue]
 <!-- your answer -->
 
 ---
-*Assessment follows the fixed questions in CONTRIBUTING.md. The decision — including any deferral or rejection — will be recorded with its reason in `registers/decision-register.md`.*
+*Assessment follows the fixed questions in CONTRIBUTING.md. The decision - including any deferral or rejection - will be recorded with its reason in `registers/decision-register.md`.*
