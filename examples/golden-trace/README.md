@@ -1,3 +1,5 @@
+> **Status: v1 working exemplar and test corpus — not normative.** Built to prove the report-backwards machinery end to end and to seed test vectors. It will be regenerated as Golden Trace v2 under the P1-1 canonicalisation decision, with per-profile signatures. Known limitations are disclosed inline below — that disclosure discipline is itself part of the standard.
+
 # SE v0.1 Golden Trace — APRUN-2026-06-09-A (Pristine Variant)
 
 A fully synthetic, deterministic, end-to-end Agentic Execution Evidence trace for the canonical ARBITR scenario, built report-backwards so that **every sentence of the board-grade promise paragraph resolves to named schema fields in named envelopes**:
@@ -37,8 +39,8 @@ out/reports/report_D_forensic.md    Forensic execution pack (incl. verification 
 ## Verify it yourself
 `python3 generate_golden_trace.py` regenerates everything and re-verifies the chain (asserts on failure). The vendor-neutral manual procedure is in `report_D_forensic.md` §1 — it is executable from the bundle alone, which is the point.
 
-## The moat test (next step)
-Per the design rule — *a competent third party should be able to generate a credible report from the open schema alone; ARBITR should generate a better one* — the protocol: give a third party (or a different model) only `envelopes.jsonl` + `manifest.json` + `artifacts/` + the draft field definitions, ask for a board summary and an audit view, then diff against reports A and B for (a) factual accuracy, (b) claim→evidence citation discipline, (c) scoped language, (d) interpretation depth (proximity insight, corroboration decomposition, leading indicators). The delta is the measured moat.
+## The third-party report test (next step)
+Per the design rule — *a competent third party should be able to generate a credible report from the open schema alone; ARBITR should generate a better one* — the protocol: give a third party (or a different model) only `envelopes.jsonl` + `manifest.json` + `artifacts/` + the draft field definitions, ask for a board summary and an audit view, then diff against reports A and B for (a) factual accuracy, (b) claim→evidence citation discipline, (c) scoped language, (d) interpretation depth (proximity insight, corroboration decomposition, leading indicators). The delta is the measured interpretation value — and the proof that the open schema alone is sufficient for a credible report.
 
 ## Schema findings surfaced by building this trace (feed back to the Field Catalogue)
 1. `source_system_reconciliation` was needed as an event kind — present in no wave's `event_kind` vocabulary; the reconciliation evidence had no natural home without it.

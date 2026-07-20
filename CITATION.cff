@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you reference the AXES standard, please cite it as below."
+title: "AXES — Autonomous eXecution Evidence Standard (SE v0.1 Public Working Draft)"
+type: dataset
+authors:
+  - name: "Magentix (steward)"
+  - family-names: Sansone
+    given-names: Martin
+repository-code: "https://github.com/magentix-ai/axes"
+url: "https://magentix.ai"
+license: CC-BY-4.0
+version: "0.1-draft"
+date-released: "2026-07-20"
+abstract: "An open, vendor-neutral evidence schema for accountable autonomous execution: portable, hash-chained, board-readable Standards Envelopes (SE) capturing authority, commit boundaries, topology, and evidence quality."

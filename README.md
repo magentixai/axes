@@ -24,6 +24,14 @@ AXES defines the missing artefact: the **Standards Envelope (SE)** — an atomic
 
 **It is not:** a logging format, an observability protocol, a policy or blocking engine, an identity system, a payment rail, a runtime, or a compliance certificate. AXES evidences; it never certifies. Conformant evidence supports scoped assurance statements — it does not license claims of "compliant", "safe" or "guaranteed".
 
+## Why "AXES"
+
+A measurement without a coordinate system is just a number. An agent's action without a frame of reference is just a log line — it tells you something happened, but not where it sits: inside or outside authority, before or after the point of no return, near to or far from a limit, corroborated or merely claimed.
+
+**AXES is the coordinate system for autonomous execution.** Every envelope places an action on the axes that accountability actually runs on — authority, consequence, topology, evidence quality, time — so that a board, an auditor, a regulator, an insurer or a court can read *where* the action sat, not just *that* it occurred. The conformance ladder (SE-C0→C5) measures how much of the frame an implementation can plot; the reports are what the plotted picture looks like to each reader.
+
+That is the whole ambition in one image: give autonomous execution a reference frame everyone can measure against — as ordinary, and as indispensable, as axes on a chart.
+
 ## Design doctrine (summary)
 
 The full doctrine is in [docs/01-doctrine-and-non-negotiables.md](docs/01-doctrine-and-non-negotiables.md). The rule that governs everything:
@@ -33,6 +41,8 @@ The full doctrine is in [docs/01-doctrine-and-non-negotiables.md](docs/01-doctri
 The standard is designed *report-backwards*: from the assurance reports it must support (board summary, audit and control view, regulator pack, forensic pack) to the fields that support them. No report line without supporting fields; no field without report, audit, topology, authority, integrity or implementation value.
 
 Core disciplines: append-only envelopes (corrections are new envelopes, never edits) · pointers-and-hashes only, no raw payloads or secrets · fact separated from interpretation, with provenance and confidence on every derived claim · evidence gaps disclosed, never hidden · cross-boundary evidence by navigation, never storage-level merge · canonical keys are immutable.
+
+**On depth:** AXES is deliberately a deep schema with a light-touch on-ramp — a small mandatory core, condition-triggered modules, and a graded conformance ladder — rather than a minimum viable message set. Evidence is the one domain where you cannot retrofit what you never captured: a missing optional field in a payment message costs a feature; a missing evidence field costs the past. The reasoning is set out in [docs/01, §6](docs/01-doctrine-and-non-negotiables.md).
 
 ## See it working: the Golden Trace
 
@@ -45,10 +55,11 @@ Run `python3 generate_golden_trace.py` to regenerate the bundle byte-identically
 | Path | Contents |
 |---|---|
 | [`docs/`](docs/) | The standard: doctrine, report profile, module map, field catalogue, vocabularies, conformance, extensions, canonicalisation, access model, threat model, standards alignment |
-| [`schema/`](schema/) | JSON Schema. Currently the **historical v0.1 ingest draft**; the modular catalogue-derived schema lands per the ROADMAP |
-| [`examples/`](examples/) | The Golden Trace bundle and single-envelope examples |
-| [`registers/`](registers/) | Requirements register (251 traceable rows), decision register, adjacent-standards watch |
+| [`schema/`](schema/) | The modular catalogue-derived JSON Schema lands here per the ROADMAP, after the canonicalisation decision — deliberately not before |
+| [`examples/`](examples/) | The Golden Trace bundle (v1 working exemplar) and single-envelope examples |
+| [`registers/`](registers/) | Requirements register (252 traceable rows), decision register, adjacent-standards watch |
 | [`tools/`](tools/) | Reference validator and byte-level test vectors (in development) |
+| [`archive/`](archive/) | Design history, preserved with honest commentary — the standard shows its working |
 
 ## Conformance (SE-C0 → SE-C5)
 
@@ -61,6 +72,14 @@ Conformance is graded, so weak implementations cannot claim full equivalence: **
 - **ARBITR** (Magentix) — proprietary interpretation, scoring and report-generation layer; the first consumer of AXES envelopes and the reference report generator. ARBITR conforms to AXES, not the other way round. Anyone can emit, validate, exchange and interpret AXES envelopes without it.
 
 An open reference emitter and validator are part of this repository's roadmap — a second independent implementation is an explicit goal and the trigger for venue incubation (see [GOVERNANCE](GOVERNANCE.md)).
+
+## Call for review — design partners wanted
+
+This standard was designed report-backwards from the needs of 58 roles across six audiences — but those requirements now need **human practitioners** to confirm, correct and extend them. If you are (or can argue like) a **practising external auditor**, an **insurance underwriter or claims handler** (cyber / tech E&O), a **payment-operations lead**, a **regulator or supervisor**, or a **forensic investigator** — we want your reaction to the [Golden Trace reports](examples/golden-trace/out/reports/), not to the schema. Read the board report or the audit view and tell us where it would and wouldn't survive contact with your world.
+
+Adversarial reviewers are equally wanted: if your instinct is to ask *"how would I defeat, discredit or abuse this evidence?"* — attacker, opposing counsel, respondent organisation, affected individual — the [threat model](docs/11-threat-model.md) needs you.
+
+What design partners get: **named acknowledgement** in the specification and the candidate draft; your review recorded in the public **divergence log** (where practitioner reaction differs from the design corpus, the register says so, with your point attached); early-partner access to the steward's programmes at [Magentix](https://magentix.ai) for those who want it; and genuine influence over a standard at the stage when influence is largest. Open a [Reporting requirement or Evidence gap issue](CONTRIBUTING.md), or reach the steward via magentix.ai.
 
 ## Contributing
 

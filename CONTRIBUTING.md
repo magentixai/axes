@@ -35,7 +35,12 @@ Every proposal is evaluated in the open against the same fixed questions:
 5. **Open vs implementation placement** — does it belong in the open envelope, the open derived annex, or the implementation layer?
 6. **Duplication** — does an existing canonical key or vocabulary already cover it?
 7. **Vocabulary impact** — does it require new controlled values, and are they mutually exclusive and complete?
-8. **Conformance impact** — which SE-C level and profiles does it touch?
+8. **Conformance impact** — which SE-C level and profiles does it touch, and at what conformance level would a reader be entitled to rely on it?
+9. **Evidence-to-claim traceability** — can every report claim the element enables link back to specific evidence references?
+10. **Fact-vs-inference danger check** — could this element be misread as encoding fact when it is actually inference, assumption, model judgement or management assertion? If so, what provenance/confidence structure prevents that?
+11. **Confidence and reliance wording** — what confidence, limitation, or reliance-boundary wording must accompany any statement built on this element?
+
+These eleven questions carry the requirements-governance discipline of the original design programme (layer placement, claim traceability, reliance boundaries, dangerous-to-encode-as-fact) into every future contribution.
 
 Additional standing rules: scoped-assurance language only (no field or definition may imply "compliant/safe/guaranteed"); fact and interpretation stay separated; personal data by reference and pseudonymous key only; no mandatory hidden chain-of-thought capture.
 
