@@ -1,0 +1,109 @@
+{
+  "version": "se.v1.draft",
+  "envelope_id": "018f8f7a-7f30-7cc2-bb3d-6a1f16d88a10",
+  "org_id": "018f8f7a-1000-7000-8000-000000000001",
+  "tenant_id": "018f8f7a-1000-7000-8000-000000000101",
+  "environment_id": "018f8f7a-1000-7000-8000-000000001001",
+  "trace_id": "018f8f7a-2000-7000-8000-000000000001",
+  "span_id": "018f8f7a-3000-7000-8000-000000000001",
+  "parent_span_id": null,
+  "event_kind": "tool_call.completed",
+  "occurred_at": "2026-05-31T12:10:02.120Z",
+  "emitted_at": "2026-05-31T12:10:02.880Z",
+  "idempotency_key": "tenant-0101:trace-0001:span-0001:tool_call.completed:v1",
+  "authority_scope": "local_files.write",
+  "capability_id": "cap.file.write",
+  "delegation_receipt_id": "del_01JZ8Z2Y7T3Y9K2W4EV0EAF9KQ",
+  "actor_ref": "user:opaque:7f0b7f8d",
+  "agent_ref": "agent:openclaw:finance-ops-worker",
+  "target_system": "local_filesystem",
+  "target_resource_type": "file",
+  "target_resource_id": "sha256:7b65f0f1a6a8f4e8c1c3c98ec0e9c6ec00000000000000000000000000000000",
+  "operation": "file.write",
+  "result_status": "OK",
+  "error_code": null,
+  "error_message": null,
+  "data_classification": "INTERNAL",
+  "inputs_ref": {
+    "uri": "customer-evidence://tenant-0101/trace-0001/input-0001.json",
+    "sha256": "64d7c7a3b335bb2b4c813e4c7b8ab4b2b7f0d6a5b3c9f91a5029f7cf19f9d6a1",
+    "content_type": "application/json",
+    "size_bytes": 1542,
+    "redaction_status": "REDACTED"
+  },
+  "outputs_ref": {
+    "uri": "customer-evidence://tenant-0101/trace-0001/output-0001.json",
+    "sha256": "d0b9f1f31a9a7d3e97f2d61ab0c6a92f24de67a7dcff1598eb8021f79cda9c3d",
+    "content_type": "application/json",
+    "size_bytes": 861,
+    "redaction_status": "REDACTED"
+  },
+  "runtime": {
+    "framework": "openclaw",
+    "framework_version": "unknown",
+    "connector_name": "arbitr-openclaw-connector",
+    "connector_version": "0.1.0",
+    "runtime_instance_ref": "host:opaque:devbox-01"
+  },
+  "authority_context": {
+    "scope": "local_files.write",
+    "purpose": "Write a generated summary file inside the approved workspace",
+    "delegated_by_ref": "user:opaque:7f0b7f8d",
+    "delegated_to_ref": "agent:openclaw:finance-ops-worker",
+    "delegation_receipt_id": "del_01JZ8Z2Y7T3Y9K2W4EV0EAF9KQ",
+    "valid_from": "2026-05-31T12:00:00Z",
+    "valid_until": "2026-05-31T13:00:00Z",
+    "constraints": {
+      "allowed_systems": [
+        "local_filesystem"
+      ],
+      "allowed_operations": [
+        "file.write"
+      ],
+      "workspace_boundary": "/workspace"
+    }
+  },
+  "target": {
+    "system": "local_filesystem",
+    "resource_type": "file",
+    "resource_id": "sha256:7b65f0f1a6a8f4e8c1c3c98ec0e9c6ec00000000000000000000000000000000",
+    "resource_label": "workspace summary file"
+  },
+  "evidence_artifacts": [
+    {
+      "artifact_id": "018f8f7a-4000-7000-8000-000000000001",
+      "artifact_type": "request",
+      "uri": "customer-evidence://tenant-0101/trace-0001/input-0001.json",
+      "sha256": "64d7c7a3b335bb2b4c813e4c7b8ab4b2b7f0d6a5b3c9f91a5029f7cf19f9d6a1",
+      "content_type": "application/json",
+      "size_bytes": 1542,
+      "created_at": "2026-05-31T12:10:02.900Z"
+    },
+    {
+      "artifact_id": "018f8f7a-4000-7000-8000-000000000002",
+      "artifact_type": "response",
+      "uri": "customer-evidence://tenant-0101/trace-0001/output-0001.json",
+      "sha256": "d0b9f1f31a9a7d3e97f2d61ab0c6a92f24de67a7dcff1598eb8021f79cda9c3d",
+      "content_type": "application/json",
+      "size_bytes": 861,
+      "created_at": "2026-05-31T12:10:02.901Z"
+    }
+  ],
+  "semantics": {
+    "semantic_keys": [
+      "operation.file.write",
+      "runtime.openclaw",
+      "target.local_filesystem"
+    ],
+    "display_hint": "agent_wrote_file"
+  },
+  "cross_scope": null,
+  "signature": null,
+  "extensions": {
+    "openclaw": {
+      "tool_name": "shell",
+      "skill_name": "workspace-files",
+      "command_class": "write_file"
+    }
+  }
+}

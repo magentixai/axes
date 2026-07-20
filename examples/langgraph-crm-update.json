@@ -1,0 +1,102 @@
+{
+  "version": "se.v1.draft",
+  "envelope_id": "018f8f7b-7f30-7cc2-bb3d-6a1f16d88a20",
+  "org_id": "018f8f7a-1000-7000-8000-000000000001",
+  "tenant_id": "018f8f7a-1000-7000-8000-000000000202",
+  "environment_id": "018f8f7a-1000-7000-8000-000000002002",
+  "trace_id": "018f8f7b-2000-7000-8000-000000000002",
+  "span_id": "018f8f7b-3000-7000-8000-000000000004",
+  "parent_span_id": "018f8f7b-3000-7000-8000-000000000003",
+  "event_kind": "external_commit.completed",
+  "occurred_at": "2026-05-31T12:16:21.100Z",
+  "emitted_at": "2026-05-31T12:16:21.410Z",
+  "idempotency_key": "tenant-0202:trace-0002:span-0004:external_commit.completed:v1",
+  "authority_scope": "crm.customer.update",
+  "capability_id": "cap.crm.update_customer",
+  "delegation_receipt_id": "del_01JZ8Z6M62C0E1G6EHQXHZD2VE",
+  "actor_ref": "user:opaque:customer-success-lead",
+  "agent_ref": "agent:langgraph:renewal-assistant",
+  "target_system": "crm",
+  "target_resource_type": "customer_record",
+  "target_resource_id": "sha256:2a97f8cf0b6f32c3cb5b763aaf52cbb7dbb1f6840d61b280f51a7c67bd7d2399",
+  "operation": "crm.customer.update",
+  "result_status": "OK",
+  "error_code": null,
+  "error_message": null,
+  "data_classification": "CONFIDENTIAL",
+  "inputs_ref": {
+    "uri": "customer-evidence://tenant-0202/trace-0002/input-0004.json",
+    "sha256": "0f38b834c4e5c7c2c8f8d90ca7f703b8e63dbe0f1fa8d14a0f019e86271617d8",
+    "content_type": "application/json",
+    "size_bytes": 2400,
+    "redaction_status": "REDACTED"
+  },
+  "outputs_ref": {
+    "uri": "customer-evidence://tenant-0202/trace-0002/output-0004.json",
+    "sha256": "c6ef9b0a550282ed0f735cbcf0a6b1fbfa75e44cce5fe5810bb97d35e7bd9f15",
+    "content_type": "application/json",
+    "size_bytes": 1110,
+    "redaction_status": "REDACTED"
+  },
+  "runtime": {
+    "framework": "langgraph",
+    "framework_version": "unknown",
+    "connector_name": "arbitr-langgraph-adapter",
+    "connector_version": "0.1.0",
+    "runtime_instance_ref": "runtime:opaque:renewal-worker-01"
+  },
+  "authority_context": {
+    "scope": "crm.customer.update",
+    "purpose": "Update renewal status and next action based on approved workflow",
+    "delegated_by_ref": "user:opaque:customer-success-lead",
+    "delegated_to_ref": "agent:langgraph:renewal-assistant",
+    "delegation_receipt_id": "del_01JZ8Z6M62C0E1G6EHQXHZD2VE",
+    "valid_from": "2026-05-31T12:00:00Z",
+    "valid_until": "2026-05-31T18:00:00Z",
+    "constraints": {
+      "allowed_systems": [
+        "crm"
+      ],
+      "allowed_operations": [
+        "crm.customer.update"
+      ],
+      "approval_required": false
+    }
+  },
+  "target": {
+    "system": "crm",
+    "resource_type": "customer_record",
+    "resource_id": "sha256:2a97f8cf0b6f32c3cb5b763aaf52cbb7dbb1f6840d61b280f51a7c67bd7d2399",
+    "resource_label": "customer renewal record",
+    "external_correlation_id": "opaque:crm-update-0004"
+  },
+  "evidence_artifacts": [
+    {
+      "artifact_id": "018f8f7b-4000-7000-8000-000000000004",
+      "artifact_type": "request",
+      "uri": "customer-evidence://tenant-0202/trace-0002/input-0004.json",
+      "sha256": "0f38b834c4e5c7c2c8f8d90ca7f703b8e63dbe0f1fa8d14a0f019e86271617d8",
+      "content_type": "application/json",
+      "size_bytes": 2400,
+      "created_at": "2026-05-31T12:16:21.420Z"
+    }
+  ],
+  "semantics": {
+    "semantic_keys": [
+      "operation.crm.customer.update",
+      "runtime.langgraph",
+      "target.crm"
+    ],
+    "display_hint": "crm_record_updated"
+  },
+  "cross_scope": null,
+  "signature": null,
+  "extensions": {
+    "langgraph": {
+      "graph_name": "renewal_followup_graph",
+      "node_name": "update_customer_record",
+      "edge_from": "classify_customer_status",
+      "edge_to": "notify_account_owner"
+    }
+  }
+}
