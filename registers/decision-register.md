@@ -25,7 +25,7 @@ IDs reference [`requirements-register.md`](requirements-register.md).
 
 | # | Question | State | Notes |
 |---|---|---|---|
-| P1-1 | Canonicalisation incl. redaction-tolerant hashing (salted per-field vs Merkle-structured) | **open — active spike** | Golden Trace is the test corpus; JCS (RFC 8785) as baseline profile candidate. GAP-EA-001 / TRK-005 |
+| P1-1 | Canonicalisation incl. redaction-tolerant hashing (salted per-field vs Merkle-structured) | **open — active spike** | Golden Trace is the test corpus; JCS (RFC 8785) baseline supported by steward prior art ([CrossMsg-Signing](https://github.com/magentixai/CrossMsg-Signing) — tested over ISO 20022 content); spike focuses on the commitment half. Exclusion-at-signing ≠ redaction-after-signing (docs/09). GAP-EA-001 / TRK-005 |
 | P1-2 | Append-only amendment model (`supersedes_envelope_id`, `amendment_reason`) | accept-core (wording in progress) | GAP-EA-004 / TRK-006; admissibility requirement |
 | P1-3 | Access & Restriction Model (redaction escrow + dereference authorisation + finding-level restriction incl. `tipping_off_restricted`) | accept (normative section in progress) | GAP-IA-002 / TRK-004 |
 | P1-4 | Receipt slot / acknowledgment ladder (rungs 0–5; outbound receipts; boundary receipts; rungs accrete over time) | accept (structure settled; format spec in progress) | TRK-003; three-perspective validation (demand/legal/supply); GT-003 |

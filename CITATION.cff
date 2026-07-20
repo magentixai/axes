@@ -6,7 +6,7 @@ authors:
   - name: "Magentix (steward)"
   - family-names: Sansone
     given-names: Martin
-repository-code: "https://github.com/magentix-ai/axes"
+repository-code: "https://github.com/magentixai/axes"
 url: "https://magentix.ai"
 license: CC-BY-4.0
 version: "0.1-draft"

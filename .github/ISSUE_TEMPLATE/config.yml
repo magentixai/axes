@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: General question / discussion
-    url: https://github.com/magentix-ai/axes/discussions
+    url: https://github.com/magentixai/axes/discussions
     about: For open-ended questions that do not fit a contribution category.

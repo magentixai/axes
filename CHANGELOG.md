@@ -4,6 +4,10 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased — SE v0.1 Public Working Draft]
 
+### 2026-07-20 — Canonicalisation prior art
+- CrossMsg-Signing (steward prior art) referenced as P1-1 spike input: JCS+JWS baseline evidence over ISO 20022 content, declared-hash-scope concept, cross-syntax test-vector seeds; exclusion-vs-redaction distinction stated (docs/09).
+- Repository references corrected to github.com/magentixai/axes.
+
 ### 2026-07-20 — Field catalogue begins
 - Module 01 — Envelope Core published as DRAFT (docs/05): 23 entries with full descriptors, requirement traceability, and 5 open questions routed to public challenge (D-012). Module 06 (Commit Boundary & Consequence) queued next.
 - Git history authored under the Magentix GitHub account.
