@@ -12,7 +12,7 @@ The corpus behind this draft: a six-audience requirements programme (executive/b
 |---|---|---|
 | **P0 — Foundations** | Doctrine, governance, licences & patent pledge, contribution pipeline, registers, Golden Trace published | ✅ This release |
 | **P1 — Pre-schema design decisions** | (1) canonicalisation incl. field-level redaction-tolerant hashing · (2) append-only amendment model · (3) access & restriction model · (4) receipt-slot / acknowledgment-ladder structure · (5) IPR posture | (5) ✅ decided (see PATENTS.md) · (2)(3)(4) drafted in corpus, normative text in progress · (1) open spike — **gates schema freeze** |
-| **P2 — Field catalogue** | 16-module catalogue: per-field descriptors, canonical keys, maturity labels, requirement traceability; decision register populated module-by-module | In progress — modules ship as individual commits |
+| **P2 — Field catalogue** | 16-module catalogue: per-field descriptors, canonical keys, maturity labels, requirement traceability; decision register populated module-by-module | **Started — Module 01 (Envelope Core) draft published**; Module 06 (Commit Boundary & Consequence) next |
 | **P3 — Schema regeneration** | Modular `se-v0.1.schema.json` + `.yaml` generated from the catalogue; examples revalidated; byte-level canonicalisation test vectors seeded from the Golden Trace; third-party report test executed and published (can an independent party produce a credible report from the open bundle alone?) | Blocked on P1(1) + P2 |
 | **P4 — Standards package** | Conformance levels & profiles, extension/namespace model, canonicalisation spec, access & restriction model, threat model, standards-alignment doc, implementation guidance, evidence cost model, open reference validator | Partial drafts |
 | **P5 — Candidate draft & human validation** | v0.1.0 Candidate tag; 3–5 human design partners (external audit, insurance, payment operations) reviewing the *reports*, with a published divergence log; adversarial persona review (attacker, opposing counsel, respondent org, affected individual). **Recruiting now — see the Call for Review in the README**; design partners receive named acknowledgement in the candidate draft and their reactions drive the divergence log | Planned — **open for volunteers today** |
@@ -24,7 +24,8 @@ Sixteen modules make up the envelope architecture (full map: [docs/04-module-map
 
 | Module | State |
 |---|---|
-| 1 Envelope Core · 5 Target/Operation · 9 Evidence Artifact Refs | Stable draft (exercised by Golden Trace + historical schema) |
+| 1 Envelope Core | **Catalogue DRAFT published** (docs/05, 23 entries) — open for challenge |
+| 5 Target/Operation · 9 Evidence Artifact Refs | Stable draft (exercised by Golden Trace + archived sketch) |
 | 3 Authority & Delegation · 6 Commit Boundary & Consequence · 7 Topology & Lineage · 10 Evidence Quality · 14 Integrity/Hashing/Signature | Strong draft — catalogue formalisation pending |
 | 2 Actor/Agent/Model/Runtime · 8 Boundary Entry/Exit · 12 Risk/Control/Exception · 16 Reportability | Draft |
 | 4 Capability & Scope · 11 Behaviour Expectation & Security Signals · 13 Data/Privacy/Classification · 15 Attestation | Draft — vocabulary harmonisation applied, review wanted |

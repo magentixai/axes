@@ -4,6 +4,10 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased — SE v0.1 Public Working Draft]
 
+### 2026-07-20 — Field catalogue begins
+- Module 01 — Envelope Core published as DRAFT (docs/05): 23 entries with full descriptors, requirement traceability, and 5 open questions routed to public challenge (D-012). Module 06 (Commit Boundary & Consequence) queued next.
+- Git history authored under the Magentix GitHub account.
+
 ### 2026-07-20 — Critical-review revision (pre-push)
 - May 2026 ingest sketch moved to `archive/2026-05-ingest-draft/` with honest design-history commentary; `schema/` now states why it is deliberately empty until the canonicalisation decision (D-007).
 - Golden Trace reclassified as v1 working exemplar / test corpus; v2 (post-canonicalisation, per-profile signatures) announced (D-008).
