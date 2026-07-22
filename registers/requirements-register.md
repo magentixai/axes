@@ -359,7 +359,25 @@ Source: `Example_Golden_Report_Output/README.md` §"Schema findings" - practice-
 | GT-005 | authority_utilisation_ratio converts pass/fail into a leading indicator (95.6% case) | derived | Confirms GAP-EXEC-012; adopt early |
 | GT-006 | outside_capture_boundary works as honest disclosure (interbank pacs.008 leg); capture-boundary declaration belongs in every regulator pack | open_se + conformance_rule | Confirms EA capture_status semantics |
 
+
 ---
 
-**Register totals:** 113 primary REQ rows (14 BPO, 15 EXT, 15 IA, 25 STD, 20 TECH, 24 EXEC-backfilled) · 80 GAP rows · 23 TRK rows · 30 BLD rows · 6 GT rows.
+## EU AI Act review additions (EU-*)
+Source: `EU-AI-ACT_Analysis_transcript.md` (steward regulatory review, 2026-07-22) cross-checked against the register. Regulation-sourced rows: the EU AI Act is demand-side evidence, and the only non-persona, non-practice source in this register. Article numbers cite Regulation (EU) 2024/1689 as amended by the 2026 Digital Omnibus; timeline verified against legal press 2026-07-22.
+
+| ID | Requirement | Source | Layer | Schema implication | Notes |
+|---|---|---|---|---|---|
+| EU-001 | Evidence the oversight actor's competence and authorisation basis, not just their presence | Art 14/26 | open_se (conditional) | oversight_actor_ref, oversight_authority_basis, competence_ref in Module 03/12 | Extends approval cluster; pairs with approval-latency (BLD-011) |
+| EU-002 | Record whether human intervention occurred before or after the commit boundary | Art 14 | open_se (conditional) | intervention_phase (pre_commit / at_commit / post_commit) | Pairs with control_evaluation_phase (GAP-EXEC-008); prevention-vs-reaction is the load-bearing distinction |
+| EU-003 | Evidence AI-interaction disclosure: required, displayed, method | Art 50 (applies 2026-08-02) | open_se (conditional) | disclosure_required, disclosure_displayed, disclosure_method; extends agent_disclosure_status (TRK-009) | Regulatory deadline attached to an existing adopted field |
+| EU-004 | Evidence machine-readable content marking: required, applied, synthetic-content classification | Art 50 | open_se (conditional) | marking_required, marking_applied, synthetic_content_classification, human_editorial_review_ref | New cluster; C2PA profiling candidate (standards watch) |
+| EU-005 | Evidence substantial modification and reassessment triggers | Lifecycle articles | open_se (conditional) + derived | substantial_modification_assessment_ref, reassessment_required | Pairs with versions-in-force cluster and drift signals |
+| EU-006 | Regulatory identity references: ai_system_id, intended_purpose_ref, risk_classification (+ basis), conformity/registration refs | Provider/deployer obligations | conditional PROFILE (never canonical core) | Regulatory profile; keeps the core regulation-neutral per doctrine | Placement rule: field slots open, article mapping implementation-layer (see EU-009) |
+| EU-007 | Deployer log custody and minimum six-month retention | Art 12/26 | conformance guidance | Existing retention_profile/retention_until fields; implementation-guidance note + evidence cost model input | Also the deployer-custody argument: third-party or chain records are not the deployer's evidence store |
+| EU-008 | Incident timing machinery: discovery, escalation, notification deadline, provider/authority notification refs | Serious-incident reporting | open_se (conditional) | incident_discovered_at, escalated_at, notification_deadline, provider/authority_notification_ref | Enriches REQ-EXEC-009 / REQ-IA-007 |
+| EU-009 | Open-slots vs proprietary-mapping rule: evidence field slots are open AXES; regulation article mapping, readiness scoring and regulator-pack generation are implementation layer | Architecture rule | conformance_rule | Prevents a third party claiming the open EU-mapping ground over the standard | Decision D-013 |
+
+---
+
+**Register totals:** 113 primary REQ rows (14 BPO, 15 EXT, 15 IA, 25 STD, 20 TECH, 24 EXEC-backfilled) · 80 GAP rows · 23 TRK rows · 30 BLD rows · 6 GT rows · 9 EU rows (261 total).
 **Next step:** Master Data Element Decision Register - the multi-wave "settled adoptions" (TRK-001/002/003/010/013 etc.) can be accepted immediately; contested items route through the harmonisation sheet's canonical-key decisions.
