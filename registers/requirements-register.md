@@ -284,7 +284,7 @@ Source: `SE_v0_1_Standards_Compression_Gap_Analysis.md` §4
 
 | ID | Item | Layer | Cross-refs |
 |---|---|---|---|
-| TRK-001 | External anchoring + witness chains + WORM proof (5-wave sourced) - elevate maturity | open_se | GAP-EXEC-003 / GAP-TECH-001 / GAP-IA-001 |
+| TRK-001 | External anchoring + witness chains + WORM proof (5-wave sourced) - elevate maturity; GT v1 SIMULATED store disclosed (D-015 / EB-*); profile EvidenceAnchor-class backends without AXES implementing runtime ABCs | open_se | GAP-EXEC-003 / GAP-TECH-001 / GAP-IA-001; docs/interop/x402-and-anchoring.md |
 | TRK-002 | execution_phase + execution_mode - EA two-field semantics adopted | open_se | GAP-EXEC-001 / GAP-TECH-002 |
 | TRK-003 | Acknowledgment ladder + outbound receipts + receipt slot (demand/legal/supply validated) | open_se + derived | GAP-EXEC-002 / GAP-EA-003 / GAP-STD-003 |
 | TRK-004 | Access & Restriction Model - one normative section | package | GAP-IA-002 |
@@ -406,8 +406,13 @@ Source: programme decision D-014. Full task list, doctrine constraints, and acce
 | CRE-011 | Control-re-evaluable conformance surface (≠ SE-C2 alone) | conformance_rule | docs/07 |
 | CRE-012 | Third-party re-evaluation test protocol and published result | programme_action | design rule in docs/01 |
 | CRE-D01 | Faithful-capture / independent witness - orthogonal, not claimed solved by CRE-* | standards_package | docs/11, Module 14/15, EU-007 |
+| EB-001 | Reading rule: SIMULATED anchor + externally_anchored ≠ closed existence bound | standards_package | D-015; docs/interop/x402-and-anchoring.md |
+| EB-002 | Mechanism-agnostic anchoring_method vocabulary + verify-path requirements | open_se | TRK-001, Module 14 |
+| EB-003 | Profile EvidenceAnchor / Rekor / SCITT / RFC 3161 / OTS receipts into SE anchoring.* | package | D-015 |
+| EB-004 | Golden Trace v2 real external anchor (+ replace SIG-STUB per signing profile) | programme_action | D-008, P1-1 |
+| EB-005 | Conformance rejects silent overclaim of external anchoring | conformance_rule | EB-001, EB-004 |
 
 ---
 
-**Register totals:** 113 primary REQ rows (14 BPO, 15 EXT, 15 IA, 25 STD, 20 TECH, 24 EXEC-backfilled) · 81 GAP rows · 24 TRK rows · 30 BLD rows · 6 GT rows · 9 EU rows · 20 TLC/CRE tracker rows (282 total, of which TLC/CRE are programme tasks not primary REQs).
-**Next step:** Execute Band A (TLC-001..007); in parallel draft CRE-001/002 against Modules 03/04/12 without freezing hashed structure before P1-1.
+**Register totals:** 113 primary REQ rows (14 BPO, 15 EXT, 15 IA, 25 STD, 20 TECH, 24 EXEC-backfilled) · 81 GAP rows · 24 TRK rows · 30 BLD rows · 6 GT rows · 9 EU rows · 20 TLC/CRE tracker rows · 5 EB existence-bound rows (287 total indexed programme/requirement artefacts; TLC/CRE/EB are programme tasks not primary REQs).
+**Next step:** Execute Band B CRE-001/002 drafts against Modules 03/04/12; parallel EB-002 vocabulary for Module 14; do not freeze hashed structure before P1-1.

@@ -33,8 +33,10 @@ out/reports/report_D_forensic.md    Forensic execution pack (incl. verification 
 ```
 
 ## What is real vs stubbed
-**Real and re-verifiable:** SHA-256 hash chain over canonical JSON (sorted keys, compact separators; `envelope_hash` and `signature` excluded from hash input; signing-key identity *included*), contiguous sequencing, time ordering, artifact hashes, manifest/bundle hash, all coverage and utilisation arithmetic.
-**Stubbed and disclosed as such:** envelope signatures (`SIG-STUB`), the external anchor store, webhook mTLS authenticity of pacs.002. The reports disclose every stub - practising the scoped-assurance language the standard mandates.
+**Real and re-verifiable:** SHA-256 hash chain over canonical JSON (sorted keys, compact separators; `envelope_hash` and `signature` excluded from hash input; signing-key identity *included*), contiguous sequencing, time ordering, artifact hashes, manifest/bundle hash, all coverage and utilisation arithmetic. On anchor envelopes, `anchoring.chain_head_hash` is the real local chain head at that moment.
+**Stubbed and disclosed as such:** envelope signatures (`SIG-STUB`); the external anchor store (`anchoring_method: "write_once_store (SIMULATED)"`, demo `anchor_store_ref`); webhook mTLS authenticity of pacs.002. The reports disclose every stub - practising the scoped-assurance language the standard mandates.
+
+**Reading rule for anchors (D-015):** `evidence_quality.corroboration_state: externally_anchored` on a SIMULATED method must **not** be treated as an independently verifiable existence bound. A third party cannot verify that the bytes existed unmodified at wall-clock time without trusting the generator. Local chain integrity ≠ external existence. Golden Trace v2 replaces the stub with a real `anchoring_method` instance (see [`docs/interop/x402-and-anchoring.md`](../../docs/interop/x402-and-anchoring.md)).
 
 ## Verify it yourself
 `python3 generate_golden_trace.py` regenerates everything and re-verifies the chain (asserts on failure). The vendor-neutral manual procedure is in `report_D_forensic.md` §1 - it is executable from the bundle alone, which is the point.

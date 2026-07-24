@@ -63,11 +63,12 @@ Exemplar: [`envelope_payment03_commit_succeeded.json`](../../examples/golden-tra
 
 ## Custody and faithful capture (out of scope for this page)
 
-Sealed, canonical bytes prove integrity **after** capture. They do not by themselves prove the runtime faithfully recorded what it evaluated. Basis fields (`assertion_basis`, `capture_layer`) and future attestation/custody work (Module 14/15, threat model, EU-007) address that axis. See programme item CRE-D01.
+Sealed, canonical bytes prove integrity **after** capture. They do not by themselves prove the runtime faithfully recorded what it evaluated, nor that the bytes existed at a wall-clock time independent of the emitter. Basis fields (`assertion_basis`, `capture_layer`) and attestation/custody work address the first; **external existence bounds** (`anchoring.*`, TRK-001 / EB-*) address the second. Golden Trace v1's SIMULATED anchor must not be read as closing that bound (D-015). See [`x402-and-anchoring.md`](x402-and-anchoring.md) and programme item CRE-D01 / EB-*.
 
 ## Related
 
 - Programme tracker and acceptance test for L2 closed: [`registers/three-layer-evidence-and-control-reevaluation.md`](../../registers/three-layer-evidence-and-control-reevaluation.md)
+- x402 composition + EvidenceAnchor SPI posture: [`x402-and-anchoring.md`](x402-and-anchoring.md)
 - Operator conformance guide: [`CONFORMANCE.md`](../../CONFORMANCE.md)
 - Normative ladder (stub): [`docs/07-conformance-levels.md`](../07-conformance-levels.md)
 - Module map: [`docs/04-module-map.md`](../04-module-map.md)

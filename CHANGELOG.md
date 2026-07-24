@@ -4,6 +4,12 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-07-24 - x402 composition, EvidenceAnchor posture, simulated-anchor reading rule
+- Decision D-015: x402 settles / AXES evidences; action-receipt as ack-ladder rung; AGT EvidenceAnchor is a runtime SPI to *profile*, not for the AXES standard to implement; Golden Trace SIMULATED anchor must not be read as a closed existence bound.
+- Informative note: [`docs/interop/x402-and-anchoring.md`](docs/interop/x402-and-anchoring.md).
+- Band C (EB-001..005) added to the three-layer tracker for external existence bound; EB-001 landed (GT README reading rule).
+- Adjacent-standards watch, ROADMAP known limitations, docs/12 stub updated.
+
 ### 2026-07-24 - Three-layer evidence coverage (Band A surfacing)
 - Programme opened (D-014 / TRK-024 / GAP-EXEC-021); tracker: [`registers/three-layer-evidence-and-control-reevaluation.md`](registers/three-layer-evidence-and-control-reevaluation.md).
 - README: **Working envelope shape (exemplar)** section - not a schema freeze; three-moment table + trimmed Golden Trace excerpt.
