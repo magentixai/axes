@@ -66,9 +66,11 @@ An emitter **must not** (yet):
 - Claim "SE-C0 conformant" or any SE-Cx badge without a published schema and public vectors
 - Equate "accepted by ARBITR" (or any product) with AXES conformance
 - Claim independent **control re-evaluation** from `policy_version` alone (see [three-layer coverage note](docs/interop/three-layer-evidence-coverage.md) and CRE-* tasks)
+- Claim an **independently verifiable existence bound** from Golden Trace v1's `write_once_store (SIMULATED)` or from `corroboration_state: externally_anchored` without a third-party-verifiable `anchoring_method` (D-015; [x402 & anchoring](docs/interop/x402-and-anchoring.md))
 
 ## Related
 
 - Normative ladder stub: [docs/07-conformance-levels.md](docs/07-conformance-levels.md)
 - Three-layer evidence coverage (informative): [docs/interop/three-layer-evidence-coverage.md](docs/interop/three-layer-evidence-coverage.md)
+- x402 composition + EvidenceAnchor posture: [docs/interop/x402-and-anchoring.md](docs/interop/x402-and-anchoring.md)
 - Programme tracker: [registers/three-layer-evidence-and-control-reevaluation.md](registers/three-layer-evidence-and-control-reevaluation.md)
