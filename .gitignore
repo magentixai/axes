@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .DS_Store
 node_modules/
+
+# Magentix proprietary commercial / battlecard material (not part of the open AXES standard)
+docs/interop/agent365-arbitr-brief.md

@@ -110,7 +110,7 @@ Trimmed excerpt from the policy-check sample (full file linked above):
 
 | Path | Contents |
 |---|---|
-| [`docs/`](docs/) | The standard plus [interop notes](docs/interop/three-layer-evidence-coverage.md): [x402 & SCITT/anchoring](docs/interop/x402-and-anchoring.md), [Agent 365/Purview → SE map](docs/interop/agent365-purview-se-mapping.md), [Agent 365 / ARBITR brief](docs/interop/agent365-arbitr-brief.md) |
+| [`docs/`](docs/) | The standard plus [interop notes](docs/interop/three-layer-evidence-coverage.md): [x402 & SCITT/anchoring](docs/interop/x402-and-anchoring.md), [Agent 365/Purview → SE map](docs/interop/agent365-purview-se-mapping.md) |
 | [`schema/`](schema/) | The modular catalogue-derived JSON Schema lands here per the ROADMAP, after the canonicalisation decision - deliberately not before |
 | [`examples/`](examples/) | Golden Trace (current dialect) and [`examples/legacy/`](examples/legacy/) (archived May-sketch dialect) |
 | [`registers/`](registers/) | Requirements register, decision register, adjacent-standards watch, [three-layer evidence & control re-evaluation tracker](registers/three-layer-evidence-and-control-reevaluation.md) |

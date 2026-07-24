@@ -71,7 +71,6 @@ These are structural - not "missing optional fields."
 
 ## Related
 
-- Positioning brief: [`agent365-arbitr-brief.md`](agent365-arbitr-brief.md)
-- ARBITR import backlog: BLD-031 in [`registers/requirements-register.md`](../../registers/requirements-register.md)
+- ARBITR import backlog: BLD-031 in [`registers/requirements-register.md`](../../registers/requirements-register.md) (Magentix commercial battlecard is proprietary and not published in this repo)
 - SCITT / anchoring: [`x402-and-anchoring.md`](x402-and-anchoring.md)
 - Three-layer coverage: [`three-layer-evidence-coverage.md`](three-layer-evidence-coverage.md)

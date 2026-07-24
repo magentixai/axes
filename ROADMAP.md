@@ -63,7 +63,7 @@ Full task list and acceptance test: [`registers/three-layer-evidence-and-control
 | Item | Status |
 |---|---|
 | Agent 365 / Purview → SE field map | ✅ Informative draft [`docs/interop/agent365-purview-se-mapping.md`](docs/interop/agent365-purview-se-mapping.md) |
-| Positioning brief (independence argument) | ✅ Draft [`docs/interop/agent365-arbitr-brief.md`](docs/interop/agent365-arbitr-brief.md) |
+| Magentix ARBITR battlecard (independence argument) | Proprietary - not published in this open repo (gitignored) |
 | **BLD-031** ARBITR import pack (Agent 365 OTel + Purview audit → SE) | Raised - implementation layer |
 
 ## Known limitations of this draft (disclosed, not hidden)

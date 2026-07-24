@@ -4,7 +4,7 @@
 
 Normative profiling statements for adjacent standards (see registers/adjacent-standards-watch.md for the live watch): W3C Trace Context compatibility, JCS, JWS/COSE, RFC 3161, SCITT, W3C VC, ISO 20022 acknowledgment-scheme mapping registry, OTel mapping, ISO/IEC 42001 / NIST AI RMF evidence support, x402 action-receipt / evidence-record composition, AGT EvidenceAnchor as an anchoring-backend profile (not an AXES runtime dependency), Microsoft Agent 365 / Purview as adjacent governance surfaces (import map only; not substitutes for SE).
 
-Informative interop notes (non-normative): [`docs/interop/x402-and-anchoring.md`](interop/x402-and-anchoring.md) (incl. SCITT profile rules), [`docs/interop/three-layer-evidence-coverage.md`](interop/three-layer-evidence-coverage.md), [`docs/interop/agent365-purview-se-mapping.md`](interop/agent365-purview-se-mapping.md), [`docs/interop/agent365-arbitr-brief.md`](interop/agent365-arbitr-brief.md) (Magentix positioning).
+Informative interop notes (non-normative): [`docs/interop/x402-and-anchoring.md`](interop/x402-and-anchoring.md) (incl. SCITT profile rules), [`docs/interop/three-layer-evidence-coverage.md`](interop/three-layer-evidence-coverage.md), [`docs/interop/agent365-purview-se-mapping.md`](interop/agent365-purview-se-mapping.md). Magentix ARBITR commercial positioning lives outside this open repo.
 
 ## EU AI Act and harmonised standards (position statement)
 
