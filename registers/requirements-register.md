@@ -190,6 +190,7 @@ Source: the six second-eyes gap analyses. Tier-1 sourced gaps with schema/standa
 | GAP-EXEC-018 | Execution cost / token utilisation | LOW-MED | open_se | execution_cost_ref (P3 cond) | - |
 | GAP-EXEC-019 | Gap-reason vocab can't express cost-driven truncation or sampling | LOW-MED | open_se | Add cost_optimisation_truncation, sampling to gap-reason vocab | - |
 | GAP-EXEC-020 | Evidence bundle lacks identity/integrity fields | LOW-MED | open_se | evidence_bundle_id + bundle_manifest_hash | - |
+| GAP-EXEC-021 | Versioned policy/control refs are not sufficient for independent re-evaluation: need content-addressed **control-context snapshot** (policy + permissions + reference-data digests), evaluated-input digest, effective dating, and declared evaluation profile - without turning AXES into a policy engine | HIGH | open_se + conformance_rule | policy_snapshot_ref + digest / control_context_hash; effective_from/until on versioned control refs; evaluated_input_digest; evaluation_profile_id; reproducible vs observed_only check rule; control-re-evaluable conformance surface | GAP-EXEC-005, REQ-EXT-007, TRK-024, CRE-* |
 
 ### B.2 Technical gap analysis (GAP-TECH)
 
@@ -306,6 +307,7 @@ Source: `SE_v0_1_Standards_Compression_Gap_Analysis.md` §4
 | TRK-021 | Tool manifest conformance | open_se + derived | GAP-STD-004 |
 | TRK-022 | Records-custodian operation + self-authentication strategy | implementation + package | GAP-EA-004 |
 | TRK-023 | SEQUENCING RULE: settle the five pre-schema design decisions (canonicalisation incl. redaction-tolerant hashing, amendment model, access & restriction model, receipt slot, IPR) before Field Catalogue → matrix → JSON Schema | programme_action | BLD-024 |
+| TRK-024 | Three-layer evidence coverage (decision / control-in-force / outcome) + path to independent control re-evaluation - surface honestly now; close L2 via content-addressed control-context (D-014) | open_se + package + conformance_rule | GAP-EXEC-005/021, REQ-EXT-007, P1-1/3/4; tracker: [`three-layer-evidence-and-control-reevaluation.md`](three-layer-evidence-and-control-reevaluation.md) |
 
 ---
 
@@ -379,5 +381,33 @@ Source: `EU-AI-ACT_Analysis_transcript.md` (steward regulatory review, 2026-07-2
 
 ---
 
-**Register totals:** 113 primary REQ rows (14 BPO, 15 EXT, 15 IA, 25 STD, 20 TECH, 24 EXEC-backfilled) · 80 GAP rows · 23 TRK rows · 30 BLD rows · 6 GT rows · 9 EU rows (261 total).
-**Next step:** Master Data Element Decision Register - the multi-wave "settled adoptions" (TRK-001/002/003/010/013 etc.) can be accepted immediately; contested items route through the harmonisation sheet's canonical-key decisions.
+## Three-layer evidence coverage & control re-evaluation (TLC-* / CRE-*)
+Source: programme decision D-014. Full task list, doctrine constraints, and acceptance test: [`three-layer-evidence-and-control-reevaluation.md`](three-layer-evidence-and-control-reevaluation.md). Stimulus: external agent-governance convergence on three bound artifacts (decision, control-in-force, outcome); AXES responds in the evidence lane only.
+
+| ID | Item | Layer | Cross-refs |
+|---|---|---|---|
+| TLC-001 | README working envelope shape (exemplar) - never "the schema" | standards_package | D-006, D-014 |
+| TLC-002 | Three-moment illustration (policy-check / control refs / commit+ack) | standards_package | Golden Trace samples |
+| TLC-003 | Informative `docs/interop/three-layer-evidence-coverage.md` with L2 gap disclosed | standards_package | TRK-024 |
+| TLC-004 | Root CONFORMANCE.md: corpus verify ≠ SE-Cx claim; docs/07 stays normative | conformance_rule | D-008, TRK-019 |
+| TLC-005 | Quarantine/label legacy example dialects | standards_package | D-007 |
+| TLC-006 | Wire README/CHANGELOG/standards watch | programme_action | BLD-019 |
+| TLC-007 | Claim-language review against doctrine §3.10 / §5 | conformance_rule | docs/01 |
+| CRE-001 | Control-context snapshot composition (what must be hashed) | open_se | GAP-EXEC-021 |
+| CRE-002 | Catalogue: snapshot ref+digest, effective dating on control refs | open_se | GAP-EXEC-005, Modules 03/04/12 |
+| CRE-003 | Evaluated-input digest (normalized inputs, hash-scoped) | open_se | P1-1, Module 14 |
+| CRE-004 | Decision binding triple (input digest, control-context digest, outcome) | open_se | Module 14, correlation spine |
+| CRE-005 | Evaluation-profile neutrality (external engine; AXES does not interpret policy) | open_se + package | docs/01 §5 |
+| CRE-006 | Reproducible vs observed_only control results | open_se + conformance_rule | Module 12 |
+| CRE-007 | Snapshot access/redaction under P1-3 | package | TRK-004, docs/10 |
+| CRE-008 | L3/receipt alignment to same action key (P1-4, Module 06, GT-003) | open_se | TRK-003 |
+| CRE-009 | Golden Trace v2 with hashed control-context pack + re-run procedure | programme_action | D-008 |
+| CRE-010 | Negative vectors (version-without-digest, etc.) | package | TRK-019 |
+| CRE-011 | Control-re-evaluable conformance surface (≠ SE-C2 alone) | conformance_rule | docs/07 |
+| CRE-012 | Third-party re-evaluation test protocol and published result | programme_action | design rule in docs/01 |
+| CRE-D01 | Faithful-capture / independent witness - orthogonal, not claimed solved by CRE-* | standards_package | docs/11, Module 14/15, EU-007 |
+
+---
+
+**Register totals:** 113 primary REQ rows (14 BPO, 15 EXT, 15 IA, 25 STD, 20 TECH, 24 EXEC-backfilled) · 81 GAP rows · 24 TRK rows · 30 BLD rows · 6 GT rows · 9 EU rows · 20 TLC/CRE tracker rows (282 total, of which TLC/CRE are programme tasks not primary REQs).
+**Next step:** Execute Band A (TLC-001..007); in parallel draft CRE-001/002 against Modules 03/04/12 without freezing hashed structure before P1-1.

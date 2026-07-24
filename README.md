@@ -48,24 +48,83 @@ Core disciplines: append-only envelopes (corrections are new envelopes, never ed
 
 [`examples/golden-trace/`](examples/golden-trace/) contains a complete, deterministic, re-verifiable evidence bundle: an autonomous accounts-payable agent executing 14 SEPA Instant payments under delegated authority - 76 hash-chained envelopes, ISO 20022 artefacts (pain.001 / pacs.002 / camt.053), a three-rung acknowledgment ladder with settlement corroboration, measured population completeness, heartbeat silence semantics, external anchoring, and four target reports (board / audit / regulator / forensic) in which **every sentence resolves to named fields in named envelopes**.
 
-Run `python3 generate_golden_trace.py` to regenerate the bundle byte-identically and re-verify the chain yourself. The verification procedure in `report_D_forensic.md` is executable from the bundle alone - which is the point.
+Run `python3 generate_golden_trace.py` from that directory to regenerate the bundle byte-identically and re-verify the chain. The verification procedure in `report_D_forensic.md` is executable from the bundle alone - which is the point. Corpus verification vs emitter conformance claims: [`CONFORMANCE.md`](CONFORMANCE.md).
+
+## Working envelope shape (exemplar)
+
+> **Not a frozen schema.** There is no published `se-v0.1.schema.json` yet - deliberately ([`schema/`](schema/), Roadmap P1-1). What follows is the **current working dialect** from the Golden Trace and [Module 01 - Envelope Core](docs/05-field-catalogue/module-01-envelope-core.md). Do not treat it as an implementable contract until the catalogue-derived schema lands after canonicalisation.
+
+Architecture the future schema will express: [module map](docs/04-module-map.md) · [controlled vocabularies](docs/06-controlled-vocabularies.md).
+
+**One payment, three moments** (same `trace_id` / `span_id` / `transaction_ref` correlation spine):
+
+| Moment | Evidence layer | Sample |
+|---|---|---|
+| Pre-commit policy check | L1 decision + L2 control refs (partial) | [`envelope_payment03_policy_check.json`](examples/golden-trace/out/samples/envelope_payment03_policy_check.json) |
+| Commit succeeded + ack ladder | L3 outcome | [`envelope_payment03_commit_succeeded.json`](examples/golden-trace/out/samples/envelope_payment03_commit_succeeded.json) |
+| Later reconciliation | L3 settlement rung accretion | [`envelope_reconciliation.json`](examples/golden-trace/out/samples/envelope_reconciliation.json) |
+
+How those layers map to fields (informative, with L2 gap disclosed): [`docs/interop/three-layer-evidence-coverage.md`](docs/interop/three-layer-evidence-coverage.md).
+
+Trimmed excerpt from the policy-check sample (full file linked above):
+
+```json
+{
+  "se_version": "0.1-draft",
+  "event_kind": "policy_check_performed",
+  "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "span_id": "span-pay-03",
+  "execution_phase": "approval",
+  "execution_mode": "autonomous",
+  "authority": {
+    "authority_context_id": "AD-7844",
+    "delegation_receipt_id": "delrec:AD-7844/2026-04-02",
+    "policy_ref": "policy:caldera/ap-payments",
+    "policy_version": "3.2",
+    "capability_id": "cap:sepa-inst-credit-transfer",
+    "approval_status": "not_required"
+  },
+  "controls": {
+    "control_evaluation_phase": "pre_commit",
+    "control_set_ref": "ctl:ap-pay/v3.2",
+    "checks": [
+      {
+        "control_id": "CTL-LIMIT-02",
+        "control_result": "passed",
+        "observed": {
+          "amount": 23900.0,
+          "limit": 25000.0,
+          "authority_utilisation_ratio": 0.956
+        }
+      }
+    ]
+  },
+  "evidence_quality": {
+    "assertion_basis": "observed",
+    "corroboration_state": "internally_corroborated"
+  }
+}
+```
 
 ## Repository map
 
 | Path | Contents |
 |---|---|
-| [`docs/`](docs/) | The standard: doctrine, report profile, module map, field catalogue, vocabularies, conformance, extensions, canonicalisation, access model, threat model, standards alignment |
+| [`docs/`](docs/) | The standard: doctrine, report profile, module map, field catalogue, vocabularies, conformance, extensions, canonicalisation, access model, threat model, standards alignment, [interop notes](docs/interop/three-layer-evidence-coverage.md) |
 | [`schema/`](schema/) | The modular catalogue-derived JSON Schema lands here per the ROADMAP, after the canonicalisation decision - deliberately not before |
-| [`examples/`](examples/) | The Golden Trace bundle (v1 working exemplar) and single-envelope examples |
-| [`registers/`](registers/) | Requirements register (252 traceable rows), decision register, adjacent-standards watch |
+| [`examples/`](examples/) | Golden Trace (current dialect) and [`examples/legacy/`](examples/legacy/) (archived May-sketch dialect) |
+| [`registers/`](registers/) | Requirements register, decision register, adjacent-standards watch, [three-layer evidence & control re-evaluation tracker](registers/three-layer-evidence-and-control-reevaluation.md) |
+| [`CONFORMANCE.md`](CONFORMANCE.md) | Operator guide: corpus verification vs SE-Cx claims ([docs/07](docs/07-conformance-levels.md) is the normative ladder home) |
 | [`tools/`](tools/) | Reference validator and byte-level test vectors (in development) |
 | [`archive/`](archive/) | Design history, preserved with honest commentary - the standard shows its working |
 
 ## Conformance (SE-C0 → SE-C5)
 
-Conformance is graded, so weak implementations cannot claim full equivalence: **SE-C0** schema-valid · **SE-C1** execution-traceable · **SE-C2** authority-evidenced · **SE-C3** topology-evidenced · **SE-C4** assurance-report-capable · **SE-C5** lossless-pipeline-capable. Implementation profiles (minimum emitter, connector, audit-grade, security telemetry, …) are orthogonal: profile = scope implemented; C-level = completeness achieved. Details: [docs/07-conformance-levels.md](docs/07-conformance-levels.md).
+Conformance is graded, so weak implementations cannot claim full equivalence: **SE-C0** schema-valid · **SE-C1** execution-traceable · **SE-C2** authority-evidenced · **SE-C3** topology-evidenced · **SE-C4** assurance-report-capable · **SE-C5** lossless-pipeline-capable. Implementation profiles (minimum emitter, connector, audit-grade, security telemetry, …) are orthogonal: profile = scope implemented; C-level = completeness achieved.
 
-**Conformance is defined by this specification and its public validator and test vectors - never by any vendor's ingestion behaviour.**
+**Start here for operators:** [`CONFORMANCE.md`](CONFORMANCE.md). **Normative ladder (in development):** [docs/07-conformance-levels.md](docs/07-conformance-levels.md).
+
+**Conformance is defined by this specification and its public validator and test vectors - never by any vendor's ingestion behaviour.** Passing Golden Trace verification is not an SE-Cx badge.
 
 ## Implementations
 

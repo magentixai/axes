@@ -4,7 +4,7 @@
 
 ## Where the standard is now
 
-The corpus behind this draft: a six-audience requirements programme (executive/board, business process owners, internal assurance, technical, external assurance, standards/ecosystem - 58 roles surveyed across six independent model runs each, then compressed and gap-analysed), a cross-wave vocabulary harmonisation pass, a programme blind-spots review, and a working end-to-end evidence bundle (the Golden Trace). All of it is traceable in [`registers/requirements-register.md`](registers/requirements-register.md) - 252 rows. Requirements are tagged *persona-derived, pending human confirmation*; human design-partner validation is a scheduled phase, not an afterthought.
+The corpus behind this draft: a six-audience requirements programme (executive/board, business process owners, internal assurance, technical, external assurance, standards/ecosystem - 58 roles surveyed across six independent model runs each, then compressed and gap-analysed), a cross-wave vocabulary harmonisation pass, a programme blind-spots review, and a working end-to-end evidence bundle (the Golden Trace). All of it is traceable in [`registers/requirements-register.md`](registers/requirements-register.md). Requirements are tagged *persona-derived, pending human confirmation*; human design-partner validation is a scheduled phase, not an afterthought. Active evidence-coverage workstream: [three-layer evidence & control re-evaluation](registers/three-layer-evidence-and-control-reevaluation.md) (D-014).
 
 ## Phase status
 
@@ -33,9 +33,23 @@ Sixteen modules make up the envelope architecture (full map: [docs/04-module-map
 | Acknowledgment ladder & receipts · external anchoring · correlation keys · amendment model | Adopted by multi-wave convergence; normative wording in P1/P2 |
 | Verifiable agent identity (`agent_identity_assertion_ref`) | Experimental |
 
+## Active workstream: three-layer evidence coverage & control re-evaluation (D-014)
+
+External governance discussions converge on three bound artifacts - pre-execution **decision**, **control specification in force**, post-execution **outcome** - keyed to one action. AXES responds in the **evidence lane only** (doctrine §5).
+
+| Band | Goal | Status |
+|---|---|---|
+| **A - Surfacing (TLC-*)** | Working envelope shape in README; informative three-layer coverage note with L2 gap disclosed; CONFORMANCE.md that separates corpus verification from SE-Cx claims; legacy example quarantine | ✅ TLC-001..007 landed 2026-07-24 |
+| **B - Control re-evaluation (CRE-*)** | Content-addressed control-context snapshot + evaluated-input digest + effective dating + evaluation-profile neutrality + Golden Trace v2 re-run proof + distinct conformance surface | Open - blocked on catalogue drafts + P1-1 for hashed binding; composition/field design may proceed in parallel |
+
+Full task list and acceptance test: [`registers/three-layer-evidence-and-control-reevaluation.md`](registers/three-layer-evidence-and-control-reevaluation.md). Umbrella tracker: TRK-024 / GAP-EXEC-021.
+
+**Catalogue sequencing note:** Module 06 (Commit Boundary) remains next for the general catalogue; CRE field drafts for Modules 03/04/12 may proceed in parallel provided they do not freeze hash structure before P1-1.
+
 ## Known limitations of this draft (disclosed, not hidden)
 
 - **There is no published JSON Schema yet - deliberately.** The schema freezes only after the canonicalisation decision (P1-1); publishing before it would guarantee a breaking revision. The only prior schema artefact is a May 2026 exploratory sketch, archived with honest commentary in `archive/2026-05-ingest-draft/` - it is design history, not the standard.
 - Requirements derive from multi-model persona simulation - a strong hypothesis generator, not human validation. P5 exists precisely to correct this, and is recruiting now.
 - Canonicalisation (including redaction-tolerant hashing) is the one genuinely open core-design question; the schema will not freeze before it is settled.
 - The Golden Trace is a **v1 working exemplar**: its hash chain, sequencing, artefact hashes and coverage arithmetic are real and re-verifiable, but its signatures are stubbed (disclosed) and its hashing is informal. Golden Trace v2 regenerates it under the settled canonicalisation and seeds the byte-level test vectors.
+- **Control-in-force evidence is partial:** envelopes carry `policy_ref` / `policy_version` / `control_set_ref` and recorded check results; they do not yet carry a content-addressed control-context snapshot sufficient for independent re-evaluation (GAP-EXEC-021).

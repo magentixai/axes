@@ -4,6 +4,14 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-07-24 - Three-layer evidence coverage (Band A surfacing)
+- Programme opened (D-014 / TRK-024 / GAP-EXEC-021); tracker: [`registers/three-layer-evidence-and-control-reevaluation.md`](registers/three-layer-evidence-and-control-reevaluation.md).
+- README: **Working envelope shape (exemplar)** section - not a schema freeze; three-moment table + trimmed Golden Trace excerpt.
+- Informative coverage note: [`docs/interop/three-layer-evidence-coverage.md`](docs/interop/three-layer-evidence-coverage.md) (L2 gap disclosed; correlation spine vs pending action digest).
+- Root [`CONFORMANCE.md`](CONFORMANCE.md): corpus verification vs SE-Cx claims; docs/07 remains normative ladder home.
+- Legacy May-sketch examples moved to [`examples/legacy/`](examples/legacy/); current dialect is Golden Trace only.
+- ROADMAP, CONTRIBUTING, adjacent-standards watch, requirements index updated.
+
 ### 2026-07-20 - Canonicalisation prior art
 - CrossMsg-Signing (steward prior art) referenced as P1-1 spike input: JCS+JWS baseline evidence over ISO 20022 content, declared-hash-scope concept, cross-syntax test-vector seeds; exclusion-vs-redaction distinction stated (docs/09).
 - Repository references corrected to github.com/magentixai/axes.
