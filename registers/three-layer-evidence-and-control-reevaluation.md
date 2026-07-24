@@ -102,10 +102,11 @@ Local hash chains do not prove independent existence-in-time. Closing the simula
 | ID | Task | Deliverable | Done when | Depends | Status |
 |---|---|---|---|---|---|
 | EB-001 | Reading rule for SIMULATED anchors | Documented: `externally_anchored` + SIMULATED ≠ closed existence bound; GT README + interop note | Public text cannot be misread as a real bound | D-015 | ✅ 2026-07-24 |
-| EB-002 | Mechanism-agnostic `anchoring_method` vocabulary | Normative list / registry posture: timestamp_authority, transparency_log, write_once_store, distributed_ledger, opentimestamps, … with verify-path requirements | Catalogue / Module 14 draft | TRK-001 | Open |
-| EB-003 | Profile EvidenceAnchor-class receipts | Map AGT EvidenceAnchor / Rekor / SCITT / RFC 3161 / OTS receipt fields into SE `anchoring.*` without depending on AGT's Python ABC | Interop table in Module 14 or docs/12 | D-015, EB-002 | Open |
-| EB-004 | Golden Trace v2 real anchor | At least one backend whose receipt verifies without Magentix infrastructure; forensic step 5 becomes real; `SIG-STUB` replaced per signing profile | GT v2 + CONFORMANCE corpus note | P1-1, D-008, EB-002 | Open |
+| EB-002 | Mechanism-agnostic `anchoring_method` vocabulary | Normative list / registry posture: `timestamp_authority`, `transparency_log` (SCITT instance), `opentimestamps`, `write_once_store`, `distributed_ledger`, … with **verify-path** requirements; MUST NOT hard-require SCITT | Catalogue / Module 14 draft | TRK-001 | Open |
+| EB-003 | Profile EvidenceAnchor-class **and SCITT** receipts | Map AGT EvidenceAnchor / Rekor / **SCITT (TS id, statement digest, receipt, inclusion proof)** / RFC 3161 / OTS → SE `anchoring.*` without depending on AGT's Python ABC or any single TS | Interop table in Module 14 or docs/12; rules in docs/interop/x402-and-anchoring.md | D-015, EB-002 | Open |
+| EB-004 | Golden Trace v2 real anchor | At least one backend whose receipt verifies without Magentix infrastructure (SCITT **or** OTS **or** TSA peer); forensic step 5 becomes real; `SIG-STUB` replaced per signing profile | GT v2 + CONFORMANCE corpus note | P1-1, D-008, EB-002 | Open |
 | EB-005 | Conformance: silent overclaim rejected | Vector/rule: SIMULATED or missing verify-path cannot claim externally_anchored for assurance | Negative vector or CONFORMANCE.md rule | EB-001, EB-004 | Open |
+| EB-006 | Ack-ladder vs existence-bound discipline | Normative note: SCITT/TSA/OTS receipt is a higher corroboration rung; MUST NOT verify as transport/protocol/business/settlement ack; optional dual registration (decision digest + outcome digest) on same action key | P1-4 + Module 06/14 text | P1-4, GT-003 | Open |
 
 Detail: [`docs/interop/x402-and-anchoring.md`](../docs/interop/x402-and-anchoring.md).
 
@@ -132,7 +133,8 @@ P1-1 settles  ->  CRE-003 input digest + CRE-004 binding
 CRE-009 Golden Trace v2  ->  CRE-010 vectors  ->  CRE-011 profile  ->  CRE-012 third-party test
 
 # Parallel (does not wait on L2):
-EB-001 ✅ -> EB-002 vocabulary -> EB-003 profiles -> EB-004 GT v2 real anchor (+ signatures) -> EB-005
+EB-001 ✅ -> EB-002 vocabulary -> EB-003 profiles (incl. SCITT) -> EB-006 ack discipline
+        -> EB-004 GT v2 real anchor (+ signatures) -> EB-005
 ```
 
 Catalogue priority implication: Module **03 Authority**, **04 Capability**, and **12 Risk/Control** should absorb CRE-001/002/005/006; Module **06** and P1-4 absorb CRE-008; Module **14** absorbs CRE-003/004 and EB-002/003 with P1-1. Module 06 remains next for commit-boundary catalogue work; CRE/EB field drafts may proceed in parallel as long as they do not freeze hashed structure before P1-1.

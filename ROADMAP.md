@@ -41,10 +41,30 @@ External governance discussions converge on three bound artifacts - pre-executio
 |---|---|---|
 | **A - Surfacing (TLC-*)** | Working envelope shape in README; informative three-layer coverage note with L2 gap disclosed; CONFORMANCE.md that separates corpus verification from SE-Cx claims; legacy example quarantine | ✅ TLC-001..007 landed 2026-07-24 |
 | **B - Control re-evaluation (CRE-*)** | Content-addressed control-context snapshot + evaluated-input digest + effective dating + evaluation-profile neutrality + Golden Trace v2 re-run proof + distinct conformance surface | Open - blocked on catalogue drafts + P1-1 for hashed binding; composition/field design may proceed in parallel |
+| **C - External existence bound (EB-*)** | Mechanism-agnostic `anchoring_method` vocabulary; profile SCITT / RFC 3161 / OTS / EvidenceAnchor receipts into `anchoring.*` (AXES does not implement runtime ABCs); Golden Trace v2 real anchor; reject SIMULATED overclaim | EB-001 ✅; EB-002..005 open - see detail below |
 
-Full task list and acceptance test: [`registers/three-layer-evidence-and-control-reevaluation.md`](registers/three-layer-evidence-and-control-reevaluation.md). Umbrella tracker: TRK-024 / GAP-EXEC-021.
+Full task list and acceptance test: [`registers/three-layer-evidence-and-control-reevaluation.md`](registers/three-layer-evidence-and-control-reevaluation.md). Umbrella tracker: TRK-024 / GAP-EXEC-021. SCITT composition rules: [`docs/interop/x402-and-anchoring.md`](docs/interop/x402-and-anchoring.md) (SCITT section).
 
-**Catalogue sequencing note:** Module 06 (Commit Boundary) remains next for the general catalogue; CRE field drafts for Modules 03/04/12 may proceed in parallel provided they do not freeze hash structure before P1-1.
+**Catalogue sequencing note:** Module 06 (Commit Boundary) remains next for the general catalogue; CRE field drafts for Modules 03/04/12 and EB field drafts for Module 14 may proceed in parallel provided they do not freeze hash structure before P1-1.
+
+### Band C detail - SCITT and peers (from AGT #276 alignment)
+
+| Requirement | Roadmap treatment |
+|---|---|
+| Separate envelope digest from notarization | Normative in Module 14: register **digests** (envelope / bundle / export), never raw payloads |
+| SCITT as profile, not core schema | EB-003: map Transparency Service id, statement digest, receipt, inclusion proof, verify path → `anchoring.*`; `anchoring_method` includes `transparency_log` / SCITT instance |
+| Pluggable backends | EB-002: SCITT peer to RFC 3161, OpenTimestamps, Rekor-like logs, WORM+verify, chain registries - MUST NOT hard-require SCITT |
+| Ack-ladder placement | P1-4 / Module 06: SCITT receipt = higher corroboration rung; must not verify as business/settlement ack |
+| Optional pre/post registration | Same action key may be anchored at decision and at outcome (GT-003 accretion) |
+| Explicit non-goals | SCITT does not close CRE-* (control re-evaluation) or CRE-D01 (faithful capture) |
+
+### Ecosystem / Magentix implementation (feeds P6)
+
+| Item | Status |
+|---|---|
+| Agent 365 / Purview → SE field map | ✅ Informative draft [`docs/interop/agent365-purview-se-mapping.md`](docs/interop/agent365-purview-se-mapping.md) |
+| Positioning brief (independence argument) | ✅ Draft [`docs/interop/agent365-arbitr-brief.md`](docs/interop/agent365-arbitr-brief.md) |
+| **BLD-031** ARBITR import pack (Agent 365 OTel + Purview audit → SE) | Raised - implementation layer |
 
 ## Known limitations of this draft (disclosed, not hidden)
 

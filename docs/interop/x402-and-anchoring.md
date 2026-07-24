@@ -68,9 +68,31 @@ corroboration_state: "externally_anchored"
 
 Closing an EvidenceAnchor integration does **not** close control re-evaluation (GAP-EXEC-021 / CRE-*). Existence bound and control-context snapshot are orthogonal.
 
+## IETF SCITT as an existence-bound profile (not a core schema)
+
+Agent-governance discussions (e.g. AGT discussion #276) correctly separate:
+
+1. **Decision / evidence envelope** - canonical bytes and digest (AXES SE; JCS baseline under P1-1).
+2. **Neutral existence bound** - where that digest is notarized so verification does not depend on the emitter's endpoint.
+
+[IETF SCITT](https://datatracker.ietf.org/doc/rfc9943/) (Supply Chain Integrity, Transparency, and Trust) is a strong instance of (2): a Transparency Service registers a **signed statement** about an artifact and returns a **receipt** (inclusion / countersignature). SCITT is **not** an agent-execution evidence schema. AXES must not fork SCITT into Modules 01-16; it **profiles** SCITT receipts into `anchoring.*`.
+
+| Rule | Implication |
+|---|---|
+| What to register | Digest of an SE envelope, evidence-bundle manifest, or export pack - **pointers and hashes**, not raw payloads (doctrine) |
+| Pluggable anchors | SCITT is one profile beside RFC 3161, OpenTimestamps, Rekor-like logs, WORM with third-party verify, on-chain registries. Format MUST NOT hard-require a SCITT Transparency Service (same discipline as #276) |
+| Ack-ladder placement | A SCITT receipt is a **higher corroboration rung** (existence / non-equivocation). It must never verify as transport, protocol, or business confirmation, nor as control re-evaluation |
+| Pre- and post-execution | Optional: two registrations on the same action key (decision digest before commit; outcome digest after) - rungs accrete (GT-003) |
+| What SCITT does **not** close | Control re-evaluation (CRE-*); faithful capture / independent witness (CRE-D01); policy enforcement |
+
+**Normative work remaining:** EB-002 vocabulary; EB-003 field map (Transparency Service id, statement digest, receipt ref, inclusion proof, verify path) in Module 14 / docs/12; EB-004 Golden Trace v2 with at least one real backend.
+
+**Concrete composition:** emit AXES envelopes → hash → SCITT Signed Statement over that digest → store receipt in `anchoring.*` → auditor verifies receipt + recomputes digest from the open bundle without Magentix or Microsoft runtime access.
+
 ## Related
 
-- Programme: external anchoring maturity TRK-001; three-layer / CRE-D01 in [`registers/three-layer-evidence-and-control-reevaluation.md`](../../registers/three-layer-evidence-and-control-reevaluation.md)
+- Programme: external anchoring maturity TRK-001; EB-* and CRE-D01 in [`registers/three-layer-evidence-and-control-reevaluation.md`](../../registers/three-layer-evidence-and-control-reevaluation.md)
 - Decision D-015 in [`registers/decision-register.md`](../../registers/decision-register.md)
 - Live watch table: [`registers/adjacent-standards-watch.md`](../../registers/adjacent-standards-watch.md)
 - Three-layer field map: [`three-layer-evidence-coverage.md`](three-layer-evidence-coverage.md)
+- Agent 365 / Purview → SE mapping (adjacent estate): [`agent365-purview-se-mapping.md`](agent365-purview-se-mapping.md)

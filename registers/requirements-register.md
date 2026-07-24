@@ -346,6 +346,7 @@ Source: `SE_v0_1_Programme_Blind_Spots_and_Pre_Catalogue_Actions.md`
 | BLD-028 | Human-reference pseudonymisation rule | conformance_rule | BLD-006 |
 | BLD-029 | Threat model, evidence cost model, ARBITR self-evidence pack | standards_package + implementation | BLD-005/014/015 |
 | BLD-030 | Run the Executive-wave 10-point requirements-governance re-pass (layer placement, claim traceability, reliance wording, conformance-before-reliance, dangerous-to-encode-as-fact, missing vocabulary): the addendum instruction was introduced mid-programme, so the Executive wave ran without it; waves 2–6 absorbed it. Backfilled REQ-EXEC rows partially compensate; the dedicated re-pass is outstanding and should complete before Executive-sourced catalogue modules freeze | programme_action | REQ-EXEC (backfill), GAP-EXEC-* |
+| BLD-031 | **ARBITR backlog: Agent 365 / Purview import pack** - ingest Agent 365 OTel (`CloudAppEvents` / observability exporter) and Purview unified audit (CopilotInteraction and related AI record types) into SE envelopes per [`docs/interop/agent365-purview-se-mapping.md`](../docs/interop/agent365-purview-se-mapping.md); join to non-M365 emitters; surface independence caveat in packs (Microsoft log ≠ independent evidence); deliver connector + fixture corpus + report delta vs Golden Trace. Positioning brief: [`docs/interop/agent365-arbitr-brief.md`](../docs/interop/agent365-arbitr-brief.md) | implementation_layer | REQ-STD-019; adjacent-standards watch |
 
 ---
 
@@ -407,12 +408,13 @@ Source: programme decision D-014. Full task list, doctrine constraints, and acce
 | CRE-012 | Third-party re-evaluation test protocol and published result | programme_action | design rule in docs/01 |
 | CRE-D01 | Faithful-capture / independent witness - orthogonal, not claimed solved by CRE-* | standards_package | docs/11, Module 14/15, EU-007 |
 | EB-001 | Reading rule: SIMULATED anchor + externally_anchored ≠ closed existence bound | standards_package | D-015; docs/interop/x402-and-anchoring.md |
-| EB-002 | Mechanism-agnostic anchoring_method vocabulary + verify-path requirements | open_se | TRK-001, Module 14 |
+| EB-002 | Mechanism-agnostic anchoring_method vocabulary + verify-path requirements (SCITT pluggable, not mandatory) | open_se | TRK-001, Module 14 |
 | EB-003 | Profile EvidenceAnchor / Rekor / SCITT / RFC 3161 / OTS receipts into SE anchoring.* | package | D-015 |
 | EB-004 | Golden Trace v2 real external anchor (+ replace SIG-STUB per signing profile) | programme_action | D-008, P1-1 |
 | EB-005 | Conformance rejects silent overclaim of external anchoring | conformance_rule | EB-001, EB-004 |
+| EB-006 | Ack-ladder vs existence-bound discipline (SCITT/TSA ≠ business ack; optional dual registration) | open_se + package | P1-4, GT-003 |
 
 ---
 
-**Register totals:** 113 primary REQ rows (14 BPO, 15 EXT, 15 IA, 25 STD, 20 TECH, 24 EXEC-backfilled) · 81 GAP rows · 24 TRK rows · 30 BLD rows · 6 GT rows · 9 EU rows · 20 TLC/CRE tracker rows · 5 EB existence-bound rows (287 total indexed programme/requirement artefacts; TLC/CRE/EB are programme tasks not primary REQs).
-**Next step:** Execute Band B CRE-001/002 drafts against Modules 03/04/12; parallel EB-002 vocabulary for Module 14; do not freeze hashed structure before P1-1.
+**Register totals:** 113 primary REQ rows · 81 GAP rows · 24 TRK rows · 31 BLD rows · 6 GT rows · 9 EU rows · TLC/CRE/EB programme rows as indexed above. TLC/CRE/EB/BLD-031 are programme or implementation tasks, not primary REQs.
+**Next step:** CRE-001/002 and EB-002/003/006 catalogue drafts; BLD-031 ARBITR import pack in Magentix delivery backlog; do not freeze hashed structure before P1-1.
