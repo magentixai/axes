@@ -49,11 +49,11 @@ Both are valuable **inputs**. Neither is, by itself, board-grade portable execut
 | `AgentID` / `AgentName` / `AgentType` (`AgentAdminActivity`) | `actor.agent_id` + type | Admin/governance of agents, not per-action commit evidence |
 | Prompt / response text (DSPM / mailbox retention) | **Referenced artefacts only** in SE | Full-text retention is a Purview control; open SE stays pointers-and-hashes |
 
-## What Microsoft does **not** capture (AXES / ARBITR gaps)
+## Where AXES (and ARBITR on top of it) go beyond Microsoft capture
 
-These are structural - not "missing optional fields."
+These are structural limits of the Microsoft control/observability plane - not "missing optional fields," and not gaps in AXES or ARBITR.
 
-| Gap | Why it matters for auditors |
+| Microsoft limit | Why AXES coverage matters for auditors |
 |---|---|
 | **Delegation-context depth** | Agent 365 binds Entra appId / blueprint / caller agent ids. It does not evidence *who delegated what capability, under which policy version, with which limits, valid when, revocable how* (AXES Module 03 / Golden Trace AD-7844 pattern). |
 | **Commit boundary & consequence** | Spans describe invoke / tool / chat. They do not distinguish advisory activity from money movement, record change, or irreversible side effects, nor mechanism/impact/reversibility. |
