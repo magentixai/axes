@@ -4,6 +4,12 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-07-24 - SCITT profile rules, Agent 365/Purview map, ARBITR import backlog
+- SCITT existence-bound profile rules expanded in [`docs/interop/x402-and-anchoring.md`](docs/interop/x402-and-anchoring.md); ROADMAP Band C detail + EB-006; adjacent-standards watch updated (RFC 9943 family).
+- Agent 365 OTel + Purview audit → SE mapping: [`docs/interop/agent365-purview-se-mapping.md`](docs/interop/agent365-purview-se-mapping.md) (incl. delegation/cross-estate/non-M365 gaps).
+- Two-page Magentix brief draft: [`docs/interop/agent365-arbitr-brief.md`](docs/interop/agent365-arbitr-brief.md) - independence argument.
+- BLD-031 raised (ARBITR Agent 365/Purview import pack); D-016 differentiate Microsoft control plane vs AXES evidence plane.
+
 ### 2026-07-24 - x402 composition, EvidenceAnchor posture, simulated-anchor reading rule
 - Decision D-015: x402 settles / AXES evidences; action-receipt as ack-ladder rung; AGT EvidenceAnchor is a runtime SPI to *profile*, not for the AXES standard to implement; Golden Trace SIMULATED anchor must not be read as a closed existence bound.
 - Informative note: [`docs/interop/x402-and-anchoring.md`](docs/interop/x402-and-anchoring.md).
