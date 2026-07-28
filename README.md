@@ -1,3 +1,5 @@
+![AXES](assets/axes-social-preview.png)
+
 # AXES - Autonomous eXecution Evidence Standard
 
 **SE v0.1 Public Working Draft** · An open, vendor-neutral evidence schema for accountable autonomous execution.
