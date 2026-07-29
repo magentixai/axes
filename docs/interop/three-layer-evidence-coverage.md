@@ -2,6 +2,10 @@
 
 > **Status: informative - not normative.** Does not freeze fields, schemas, or conformance levels. Programme: [D-014 / TRK-024](../../registers/three-layer-evidence-and-control-reevaluation.md). Doctrine: AXES is the **evidence lane** ([docs/01](../01-doctrine-and-non-negotiables.md) §5) - it records what happened under claimed authority; it does not enforce policy, issue authorization tokens, or certify compliance.
 
+### Coming from AGT [#276](https://github.com/microsoft/agent-governance-toolkit/discussions/276)?
+
+That discussion converged on three bound views of one action - **Decision**, **Control-in-force**, and **Outcome** - plus the separate need for byte-identity proof (not only a named canonicalisation rule). This page is AXES's informative reading of that split in the evidence lane only. Schema stays unfrozen; nothing here claims an SE-Cx level. Watchable follow-ups: [#4](https://github.com/magentixai/axes/issues/4) (EB-004), [#5](https://github.com/magentixai/axes/issues/5) (P1-1), [#6](https://github.com/magentixai/axes/issues/6) (conformance vectors / canoncheck-class), [#7](https://github.com/magentixai/axes/issues/7) (interop field lists).
+
 ## The three layers
 
 Accountable autonomous execution needs three bound evidence views of the same action:
