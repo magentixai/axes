@@ -70,6 +70,7 @@ IDs reference [`requirements-register.md`](requirements-register.md).
 | 2026-07-29 | Real anchoring instance (`distributed_ledger`) | Track a real, third-party-verifiable anchoring_method to replace the SIMULATED stub | argentum-core on-chain anchor (giskard09) | axes#3; EB-004 (axes#4) | Tracked for Golden Trace v2 |
 | 2026-07-29 | Evaluator disqualifications (independence, completeness) | Adopt as evaluator-audience constraints, mechanism-agnostic | Tersign (Kevin Zhang) | axes#2; x402#2853 | Recorded |
 | 2026-07-29 | Conformance oracle discipline | Require one pinned outcome per edge; reject disjunctive oracles | Point made by Rul1an in public review | AGT#276; conformance seed axes#6 | Adopted |
+| 2026-07-29 | Byte-identity vector methodology (JCS baseline) | Record independent convergence on RFC 8785 JCS + SHA-256 byte-identity testing; AXES seeds its own envelope-shaped vectors under the same discipline | MarkovianProtocol (canoncheck) - convergence on methodology and vector bar, not adoption of their codebase | axes#6; P1-1; AGT#276 | Convergence recorded |
 
 ## Deferred / rejected (initial entries)
 

@@ -24,7 +24,7 @@ Structured review is the point of publishing early. Contributions are welcome fr
 | **Security / privacy concern** | Attack surface, misuse potential, privacy or surveillance implications |
 | **Conformance test proposal** | Test vectors, negative examples, validator behaviour |
 
-Operator-facing conformance notes (corpus vs claims): [`CONFORMANCE.md`](CONFORMANCE.md). Informative mapping of AXES evidence to decision / control-in-force / outcome layers: [`docs/interop/three-layer-evidence-coverage.md`](docs/interop/three-layer-evidence-coverage.md). Programme tasks for closing independent control re-evaluation: [`registers/three-layer-evidence-and-control-reevaluation.md`](registers/three-layer-evidence-and-control-reevaluation.md).
+Primitive-by-primitive provenance (standards cited, contributors credited): [`PROVENANCE.md`](PROVENANCE.md). Operator-facing conformance notes (corpus vs claims): [`CONFORMANCE.md`](CONFORMANCE.md). Informative mapping of AXES evidence to decision / control-in-force / outcome layers: [`docs/interop/three-layer-evidence-coverage.md`](docs/interop/three-layer-evidence-coverage.md). Programme tasks for closing independent control re-evaluation: [`registers/three-layer-evidence-and-control-reevaluation.md`](registers/three-layer-evidence-and-control-reevaluation.md).
 
 ## How proposals are assessed
 

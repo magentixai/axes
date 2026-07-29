@@ -15,16 +15,16 @@ Each primitive traces to one of three sources:
 | Primitive | What it is | Source |
 |---|---|---|
 | Canonical byte form | JCS canonicalisation then SHA-256 over the canonical preimage | RFC 8785 (JSON Canonicalization Scheme); FIPS 180-4 (SHA-256). Adopted via the repository canonicalisation spike (P1-1) |
-| Envelope hash and hash chain | Per-envelope digest excluding the signature, linked by previous-hash, genesis of sixty-four zeros | Established hash-chaining practice (Haber and Stornetta 1991; Merkle trees; RFC 6962, Certificate Transparency). Digest computed over this repository own envelope field set |
+| Envelope hash and hash chain | Per-envelope digest excluding the signature, linked by previous-hash, genesis of sixty-four zeros | Established hash-chaining practice (Haber and Stornetta 1991; Merkle trees; RFC 6962, Certificate Transparency). Digest computed over this repository's own envelope field set |
 | Content-addressed references | SHA-256(JCS(preimage)) identifiers for actions and custody | Content-addressing practice (RFC 6920, Naming Things with Hashes). Action identity converges with draft-etcheverry-action-ref (giskard09 / Pablo Etcheverry) and with the action-receipt proposal in x402#2906 (jsuich), both independently on RFC 8785 |
-| Corroboration grading | corroboration_state and emitter_independence_level | This repository graded vocabulary. The independence and completeness disqualifications were contributed by Tersign (Kevin Zhang), axes#2 |
+| Corroboration grading | corroboration_state and emitter_independence_level | This repository's graded vocabulary. The independence and completeness disqualifications were contributed by Tersign (Kevin Zhang), axes#2 |
 | Custody axis | capture_relationship / custody-ref (self, same_domain, deployer_domain, independent_third_party) | Proposed by neldan00077 (TrustLayers); reference implementation custody-ref-v1 contributed by giskard09, axes#3; independence predicate and capture-boundary composition from this repository |
-| Declared capture boundary and fail-closed emission | Scope of capture is declared; within it, absence of an envelope means absence of a commit-boundary action | This repository Golden Trace design; completeness-under-a-committed-head from Tersign, axes#2 |
+| Declared capture boundary and fail-closed emission | Scope of capture is declared; within it, absence of an envelope means absence of a commit-boundary action | This repository's Golden Trace design; completeness-under-a-committed-head from Tersign, axes#2 |
 | Anchoring vocabulary | anchoring_method: distributed_ledger, transparency_log, timestamp_authority | RFC 3161 (Time-Stamp Protocol); IETF transparency work (SCITT); OpenTimestamps; on-chain anchoring reference instance via argentum-core (giskard09), tracked as EB-004 / axes#4 |
 | Signature suites | Envelope signatures profiled over JWS and COSE | RFC 7515 (JWS); RFC 9052 and RFC 9053 (COSE) |
-| Acknowledgement ladder | Three-layer acknowledgement (transport, protocol, business-level settlement) | This repository Golden Trace design, grounded in ISO 20022 message semantics |
-| Conformance ladder and vectors | SE-C0 to SE-C5; two-sided vectors with one pinned outcome per edge, verifiable from bytes with a standard-library verifier | Standard conformance-test practice. The "one pinned outcome per edge" requirement follows a point made by Rul1an in public review |
-| Report rendering and reliance boundary | Role-specific reports from one record; the standard evidences execution and does not certify | This repository doctrine |
+| Acknowledgement ladder | Three-layer acknowledgement (transport, protocol, business-level settlement) | This repository's Golden Trace design, grounded in ISO 20022 message semantics |
+| Conformance ladder and vectors | SE-C0 to SE-C5; two-sided vectors with one pinned outcome per edge, verifiable from bytes with a standard-library verifier | Standard conformance-test practice; independent byte-identity vector suites (including MarkovianProtocol canoncheck) converged on RFC 8785 JCS + SHA-256 in the same window - convergence on methodology, not adoption of any single implementation. The "one pinned outcome per edge" requirement follows a point made by Rul1an in public review |
+| Report rendering and reliance boundary | Role-specific reports from one record; the standard evidences execution and does not certify | This repository's doctrine |
 | Domain artefact references | ISO 20022 (finance); QIF, ISA-95 / B2MML, MTConnect, EN 10204 (manufacturing) | The named public industry standards |
 | Redaction | Hash-substitution redaction with enumerated redacted fields | Established redaction-by-digest practice; field enumeration from this repository |
 
@@ -34,7 +34,7 @@ RFC 8785 (JSON Canonicalization Scheme); FIPS 180-4 (SHA-256); RFC 7515 (JWS); R
 
 ## Contributor credits
 
-AXES is better for contributions from, among others: neldan00077 (TrustLayers) for the custody axis; giskard09 / Pablo Etcheverry (argentum-core, Mycelium Trails) for action-ref, real on-chain anchoring, and the custody-ref reference implementation; Tersign (Kevin Zhang) for the independence and completeness disqualifications; jsuich (Holological) for the action-receipt convergence on the canonicalisation baseline; Rul1an for the conformance-oracle discipline. Contributions are credited per component in `registers/decision-register.md` at the point of adoption.
+AXES is better for contributions from, among others: neldan00077 (TrustLayers) for the custody axis; giskard09 / Pablo Etcheverry (argentum-core, Mycelium Trails) for action-ref, real on-chain anchoring, and the custody-ref reference implementation; Tersign (Kevin Zhang) for the independence and completeness disqualifications; jsuich (Holological) for the action-receipt convergence on the canonicalisation baseline; MarkovianProtocol (canoncheck) for independent byte-identity vector methodology on the JCS baseline; Rul1an for the conformance-oracle discipline. Contributions are credited per component in `registers/decision-register.md` at the point of adoption.
 
 ## Scope of derivation
 

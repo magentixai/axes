@@ -152,7 +152,7 @@ Structured contributions are welcome from the first draft - field proposals, def
 
 ## Licence and IPR
 
-Specification text: [CC-BY-4.0](LICENSE). Reference code, examples and test vectors: [Apache-2.0](LICENSE-CODE). Patent posture: royalty-free pledge on implementation of the AXES core - see [PATENTS.md](PATENTS.md). Contributions under DCO; no copyright assignment.
+Specification text: [CC-BY-4.0](LICENSE). Reference code, examples and test vectors: [Apache-2.0](LICENSE-CODE). Patent posture: royalty-free pledge on implementation of the AXES core - see [PATENTS.md](PATENTS.md). Contributions under DCO; no copyright assignment. **Provenance:** where each load-bearing primitive comes from (open standards, repository work, credited external contributions) is recorded in [`PROVENANCE.md`](PROVENANCE.md), with per-component adoption credits in [`registers/decision-register.md`](registers/decision-register.md).
 
 ## Steward
 
