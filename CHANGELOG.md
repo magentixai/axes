@@ -7,7 +7,7 @@ All notable changes to the AXES specification and repository.
 ### 2026-07-24 - SCITT profile rules, Agent 365/Purview map, ARBITR import backlog
 - SCITT existence-bound profile rules expanded in [`docs/interop/x402-and-anchoring.md`](docs/interop/x402-and-anchoring.md); ROADMAP Band C detail + EB-006; adjacent-standards watch updated (RFC 9943 family).
 - Agent 365 OTel + Purview audit → SE mapping: [`docs/interop/agent365-purview-se-mapping.md`](docs/interop/agent365-purview-se-mapping.md) (incl. delegation/cross-estate/non-M365 gaps).
-- BLD-031 raised (ARBITR Agent 365/Purview import pack); D-016 differentiate Microsoft control plane vs AXES evidence plane. Magentix ARBITR battlecard kept proprietary (gitignored; not published in this repo).
+- BLD-031 raised (ARBITR Agent 365/Purview import pack); D-016 differentiate Microsoft control plane vs AXES evidence plane. Magentix AI ARBITR battlecard kept proprietary (gitignored; not published in this repo).
 
 ### 2026-07-24 - x402 composition, EvidenceAnchor posture, simulated-anchor reading rule
 - Decision D-015: x402 settles / AXES evidences; action-receipt as ack-ladder rung; AGT EvidenceAnchor is a runtime SPI to *profile*, not for the AXES standard to implement; Golden Trace SIMULATED anchor must not be read as a closed existence bound.
@@ -29,7 +29,7 @@ All notable changes to the AXES specification and repository.
 
 ### 2026-07-20 - Field catalogue begins
 - Module 01 - Envelope Core published as DRAFT (docs/05): 23 entries with full descriptors, requirement traceability, and 5 open questions routed to public challenge (D-012). Module 06 (Commit Boundary & Consequence) queued next.
-- Git history authored under the Magentix GitHub account.
+- Git history authored under the Magentix AI GitHub account.
 
 ### 2026-07-20 - Critical-review revision (pre-push)
 - May 2026 ingest sketch moved to `archive/2026-05-ingest-draft/` with honest design-history commentary; `schema/` now states why it is deliberately empty until the canonicalisation decision (D-007).

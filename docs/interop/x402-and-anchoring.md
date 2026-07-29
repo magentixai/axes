@@ -46,7 +46,7 @@ corroboration_state: "externally_anchored"
 | Forensic procedure step comparing "anchor store" | Explicitly simulated ([report_D](../../examples/golden-trace/out/reports/report_D_forensic.md)) |
 | Envelope signatures | **Stubbed** (`SIG-STUB`) - separate hole beside anchoring |
 
-**Reading rule:** `corroboration_state: externally_anchored` on a SIMULATED method must **not** be treated as a closed existence bound. Disclosure in the Golden Trace README is mandatory; disclosure is not completion. Golden Trace v2 (D-008) replaces the stub with at least one real `anchoring_method` instance whose receipt verifies without Magentix infrastructure.
+**Reading rule:** `corroboration_state: externally_anchored` on a SIMULATED method must **not** be treated as a closed existence bound. Disclosure in the Golden Trace README is mandatory; disclosure is not completion. Golden Trace v2 (D-008) replaces the stub with at least one real `anchoring_method` instance whose receipt verifies without Magentix AI infrastructure.
 
 ## EvidenceAnchor SPI (AGT) - interface vs AXES
 
@@ -87,7 +87,7 @@ Agent-governance discussions (e.g. AGT discussion #276) correctly separate:
 
 **Normative work remaining:** EB-002 vocabulary; EB-003 field map (Transparency Service id, statement digest, receipt ref, inclusion proof, verify path) in Module 14 / docs/12; EB-004 Golden Trace v2 with at least one real backend.
 
-**Concrete composition:** emit AXES envelopes → hash → SCITT Signed Statement over that digest → store receipt in `anchoring.*` → auditor verifies receipt + recomputes digest from the open bundle without Magentix or Microsoft runtime access.
+**Concrete composition:** emit AXES envelopes → hash → SCITT Signed Statement over that digest → store receipt in `anchoring.*` → auditor verifies receipt + recomputes digest from the open bundle without Magentix AI or Microsoft runtime access.
 
 ## Related
 

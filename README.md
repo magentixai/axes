@@ -130,7 +130,7 @@ Conformance is graded, so weak implementations cannot claim full equivalence: **
 
 ## Implementations
 
-- **ARBITR** (Magentix) - proprietary interpretation, scoring and report-generation layer; the first consumer of AXES envelopes and the reference report generator. ARBITR conforms to AXES, not the other way round. Anyone can emit, validate, exchange and interpret AXES envelopes without it.
+- **ARBITR** (Magentix AI) - proprietary interpretation, scoring and report-generation layer; the first consumer of AXES envelopes and the reference report generator. ARBITR conforms to AXES, not the other way round. Anyone can emit, validate, exchange and interpret AXES envelopes without it.
 
 An open reference emitter and validator are part of this repository's roadmap - a second independent implementation is an explicit goal and the trigger for venue incubation (see [GOVERNANCE](GOVERNANCE.md)).
 
@@ -140,7 +140,7 @@ This standard was designed report-backwards from the needs of 58 roles across si
 
 Adversarial reviewers are equally wanted: if your instinct is to ask *"how would I defeat, discredit or abuse this evidence?"* - attacker, opposing counsel, respondent organisation, affected individual - the [threat model](docs/11-threat-model.md) needs you.
 
-What design partners get: **named acknowledgement** in the specification and the candidate draft; your review recorded in the public **divergence log** (where practitioner reaction differs from the design corpus, the register says so, with your point attached); early-partner access to the steward's programmes at [Magentix](https://magentix.ai) for those who want it; and genuine influence over a standard at the stage when influence is largest. Open a [Reporting requirement or Evidence gap issue](CONTRIBUTING.md), or reach the steward via magentix.ai.
+What design partners get: **named acknowledgement** in the specification and the candidate draft; your review recorded in the public **divergence log** (where practitioner reaction differs from the design corpus, the register says so, with your point attached); early-partner access to the steward's programmes at [Magentix AI](https://magentix.ai) for those who want it; and genuine influence over a standard at the stage when influence is largest. Open a [Reporting requirement or Evidence gap issue](CONTRIBUTING.md), or reach the steward via magentix.ai.
 
 ## Contributing
 
@@ -152,7 +152,7 @@ Specification text: [CC-BY-4.0](LICENSE). Reference code, examples and test vect
 
 ## Steward
 
-AXES is stewarded by [Magentix](https://magentix.ai). Stewardship, the decision process, and the declared path to incubation at a recognised standards venue are documented in [GOVERNANCE.md](GOVERNANCE.md).
+AXES is stewarded by [Magentix AI](https://magentix.ai). Stewardship, the decision process, and the declared path to incubation at a recognised standards venue are documented in [GOVERNANCE.md](GOVERNANCE.md).
 
 ---
 

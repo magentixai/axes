@@ -22,7 +22,7 @@ Both bands stay inside AXES doctrine: append-only envelopes, pointers-and-hashes
 | AXES evidences; it never enforces | Mapping docs describe *evidence coverage of* the three layers - never claim AXES *is* a governance/authorization stack |
 | No frozen JSON Schema until P1-1 (D-006) | README and examples surface a **working envelope shape**, never "the SE v0.1 schema" |
 | Golden Trace is exemplar/corpus, not normative (D-008) | Corpus verification ≠ emitter conformance claim |
-| Conformance is defined by public spec, validator, and test vectors - never by vendor ingestion (incl. ARBITR) | Do not use Magentix-authored reports A-D as proof of SE-C4 |
+| Conformance is defined by public spec, validator, and test vectors - never by vendor ingestion (incl. ARBITR) | Do not use Magentix AI-authored reports A-D as proof of SE-C4 |
 | Correlation ≠ cryptographic action binding | Today's `trace_id` / `span_id` / `transaction_ref` are a **correlation spine**; content-addressed action binding awaits P1-1 / Module 14 |
 | Faithful capture is orthogonal | Sealing the right snapshot does not prove the runtime evaluated that snapshot; custody/attestation tracked separately (threat model, Module 14/15) |
 | Policy-language neutrality | Envelope binds digests + declared evaluation profile; re-run happens in an external engine - AXES does not interpret Cedar/OPA/etc. |
@@ -55,7 +55,7 @@ Ship discoverability and claim hygiene first. No fake schema. No conformance the
 | TLC-006 | Wire and govern | README map + CONTRIBUTING pointer; CHANGELOG; adjacent-standards watch row for agent-governance evidence discussions (differentiate: control lane vs evidence lane); optional register cross-links only | Discoverable from repo root | TLC-001..005 | ✅ 2026-07-24 |
 | TLC-007 | Claim language review | Pass all new text against doctrine §3.10 and category discipline §5; no "AXES authorizes / enforces / certifies" | Review checklist ticked on PR | TLC-003, TLC-004 | ✅ 2026-07-24 |
 
-**Explicit non-goals for Band A:** populate `schema/` with a preview JSON Schema; claim SE-C0 validity; equate Magentix reports with third-party reportability; assert L2 re-evaluation is already met.
+**Explicit non-goals for Band A:** populate `schema/` with a preview JSON Schema; claim SE-C0 validity; equate Magentix AI reports with third-party reportability; assert L2 re-evaluation is already met.
 
 ---
 
@@ -83,7 +83,7 @@ Target: a competent third party, given the evidence bundle and authorised derefe
 | CRE-009 | Golden Trace v2 control-context pack | Publish hashed control-context artifacts (policy + supplier-master + limits as applicable) beside envelopes; decision envelopes carry digests; public procedure to re-run CTL-* checks from bundle + artifacts | `generate_golden_trace.py` verifies re-evaluation for reproducible checks; stubs disclosed | CRE-002..006, P1-1, D-008 |
 | CRE-010 | Negative / mismatch vectors | Fixtures: version without digest; digest without retrievable artifact; input mismatch; effective-time miss; observed-only check offered as re-evaluable | Byte-level or validator vectors fail closed | CRE-009 |
 | CRE-011 | Conformance profile flag | Distinct claim surface (profile or SE-C gate) for **control-re-evaluable** evidence - separate from "authority fields present" (SE-C2) | docs/07 + CONFORMANCE.md updated; cannot be satisfied by `policy_version` alone | CRE-009, CRE-010, TRK-019 |
-| CRE-012 | Third-party re-evaluation test | Protocol: give an independent party only open bundle + control-context artifacts + draft field defs; they re-run checks and report pass/fail without Magentix tooling | Published result or divergence log entry | CRE-009, CRE-011 |
+| CRE-012 | Third-party re-evaluation test | Protocol: give an independent party only open bundle + control-context artifacts + draft field defs; they re-run checks and report pass/fail without Magentix AI tooling | Published result or divergence log entry | CRE-009, CRE-011 |
 
 ### B3 - Explicitly deferred (related, not this bar)
 
@@ -104,7 +104,7 @@ Local hash chains do not prove independent existence-in-time. Closing the simula
 | EB-001 | Reading rule for SIMULATED anchors | Documented: `externally_anchored` + SIMULATED ≠ closed existence bound; GT README + interop note | Public text cannot be misread as a real bound | D-015 | ✅ 2026-07-24 |
 | EB-002 | Mechanism-agnostic `anchoring_method` vocabulary | Normative list / registry posture: `timestamp_authority`, `transparency_log` (SCITT instance), `opentimestamps`, `write_once_store`, `distributed_ledger`, … with **verify-path** requirements; MUST NOT hard-require SCITT | Catalogue / Module 14 draft | TRK-001 | Open |
 | EB-003 | Profile EvidenceAnchor-class **and SCITT** receipts | Map AGT EvidenceAnchor / Rekor / **SCITT (TS id, statement digest, receipt, inclusion proof)** / RFC 3161 / OTS → SE `anchoring.*` without depending on AGT's Python ABC or any single TS | Interop table in Module 14 or docs/12; rules in docs/interop/x402-and-anchoring.md | D-015, EB-002 | Open |
-| EB-004 | Golden Trace v2 real anchor | At least one backend whose receipt verifies without Magentix infrastructure (SCITT **or** OTS **or** TSA peer); forensic step 5 becomes real; `SIG-STUB` replaced per signing profile | GT v2 + CONFORMANCE corpus note | P1-1, D-008, EB-002 | Open |
+| EB-004 | Golden Trace v2 real anchor | At least one backend whose receipt verifies without Magentix AI infrastructure (SCITT **or** OTS **or** TSA peer); forensic step 5 becomes real; `SIG-STUB` replaced per signing profile | GT v2 + CONFORMANCE corpus note | P1-1, D-008, EB-002 | Open - [#4](https://github.com/magentixai/axes/issues/4); related candidate [#3](https://github.com/magentixai/axes/issues/3) |
 | EB-005 | Conformance: silent overclaim rejected | Vector/rule: SIMULATED or missing verify-path cannot claim externally_anchored for assurance | Negative vector or CONFORMANCE.md rule | EB-001, EB-004 | Open |
 | EB-006 | Ack-ladder vs existence-bound discipline | Normative note: SCITT/TSA/OTS receipt is a higher corroboration rung; MUST NOT verify as transport/protocol/business/settlement ack; optional dual registration (decision digest + outcome digest) on same action key | P1-4 + Module 06/14 text | P1-4, GT-003 | Open |
 

@@ -4,13 +4,13 @@
 
 ## The pledge
 
-Magentix (the steward) irrevocably pledges not to assert any patent claim it owns or controls, now or in the future, that is necessarily infringed by implementing, emitting, validating, storing, exchanging or consuming the **AXES core** - meaning the envelope structure, modules, field semantics, controlled vocabularies, canonicalisation and hashing rules, conformance levels, extension model and evidence-bundle/export profiles published in this repository - against any party implementing the AXES specification.
+Magentix AI (the steward) irrevocably pledges not to assert any patent claim it owns or controls, now or in the future, that is necessarily infringed by implementing, emitting, validating, storing, exchanging or consuming the **AXES core** - meaning the envelope structure, modules, field semantics, controlled vocabularies, canonicalisation and hashing rules, conformance levels, extension model and evidence-bundle/export profiles published in this repository - against any party implementing the AXES specification.
 
 **Defensive termination:** this pledge terminates, as to a given party, if that party (or its affiliates) asserts a patent claim against any implementation of the AXES specification.
 
 ## The boundary (stated in writing, as promised)
 
-The pledge covers **implementation of the open standard**. It does not extend to interpretation methods built *on top of* AXES evidence - scoring models, narrative generation, report design systems, prioritisation logic, terminology mapping, benchmarking and comparable interpretation technology - whether Magentix's (ARBITR) or anyone else's. That is the competitive layer, deliberately outside the standard, and it remains protectable by all parties.
+The pledge covers **implementation of the open standard**. It does not extend to interpretation methods built *on top of* AXES evidence - scoring models, narrative generation, report design systems, prioritisation logic, terminology mapping, benchmarking and comparable interpretation technology - whether Magentix AI's (ARBITR) or anyone else's. That is the competitive layer, deliberately outside the standard, and it remains protectable by all parties.
 
 ## Licensing summary
 

@@ -58,12 +58,12 @@ Full task list and acceptance test: [`registers/three-layer-evidence-and-control
 | Optional pre/post registration | Same action key may be anchored at decision and at outcome (GT-003 accretion) |
 | Explicit non-goals | SCITT does not close CRE-* (control re-evaluation) or CRE-D01 (faithful capture) |
 
-### Ecosystem / Magentix implementation (feeds P6)
+### Ecosystem / Magentix AI implementation (feeds P6)
 
 | Item | Status |
 |---|---|
 | Agent 365 / Purview → SE field map | ✅ Informative draft [`docs/interop/agent365-purview-se-mapping.md`](docs/interop/agent365-purview-se-mapping.md) |
-| Magentix ARBITR battlecard (independence argument) | Proprietary - not published in this open repo (gitignored) |
+| Magentix AI ARBITR battlecard (independence argument) | Proprietary - not published in this open repo (gitignored) |
 | **BLD-031** ARBITR import pack (Agent 365 OTel + Purview audit → SE) | Raised - implementation layer |
 
 ## Known limitations of this draft (disclosed, not hidden)

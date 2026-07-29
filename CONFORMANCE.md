@@ -2,7 +2,7 @@
 
 > **Authority line:** this file is the **operator / worked guide**. The normative conformance ladder and profiles live in [`docs/07-conformance-levels.md`](docs/07-conformance-levels.md) (Roadmap P4 - currently a stub of intended scope). If the two ever diverge, **docs/07 wins** once it is filled; until then treat SE-C language here as illustration against the Golden Trace corpus only.
 
-**Conformance is defined by this specification, the public validator, and the public test vectors - never by any vendor's ingestion behaviour, including Magentix ARBITR** ([GOVERNANCE.md](GOVERNANCE.md)).
+**Conformance is defined by this specification, the public validator, and the public test vectors - never by any vendor's ingestion behaviour, including Magentix AI ARBITR** ([GOVERNANCE.md](GOVERNANCE.md)).
 
 ## Two different checks (do not collapse them)
 
@@ -38,7 +38,7 @@ How the corpus *exercises* the ladder - illustration only, not a badge:
 | C1-shaped | Shared `trace_id`; `span_id` / `parent_span_id`; contiguous `sequence_number`; hash chain | Hashing is informal (`GT-JCS-0`); signatures stubbed |
 | C2-shaped | `authority.*` on policy-check and commit envelopes; control checks pre-commit | Control-in-force is versioned refs, not re-evaluable snapshots ([GAP-EXEC-021](registers/requirements-register.md)) |
 | C3-shaped | Batch→payment parent spans; boundary and reconciliation events | - |
-| C4-shaped | Reports A-D cite named fields in named envelopes | Reports are steward-authored exemplars. The **third-party report test** (independent party, open bundle only) is the real C4 proof and remains a next step - not satisfied by Magentix-authored markdown |
+| C4-shaped | Reports A-D cite named fields in named envelopes | Reports are steward-authored exemplars. The **third-party report test** (independent party, open bundle only) is the real C4 proof and remains a next step - not satisfied by Magentix AI-authored markdown |
 | C5-shaped | Fail-closed emission posture; heartbeats; deterministic regenerate | Pipeline semantics beyond the generator are not fully claimed |
 
 ## How to verify the Golden Trace corpus

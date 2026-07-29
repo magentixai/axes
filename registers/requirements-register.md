@@ -346,7 +346,7 @@ Source: `SE_v0_1_Programme_Blind_Spots_and_Pre_Catalogue_Actions.md`
 | BLD-028 | Human-reference pseudonymisation rule | conformance_rule | BLD-006 |
 | BLD-029 | Threat model, evidence cost model, ARBITR self-evidence pack | standards_package + implementation | BLD-005/014/015 |
 | BLD-030 | Run the Executive-wave 10-point requirements-governance re-pass (layer placement, claim traceability, reliance wording, conformance-before-reliance, dangerous-to-encode-as-fact, missing vocabulary): the addendum instruction was introduced mid-programme, so the Executive wave ran without it; waves 2–6 absorbed it. Backfilled REQ-EXEC rows partially compensate; the dedicated re-pass is outstanding and should complete before Executive-sourced catalogue modules freeze | programme_action | REQ-EXEC (backfill), GAP-EXEC-* |
-| BLD-031 | **ARBITR backlog: Agent 365 / Purview import pack** - ingest Agent 365 OTel (`CloudAppEvents` / observability exporter) and Purview unified audit (CopilotInteraction and related AI record types) into SE envelopes per [`docs/interop/agent365-purview-se-mapping.md`](../docs/interop/agent365-purview-se-mapping.md); join to non-M365 emitters; surface independence caveat in packs (Microsoft log ≠ independent evidence); deliver connector + fixture corpus + report delta vs Golden Trace. Magentix commercial battlecard is proprietary (not in this repo) | implementation_layer | REQ-STD-019; adjacent-standards watch |
+| BLD-031 | **ARBITR backlog: Agent 365 / Purview import pack** - ingest Agent 365 OTel (`CloudAppEvents` / observability exporter) and Purview unified audit (CopilotInteraction and related AI record types) into SE envelopes per [`docs/interop/agent365-purview-se-mapping.md`](../docs/interop/agent365-purview-se-mapping.md); join to non-M365 emitters; surface independence caveat in packs (Microsoft log ≠ independent evidence); deliver connector + fixture corpus + report delta vs Golden Trace. Magentix AI commercial battlecard is proprietary (not in this repo) | implementation_layer | REQ-STD-019; adjacent-standards watch |
 
 ---
 
@@ -417,4 +417,4 @@ Source: programme decision D-014. Full task list, doctrine constraints, and acce
 ---
 
 **Register totals:** 113 primary REQ rows · 81 GAP rows · 24 TRK rows · 31 BLD rows · 6 GT rows · 9 EU rows · TLC/CRE/EB programme rows as indexed above. TLC/CRE/EB/BLD-031 are programme or implementation tasks, not primary REQs.
-**Next step:** CRE-001/002 and EB-002/003/006 catalogue drafts; BLD-031 ARBITR import pack in Magentix delivery backlog; do not freeze hashed structure before P1-1.
+**Next step:** CRE-001/002 and EB-002/003/006 catalogue drafts; BLD-031 ARBITR import pack in Magentix AI delivery backlog; do not freeze hashed structure before P1-1.

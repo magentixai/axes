@@ -3,7 +3,7 @@ message: "If you reference the AXES standard, please cite it as below."
 title: "AXES - Autonomous eXecution Evidence Standard (SE v0.1 Public Working Draft)"
 type: dataset
 authors:
-  - name: "Magentix (steward)"
+  - name: "Magentix AI (steward)"
   - family-names: Sansone
     given-names: Martin
 repository-code: "https://github.com/magentixai/axes"

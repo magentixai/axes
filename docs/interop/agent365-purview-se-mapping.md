@@ -71,6 +71,6 @@ These are structural limits of the Microsoft control/observability plane - not "
 
 ## Related
 
-- ARBITR import backlog: BLD-031 in [`registers/requirements-register.md`](../../registers/requirements-register.md) (Magentix commercial battlecard is proprietary and not published in this repo)
+- ARBITR import backlog: BLD-031 in [`registers/requirements-register.md`](../../registers/requirements-register.md) (Magentix AI commercial battlecard is proprietary and not published in this repo)
 - SCITT / anchoring: [`x402-and-anchoring.md`](x402-and-anchoring.md)
 - Three-layer coverage: [`three-layer-evidence-coverage.md`](three-layer-evidence-coverage.md)
