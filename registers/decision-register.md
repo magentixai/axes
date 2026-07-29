@@ -61,6 +61,16 @@ IDs reference [`requirements-register.md`](requirements-register.md).
 | Erasure vs immutability: crypto-shred referenced content, `content_erased` resolution, subject-key separation generalised to all human references | accept as conformance rules | TRK-016, BLD-006/028 |
 | Verifiable agent identity slot (`agent_identity_assertion_ref`) | experimental | BLD-017 - industry-wide unsolved; slot reserved |
 
+## External contribution credits
+
+| Date | Component | Decision | Source / credit | Reference | Status |
+|---|---|---|---|---|---|
+| 2026-07-29 | Custody axis (`capture_relationship`) | Assess a typed custody field; independence must be backed by a signer outside both executor and deployer domains | Proposed by neldan00077 (TrustLayers); reference implementation custody-ref-v1 by giskard09 | AGT#276; axes#3; Field proposal axes#10 | Under assessment |
+| 2026-07-29 | Action identity / content-addressed refs | Confirm SHA-256(JCS(preimage)) baseline for action identity | Converges with draft-etcheverry-action-ref (giskard09) and x402#2906 (jsuich); baseline RFC 8785 | axes#3; x402#2906; P1-1 | Convergence recorded |
+| 2026-07-29 | Real anchoring instance (`distributed_ledger`) | Track a real, third-party-verifiable anchoring_method to replace the SIMULATED stub | argentum-core on-chain anchor (giskard09) | axes#3; EB-004 (axes#4) | Tracked for Golden Trace v2 |
+| 2026-07-29 | Evaluator disqualifications (independence, completeness) | Adopt as evaluator-audience constraints, mechanism-agnostic | Tersign (Kevin Zhang) | axes#2; x402#2853 | Recorded |
+| 2026-07-29 | Conformance oracle discipline | Require one pinned outcome per edge; reject disjunctive oracles | Point made by Rul1an in public review | AGT#276; conformance seed axes#6 | Adopted |
+
 ## Deferred / rejected (initial entries)
 
 | Item | State | Reason |

@@ -50,6 +50,10 @@ Additional standing rules: scoped-assurance language only (no field or definitio
 
 Decisions land in [`registers/decision-register.md`](registers/decision-register.md) with a recorded rationale - including rejections and deferrals, which are staged, not deleted. Accepted items flow into the field catalogue with full traceability to your issue.
 
+### Attribution
+
+Every adopted contribution is credited to its author, per component, in `registers/decision-register.md` at the point of adoption, alongside the source standard (RFC, ISO, or FIPS) where one applies. The full mapping of primitives to their sources is in `PROVENANCE.md`. Reused external material is cited to its actual source, and AXES does not adopt a third-party construction without recording its origin.
+
 ## Not sure where it fits?
 
 Open a **Definition challenge** or **Evidence gap** issue and describe the real-world situation. A concrete scenario beats a perfect category.
