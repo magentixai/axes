@@ -1,0 +1,23 @@
+<B2MML xmlns="http://www.mesa.org/xml/B2MML-V0600">
+  <ProductionPerformance id="MRUN-2026-06-11-A">
+    <ProductionOrder>PO-IRN-2026-4471-06</ProductionOrder>
+    <PartNumber>IMP-4471</PartNumber><Revision>D</Revision>
+    <Quantity produced="14" scrap="0"/>
+    <MaterialProducedActualList>
+    <MaterialProducedActual serial="IMP4471-0001" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0002" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0003" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0004" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0005" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0006" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0007" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0008" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0009" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0010" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0011" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0012" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0013" qty="1" disposition="conforming"/>
+    <MaterialProducedActual serial="IMP4471-0014" qty="1" disposition="conforming"/>
+    </MaterialProducedActualList>
+  </ProductionPerformance>
+</B2MML>

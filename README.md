@@ -46,11 +46,15 @@ Core disciplines: append-only envelopes (corrections are new envelopes, never ed
 
 **On depth:** AXES is deliberately a deep schema with a light-touch on-ramp - a small mandatory core, condition-triggered modules, and a graded conformance ladder - rather than a minimum viable message set. Evidence is the one domain where you cannot retrofit what you never captured: a missing optional field in a payment message costs a feature; a missing evidence field costs the past. The reasoning is set out in [docs/01, §6](docs/01-doctrine-and-non-negotiables.md).
 
-## See it working: the Golden Trace
+## See it working: the Golden Traces
 
-[`examples/golden-trace/`](examples/golden-trace/) contains a complete, deterministic, re-verifiable evidence bundle: an autonomous accounts-payable agent executing 14 SEPA Instant payments under delegated authority - 76 hash-chained envelopes, ISO 20022 artefacts (pain.001 / pacs.002 / camt.053), a three-rung acknowledgment ladder with settlement corroboration, measured population completeness, heartbeat silence semantics, external anchoring, and four target reports (board / audit / regulator / forensic) in which **every sentence resolves to named fields in named envelopes**.
+Two complete bundles share the **same evidence skeleton** (76 envelopes, hash chain, heartbeats, anchors, four role-specific reports). Only domain and artifact standards differ - finance vs manufacturing.
 
-Run `python3 generate_golden_trace.py` from that directory to regenerate the bundle byte-identically and re-verify the chain. The verification procedure in `report_D_forensic.md` is executable from the bundle alone - which is the point. Corpus verification vs emitter conformance claims: [`CONFORMANCE.md`](CONFORMANCE.md).
+**Financial services** - [`examples/golden-trace/`](examples/golden-trace/) (APRUN-2026-06-09-A): autonomous accounts-payable run, 14 SEPA Instant payments under delegated authority AD-7844, ISO 20022 artefacts (pain.001 / pacs.002 / camt.053).
+
+**Industrial and manufacturing** - [`examples/golden-trace-ind/`](examples/golden-trace-ind/) (MRUN-2026-06-11-A): autonomous production batch release, 14 machined parts under delegated authority MD-5120, QIF / ISA-95 B2MML / MTConnect / EN 10204 stand-ins.
+
+Run `python3 generate_golden_trace.py` from either directory to regenerate the bundle byte-identically and re-verify the chain. The verification procedure in each bundle's `report_D_forensic.md` is executable from the artefacts alone - which is the point. Corpus verification vs emitter conformance claims: [`CONFORMANCE.md`](CONFORMANCE.md).
 
 ## Working envelope shape (exemplar)
 
