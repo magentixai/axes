@@ -24,6 +24,8 @@ from tools.axes_canonical import (
     amount_from_decimal,
     hash_preimage,
     sha256_hex,
+    write_json_utf8_lf,
+    write_text_utf8_lf,
 )
 
 VECTORS_DIR = os.path.join(ROOT, "vectors")
@@ -46,9 +48,7 @@ def hash_input(envelope: dict) -> dict:
 def write_vector(name: str, envelope: dict) -> tuple[str, str]:
     os.makedirs(VECTORS_DIR, exist_ok=True)
     path = os.path.join(VECTORS_DIR, name)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(envelope, f, indent=2, ensure_ascii=False)
-        f.write("\n")
+    write_json_utf8_lf(path, envelope)
     cb = hash_preimage(envelope)
     return cb.decode("utf-8"), sha256_hex(cb)
 
@@ -165,8 +165,7 @@ def duplicate_key_vector() -> dict:
         '"amount":{"asset":"iso4217:EUR","decimals":2,"value":"200000"}}'
     )
     path = os.path.join(VECTORS_DIR, "axes_reject_duplicate_key.json")
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(raw + "\n")
+    write_text_utf8_lf(path, raw + "\n")
     return {"axes_reject_duplicate_key.json": {"reject": True}}
 
 
@@ -206,9 +205,7 @@ def main() -> None:
         "sha256": digest,
     }
 
-    with open(os.path.join(VECTORS_DIR, "expected.json"), "w", encoding="utf-8") as f:
-        json.dump(expected, f, indent=2, ensure_ascii=False)
-        f.write("\n")
+    write_json_utf8_lf(os.path.join(VECTORS_DIR, "expected.json"), expected)
 
     print(f"Wrote {len(expected)} vector expectations to {VECTORS_DIR}")
 

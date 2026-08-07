@@ -4,6 +4,12 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-08-07 - Golden Trace v2 manifest portability fix
+- Generators write all corpus files as UTF-8 with explicit LF (`newline="\n"`); never platform text mode (fixes CRLF and CP1252 Ø in Ind QIF).
+- `.gitattributes` marks `examples/**/out/**`, `vectors/**`, and archived v1 corpora as `-text` so git cannot re-normalise pinned bytes.
+- Generator self-check: `assert_manifest_matches_files` before exit. Bundle hashes change once to portable values; chain heads unchanged.
+- Verification report: [`docs/13b-AXES_Golden_Trace_v2_Linux_Verification.md`](docs/13b-AXES_Golden_Trace_v2_Linux_Verification.md).
+
 ### 2026-08-07 - Golden Trace v2 (P1-1 canonicalisation ruling)
 - **RFC 8785 JCS** replaces GT-JCS-0; `tools/axes_canonical.py` + `requirements-dev.txt` (`jcs` package).
 - **Numeric kinds:** `Amount` for money/limits with namespaced `asset` (`iso4217:EUR` in Fin; `caip19:…` USDC decimals=6 in vectors); derived ratios removed from hash scope; `temperature`/`top_p` and industrial measurements/Cpk as exact decimal strings; zero JSON floats in hash scope (generator assertion).

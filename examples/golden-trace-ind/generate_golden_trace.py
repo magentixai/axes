@@ -37,11 +37,14 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 from tools.axes_canonical import (
     CANONICALISATION_VERSION,
+    assert_manifest_matches_files,
     assert_no_floats_in_hash_scope,
     canonical_bytes,
     decimal_str,
     envelope_digest,
     sha256_hex,
+    write_json_utf8_lf,
+    write_text_utf8_lf,
 )
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
@@ -252,8 +255,8 @@ def build():
 
     def save_artifact(name, content):
         p = os.path.join(OUT, "artifacts", name)
-        with open(p, "w") as f: f.write(content)
-        h = sha256_hex(content.encode()); artifacts[name] = h; return h
+        write_text_utf8_lf(p, content)
+        h = sha256_hex(content.encode("utf-8")); artifacts[name] = h; return h
 
     def later(sec, env): pending.append((sec, len(pending), env))
 
@@ -576,7 +579,7 @@ Signatures are placeholders; anchor store is simulated (EB-004 real distributed_
 """
     for name, content in (("report_A_board.md", A), ("report_B_audit.md", B),
                           ("report_C_regulator.md", C), ("report_D_forensic.md", D)):
-        with open(os.path.join(OUT, "reports", name), "w", encoding="utf-8") as f: f.write(content)
+        write_text_utf8_lf(os.path.join(OUT, "reports", name), content)
 
 # ----------------------------------------------------------------------------
 # 6. Manifest, samples, verify, main
@@ -594,8 +597,10 @@ def verify(envs):
 
 def main():
     ch, rows, artifacts = build()
-    with open(os.path.join(OUT, "envelopes.jsonl"), "w", encoding="utf-8") as f:
-        for e in ch.envelopes: f.write(json.dumps(e, ensure_ascii=False) + "\n")
+    write_text_utf8_lf(
+        os.path.join(OUT, "envelopes.jsonl"),
+        "".join(json.dumps(e, ensure_ascii=False) + "\n" for e in ch.envelopes),
+    )
     ok, msg = verify(ch.envelopes); assert ok, msg
     write_reports(ch, rows, artifacts)
     picks = {"envelope_part03_quality_gate.json": lambda e: e["event_kind"]=="policy_check_performed" and e.get("part_index")==3,
@@ -604,8 +609,7 @@ def main():
              "envelope_anchor.json": lambda e: e["event_kind"]=="attestation_recorded"}
     for name, pred in picks.items():
         env = next(e for e in ch.envelopes if pred(e))
-        with open(os.path.join(OUT, "samples", name), "w", encoding="utf-8") as f:
-            json.dump(env, f, indent=2, ensure_ascii=False)
+        write_json_utf8_lf(os.path.join(OUT, "samples", name), env)
     files = {}
     rel_paths = []
     for root, _, fnames in os.walk(OUT):
@@ -614,15 +618,16 @@ def main():
                 continue
             rel_paths.append(os.path.relpath(os.path.join(root, fn), OUT).replace("\\", "/"))
     for rel in sorted(rel_paths):
-        files[rel] = sha256_hex(open(os.path.join(OUT, rel), "rb").read())
+        files[rel] = sha256_hex(open(os.path.join(OUT, *rel.split("/")), "rb").read())
+    assert_manifest_matches_files(OUT, files)
     bundle_hash = sha256_hex(canonical(files))
     manifest = {"evidence_bundle_id": "bundle:MRUN-2026-06-11-A",
                 "bundle_manifest_hash": bundle_hash, "generated_at": ts(0),
                 "envelope_count": len(ch.envelopes), "chain_head": ch.prev,
                 "chain_verification": msg, "files": files,
                 "note": "Golden trace v2 (industrial): hashes real (RFC 8785 JCS); signatures and anchor store simulated."}
-    with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2, ensure_ascii=False)
+    write_json_utf8_lf(os.path.join(OUT, "manifest.json"), manifest)
+    assert_manifest_matches_files(OUT, files)
     print(msg)
     print(f"envelopes={len(ch.envelopes)} parts={len(rows)} artifacts={len(artifacts)} bundle={bundle_hash[:16]}…")
 

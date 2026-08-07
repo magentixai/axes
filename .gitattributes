@@ -1,0 +1,5 @@
+# Pinned Golden Trace corpora and conformance vectors are byte-identity fixtures.
+# Never let git normalise line endings; hashes must match on-disk UTF-8/LF bytes.
+examples/**/out/** -text
+vectors/** -text
+archive/golden-trace-v1-*/** -text

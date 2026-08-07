@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from decimal import Decimal
 from typing import Any
 
@@ -114,3 +115,27 @@ def decimal_str(value: Decimal | str | float | int, places: int | None = None) -
         d = d.quantize(q)
         return format(d, f".{places}f")
     return format(d, "f")
+
+
+def write_text_utf8_lf(path: str, content: str) -> None:
+    """Write text as UTF-8 with LF endings on every platform (never CRLF or CP1252)."""
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(content)
+
+
+def write_json_utf8_lf(path: str, obj: Any, *, indent: int | None = 2) -> None:
+    """Write JSON as UTF-8 + LF; trailing newline for stable diffs."""
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(obj, f, indent=indent, ensure_ascii=False)
+        f.write("\n")
+
+
+def assert_manifest_matches_files(out_dir: str, files: dict[str, str]) -> None:
+    """Fail if any pinned file hash disagrees with the bytes on disk."""
+    for rel, expected in files.items():
+        path = os.path.join(out_dir, *rel.split("/"))
+        actual = sha256_hex(open(path, "rb").read())
+        if actual != expected:
+            raise AssertionError(
+                f"manifest desync at {rel}: manifest={expected} disk={actual}"
+            )
