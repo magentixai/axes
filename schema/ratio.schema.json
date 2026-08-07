@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://magentix.ai/axes/schema/ratio.schema.json",
+  "title": "Ratio",
+  "description": "Exact rational for ratios that must live inside hash scope. Default: derive ratios in the report layer from Amount operands.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["numerator", "denominator"],
+  "properties": {
+    "numerator": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "denominator": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    }
+  }
+}

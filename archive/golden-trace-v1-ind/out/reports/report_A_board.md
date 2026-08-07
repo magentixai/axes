@@ -1,0 +1,22 @@
+# Board Assurance Summary - Autonomous Production Batch Release MRUN-2026-06-11-A
+**Organisation:** Ironmark Precision Ltd · **Period:** 2026-06-11 07:00–07:11 UTC (batch reconciled T+0 end of shift) · **Assurance basis:** SE v0.1-draft evidence, scoped - see Reliance Boundary.
+
+## The assurance statement
+> **An authorised autonomous process released 14 machined parts under delegated authority MD-5120.** [env:0007 | authority.authority_context_id] [env:0075 | summary.released_count] - all 14 release events carry `authority_context_id = MD-5120` with delegation receipt `delrec:MD-5120/2026-04-15` granted by the Quality Director [env:0007 | authority.delegation_receipt_id] [env:0007 | authority.delegator_id] under part-release policy v5.1 in force throughout [env:0007 | authority.policy_version], against released engineering drawing IMP-4471 rev D and work instruction WI-4471 v5.1.
+>
+> **Every part remained within released engineering tolerance.** Each of the 14 units passed three pre-release quality gates - critical-dimension conformance, statistical process control, and material-lot verification - evaluated *before* the part was dispositioned conforming, 42 control evaluations in total, all passed [env:0004 | controls.control_evaluation_phase] [env:0004 | controls.checks[*].control_result]. The tightest characteristic ran at 95.6% of the released tolerance band (part 3, SN IMP4471-0003, Ø25 H7 bore) [env:0013 | controls.checks[0].observed.tolerance_utilisation_ratio]; the lowest process capability observed was Cpk 1.41 against a 1.33 floor (part 3) [env:0013 | controls.checks[1].observed.cpk].
+>
+> **No exceptions requiring human intervention occurred.** Exception count 0, scrap count 0, human-intervention count 0 [env:0075 | summary.exception_count] [env:0075 | summary.scrap_count] [env:0075 | summary.human_intervention_count]; no quality-engineer disposition was required under the policy rule for parts inside tolerance on a released drawing [env:0004 | authority.approval_status] [env:0004 | authority.approval_basis].
+>
+> **Evidence integrity validated.** All 76 envelopes form an unbroken SHA-256 hash chain (re-verified at report generation), externally anchored at 5-minute intervals - 3 anchor receipts [env:0037 | anchoring.anchor_receipt_id]; emission ran fail-closed for release-boundary actions throughout [env:0007 | emission.emission_fail_posture]; liveness heartbeats present for every 60-second interval of the run with zero silent windows [env:0009 | liveness.liveness_status].
+>
+> **No cross-programme contamination detected.** Cell-boundary and cross-order exposure indicators are false, on the stated basis that the cell processed only order PO-IRN-2026-4471-06 during the window [env:0074 | boundary_assessment.cross_order_exposure_indicator] [env:0074 | boundary_assessment.basis].
+
+## What the board should know
+- **External confirmation, not self-assertion:** every release carries a three-rung acknowledgment ladder - transport (OPC-UA Good), machine (MES ACCEPTED), quality (QIF 3.0 / ISO 23952 inspection result **CONFORMING**) [env:0007 | acknowledgments[*]] - and the end-of-shift ISA-95 batch record reconciles **14 of 14** units against the production order [env:0073 | reconciliation.batch_record_count].
+- **Completeness is measured, not asserted:** the in-scope population is independently defined (MES production order PO-IRN-2026-4471-06: 14 planned; finished-goods goods-receipt: 14 booked; scrap: 0) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% [env:0073 | reconciliation.evidence_population_ref] [env:0073 | reconciliation.evidence_coverage_ratio].
+- **Leading indicator:** one part ran at 95.6% of its tolerance band; nothing out of tolerance, but characteristic headroom on the Ø25 H7 bore is worth a process-capability review before the next batch.
+- **Recommended position:** continue autonomous release at current scope; no restriction indicated by this run's evidence.
+
+## Reliance boundary
+This report evidences this run only; it supports internal assurance, quality-management reliance, and customer source-surveillance for the stated period and population. It is **not** an airworthiness or conformity certification, and statements are bounded by the capture boundary declared in the Conformity Assessment Pack (§4). Signatures and anchor receipts in this golden trace are stubs pending the SE v0.1 signing profile.

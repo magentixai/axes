@@ -24,7 +24,7 @@ Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-c
 
 ## 2. Population and completeness (IPE basis)
 - Population definition: ERP approved-invoice queue at 08:55Z (14 due) reconciled against bank statement FMB-STMT-2026-06-09 (14 booked) - **independently reconciled**, not self-reported [env:0073 | reconciliation.population_basis].
-- Coverage: envelopes 14/14 (100%); tamper-evident 100% [env:0073 | reconciliation.evidence_coverage_ratio].
+- Coverage: envelopes 14/14 (100%); tamper-evident 100% (report-layer derived from envelope_commit_count).
 - Sequence continuity: envelope sequence numbers 0001–0076 contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) [env:0009 | liveness.declared_heartbeat_interval_s].
 
 ## 3. Evidence quality

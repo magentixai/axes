@@ -1,0 +1,69 @@
+{
+  "se_version": "0.1-draft",
+  "profile_id": "se-profile:payments-emitter/0.1-draft",
+  "event_kind": "commit_attempted",
+  "occurred_at": "2026-06-09T09:02:00.000Z",
+  "emitted_at": "2026-06-09T09:02:00.400Z",
+  "recorded_at": "2026-06-09T09:02:00.900Z",
+  "timestamp_source": "ntp:cluster-sync",
+  "clock_sync_confidence": "high",
+  "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "span_id": "span-custody-vector",
+  "org_id": "org:caldera-robotics",
+  "tenant_id": "tenant:caldera-prod",
+  "environment_id": "env:prod-eu",
+  "environment_type": "production",
+  "execution_phase": "commit",
+  "execution_mode": "autonomous",
+  "actor": {
+    "agent_id": "agent:caldera/ap-pilot",
+    "agent_version": "2.4.1"
+  },
+  "authority": {
+    "authority_context_id": "AD-7844",
+    "delegation_receipt_id": "delrec:AD-7844/2026-04-02",
+    "policy_ref": "policy:caldera/ap-payments",
+    "policy_version": "3.2"
+  },
+  "emission": {
+    "capture_layer": "runtime_sdk",
+    "capture_status": "captured",
+    "emission_fail_posture": "fail_closed"
+  },
+  "evidence_quality": {
+    "evidence_origin": "runtime",
+    "assertion_basis": "observed",
+    "corroboration_state": "third_party_confirmed"
+  },
+  "custody": {
+    "capture_relationship": "independent_third_party",
+    "executor_id": "agent:caldera/ap-pilot",
+    "deployer_id": "org:caldera-robotics",
+    "capturer_id": "org:trustline-custody/eu-west",
+    "signing_trust_ref": {
+      "ref": "custody-ref:external/notary-001",
+      "signer_id": "key:trustline/notary-2026q2"
+    }
+  },
+  "operation": {
+    "operation": "submit_sepa_inst_credit_transfer",
+    "commit_boundary_status": "commit_attempted",
+    "commit_mechanism": "payment_initiation",
+    "commit_impact_class": "money_movement",
+    "monetary": {
+      "amount": {
+        "value": "100000",
+        "decimals": 2,
+        "asset": "iso4217:EUR"
+      }
+    },
+    "beneficiary": "Bolt & Brass Supplies GmbH"
+  },
+  "integrity": {
+    "hash_algorithm": "SHA-256",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signing_key_id": "key:caldera/se-emitter-2026q2",
+    "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2"
+  }
+}

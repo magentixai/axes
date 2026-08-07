@@ -98,9 +98,8 @@ Trimmed excerpt from the policy-check sample (full file linked above):
         "control_id": "CTL-LIMIT-02",
         "control_result": "passed",
         "observed": {
-          "amount": 23900.0,
-          "limit": 25000.0,
-          "authority_utilisation_ratio": 0.956
+          "amount": {"value": "2390000", "decimals": 2, "asset": "iso4217:EUR"},
+          "limit": {"value": "2500000", "decimals": 2, "asset": "iso4217:EUR"}
         }
       }
     ]
@@ -121,7 +120,8 @@ Trimmed excerpt from the policy-check sample (full file linked above):
 | [`examples/`](examples/) | Golden Trace (current dialect) and [`examples/legacy/`](examples/legacy/) (archived May-sketch dialect) |
 | [`registers/`](registers/) | Requirements register, decision register, adjacent-standards watch, [three-layer evidence & control re-evaluation tracker](registers/three-layer-evidence-and-control-reevaluation.md) |
 | [`CONFORMANCE.md`](CONFORMANCE.md) | Operator guide: corpus verification vs SE-Cx claims ([docs/07](docs/07-conformance-levels.md) is the normative ladder home) |
-| [`tools/`](tools/) | Reference validator and byte-level test vectors (in development) |
+| [`tools/`](tools/) | RFC 8785 canonicaliser (`axes_canonical.py`), vector generator; reference validator (Roadmap P4) |
+| [`vectors/`](vectors/) | Byte-level canonicalisation/hashing conformance vectors (Golden Trace v2) |
 | [`archive/`](archive/) | Design history, preserved with honest commentary - the standard shows its working |
 
 ## Conformance (SE-C0 → SE-C5)

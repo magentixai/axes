@@ -58,8 +58,6 @@
     "expected_count_erp": 14,
     "statement_count_bank": 14,
     "envelope_commit_count": 14,
-    "evidence_coverage_ratio": 1.0,
-    "tamper_evident_coverage_ratio": 1.0,
     "settlement_artifact": {
       "ref": "artifacts/camt053_20260609.xml",
       "sha256": "9f5f1a2529ee0d61ceac1d74e52fc40b444bd12849291a6e3b4222c2f49a3ca0",
@@ -75,11 +73,11 @@
   "envelope_id": "env:APRUN-2026-06-09-A/0073",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "9b0cedb8ad5228e045688523a369d65170a5ab6c1bab70f346996ee28089342a",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "b1c14faae9fe8ca332e115173755fc6ca99c7c9caddadb8da1548f0516ad2106",
     "signing_key_id": "key:caldera/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
-    "envelope_hash": "8bb71bcb23578f1d4a3029f537b21e98b239b409dd6f5438f44ba15750c9ea47",
-    "signature": "SIG-STUB(8bb71bcb23578f1d)"
+    "envelope_hash": "c20f250f66905806abf601fbd34467a458385a2fb47abad170c445ecaf89807d",
+    "signature": "SIG-STUB(c20f250f66905806)"
   }
 }

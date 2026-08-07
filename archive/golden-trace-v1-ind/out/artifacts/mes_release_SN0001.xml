@@ -1,0 +1,8 @@
+<MESRelease xmlns="urn:ironmark:mes:v3">
+  <ReleaseOrder run="MRUN-2026-06-11-A" line="01">
+    <PartNumber>IMP-4471</PartNumber><Revision>D</Revision><Serial>IMP4471-0001</Serial>
+    <ProductionOrder>PO-IRN-2026-4471-06</ProductionOrder>
+    <Disposition>RELEASED</Disposition>
+    <RecordId>SN0001</RecordId>
+  </ReleaseOrder>
+</MESRelease>

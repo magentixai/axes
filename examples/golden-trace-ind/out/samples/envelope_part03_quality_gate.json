@@ -70,12 +70,11 @@
         "name": "critical dimension within released tolerance",
         "control_result": "passed",
         "observed": {
-          "characteristic": "\u00d825 H7 bore",
-          "nominal_mm": 25.0,
-          "tolerance_upper_mm": 25.021,
-          "tolerance_lower_mm": 25.0,
-          "measured_mm": 25.0201,
-          "tolerance_utilisation_ratio": 0.956,
+          "characteristic": "Ø25 H7 bore",
+          "nominal_mm": "25.000",
+          "tolerance_upper_mm": "25.021",
+          "tolerance_lower_mm": "25.000",
+          "measured_mm": "25.0201",
           "measurement_artifact_ref": "artifacts/qif_SN0003.xml",
           "measurement_scheme": "ISO23952-QIF-3.0"
         }
@@ -85,8 +84,8 @@
         "name": "process in statistical control",
         "control_result": "passed",
         "observed": {
-          "cpk": 1.41,
-          "cpk_floor": 1.33,
+          "cpk": "1.41",
+          "cpk_floor": "1.33",
           "subgroup_ref": "spc:IMP-4471/revD/2026-06-11"
         }
       },
@@ -103,11 +102,11 @@
   "envelope_id": "env:MRUN-2026-06-11-A/0013",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "c5674e144175692c96011bbce53bbcdd4ad4664daec64e6b2213f9bf29e88970",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "a66b7c0906b39da1ad869c2711d27bde93a61f05fe4b6580a72e0be354908760",
     "signing_key_id": "key:ironmark/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
-    "envelope_hash": "423b40be6ac39c6a68df68713dbcc70a72d52795212e6987626575133f47e172",
-    "signature": "SIG-STUB(423b40be6ac39c6a)"
+    "envelope_hash": "c6c8e3d048404bb958a3f5e7d9a3adeee09b4d13db901d8c3e22b2e6aecde975",
+    "signature": "SIG-STUB(c6c8e3d048404bb9)"
   }
 }

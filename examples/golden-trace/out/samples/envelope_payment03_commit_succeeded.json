@@ -60,8 +60,11 @@
     "commit_mechanism": "payment_initiation",
     "commit_impact_class": "money_movement",
     "monetary": {
-      "amount": 23900.0,
-      "currency": "EUR"
+      "amount": {
+        "value": "2390000",
+        "decimals": 2,
+        "asset": "iso4217:EUR"
+      }
     }
   },
   "result": {
@@ -98,11 +101,11 @@
   "envelope_id": "env:APRUN-2026-06-09-A/0016",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "975a3cb057782202d582980027e96651770d3ca216324e43a682d96701ff2dcd",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "0706ed2befc56415cf7a6a33bbadf22d203bab5f235d6d1f90770ba09f4a4b92",
     "signing_key_id": "key:caldera/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
-    "envelope_hash": "f06df8908d41bfc81fe693ad63cdcf480680ba19d8413f0a57a712940d4022d6",
-    "signature": "SIG-STUB(f06df8908d41bfc8)"
+    "envelope_hash": "2f633b7cc10e2193b5324d5ac69dc65aac8afc2f66931551a894e95d85135ba2",
+    "signature": "SIG-STUB(2f633b7cc10e2193)"
   }
 }

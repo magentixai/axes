@@ -21,14 +21,28 @@ Outputs (under ./out):
   reports/report_D_forensic.md    - Forensic execution pack
 
 Design notes:
-  * Same structural skeleton as examples/golden-trace/ (76 envelopes, GT-JCS-0).
+  * Same structural skeleton as examples/golden-trace/ (76 envelopes, RFC 8785 JCS).
+  * No JSON floats in hash scope: measurements/Cpk as exact decimal strings; ratios report-layer.
   * Signatures and external anchor receipts are STUBS (clearly marked). Hashes are real.
   * Deterministic: fixed timestamps, no randomness.
 """
 
-import json, hashlib, os
+import json, hashlib, os, sys
 from collections import OrderedDict
 from datetime import datetime, timedelta, timezone
+from decimal import Decimal
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+from tools.axes_canonical import (
+    CANONICALISATION_VERSION,
+    assert_no_floats_in_hash_scope,
+    canonical_bytes,
+    decimal_str,
+    envelope_digest,
+    sha256_hex,
+)
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 
@@ -38,7 +52,7 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 SE_VERSION = "0.1-draft"
 PROFILE_ID = "se-profile:manufacturing-emitter/0.1-draft"
 CONFORMANCE_LEVEL = "SE-C4-assurance-report-capable (claimed, golden-trace-ind)"
-CANON = "GT-JCS-0"
+CANON = CANONICALISATION_VERSION
 
 ORG = "org:ironmark-precision"
 TENANT = "tenant:ironmark-prod"
@@ -54,7 +68,7 @@ ACTOR = {
     "connector_id": "connector:opcua-gw/1.8.0",
     "provider_id": "cell:ironmark/cnc-cell-4",
 }
-SAMPLING = {"temperature": 0.2, "top_p": 0.9, "max_tokens": 4096,
+SAMPLING = {"temperature": "0.2", "top_p": "0.9", "max_tokens": 4096,
             "reproducibility_note": "non-zero temperature: reproducible in distribution, not in instance"}
 
 AUTHORITY = {
@@ -68,7 +82,7 @@ AUTHORITY = {
     "scope": {"authorised_order_quantity": 14,
               "part_number": "IMP-4471", "drawing_revision": "D",
               "critical_characteristic": "\u00d825 H7 bore (25.000 +0.021 / 0 mm)",
-              "cpk_floor": 1.33,
+              "cpk_floor": "1.33",
               "material_grade": "15-5PH stainless",
               "material_heat": "HT-88213",
               "approval_rule": "no quality-engineer disposition required for characteristics inside tolerance on a released drawing revision",
@@ -83,11 +97,12 @@ UTILS = [0.179, 0.515, 0.956, 0.370, 0.133, 0.624, 0.311, 0.078,
          0.441, 0.276, 0.099, 0.325, 0.209, 0.181]
 CPKS = [1.92, 1.71, 1.41, 1.80, 1.95, 1.63, 1.83, 1.98,
         1.74, 1.86, 1.97, 1.82, 1.89, 1.90]
-TOL_UPPER, TOL_LOWER, TOL_RANGE = 25.021, 25.0, 0.021
+TOL_UPPER, TOL_LOWER, TOL_RANGE = Decimal("25.021"), Decimal("25.0"), Decimal("0.021")
 CHARACTERISTIC = "\u00d825 H7 bore"
 
 def measured_mm(util):
-    return round(TOL_LOWER + util * TOL_RANGE, 4)
+    """Exact measured value as Decimal (stored as decimal string in envelopes)."""
+    return (TOL_LOWER + Decimal(str(util)) * TOL_RANGE).quantize(Decimal("0.0001"))
 
 SERIALS = [f"IMP4471-{n:04d}" for n in range(1, 15)]
 ORDER_QTY = AUTHORITY["scope"]["authorised_order_quantity"]
@@ -100,8 +115,8 @@ ANCHOR_INTERVAL_S = 300
 # ----------------------------------------------------------------------------
 # 2. Hashing, chaining, stub signing
 # ----------------------------------------------------------------------------
-def sha256_hex(b: bytes) -> str: return hashlib.sha256(b).hexdigest()
-def canonical(obj) -> bytes: return json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()
+def canonical(obj) -> bytes:
+    return canonical_bytes(obj)
 
 class Chain:
     def __init__(self):
@@ -117,7 +132,8 @@ class Chain:
             "signing_key_id": "key:ironmark/se-emitter-2026q2",
             "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
         })
-        h = sha256_hex(canonical(env))
+        assert_no_floats_in_hash_scope(env)
+        h = envelope_digest(env)
         env["integrity"]["envelope_hash"] = h
         env["integrity"]["signature"] = "SIG-STUB(" + h[:16] + ")"
         self.prev = h
@@ -165,11 +181,12 @@ def subject(serial):
 # ----------------------------------------------------------------------------
 def qif_xml(i, serial, measured):
     sn = f"SN{i:04d}"
+    meas_s = decimal_str(measured, 4)
     return f"""<QIFDocument xmlns="http://qifstandards.org/xsd/qif3">
   <Product><PartNumber>IMP-4471</PartNumber><SerialNumber>{serial}</SerialNumber></Product>
   <ResultsSummary>
     <Characteristic name="{CHARACTERISTIC}" nominal="25.000" upper="{TOL_UPPER}" lower="{TOL_LOWER}">
-      <MeasuredValue unit="mm">{measured:.4f}</MeasuredValue>
+      <MeasuredValue unit="mm">{meas_s}</MeasuredValue>
       <Disposition>CONFORMING</Disposition>
     </Characteristic>
     <InspectionRecord id="{sn}"/>
@@ -272,20 +289,23 @@ def build():
         qif_name = f"qif_SN{i:04d}.xml"
         mes_name = f"mes_release_SN{i:04d}.xml"
 
+        meas_s = decimal_str(meas, 4)
+        cpk_s = decimal_str(cpk, 2)
         e = base_env("policy_check_performed", p0, "approval", span, "span-batch", part=i)
         e["subject"] = subject(serial)
         e["controls"] = {"control_evaluation_phase": "pre_commit", "control_set_ref": "ctl:part-release/v5.1",
             "checks": [
                 {"control_id": "CTL-DIM-01", "name": "critical dimension within released tolerance",
                  "control_result": "passed",
-                 "observed": {"characteristic": CHARACTERISTIC, "nominal_mm": 25.0,
-                              "tolerance_upper_mm": TOL_UPPER, "tolerance_lower_mm": TOL_LOWER,
-                              "measured_mm": meas, "tolerance_utilisation_ratio": util,
+                 "observed": {"characteristic": CHARACTERISTIC, "nominal_mm": "25.000",
+                              "tolerance_upper_mm": decimal_str(TOL_UPPER, 3),
+                              "tolerance_lower_mm": decimal_str(TOL_LOWER, 3),
+                              "measured_mm": meas_s,
                               "measurement_artifact_ref": f"artifacts/{qif_name}",
                               "measurement_scheme": "ISO23952-QIF-3.0"}},
                 {"control_id": "CTL-SPC-02", "name": "process in statistical control",
                  "control_result": "passed",
-                 "observed": {"cpk": cpk, "cpk_floor": CPK_FLOOR,
+                 "observed": {"cpk": cpk_s, "cpk_floor": CPK_FLOOR,
                               "subgroup_ref": "spc:IMP-4471/revD/2026-06-11"}},
                 {"control_id": "CTL-MAT-03", "name": "material lot verified to certified heat",
                  "control_result": "passed", "evidence_ref": "matcert:EN10204-3.1/HT-88213",
@@ -339,7 +359,7 @@ def build():
              "ack_artifact_hash": qif_hash, "ack_authenticity_basis": "qms_signed (QMS record, STUB)"}]
         e["evidence_quality"]["corroboration_state"] = "third_party_confirmed"
         later(p0 + 9, e)
-        part_rows.append({"i": i, "serial": serial, "measured": meas, "util": util, "cpk": cpk,
+        part_rows.append({"i": i, "serial": serial, "measured": meas_s, "util": util, "cpk": cpk_s,
                           "qif_hash": qif_hash, "mes_hash": mes_hash, "t_commit": ts(p0 + 9)})
 
     end_sec = 12 + 14 * 45 + 10
@@ -371,7 +391,6 @@ def build():
         "population_basis": "independently_reconciled",
         "expected_count_mes": 14, "goods_receipt_count": 14, "envelope_commit_count": 14,
         "scrap_count": 0,
-        "evidence_coverage_ratio": 1.0, "tamper_evident_coverage_ratio": 1.0,
         "batch_record_count": 14,
         "settlement_artifact": {"ref": "artifacts/b2mml_batchrecord_MRUN-2026-06-11-A.xml",
                                   "sha256": b2mml_hash, "scheme": "ISA95-B2MML"},
@@ -388,12 +407,10 @@ def build():
     later(recon_sec + 60, e)
 
     e = base_env("execution_completed", recon_sec + 90, "execution", "span-batch")
-    peak_util = max(r["util"] for r in part_rows)
     min_cpk = min(r["cpk"] for r in part_rows)
     e["summary"] = {"released_count": 14, "exception_count": 0, "scrap_count": 0,
                     "human_intervention_count": 0,
                     "order_ref": "PO-IRN-2026-4471-06",
-                    "peak_tolerance_utilisation_ratio": peak_util,
                     "minimum_cpk_observed": min_cpk}
     later(recon_sec + 90, e)
 
@@ -428,7 +445,7 @@ def write_reports(ch, rows, artifacts):
     exported = by_kind["evidence_exported"][0]
     anchors = by_kind["attestation_recorded"]
     hbs = by_kind["heartbeat_event"]
-    peak = done["summary"]["peak_tolerance_utilisation_ratio"]
+    peak = max(r["util"] for r in rows)
     min_cpk = done["summary"]["minimum_cpk_observed"]
     n_env = len(ch.envelopes)
     part3_policy = policy[2]
@@ -439,7 +456,7 @@ def write_reports(ch, rows, artifacts):
 ## The assurance statement
 > **An authorised autonomous process released 14 machined parts under delegated authority MD-5120.** {cite(commit_ok[0],'authority.authority_context_id')} {cite(done,'summary.released_count')} - all 14 release events carry `authority_context_id = MD-5120` with delegation receipt `delrec:MD-5120/2026-04-15` granted by the Quality Director {cite(commit_ok[0],'authority.delegation_receipt_id')} {cite(commit_ok[0],'authority.delegator_id')} under part-release policy v5.1 in force throughout {cite(commit_ok[0],'authority.policy_version')}, against released engineering drawing IMP-4471 rev D and work instruction WI-4471 v5.1.
 >
-> **Every part remained within released engineering tolerance.** Each of the 14 units passed three pre-release quality gates - critical-dimension conformance, statistical process control, and material-lot verification - evaluated *before* the part was dispositioned conforming, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. The tightest characteristic ran at {peak:.1%} of the released tolerance band (part 3, SN IMP4471-0003, {CHARACTERISTIC}) {cite(part3_policy,'controls.checks[0].observed.tolerance_utilisation_ratio')}; the lowest process capability observed was Cpk {min_cpk:.2f} against a 1.33 floor (part 3) {cite(part3_policy,'controls.checks[1].observed.cpk')}.
+> **Every part remained within released engineering tolerance.** Each of the 14 units passed three pre-release quality gates - critical-dimension conformance, statistical process control, and material-lot verification - evaluated *before* the part was dispositioned conforming, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. The tightest characteristic ran at {peak:.1%} of the released tolerance band (part 3, SN IMP4471-0003, {CHARACTERISTIC}, report-layer derived from measured_mm vs tolerance band) {cite(part3_policy,'controls.checks[0].observed.measured_mm')}; the lowest process capability observed was Cpk {min_cpk} against a 1.33 floor (part 3) {cite(part3_policy,'controls.checks[1].observed.cpk')}.
 >
 > **No exceptions requiring human intervention occurred.** Exception count 0, scrap count 0, human-intervention count 0 {cite(done,'summary.exception_count')} {cite(done,'summary.scrap_count')} {cite(done,'summary.human_intervention_count')}; no quality-engineer disposition was required under the policy rule for parts inside tolerance on a released drawing {cite(policy[0],'authority.approval_status')} {cite(policy[0],'authority.approval_basis')}.
 >
@@ -449,7 +466,7 @@ def write_reports(ch, rows, artifacts):
 
 ## What the board should know
 - **External confirmation, not self-assertion:** every release carries a three-rung acknowledgment ladder - transport (OPC-UA Good), machine (MES ACCEPTED), quality (QIF 3.0 / ISO 23952 inspection result **CONFORMING**) {cite(commit_ok[0],'acknowledgments[*]')} - and the end-of-shift ISA-95 batch record reconciles **14 of 14** units against the production order {cite(recon,'reconciliation.batch_record_count')}.
-- **Completeness is measured, not asserted:** the in-scope population is independently defined (MES production order PO-IRN-2026-4471-06: 14 planned; finished-goods goods-receipt: 14 booked; scrap: 0) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% {cite(recon,'reconciliation.evidence_population_ref')} {cite(recon,'reconciliation.evidence_coverage_ratio')}.
+- **Completeness is measured, not asserted:** the in-scope population is independently defined (MES production order PO-IRN-2026-4471-06: 14 planned; finished-goods goods-receipt: 14 booked; scrap: 0) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% (report-layer derived) {cite(recon,'reconciliation.evidence_population_ref')} {cite(recon,'reconciliation.envelope_commit_count')}.
 - **Leading indicator:** one part ran at {peak:.1%} of its tolerance band; nothing out of tolerance, but characteristic headroom on the {CHARACTERISTIC} is worth a process-capability review before the next batch.
 - **Recommended position:** continue autonomous release at current scope; no restriction indicated by this run's evidence.
 
@@ -458,7 +475,7 @@ This report evidences this run only; it supports internal assurance, quality-man
 """
 
     ctl_rows = "\n".join(
-        f"| {r['i']:02d} | {r['serial']} | {CHARACTERISTIC} | passed ({r['util']:.1%}) | passed (Cpk {r['cpk']:.2f}) | passed (HT-88213) | not_required |"
+        f"| {r['i']:02d} | {r['serial']} | {CHARACTERISTIC} | passed ({r['util']:.1%}) | passed (Cpk {r['cpk']}) | passed (HT-88213) | not_required |"
         for r in rows)
     B = f"""# Quality and Control View - MRUN-2026-06-11-A
 
@@ -473,17 +490,17 @@ Three preventive quality gates (control set `ctl:part-release/v5.1`) were evalua
 
 ## 2. Population and completeness (IPE basis)
 - Population definition: MES production order PO-IRN-2026-4471-06 at 06:55Z (14 planned) reconciled against finished-goods goods-receipt GRN-2026-06-11-IMP4471 (14 booked, 0 scrap) - **independently reconciled**, not self-reported {cite(recon,'reconciliation.population_basis')}.
-- Coverage: envelopes 14/14 (100%); tamper-evident 100% {cite(recon,'reconciliation.evidence_coverage_ratio')}.
+- Coverage: envelopes 14/14 (100%); tamper-evident 100% (report-layer derived from envelope_commit_count).
 - Sequence continuity: envelope sequence numbers 0001-{n_env:04d} contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) {cite(hbs[0],'liveness.declared_heartbeat_interval_s')}.
 
 ## 3. Evidence quality
 - Origin/basis: runtime-observed on the shop-floor edge; release confirmations are **quality-system confirmed** (QIF 3.0 CONFORMING per unit) and **source-system corroborated** (ISA-95 batch record) {cite(commit_ok[0],'evidence_quality.corroboration_state')} {cite(recon,'evidence_quality.corroboration_state')}.
 - Corroboration coverage decomposition: anchored 100% · quality-receipted 14/14 · provider-only 0.
 - Point-in-time validity: policy v5.1 effective from 2026-05-01, in force at every event {cite(commit_ok[0],'authority.policy_version')}; drawing rev D released 2026-03-20; delegation valid 2026-04-15 to 2026-12-31.
-- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped - *reproducible in distribution, not in instance* {cite(by_kind['context_retrieved'][0],'model.sampling_parameters')}; reasoning artifacts `provider_withheld` - disclosed, not silent {cite(by_kind['context_retrieved'][0],'model.reasoning_artifact_availability')}.
+- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9 as exact decimal strings); replay claim scoped - *reproducible in distribution, not in instance* {cite(by_kind['context_retrieved'][0],'model.sampling_parameters')}; reasoning artifacts `provider_withheld` - disclosed, not silent {cite(by_kind['context_retrieved'][0],'model.reasoning_artifact_availability')}.
 
 ## 4. Findings register
-No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak characteristic utilisation {peak:.1%} with the lowest capability of the batch at Cpk {min_cpk:.2f} - recommend a process-capability review for the {CHARACTERISTIC} before the next batch. Owner: manufacturing process owner. Due: next production cycle.
+No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak characteristic utilisation {peak:.1%} with the lowest capability of the batch at Cpk {min_cpk} - recommend a process-capability review for the {CHARACTERISTIC} before the next batch. Owner: manufacturing process owner. Due: next production cycle.
 """
 
     art_rows = "\n".join(f"| {n} | `{h[:16]}…` |" for n, h in sorted(artifacts.items()))
@@ -502,13 +519,13 @@ agent:ironmark/mfg-pilot 3.1.0 -> orchestrator:ironmark/shopfloor-orch 2.2 -> mo
 Delegation MD-5120: Quality Director -> manufacturing agent; per-part release inside released drawing rev D tolerances for critical characteristics; batch release up to authorised order quantity (14); released-engineering constraint (drawing IMP-4471 rev D + work instruction WI-4471 v5.1 only); validity 2026-04-15 to 2026-12-31; policy `ironmark/part-release` v5.1 in force {cite(commit_ok[0],'authority.policy_ref')}. The granting principal (`delegator_id`) is recorded pseudonymously; resolution is available to authorised reviewers via the access model.
 
 ## 4. Evidence completeness and capture boundary
-Coverage 14/14 against an independently reconciled population (MES production order + finished-goods goods-receipt) {cite(recon,'reconciliation.evidence_coverage_ratio')}. **Declared capture boundary:** downstream heat-treatment and plating performed by an external subcontractor are *outside* the emitter's capture boundary and are evidenced indirectly via the incoming EN 10204 3.1 material certificate and the subcontractor's certificate of conformance; this is disclosed, not inferred. Emission posture fail-closed for release-boundary actions {cite(commit_ok[0],'emission.emission_fail_posture')}.
+Coverage 14/14 against an independently reconciled population (MES production order + finished-goods goods-receipt) {cite(recon,'reconciliation.envelope_commit_count')}. **Declared capture boundary:** downstream heat-treatment and plating performed by an external subcontractor are *outside* the emitter's capture boundary and are evidenced indirectly via the incoming EN 10204 3.1 material certificate and the subcontractor's certificate of conformance; this is disclosed, not inferred. Emission posture fail-closed for release-boundary actions {cite(commit_ok[0],'emission.emission_fail_posture')}.
 
 ## 5. Exceptions and material events
 None. 14/14 released conforming; 0 exceptions; 0 scrap; 0 human interventions; 0 control failures {cite(done,'summary')}.
 
 ## 6. Cryptographic sealing status
-SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), contiguous sequence 0001-{n_env:04d}; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Operator identity and any personal data carried by reference with hash-substitution redaction (`redact:operator-pii/v1`); redacted fields enumerated per envelope {cite(by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
+SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalisation_version = {CANON}`), contiguous sequence 0001-{n_env:04d}; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Operator identity and any personal data carried by reference with hash-substitution redaction (`redact:operator-pii/v1`); redacted fields enumerated per envelope {cite(by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
 
 ## 7. Appendix A - artifact register (manufacturing interop standards)
 | Artifact | SHA-256 |
@@ -528,12 +545,12 @@ Evidence supports: internal quality-management reliance; customer source-surveil
         f"| {e['sequence_number']:04d} | {e['event_kind']} | {e.get('part_index',' - ')} | {e['occurred_at']} | `{e['integrity']['envelope_hash'][:12]}…` |"
         for e in ch.envelopes[:24])
     part_link_rows = "\n".join(
-        f"| {r['i']:02d} | {r['serial']} | {r['measured']:.4f} mm | HT-88213 | `{r['qif_hash'][:10]}…` | `{r['mes_hash'][:10]}…` | {r['t_commit']} |"
+        f"| {r['i']:02d} | {r['serial']} | {r['measured']} mm | HT-88213 | `{r['qif_hash'][:10]}…` | `{r['mes_hash'][:10]}…` | {r['t_commit']} |"
         for r in rows)
     D = f"""# Forensic Execution Pack - MRUN-2026-06-11-A
 
 ## 1. Verification procedure (vendor-neutral)
-1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with sorted keys and compact separators; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64x'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Conformity Assessment Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1-4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
+1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with RFC 8785 JCS; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64x'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Conformity Assessment Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1-4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
 
 ## 2. Envelope sequence (first 24 of {n_env}; full stream in envelopes.jsonl)
 | Seq | event_kind | Part# | occurred_at | envelope_hash |
@@ -545,7 +562,7 @@ Evidence supports: internal quality-management reliance; customer source-surveil
 |---|---|---|---|---|---|---|
 {part_link_rows}
 
-Released tolerance for the critical characteristic: 25.000 +0.021 / 0 mm (H7). Part 3 at {rows[2]['measured']:.4f} mm sits at {rows[2]['util']:.1%} of the tolerance band - inside tolerance, and the tightest unit in the batch.
+Released tolerance for the critical characteristic: 25.000 +0.021 / 0 mm (H7). Part 3 at {rows[2]['measured']} mm sits at {rows[2]['util']:.1%} of the tolerance band - inside tolerance, and the tightest unit in the batch.
 
 ## 4. Topology graph (declared = observed for this run)
 Nodes: agent mfg-pilot 3.1.0 · orchestrator shopfloor-orch 2.2 · model claude-sonnet-4-6 · gateway toolproxy-2 · connector opcua-gw 1.8.0 · cell cnc-cell-4 · mes ironmark/prod · runtime edge-mes-01.
@@ -554,12 +571,12 @@ Edges: agent->orchestrator->model (inference); agent->gateway->connector->cell (
 ## 5. Chronology and silence semantics
 Run window 07:00:00-07:10:52Z; heartbeats every 60s ({len(hbs)} beats, 0 silent windows); anchors at 300s cadence ({len(anchors)} receipts); end-of-shift reconciliation 16:10Z. Emission fail-closed => within the declared boundary, absence of an envelope implies absence of a release-boundary action.
 
-## 6. Known stubs and limitations (golden trace)
-Signatures are placeholders; anchor store is simulated; QIF result webhook authenticity (QMS mTLS) is asserted not demonstrated; the subcontracted heat-treatment and plating legs are outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and part-to-artifact linkage are real and re-verifiable.
+## 6. Known stubs and limitations (golden trace v2)
+Signatures are placeholders; anchor store is simulated (EB-004 real distributed_ledger anchor pending); QIF result webhook authenticity (QMS mTLS) is asserted not demonstrated; the subcontracted heat-treatment and plating legs are outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and part-to-artifact linkage are real and re-verifiable under RFC 8785 JCS with no JSON floats in hash scope.
 """
     for name, content in (("report_A_board.md", A), ("report_B_audit.md", B),
                           ("report_C_regulator.md", C), ("report_D_forensic.md", D)):
-        with open(os.path.join(OUT, "reports", name), "w") as f: f.write(content)
+        with open(os.path.join(OUT, "reports", name), "w", encoding="utf-8") as f: f.write(content)
 
 # ----------------------------------------------------------------------------
 # 6. Manifest, samples, verify, main
@@ -577,8 +594,8 @@ def verify(envs):
 
 def main():
     ch, rows, artifacts = build()
-    with open(os.path.join(OUT, "envelopes.jsonl"), "w") as f:
-        for e in ch.envelopes: f.write(json.dumps(e) + "\n")
+    with open(os.path.join(OUT, "envelopes.jsonl"), "w", encoding="utf-8") as f:
+        for e in ch.envelopes: f.write(json.dumps(e, ensure_ascii=False) + "\n")
     ok, msg = verify(ch.envelopes); assert ok, msg
     write_reports(ch, rows, artifacts)
     picks = {"envelope_part03_quality_gate.json": lambda e: e["event_kind"]=="policy_check_performed" and e.get("part_index")==3,
@@ -587,20 +604,25 @@ def main():
              "envelope_anchor.json": lambda e: e["event_kind"]=="attestation_recorded"}
     for name, pred in picks.items():
         env = next(e for e in ch.envelopes if pred(e))
-        with open(os.path.join(OUT, "samples", name), "w") as f: json.dump(env, f, indent=2)
+        with open(os.path.join(OUT, "samples", name), "w", encoding="utf-8") as f:
+            json.dump(env, f, indent=2, ensure_ascii=False)
     files = {}
+    rel_paths = []
     for root, _, fnames in os.walk(OUT):
-        for fn in sorted(fnames):
-            if fn == "manifest.json": continue
-            p = os.path.join(root, fn)
-            files[os.path.relpath(p, OUT).replace("\\", "/")] = sha256_hex(open(p, "rb").read())
+        for fn in fnames:
+            if fn == "manifest.json":
+                continue
+            rel_paths.append(os.path.relpath(os.path.join(root, fn), OUT).replace("\\", "/"))
+    for rel in sorted(rel_paths):
+        files[rel] = sha256_hex(open(os.path.join(OUT, rel), "rb").read())
     bundle_hash = sha256_hex(canonical(files))
     manifest = {"evidence_bundle_id": "bundle:MRUN-2026-06-11-A",
                 "bundle_manifest_hash": bundle_hash, "generated_at": ts(0),
                 "envelope_count": len(ch.envelopes), "chain_head": ch.prev,
                 "chain_verification": msg, "files": files,
-                "note": "Golden trace (industrial): hashes real; signatures and anchor store simulated."}
-    with open(os.path.join(OUT, "manifest.json"), "w") as f: json.dump(manifest, f, indent=2)
+                "note": "Golden trace v2 (industrial): hashes real (RFC 8785 JCS); signatures and anchor store simulated."}
+    with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2, ensure_ascii=False)
     print(msg)
     print(f"envelopes={len(ch.envelopes)} parts={len(rows)} artifacts={len(artifacts)} bundle={bundle_hash[:16]}…")
 

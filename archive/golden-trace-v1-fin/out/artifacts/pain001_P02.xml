@@ -1,0 +1,14 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.11">
+  <CstmrCdtTrfInitn>
+    <GrpHdr><MsgId>CALD-PAIN-02</MsgId><CreDtTm>2026-06-09T09:00:00.000Z</CreDtTm></GrpHdr>
+    <PmtInf>
+      <Dbtr><Nm>Caldera Robotics Ltd</Nm><Acct><Id>[REDACTED:iban-debtor]</Id></Acct></Dbtr>
+      <CdtTrfTxInf>
+        <PmtId><EndToEndId>E2E-CALD-20260609-0002</EndToEndId></PmtId>
+        <Amt><InstdAmt Ccy="EUR">12880.50</InstdAmt></Amt>
+        <Cdtr><Nm>Helix Tooling BV</Nm><Acct><Id>[REDACTED:iban-SUP-002]</Id></Acct></Cdtr>
+        <RmtInf><Ustrd>INV-2026-3325</Ustrd></RmtInf>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>

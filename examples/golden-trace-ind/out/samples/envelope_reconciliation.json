@@ -60,8 +60,6 @@
     "goods_receipt_count": 14,
     "envelope_commit_count": 14,
     "scrap_count": 0,
-    "evidence_coverage_ratio": 1.0,
-    "tamper_evident_coverage_ratio": 1.0,
     "batch_record_count": 14,
     "settlement_artifact": {
       "ref": "artifacts/b2mml_batchrecord_MRUN-2026-06-11-A.xml",
@@ -78,11 +76,11 @@
   "envelope_id": "env:MRUN-2026-06-11-A/0073",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "afc642fe037ed149abfcdf19ba55d8360bc7b92fb50e99db345ea800de38050e",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "6298dd65829b2c4bfa64270cbe1982403ab0a818d398abd3ffb9002125973c4e",
     "signing_key_id": "key:ironmark/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
-    "envelope_hash": "88f9d604af3a531e4e1ae07b664427e8e48c4ac739e00ebda60e27e753d144bd",
-    "signature": "SIG-STUB(88f9d604af3a531e)"
+    "envelope_hash": "7e57bf6a285583835753c18d698159742fd03d5fe4b0f26996606afd841a58b9",
+    "signature": "SIG-STUB(7e57bf6a28558383)"
   }
 }

@@ -102,11 +102,11 @@
   "envelope_id": "env:MRUN-2026-06-11-A/0016",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "2caeae8ea0a54b7d8c448d01ad5e4c329973cdadab270fbc51208bdbafeb4a07",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "13a01b710b634801a65c3b63c52a70ddf8cf9b1977d3fcaf72ae4c31cd5668d4",
     "signing_key_id": "key:ironmark/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
-    "envelope_hash": "191bbbf919d89a1482fe6673dd11d77c91bb72876d931d3dfa7373640ed3a342",
-    "signature": "SIG-STUB(191bbbf919d89a14)"
+    "envelope_hash": "438ef3ce6130e1ba13a4127c1f8feb93ed17e914c3eb316b52f3445736af2cea",
+    "signature": "SIG-STUB(438ef3ce6130e1ba)"
   }
 }

@@ -57,7 +57,7 @@
     "anchor_receipt_id": "anch:001",
     "anchoring_method": "write_once_store (SIMULATED)",
     "anchored_at": "2026-06-11T07:05:00.000Z",
-    "chain_head_hash": "bdf60861910121b1d5d3f91077c78aee26c03294542985727407b05b9b4ff684",
+    "chain_head_hash": "7041071a5600749588a2f65f2962efea894f526c25d3075ca4f23b1b463ed0d3",
     "anchor_store_ref": "anchorstore:trustline-demo/eu",
     "anchoring_latency_ms": 740
   },
@@ -65,11 +65,11 @@
   "envelope_id": "env:MRUN-2026-06-11-A/0037",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "bdf60861910121b1d5d3f91077c78aee26c03294542985727407b05b9b4ff684",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "7041071a5600749588a2f65f2962efea894f526c25d3075ca4f23b1b463ed0d3",
     "signing_key_id": "key:ironmark/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
-    "envelope_hash": "b5815dc03e2ec7bd1c5d3f014648c84f67340f3c6eadc987f72a056e93f2f106",
-    "signature": "SIG-STUB(b5815dc03e2ec7bd)"
+    "envelope_hash": "4c0765f0318fd7a965edc276a3f1cfa428db0ba0a73d8a5e281d507fde65d02a",
+    "signature": "SIG-STUB(4c0765f0318fd7a9)"
   }
 }

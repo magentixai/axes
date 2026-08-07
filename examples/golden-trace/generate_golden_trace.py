@@ -22,16 +22,31 @@ Outputs (under ./out):
 
 Design notes:
   * Field names follow the Cross-Wave Vocabulary Harmonisation sheet (draft canonical keys).
-  * Hash chain: SHA-256 over canonical JSON (sorted keys, compact separators),
+  * Hash chain: SHA-256 over RFC 8785 JCS canonical JSON,
     excluding `integrity.envelope_hash` and `integrity.signature` at hash time.
-    `canonicalisation_version` = "GT-JCS-0" (golden-trace stand-in for a real JCS profile).
+    `canonicalisation_version` = "RFC8785-JCS". Monetary fields use Amount (integer
+    atomic EUR minor units); derived ratios render in the report layer only.
   * Signatures and external anchor receipts are STUBS (clearly marked). Hashes are real.
   * Deterministic: fixed timestamps, no randomness.
 """
 
-import json, hashlib, os
+import json, hashlib, os, sys
 from collections import OrderedDict
 from datetime import datetime, timedelta, timezone
+from decimal import Decimal
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+from tools.axes_canonical import (
+    CANONICALISATION_VERSION,
+    amount_from_decimal,
+    assert_no_floats_in_hash_scope,
+    canonical_bytes,
+    envelope_digest,
+    ratio_display,
+    sha256_hex,
+)
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 
@@ -41,7 +56,13 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 SE_VERSION = "0.1-draft"
 PROFILE_ID = "se-profile:payments-emitter/0.1-draft"
 CONFORMANCE_LEVEL = "SE-C4-assurance-report-capable (claimed, golden-trace)"
-CANON = "GT-JCS-0"
+CANON = CANONICALISATION_VERSION
+CORPUS_ASSET_NOTE = (
+    "Golden Trace v2: monetary fields use Amount with asset iso4217:EUR "
+    "(decimals=2 minor units); canonical form is RFC 8785 JCS; digest is "
+    "SHA-256 over canonical bytes (declared, agile). Crypto Amounts "
+    "(e.g. caip19:… USDC decimals=6) are exercised in vectors/."
+)
 
 ORG = "org:caldera-robotics"
 TENANT = "tenant:caldera-prod"
@@ -57,7 +78,7 @@ ACTOR = {
     "connector_id": "connector:openbank-gw/2.2.0",
     "provider_id": "provider:first-meridian-bank",
 }
-SAMPLING = {"temperature": 0.2, "top_p": 0.9, "max_tokens": 4096,
+SAMPLING = {"temperature": "0.2", "top_p": "0.9", "max_tokens": 4096,
             "reproducibility_note": "non-zero temperature: reproducible in distribution, not in instance"}
 
 AUTHORITY = {
@@ -67,8 +88,8 @@ AUTHORITY = {
     "policy_ref": "policy:caldera/ap-payments", "policy_version": "3.2",
     "policy_effective_from": "2026-05-01T00:00:00Z",
     "capability_id": "cap:sepa-inst-credit-transfer",
-    "scope": {"per_payment_limit": {"amount": 25000.00, "currency": "EUR"},
-              "batch_aggregate_limit": {"amount": 150000.00, "currency": "EUR"},
+    "scope": {"per_payment_limit": amount_from_decimal("25000.00"),
+              "batch_aggregate_limit": amount_from_decimal("150000.00"),
               "beneficiary_constraint": "supplier-master:v2026-05 (approved list only)",
               "approval_rule": "no human approval required at/below per-payment limit to approved beneficiaries",
               "valid_from": "2026-04-02T00:00:00Z", "valid_until": "2026-12-31T23:59:59Z"},
@@ -90,8 +111,8 @@ AMOUNTS = [4475.00, 12880.50, 23900.00, 9240.10, 3318.75, 15602.00, 7777.77,
            1949.99, 11025.40, 6890.00, 2475.25, 8112.60, 5230.95, 4527.87]
 INVOICES = [f"INV-2026-{n}" for n in (3318, 3325, 3327, 3340, 3341, 3355, 3360,
                                       3361, 3372, 3375, 3380, 3384, 3390, 3391)]
-BATCH_LIMIT = AUTHORITY["scope"]["batch_aggregate_limit"]["amount"]
-PER_LIMIT = AUTHORITY["scope"]["per_payment_limit"]["amount"]
+BATCH_LIMIT = AUTHORITY["scope"]["batch_aggregate_limit"]
+PER_LIMIT = AUTHORITY["scope"]["per_payment_limit"]
 
 TRACE_ID = "4bf92f3577b34da6a3ce929d0e0e4736"   # W3C Trace Context compatible
 HEARTBEAT_INTERVAL_S = 60
@@ -100,8 +121,8 @@ ANCHOR_INTERVAL_S = 300
 # ----------------------------------------------------------------------------
 # 2. Hashing, chaining, stub signing
 # ----------------------------------------------------------------------------
-def sha256_hex(b: bytes) -> str: return hashlib.sha256(b).hexdigest()
-def canonical(obj) -> bytes: return json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()
+def canonical(obj) -> bytes:
+    return canonical_bytes(obj)
 
 class Chain:
     def __init__(self):
@@ -117,7 +138,8 @@ class Chain:
             "signing_key_id": "key:caldera/se-emitter-2026q2",
             "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
         })
-        h = sha256_hex(canonical(env))
+        assert_no_floats_in_hash_scope(env)
+        h = envelope_digest(env)
         env["integrity"]["envelope_hash"] = h
         env["integrity"]["signature"] = "SIG-STUB(" + h[:16] + ")"     # stub, see README
         self.prev = h
@@ -231,7 +253,7 @@ def build():
 
     e = base_env("plan_created", 9, "advisory", "span-plan", "span-batch")
     e["plan"] = {"planned_payment_count": 14,
-                 "planned_aggregate": {"amount": round(sum(AMOUNTS), 2), "currency": "EUR"},
+                 "planned_aggregate": amount_from_decimal(str(round(sum(AMOUNTS), 2))),
                  "plan_ref": "artifact:plan/APRUN-2026-06-09-A"}
     later(9, e)
 
@@ -241,7 +263,8 @@ def build():
         e2e = f"E2E-CALD-20260609-{i:04d}"
         span = f"span-pay-{i:02d}"
         idem = f"idem:APRUN-2026-06-09-A/{i:04d}"
-        util = round(amount / PER_LIMIT, 4)
+        amt = amount_from_decimal(str(amount))
+        util = ratio_display(int(amt["value"]), int(PER_LIMIT["value"]))
 
         e = base_env("policy_check_performed", p0, "approval", span, "span-batch", payment=i)
         e["controls"] = {"control_evaluation_phase": "pre_commit", "control_set_ref": "ctl:ap-pay/v3.2",
@@ -250,7 +273,7 @@ def build():
                  "control_result": "passed", "evidence_ref": f"suppliermaster:v2026-05/{sid}"},
                 {"control_id": "CTL-LIMIT-02", "name": "per-payment limit",
                  "control_result": "passed",
-                 "observed": {"amount": amount, "limit": PER_LIMIT, "authority_utilisation_ratio": util}},
+                 "observed": {"amount": amt, "limit": PER_LIMIT}},
                 {"control_id": "CTL-DUPL-03", "name": "duplicate instruction (idempotency key unseen)",
                  "control_result": "passed", "idempotency_key": idem}]}
         e["authority"]["approval_status"] = "not_required"
@@ -265,7 +288,7 @@ def build():
             "commit_boundary_status": "commit_attempted",
             "commit_mechanism": "payment_initiation", "commit_impact_class": "money_movement",
             "transaction_ref": e2e, "idempotency_key": idem, "idempotency_key_forwarded": True,
-            "monetary": {"amount": amount, "currency": "EUR"},
+            "monetary": {"amount": amt},
             "beneficiary_ref": f"suppliermaster:v2026-05/{sid}",
             "instruction_artifact": {"ref": f"artifacts/{pain_name}", "sha256": pain_hash,
                                      "scheme": "ISO20022-pain.001.001.11"}}
@@ -290,7 +313,7 @@ def build():
         e["operation"] = {"operation": "submit_sepa_inst_credit_transfer", "transaction_ref": e2e,
                           "commit_boundary_status": "committed",
                           "commit_mechanism": "payment_initiation", "commit_impact_class": "money_movement",
-                          "monetary": {"amount": amount, "currency": "EUR"}}
+                          "monetary": {"amount": amt}}
         e["result"] = {"result_status": "success", "side_effect_confirmation_status": "confirmed"}
         e["acknowledgments"] = [
             {"ack_layer": "transport", "ack_scheme": "HTTPS", "ack_code": "200",
@@ -333,7 +356,6 @@ def build():
                                    "+ bank-statement FMB-STMT-2026-06-09",
         "population_basis": "independently_reconciled",
         "expected_count_erp": 14, "statement_count_bank": 14, "envelope_commit_count": 14,
-        "evidence_coverage_ratio": 1.0, "tamper_evident_coverage_ratio": 1.0,
         "settlement_artifact": {"ref": "artifacts/camt053_20260609.xml", "sha256": camt_hash,
                                 "scheme": "ISO20022-camt.053.001.08"},
         "acknowledgment_rung": {"ack_layer": "settlement", "ack_scheme": "ISO20022-camt.053.001.08",
@@ -348,11 +370,10 @@ def build():
                                          "connector telemetry shows no other destinations"}
     later(recon_sec + 60, e)
 
+    batch_total = amount_from_decimal(str(round(sum(AMOUNTS), 2)))
     e = base_env("execution_completed", recon_sec + 90, "execution", "span-batch")
     e["summary"] = {"committed_count": 14, "exception_count": 0, "human_intervention_count": 0,
-                    "aggregate": {"amount": round(sum(AMOUNTS), 2), "currency": "EUR"},
-                    "batch_limit_utilisation_ratio": round(sum(AMOUNTS) / BATCH_LIMIT, 4),
-                    "peak_per_payment_utilisation_ratio": max(r["utilisation"] for r in payment_rows)}
+                    "aggregate": batch_total}
     later(recon_sec + 90, e)
 
     e = base_env("evidence_exported", recon_sec + 120, "execution", "span-export", "span-batch")
@@ -376,6 +397,9 @@ def build():
 # ----------------------------------------------------------------------------
 def cite(env, path): return f"[env:{env['sequence_number']:04d} | {path}]"
 
+def fmt_eur(amt: dict) -> float:
+    return int(amt["value"]) / (10 ** amt["decimals"])
+
 def write_reports(ch, rows, artifacts):
     by_kind = {}
     for e in ch.envelopes: by_kind.setdefault(e["event_kind"], []).append(e)
@@ -387,9 +411,10 @@ def write_reports(ch, rows, artifacts):
     exported = by_kind["evidence_exported"][0]
     anchors = by_kind["attestation_recorded"]
     hbs = by_kind["heartbeat_event"]
-    total = done["summary"]["aggregate"]["amount"]
-    peak = done["summary"]["peak_per_payment_utilisation_ratio"]
-    batch_util = done["summary"]["batch_limit_utilisation_ratio"]
+    total_amt = done["summary"]["aggregate"]
+    total = fmt_eur(total_amt)
+    peak = max(r["utilisation"] for r in rows)
+    batch_util = ratio_display(int(total_amt["value"]), int(BATCH_LIMIT["value"]))
     n_env = len(ch.envelopes)
 
     # ---------------- Report A: Board assurance summary --------------------
@@ -399,7 +424,7 @@ def write_reports(ch, rows, artifacts):
 ## The assurance statement
 > **An authorised autonomous process executed 14 payment instructions under delegated authority AD-7844.** {cite(commit_ok[0],'authority.authority_context_id')} {cite(done,'summary.committed_count')} - all 14 commit events carry `authority_context_id = AD-7844` with delegation receipt `delrec:AD-7844/2026-04-02` granted by the CFO {cite(commit_ok[0],'authority.delegation_receipt_id')} {cite(commit_ok[0],'authority.delegator_id')} under payment policy v3.2 in force throughout {cite(commit_ok[0],'authority.policy_version')}.
 >
-> **All payments remained within approved policy boundaries.** Each of the 14 instructions passed three pre-commit policy checks - approved-beneficiary, per-payment limit, and duplicate-key - evaluated *before* execution, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. Peak single-payment authority utilisation was {peak:.1%} of the €25,000 limit (payment 3) {cite(policy[2],'controls.checks[1].observed.authority_utilisation_ratio')}; batch aggregate €{total:,.2f} used {batch_util:.1%} of the €150,000 batch limit {cite(done,'summary.batch_limit_utilisation_ratio')}.
+> **All payments remained within approved policy boundaries.** Each of the 14 instructions passed three pre-commit policy checks - approved-beneficiary, per-payment limit, and duplicate-key - evaluated *before* execution, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. Peak single-payment authority utilisation was {peak:.1%} of the EUR 25,000 limit (payment 3, derived from Amount operands) {cite(policy[2],'controls.checks[1].observed.amount')} {cite(policy[2],'controls.checks[1].observed.limit')}; batch aggregate EUR {total:,.2f} used {batch_util:.1%} of the EUR 150,000 batch limit (report-layer derived).
 >
 > **No exceptions requiring human intervention occurred.** Exception count 0, human-intervention count 0 {cite(done,'summary.exception_count')} {cite(done,'summary.human_intervention_count')}; no approval was required under the policy rule for at-limit payments to approved beneficiaries {cite(policy[0],'authority.approval_status')} {cite(policy[0],'authority.approval_basis')}.
 >
@@ -409,7 +434,7 @@ def write_reports(ch, rows, artifacts):
 
 ## What the board should know
 - **External confirmation, not self-assertion:** every payment carries a three-rung acknowledgment ladder - transport (HTTPS 200), protocol (bank API ACCEPTED), business (ISO 20022 pacs.002 status **ACSC** = settlement completed) {cite(commit_ok[0],'acknowledgments[*]')} - and the bank's end-of-day camt.053 statement reconciles **14 of 14** instructions {cite(recon,'reconciliation.statement_count_bank')}.
-- **Completeness is measured, not asserted:** the in-scope population is independently defined (ERP approved-invoice queue: 14 due; bank statement: 14 booked) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% {cite(recon,'reconciliation.evidence_population_ref')} {cite(recon,'reconciliation.evidence_coverage_ratio')}.
+- **Completeness is measured, not asserted:** the in-scope population is independently defined (ERP approved-invoice queue: 14 due; bank statement: 14 booked) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% (report-layer derived) {cite(recon,'reconciliation.evidence_population_ref')} {cite(recon,'reconciliation.envelope_commit_count')}.
 - **Leading indicator:** one payment ran at {peak:.1%} of its limit; nothing breached, but limit headroom on supplier SUP-003 invoices is worth a policy review.
 - **Recommended position:** continue autonomous operation at current scope; no restriction indicated by this run's evidence.
 
@@ -434,7 +459,7 @@ Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-c
 
 ## 2. Population and completeness (IPE basis)
 - Population definition: ERP approved-invoice queue at 08:55Z (14 due) reconciled against bank statement FMB-STMT-2026-06-09 (14 booked) - **independently reconciled**, not self-reported {cite(recon,'reconciliation.population_basis')}.
-- Coverage: envelopes 14/14 (100%); tamper-evident 100% {cite(recon,'reconciliation.evidence_coverage_ratio')}.
+- Coverage: envelopes 14/14 (100%); tamper-evident 100% (report-layer derived from envelope_commit_count).
 - Sequence continuity: envelope sequence numbers 0001–{n_env:04d} contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) {cite(hbs[0],'liveness.declared_heartbeat_interval_s')}.
 
 ## 3. Evidence quality
@@ -463,13 +488,13 @@ agent:caldera/ap-pilot 2.4.1 → orchestrator:caldera/flowdeck 1.9 → model:ant
 Delegation AD-7844: CFO → AP agent; per-payment €25,000; batch €150,000; approved-beneficiary constraint (supplier-master v2026-05); validity 2026-04-02→2026-12-31; policy `caldera/ap-payments` v3.2 in force {cite(commit_ok[0],'authority.policy_ref')}. The granting principal (`delegator_id`) is recorded pseudonymously; resolution is available to authorised reviewers via the access model.
 
 ## 4. Evidence completeness and capture boundary
-Coverage 14/14 against an independently reconciled population (ERP queue + bank statement) {cite(recon,'reconciliation.evidence_coverage_ratio')}. **Declared capture boundary:** the interbank leg (pacs.008 between First Meridian and beneficiary banks) is *outside* the emitter's capture boundary and is evidenced indirectly via pacs.002 ACSC and camt.053; this is disclosed, not inferred. Emission posture fail-closed for commit-boundary actions {cite(commit_ok[0],'emission.emission_fail_posture')}.
+Coverage 14/14 against an independently reconciled population (ERP queue + bank statement) {cite(recon,'reconciliation.envelope_commit_count')}. **Declared capture boundary:** the interbank leg (pacs.008 between First Meridian and beneficiary banks) is *outside* the emitter's capture boundary and is evidenced indirectly via pacs.002 ACSC and camt.053; this is disclosed, not inferred. Emission posture fail-closed for commit-boundary actions {cite(commit_ok[0],'emission.emission_fail_posture')}.
 
 ## 5. Exceptions and material events
 None. 14/14 committed; 0 exceptions; 0 human interventions; 0 control failures {cite(done,'summary')}.
 
 ## 6. Cryptographic sealing status
-SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), contiguous sequence 0001–{n_env:04d}; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope {cite(commit_ok[0] if False else by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
+SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalisation_version = {CANON}`), contiguous sequence 0001-{n_env:04d}; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope {cite(commit_ok[0] if False else by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
 
 ## 7. Appendix A - artifact register (ISO 20022)
 | Artifact | SHA-256 |
@@ -495,7 +520,7 @@ Evidence supports: internal audit reliance; external review with re-verification
     D = f"""# Forensic Execution Pack - APRUN-2026-06-09-A
 
 ## 1. Verification procedure (vendor-neutral)
-1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with sorted keys and compact separators; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64×'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Regulator Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1–4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
+1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with RFC 8785 JCS; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64×'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Regulator Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1-4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
 
 ## 2. Envelope sequence (first 24 of {n_env}; full stream in envelopes.jsonl)
 | Seq | event_kind | Pay# | occurred_at | envelope_hash |
@@ -514,12 +539,12 @@ Edges: agent→orchestrator→model (inference); agent→gateway→connector→p
 ## 5. Chronology and silence semantics
 Run window 09:00:00–09:10:52Z; heartbeats every 60s ({len(hbs)} beats, 0 silent windows); anchors at 300s cadence ({len(anchors)} receipts); EOD reconciliation 18:10Z. Emission fail-closed ⇒ within the declared boundary, absence of an envelope implies absence of a commit-boundary action.
 
-## 6. Known stubs and limitations (golden trace)
-Signatures are placeholders; anchor store is simulated; pacs.002 webhook authenticity (mTLS) is asserted not demonstrated; the interbank pacs.008 leg is outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and artifact linkage are real and re-verifiable.
+## 6. Known stubs and limitations (golden trace v2)
+Signatures are placeholders; anchor store is simulated (EB-004 real `distributed_ledger` anchor pending giskard09 confirmation on #3); pacs.002 webhook authenticity (mTLS) is asserted not demonstrated; the interbank pacs.008 leg is outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and artifact linkage are real and re-verifiable under RFC 8785 JCS with integer Amount fields (no JSON floats in hash scope).
 """
     for name, content in (("report_A_board.md", A), ("report_B_audit.md", B),
                           ("report_C_regulator.md", C), ("report_D_forensic.md", D)):
-        with open(os.path.join(OUT, "reports", name), "w") as f: f.write(content)
+        with open(os.path.join(OUT, "reports", name), "w", encoding="utf-8") as f: f.write(content)
 
 # ----------------------------------------------------------------------------
 # 6. Manifest, samples, verify, main
@@ -537,7 +562,7 @@ def verify(envs):
 
 def main():
     ch, rows, artifacts = build()
-    with open(os.path.join(OUT, "envelopes.jsonl"), "w") as f:
+    with open(os.path.join(OUT, "envelopes.jsonl"), "w", encoding="utf-8") as f:
         for e in ch.envelopes: f.write(json.dumps(e) + "\n")
     ok, msg = verify(ch.envelopes); assert ok, msg
     write_reports(ch, rows, artifacts)
@@ -548,21 +573,26 @@ def main():
              "envelope_anchor.json": lambda e: e["event_kind"]=="attestation_recorded"}
     for name, pred in picks.items():
         env = next(e for e in ch.envelopes if pred(e))
-        with open(os.path.join(OUT, "samples", name), "w") as f: json.dump(env, f, indent=2)
-    # manifest
+        with open(os.path.join(OUT, "samples", name), "w", encoding="utf-8") as f: json.dump(env, f, indent=2, ensure_ascii=False)
+    # manifest (sorted file list, forward-slash keys, for cross-platform byte stability)
     files = {}
+    rel_paths = []
     for root, _, fnames in os.walk(OUT):
-        for fn in sorted(fnames):
-            if fn == "manifest.json": continue
-            p = os.path.join(root, fn)
-            files[os.path.relpath(p, OUT)] = sha256_hex(open(p, "rb").read())
+        for fn in fnames:
+            if fn == "manifest.json":
+                continue
+            rel_paths.append(os.path.relpath(os.path.join(root, fn), OUT).replace("\\", "/"))
+    for rel in sorted(rel_paths):
+        p = os.path.join(OUT, *rel.split("/"))
+        files[rel] = sha256_hex(open(p, "rb").read())
     bundle_hash = sha256_hex(canonical(files))
     manifest = {"evidence_bundle_id": "bundle:APRUN-2026-06-09-A",
                 "bundle_manifest_hash": bundle_hash, "generated_at": ts(0),
                 "envelope_count": len(ch.envelopes), "chain_head": ch.prev,
                 "chain_verification": msg, "files": files,
-                "note": "Golden trace: hashes real; signatures and anchor store simulated."}
-    with open(os.path.join(OUT, "manifest.json"), "w") as f: json.dump(manifest, f, indent=2)
+                "corpus_asset_note": CORPUS_ASSET_NOTE,
+                "note": "Golden trace v2: hashes real (RFC 8785 JCS); signatures and anchor store simulated."}
+    with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8") as f: json.dump(manifest, f, indent=2, ensure_ascii=False)
     print(msg); print(f"envelopes={len(ch.envelopes)} payments={len(rows)} artifacts={len(artifacts)} bundle={bundle_hash[:16]}…")
 
 if __name__ == "__main__":

@@ -10,13 +10,13 @@ agent:caldera/ap-pilot 2.4.1 → orchestrator:caldera/flowdeck 1.9 → model:ant
 Delegation AD-7844: CFO → AP agent; per-payment €25,000; batch €150,000; approved-beneficiary constraint (supplier-master v2026-05); validity 2026-04-02→2026-12-31; policy `caldera/ap-payments` v3.2 in force [env:0007 | authority.policy_ref]. The granting principal (`delegator_id`) is recorded pseudonymously; resolution is available to authorised reviewers via the access model.
 
 ## 4. Evidence completeness and capture boundary
-Coverage 14/14 against an independently reconciled population (ERP queue + bank statement) [env:0073 | reconciliation.evidence_coverage_ratio]. **Declared capture boundary:** the interbank leg (pacs.008 between First Meridian and beneficiary banks) is *outside* the emitter's capture boundary and is evidenced indirectly via pacs.002 ACSC and camt.053; this is disclosed, not inferred. Emission posture fail-closed for commit-boundary actions [env:0007 | emission.emission_fail_posture].
+Coverage 14/14 against an independently reconciled population (ERP queue + bank statement) [env:0073 | reconciliation.envelope_commit_count]. **Declared capture boundary:** the interbank leg (pacs.008 between First Meridian and beneficiary banks) is *outside* the emitter's capture boundary and is evidenced indirectly via pacs.002 ACSC and camt.053; this is disclosed, not inferred. Emission posture fail-closed for commit-boundary actions [env:0007 | emission.emission_fail_posture].
 
 ## 5. Exceptions and material events
 None. 14/14 committed; 0 exceptions; 0 human interventions; 0 control failures [env:0075 | summary].
 
 ## 6. Cryptographic sealing status
-SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), contiguous sequence 0001–0076; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope [env:0005 | privacy.redacted_fields].
+SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalisation_version = RFC8785-JCS`), contiguous sequence 0001-0076; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope [env:0005 | privacy.redacted_fields].
 
 ## 7. Appendix A - artifact register (ISO 20022)
 | Artifact | SHA-256 |
@@ -54,9 +54,9 @@ SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), 
 ## 8. Appendix B - anchor receipts
 | Receipt | Anchored at | Chain head |
 |---|---|---|
-| anch:001 | 2026-06-09T09:05:00.000Z | `41a6eea3a3406063…` |
-| anch:002 | 2026-06-09T09:10:00.000Z | `19cc4313d3de3fcb…` |
-| anch:003 | 2026-06-09T09:10:52.000Z | `f2dd091a293dc236…` |
+| anch:001 | 2026-06-09T09:05:00.000Z | `bb8c3c3402fb5a55…` |
+| anch:002 | 2026-06-09T09:10:00.000Z | `b3fedff1591049a0…` |
+| anch:003 | 2026-06-09T09:10:52.000Z | `49f364637b9f60c7…` |
 
 ## 9. Reliance boundary
 Evidence supports: internal audit reliance; external review with re-verification; insurer notification support. It does not constitute: a compliance certification; a fairness or legality determination; coverage of systems outside §4's declared boundary.

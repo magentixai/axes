@@ -1,0 +1,69 @@
+{
+  "se_version": "0.1-draft",
+  "profile_id": "se-profile:payments-emitter/0.1-draft",
+  "event_kind": "execution_started",
+  "occurred_at": "2026-06-09T09:00:00.000Z",
+  "emitted_at": "2026-06-09T09:00:00.400Z",
+  "recorded_at": "2026-06-09T09:00:00.900Z",
+  "timestamp_source": "ntp:cluster-sync",
+  "clock_sync_confidence": "high",
+  "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "span_id": "span-batch",
+  "org_id": "org:caldera-robotics",
+  "tenant_id": "tenant:caldera-prod",
+  "environment_id": "env:prod-eu",
+  "environment_type": "production",
+  "execution_phase": "execution",
+  "execution_mode": "autonomous",
+  "actor": {
+    "agent_id": "agent:caldera/ap-pilot",
+    "agent_version": "2.4.1",
+    "orchestrator_id": "orchestrator:caldera/flowdeck",
+    "orchestrator_version": "1.9.0",
+    "model_id": "model:anthropic/claude-sonnet-4-6",
+    "model_version": "2025-09-29",
+    "runtime_id": "runtime:aws/eu-west-1/ecs-apx-11",
+    "tool_id": "tool:bankapi/sepa-inst-submit",
+    "tool_gateway_id": "gateway:caldera/toolproxy-3",
+    "connector_id": "connector:openbank-gw/2.2.0",
+    "provider_id": "provider:first-meridian-bank"
+  },
+  "authority": {
+    "authority_context_id": "AD-7844",
+    "delegation_receipt_id": "delrec:AD-7844/2026-04-02",
+    "delegator_id": "person:pseu/cfo-9f31",
+    "policy_ref": "policy:caldera/ap-payments",
+    "policy_version": "3.2",
+    "capability_id": "cap:sepa-inst-credit-transfer"
+  },
+  "emission": {
+    "capture_layer": "runtime_sdk",
+    "capture_status": "captured",
+    "emission_fail_posture": "fail_closed",
+    "declared_heartbeat_interval_s": 60
+  },
+  "evidence_quality": {
+    "evidence_origin": "runtime",
+    "assertion_basis": "observed",
+    "corroboration_state": "internally_corroborated"
+  },
+  "privacy": {
+    "personal_data_flag": false,
+    "redaction_applied": false
+  },
+  "operation": {
+    "operation": "ap_payment_batch_run",
+    "batch_id": "APRUN-2026-06-09-A",
+    "target_system_id": "erp:ledgerworks/prod",
+    "target_resource_type": "approved_invoice_queue"
+  },
+  "sequence_number": 1,
+  "envelope_id": "env:APRUN-2026-06-09-A/0001",
+  "integrity": {
+    "hash_algorithm": "SHA-256",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signing_key_id": "key:caldera/se-emitter-2026q2",
+    "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "se_version": "0.1-draft",
+  "profile_id": "se-profile:payments-emitter/0.1-draft",
+  "event_kind": "source_system_reconciliation",
+  "occurred_at": "2026-06-09T18:10:52.000Z",
+  "emitted_at": "2026-06-09T18:10:52.400Z",
+  "recorded_at": "2026-06-09T18:10:52.900Z",
+  "timestamp_source": "ntp:cluster-sync",
+  "clock_sync_confidence": "high",
+  "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "span_id": "span-recon",
+  "parent_span_id": "span-batch",
+  "org_id": "org:caldera-robotics",
+  "tenant_id": "tenant:caldera-prod",
+  "environment_id": "env:prod-eu",
+  "environment_type": "production",
+  "execution_phase": "execution",
+  "execution_mode": "autonomous",
+  "actor": {
+    "agent_id": "agent:caldera/ap-pilot",
+    "agent_version": "2.4.1",
+    "orchestrator_id": "orchestrator:caldera/flowdeck",
+    "orchestrator_version": "1.9.0",
+    "model_id": "model:anthropic/claude-sonnet-4-6",
+    "model_version": "2025-09-29",
+    "runtime_id": "runtime:aws/eu-west-1/ecs-apx-11",
+    "tool_id": "tool:bankapi/sepa-inst-submit",
+    "tool_gateway_id": "gateway:caldera/toolproxy-3",
+    "connector_id": "connector:openbank-gw/2.2.0",
+    "provider_id": "provider:first-meridian-bank"
+  },
+  "authority": {
+    "authority_context_id": "AD-7844",
+    "delegation_receipt_id": "delrec:AD-7844/2026-04-02",
+    "delegator_id": "person:pseu/cfo-9f31",
+    "policy_ref": "policy:caldera/ap-payments",
+    "policy_version": "3.2",
+    "capability_id": "cap:sepa-inst-credit-transfer"
+  },
+  "emission": {
+    "capture_layer": "runtime_sdk",
+    "capture_status": "captured",
+    "emission_fail_posture": "fail_closed",
+    "declared_heartbeat_interval_s": 60
+  },
+  "evidence_quality": {
+    "evidence_origin": "runtime",
+    "assertion_basis": "observed",
+    "corroboration_state": "source_system_corroborated"
+  },
+  "privacy": {
+    "personal_data_flag": false,
+    "redaction_applied": false
+  },
+  "reconciliation": {
+    "evidence_population_ref": "population:erp-approved-invoice-queue@2026-06-09T08:55Z (14 due) + bank-statement FMB-STMT-2026-06-09",
+    "population_basis": "independently_reconciled",
+    "expected_count_erp": 14,
+    "statement_count_bank": 14,
+    "envelope_commit_count": 14,
+    "settlement_artifact": {
+      "ref": "artifacts/camt053_20260609.xml",
+      "sha256": "9f5f1a2529ee0d61ceac1d74e52fc40b444bd12849291a6e3b4222c2f49a3ca0",
+      "scheme": "ISO20022-camt.053.001.08"
+    },
+    "acknowledgment_rung": {
+      "ack_layer": "settlement",
+      "ack_scheme": "ISO20022-camt.053.001.08",
+      "ack_authenticity_basis": "counterparty_signed (statement channel, STUB)"
+    }
+  },
+  "sequence_number": 73,
+  "envelope_id": "env:APRUN-2026-06-09-A/0073",
+  "integrity": {
+    "hash_algorithm": "SHA-256",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "b1c14faae9fe8ca332e115173755fc6ca99c7c9caddadb8da1548f0516ad2106",
+    "signing_key_id": "key:caldera/se-emitter-2026q2",
+    "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2"
+  }
+}

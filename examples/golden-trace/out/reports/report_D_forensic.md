@@ -1,35 +1,35 @@
 # Forensic Execution Pack - APRUN-2026-06-09-A
 
 ## 1. Verification procedure (vendor-neutral)
-1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with sorted keys and compact separators; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64×'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Regulator Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1–4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
+1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with RFC 8785 JCS; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64×'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Regulator Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1-4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
 
 ## 2. Envelope sequence (first 24 of 76; full stream in envelopes.jsonl)
 | Seq | event_kind | Pay# | occurred_at | envelope_hash |
 |---|---|---|---|---|
-| 0001 | execution_started |  -  | 2026-06-09T09:00:00.000Z | `06b5e40ae177…` |
-| 0002 | context_retrieved |  -  | 2026-06-09T09:00:04.000Z | `c45bf398955a…` |
-| 0003 | plan_created |  -  | 2026-06-09T09:00:09.000Z | `d5ba004f462b…` |
-| 0004 | policy_check_performed | 1 | 2026-06-09T09:00:12.000Z | `b1206830ecdb…` |
-| 0005 | commit_attempted | 1 | 2026-06-09T09:00:18.000Z | `37f43ef468fa…` |
-| 0006 | tool_invoked | 1 | 2026-06-09T09:00:19.000Z | `1f1a382ff7ac…` |
-| 0007 | commit_succeeded | 1 | 2026-06-09T09:00:21.000Z | `3676cba2056e…` |
-| 0008 | policy_check_performed | 2 | 2026-06-09T09:00:57.000Z | `ee890545177c…` |
-| 0009 | heartbeat_event |  -  | 2026-06-09T09:01:00.000Z | `fbcd1eb02740…` |
-| 0010 | commit_attempted | 2 | 2026-06-09T09:01:03.000Z | `d36e6962fba0…` |
-| 0011 | tool_invoked | 2 | 2026-06-09T09:01:04.000Z | `a8516a896b1b…` |
-| 0012 | commit_succeeded | 2 | 2026-06-09T09:01:06.000Z | `30083260e8b8…` |
-| 0013 | policy_check_performed | 3 | 2026-06-09T09:01:42.000Z | `8c0fbc5b10ab…` |
-| 0014 | commit_attempted | 3 | 2026-06-09T09:01:48.000Z | `ed4639eaf65b…` |
-| 0015 | tool_invoked | 3 | 2026-06-09T09:01:49.000Z | `975a3cb05778…` |
-| 0016 | commit_succeeded | 3 | 2026-06-09T09:01:51.000Z | `f06df8908d41…` |
-| 0017 | heartbeat_event |  -  | 2026-06-09T09:02:00.000Z | `896ec4f05690…` |
-| 0018 | policy_check_performed | 4 | 2026-06-09T09:02:27.000Z | `7eabe561b7ca…` |
-| 0019 | commit_attempted | 4 | 2026-06-09T09:02:33.000Z | `a7f0b15d494f…` |
-| 0020 | tool_invoked | 4 | 2026-06-09T09:02:34.000Z | `856e190bd2ec…` |
-| 0021 | commit_succeeded | 4 | 2026-06-09T09:02:36.000Z | `152fa0b5e912…` |
-| 0022 | heartbeat_event |  -  | 2026-06-09T09:03:00.000Z | `b19a70816247…` |
-| 0023 | policy_check_performed | 5 | 2026-06-09T09:03:12.000Z | `b08c316b464f…` |
-| 0024 | commit_attempted | 5 | 2026-06-09T09:03:18.000Z | `22f88bedb6c9…` |
+| 0001 | execution_started |  -  | 2026-06-09T09:00:00.000Z | `d68e2599796b…` |
+| 0002 | context_retrieved |  -  | 2026-06-09T09:00:04.000Z | `e9a0874007e3…` |
+| 0003 | plan_created |  -  | 2026-06-09T09:00:09.000Z | `70331c730b17…` |
+| 0004 | policy_check_performed | 1 | 2026-06-09T09:00:12.000Z | `8fc02ab4cf78…` |
+| 0005 | commit_attempted | 1 | 2026-06-09T09:00:18.000Z | `1b0c9862f443…` |
+| 0006 | tool_invoked | 1 | 2026-06-09T09:00:19.000Z | `525a1fbb77b3…` |
+| 0007 | commit_succeeded | 1 | 2026-06-09T09:00:21.000Z | `0a9b1628e5a1…` |
+| 0008 | policy_check_performed | 2 | 2026-06-09T09:00:57.000Z | `824175129ed0…` |
+| 0009 | heartbeat_event |  -  | 2026-06-09T09:01:00.000Z | `9a8ecf2a45bc…` |
+| 0010 | commit_attempted | 2 | 2026-06-09T09:01:03.000Z | `f74418e2157c…` |
+| 0011 | tool_invoked | 2 | 2026-06-09T09:01:04.000Z | `d84869be56ee…` |
+| 0012 | commit_succeeded | 2 | 2026-06-09T09:01:06.000Z | `d6a218a172b4…` |
+| 0013 | policy_check_performed | 3 | 2026-06-09T09:01:42.000Z | `2fd1f9e7a6b8…` |
+| 0014 | commit_attempted | 3 | 2026-06-09T09:01:48.000Z | `e1e0bf798f03…` |
+| 0015 | tool_invoked | 3 | 2026-06-09T09:01:49.000Z | `0706ed2befc5…` |
+| 0016 | commit_succeeded | 3 | 2026-06-09T09:01:51.000Z | `2f633b7cc10e…` |
+| 0017 | heartbeat_event |  -  | 2026-06-09T09:02:00.000Z | `4cb15725bce6…` |
+| 0018 | policy_check_performed | 4 | 2026-06-09T09:02:27.000Z | `284c779caa24…` |
+| 0019 | commit_attempted | 4 | 2026-06-09T09:02:33.000Z | `b090679f2e5c…` |
+| 0020 | tool_invoked | 4 | 2026-06-09T09:02:34.000Z | `9595376240ec…` |
+| 0021 | commit_succeeded | 4 | 2026-06-09T09:02:36.000Z | `e98d8014b58f…` |
+| 0022 | heartbeat_event |  -  | 2026-06-09T09:03:00.000Z | `cb4bff0ba6a5…` |
+| 0023 | policy_check_performed | 5 | 2026-06-09T09:03:12.000Z | `2a3ad83fe7c4…` |
+| 0024 | commit_attempted | 5 | 2026-06-09T09:03:18.000Z | `f11503eedeaf…` |
 
 ## 3. Payment ↔ artifact ↔ confirmation linkage
 | # | EndToEndId | Amount | Beneficiary | Invoice | pain.001 hash | pacs.002 hash | Committed at |
@@ -56,5 +56,5 @@ Edges: agent→orchestrator→model (inference); agent→gateway→connector→p
 ## 5. Chronology and silence semantics
 Run window 09:00:00–09:10:52Z; heartbeats every 60s (10 beats, 0 silent windows); anchors at 300s cadence (3 receipts); EOD reconciliation 18:10Z. Emission fail-closed ⇒ within the declared boundary, absence of an envelope implies absence of a commit-boundary action.
 
-## 6. Known stubs and limitations (golden trace)
-Signatures are placeholders; anchor store is simulated; pacs.002 webhook authenticity (mTLS) is asserted not demonstrated; the interbank pacs.008 leg is outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and artifact linkage are real and re-verifiable.
+## 6. Known stubs and limitations (golden trace v2)
+Signatures are placeholders; anchor store is simulated (EB-004 real `distributed_ledger` anchor pending giskard09 confirmation on #3); pacs.002 webhook authenticity (mTLS) is asserted not demonstrated; the interbank pacs.008 leg is outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and artifact linkage are real and re-verifiable under RFC 8785 JCS with integer Amount fields (no JSON floats in hash scope).

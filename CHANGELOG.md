@@ -4,6 +4,16 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-08-07 - Golden Trace v2 (P1-1 canonicalisation ruling)
+- **RFC 8785 JCS** replaces GT-JCS-0; `tools/axes_canonical.py` + `requirements-dev.txt` (`jcs` package).
+- **Numeric kinds:** `Amount` for money/limits with namespaced `asset` (`iso4217:EUR` in Fin; `caip19:…` USDC decimals=6 in vectors); derived ratios removed from hash scope; `temperature`/`top_p` and industrial measurements/Cpk as exact decimal strings; zero JSON floats in hash scope (generator assertion).
+- Golden Trace **Fin and Ind** corpora regenerated; v1 archived at [`archive/golden-trace-v1-fin/`](archive/golden-trace-v1-fin/) and [`archive/golden-trace-v1-ind/`](archive/golden-trace-v1-ind/).
+- **Conformance vectors:** [`vectors/`](vectors/) (canoncheck layout) including custody deployer-capturer twins and USDC Amount example; `tools/generate_conformance_vectors.py`.
+- **Schema:** [`schema/amount.schema.json`](schema/amount.schema.json), [`schema/ratio.schema.json`](schema/ratio.schema.json).
+- **Docs:** [`docs/09-canonicalisation-and-hashing.md`](docs/09-canonicalisation-and-hashing.md) expanded; decision register P1-1 partial decision recorded (MarkovianProtocol, Tersign credits).
+- EB-004 real `distributed_ledger` anchor deferred pending giskard09 confirmation on axes#3 (SIMULATED stub retained, honestly disclosed).
+- Rule-layer custody verdicts are declared via `reject_code` on vectors; proven by two-sided interop (custody-ref-v1), not an in-repo verifier (Planned, P4).
+
 ### 2026-07-24 - SCITT profile rules, Agent 365/Purview map, ARBITR import backlog
 - SCITT existence-bound profile rules expanded in [`docs/interop/x402-and-anchoring.md`](docs/interop/x402-and-anchoring.md); ROADMAP Band C detail + EB-006; adjacent-standards watch updated (RFC 9943 family).
 - Agent 365 OTel + Purview audit → SE mapping: [`docs/interop/agent365-purview-se-mapping.md`](docs/interop/agent365-purview-se-mapping.md) (incl. delegation/cross-estate/non-M365 gaps).

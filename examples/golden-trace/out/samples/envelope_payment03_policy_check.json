@@ -70,9 +70,16 @@
         "name": "per-payment limit",
         "control_result": "passed",
         "observed": {
-          "amount": 23900.0,
-          "limit": 25000.0,
-          "authority_utilisation_ratio": 0.956
+          "amount": {
+            "value": "2390000",
+            "decimals": 2,
+            "asset": "iso4217:EUR"
+          },
+          "limit": {
+            "value": "2500000",
+            "decimals": 2,
+            "asset": "iso4217:EUR"
+          }
         }
       },
       {
@@ -87,11 +94,11 @@
   "envelope_id": "env:APRUN-2026-06-09-A/0013",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "30083260e8b8b5609c3cf43e8ff4343592851b966cdef0976d905b841cf5c7ae",
+    "canonicalisation_version": "RFC8785-JCS",
+    "previous_envelope_hash": "d6a218a172b401e8990724f198bcff903383cfe8752e245dba572cdec78c5c8b",
     "signing_key_id": "key:caldera/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
-    "envelope_hash": "8c0fbc5b10ab6b1a01202ed2122b3229dca593a8a6469971337f0d9fe95c3377",
-    "signature": "SIG-STUB(8c0fbc5b10ab6b1a)"
+    "envelope_hash": "2fd1f9e7a6b8f6e3b8a6b9860336605097bf3daca8b60c3162f2e93ef8ebcd0f",
+    "signature": "SIG-STUB(2fd1f9e7a6b8f6e3)"
   }
 }
