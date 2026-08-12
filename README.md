@@ -26,6 +26,19 @@ AXES defines the missing artefact: the **Standards Envelope (SE)** - an atomic, 
 
 **It is not:** a logging format, an observability protocol, a policy or blocking engine, an identity system, a payment rail, a runtime, or a compliance certificate. AXES evidences; it never certifies. Conformant evidence supports scoped assurance statements - it does not license claims of "compliant", "safe" or "guaranteed".
 
+## Who this is for
+
+AXES was designed report-backwards from 58 roles across six reader audiences. It is written for the people accountable for an autonomous action, not only the engineers who built the system - and these are roles, not industries: the same envelope serves a SEPA Instant payment agent, an industrial production-batch release, or any other action that becomes real.
+
+| You are… | What AXES lets you rely on |
+|---|---|
+| **Executive and board** - the board and its risk and audit committees, CEO, CFO, COO, CRO, CTO/CIO, CISO, Chief Compliance Officer, General Counsel, Chief AI Officer | A board-readable account of what a system did, under whose authority and within what limits, with materiality and residual risk on the face of it - to sign off on or challenge on its own terms, without taking the engineering team's word for it. |
+| **Business process owners** - process, business-unit and operations owners across payment, finance, customer, HR and legal operations | Whether the agent behaved correctly inside the business process, what actually became real, and what the accountable owner needs to do about it now. |
+| **Internal assurance** - internal audit, enterprise risk, compliance, controls testing, operational resilience and continuity, data protection, InfoSec, fraud and financial crime, third-party risk, model risk | Evidence you can test rather than accept - append-only, hash-chained, interpretation separated from fact - with control results, chain of custody, and gaps the record declares rather than hides. |
+| **External assurance** - external auditors, regulators and supervisors, insurers, external counsel, courts and dispute bodies, enterprise clients, partners, investors, incident responders, forensic investigators | A portable, vendor-neutral record that reads the same whichever runtime produced it, re-verifiable by a competent third party from the bundle alone, with no proprietary tooling required. |
+| **Standards and ecosystem** - standards bodies and contributors, framework builders, SaaS vendors, agent-runtime providers, MCP and tool-protocol implementers, open-source contributors | A stable, openly governed evidence contract to build to and map against, with a graded conformance ladder and public test vectors, so an implementation can claim conformance honestly and interoperate. |
+| **Technical and platform** - engineering leadership, platform, DevOps/SRE, security, AI, data and product engineering, connector developers | One evidence contract to emit against, portable across runtimes and vendors - a small mandatory core with condition-triggered modules, not a bespoke logging scheme per consumer. Emit once; every reader above works from the same envelopes. |
+
 ## Why "AXES"
 
 A measurement without a coordinate system is just a number. An agent's action without a frame of reference is just a log line - it tells you something happened, but not where it sits: inside or outside authority, before or after the point of no return, near to or far from a limit, corroborated or merely claimed.
