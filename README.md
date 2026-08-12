@@ -61,11 +61,11 @@ Core disciplines: append-only envelopes (corrections are new envelopes, never ed
 
 ## See it working: the Golden Traces
 
-Two complete bundles share the **same evidence skeleton** (76 envelopes, hash chain, heartbeats, anchors, four role-specific reports). Only domain and artifact standards differ - finance vs manufacturing.
+Two complete bundles share the **same evidence skeleton** (76 envelopes, hash chain, heartbeats, anchors, four role-specific reports). Only domain and artefact standards differ - finance vs manufacturing.
 
 **Financial services** - [`examples/golden-trace/`](examples/golden-trace/) (APRUN-2026-06-09-A): autonomous accounts-payable run, 14 SEPA Instant payments under delegated authority AD-7844, ISO 20022 artefacts (pain.001 / pacs.002 / camt.053).
 
-**Industrial and manufacturing** - [`examples/golden-trace-ind/`](examples/golden-trace-ind/) (MRUN-2026-06-11-A): autonomous production batch release, 14 machined parts under delegated authority MD-5120, QIF / ISA-95 B2MML / MTConnect / EN 10204 stand-ins.
+**Industrial and manufacturing** - [`examples/golden-trace-ind/`](examples/golden-trace-ind/) (MRUN-2026-06-11-A): autonomous production batch release, 14 machined parts under delegated authority MD-5120, QIF / ISA-95 B2MML / MTConnect / EN 10204.
 
 Run `python3 generate_golden_trace.py` from either directory to regenerate the bundle byte-identically and re-verify the chain. The verification procedure in each bundle's `report_D_forensic.md` is executable from the artefacts alone - which is the point. Corpus verification vs emitter conformance claims: [`CONFORMANCE.md`](CONFORMANCE.md).
 
