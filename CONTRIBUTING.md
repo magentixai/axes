@@ -46,6 +46,8 @@ These eleven questions carry the requirements-governance discipline of the origi
 
 Additional standing rules: scoped-assurance language only (no field or definition may imply "compliant/safe/guaranteed"); fact and interpretation stay separated; personal data by reference and pseudonymous key only; no mandatory hidden chain-of-thought capture.
 
+**Corpus of record.** The Golden Trace corpus changes only in announced releases. No corpus regeneration lands on the default branch outside a tagged release with a [`RELEASES.md`](RELEASES.md) row, published digests, and notice to anyone who has published a verification result against the previous release. A field rename or schema correction may be *decided* at any time; it *lands in the corpus* at the next release. Reproduce published figures from the tag named in [`VERIFY.md`](VERIFY.md), not from an untagged default-branch HEAD.
+
 ## What happens next
 
 Decisions land in [`registers/decision-register.md`](registers/decision-register.md) with a recorded rationale - including rejections and deferrals, which are staged, not deleted. Accepted items flow into the field catalogue with full traceability to your issue.

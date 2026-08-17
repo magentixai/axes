@@ -41,6 +41,7 @@
 **Definition.** The exact version of the SE envelope specification this envelope conforms to (e.g. `se-0.1.0`).
 **Purpose.** Lets any verifier or consumer select the correct schema, vocabularies and canonicalisation rules - including years later, from an evidence archive.
 **Rules.** MUST identify a published spec version; MUST sit inside the hash scope. Consumers encountering an unknown version follow `unknown_field_policy` (docs/08), never guess.
+**Canonicalisation registry.** Companion field `integrity.canonicalisation_version` is the closed registry identifier **`RFC8785-JCS`**. What it dereferences to (RFC 8785 revision, UTF-8 output, UTF-16 code-unit member sort, no Unicode normalisation, digest algorithm and encoding declared separately) is stated in [docs/09](../09-canonicalisation-and-hashing.md). The earlier form `RFC8785` is retired. A change in any of those properties is a new identifier.
 **Report / audit usage.** Report manifests state the version(s) of every envelope relied on; mixed-version evidence sets are disclosed.
 **Misinterpretations.** This is the *spec* version, not the emitter's software version (Module 02) and not the schema-file URI.
 **Sources.** REQ-STD-001/007/015; REQ-EXEC-021.
@@ -60,6 +61,12 @@
 **Purpose.** The single most-read field in the standard: topology reconstruction, report sectioning, conformance checks and aggregate analysis all pivot on it.
 **Allowed values.** The canonical merge (docs/06 §2.1, §2.10) uses the technical lifecycle backbone (`execution_started`, `model_invoked`, `tool_invoked`, `policy_check_performed`, `approval_requested`, `commit_attempted`, `commit_succeeded`, `commit_failed`, `boundary_exit`, `boundary_entry`, `rollback_attempted`, `escalation_triggered`, `execution_completed`, `evidence_gap_detected`, …) plus assurance events (`human_intervention`, `attestation_recorded`, `evidence_exported`), authority lifecycle (`authority_granted`, `authority_revoked`, `authority_suspended`, `autonomy_state_changed`, `containment_action`), evidence lifecycle (`redaction_applied`, `trace_continuation_declared`), and the practice-sourced `heartbeat_event` and `source_system_reconciliation` (GT-001/002). Final enumeration freezes with this module; values are additive-only thereafter.
 **Rules.** One envelope, one event. Compound happenings emit multiple envelopes sharing `trace_id`.
+**Witnessed, never authored (correlation and triage).** Two additional `event_kind` values record asynchronous cross-event work no single decision produced:
+
+- `correlation_finding` - a finding that spans events (worked example: three individually permitted tool calls - list a directory, read a credentials file to a temporary path, POST to a collector - produce one critical credential-exfiltration finding no per-call gate can see). Raised in public discussion by Ioannis Loutsis (Agentmetry).
+- `triage_disposition` - a later human disposition of that finding, on the same append-only chain.
+
+The custody axis records who produced the finding, when, and how far confirmed. **The custodian attests that a finding was emitted, by whom and when. It never asserts the correlation itself.** Enforcement belongs to the policy engine; correlation belongs to SOC and threat-detection, not the custodian; custody-of-the-fact belongs to the witness (discipline stated by Dani Danwin / TrustLayers). Collapsing the correlator's job into the witness is how a custodian becomes something it has no authority to be.
 **Report / audit usage.** Drives every timeline, the prevention-vs-detection distinction (`policy_check_performed` before `commit_attempted`), and silence semantics (`heartbeat_event`).
 **Misinterpretations.** `event_kind` is *what happened in the lifecycle*, never *how well it went* (`result_status`, Module 05/06) and never *what it means* (interpretation layer).
 **Sources.** REQ-STD-009; REQ-EXEC-018; harmonisation §2.1/§2.10; GT-001/002.
@@ -67,8 +74,9 @@
 ## 1.4 `occurred_at` · 1.5 `emitted_at` · 1.6 `recorded_at`
 
 **Definitions.** `occurred_at`: when the evidenced event happened in the world. `emitted_at`: when the emitter created this envelope. `recorded_at`: when the receiving store durably persisted it (stamped by the recipient, outside emitter control).
-**Purpose.** The three-point time model makes capture latency and pipeline delay *measurable* instead of invisible: `emitted_at − occurred_at` = capture lag; `recorded_at − emitted_at` = pipeline lag. Forensic ordering uses `occurred_at`; evidence-pipeline health uses the other two.
-**Rules.** RFC 3339 UTC with millisecond precision or better. `occurred_at ≤ emitted_at` (violations are evidence-quality signals, not silent corrections). `recorded_at` lives outside the emitter hash scope (it is the recipient's assertion - its integrity is the store's chain-of-custody problem, Module 14).
+**Purpose.** The three-point time model makes capture latency and pipeline delay *measurable* instead of invisible: `emitted_at − occurred_at` = capture lag; `recorded_at − emitted_at` = pipeline lag. Forensic ordering uses `occurred_at`; evidence-pipeline health uses the other two. Named derivations live in the catalogue, not as stored envelope fields, unless the derivation crosses a boundary the consumer cannot reproduce or the executing system computed the value and **acted on it** (then store it with `assertion_basis: derived` and `evidence_origin: runtime`; divergence from independent recomputation is how a miscalculating agent is detected).
+**Anchoring lag (pending gt-v2.1 / WO16 Task 12).** Catalogue replacement: **remove** the stored derived field (`anchoring_latency_ms` on corpus tag `corpus/2026-08-08-gt-v2`; `anchoring_latency` on the retired default-branch lineage) and **add** `anchor_requested_at` (ISO 8601 UTC). Named derivation: **`anchored_at − anchor_requested_at` = anchoring lag**. Docs and corpus disagree until the announced regeneration; do not treat the stored latency on today's envelopes as a catalogue-conformant measurement. Unit stays out of the key (D-017). `declared_heartbeat_interval_s` is specified for the same release: carry the unit in the value, following `monetary: {amount, currency}`. **`size_bytes` is exempt:** bytes is the canonical unit for size with no realistic alternative; applying the rule there would be pedantry.
+**Rules.** RFC 3339 UTC with millisecond precision or better. `occurred_at ≤ emitted_at` (violations are evidence-quality signals, not silent corrections). `recorded_at` lives outside the emitter hash scope (it is the recipient's assertion - its integrity is the store's chain-of-custody problem, Module 14 / [docs/09a](../09a-hash-scope-and-exclusions.md)).
 **Misinterpretations.** None of the three is "the trusted time" by itself - trusted time requires `timestamp_source` plus external anchoring (Module 14). Backfilled evidence shows honest old `occurred_at` with new `emitted_at`, never rewritten timestamps.
 **Sources.** REQ-TECH-002; REQ-IA-002; GAP-EXEC-003; BPO-011.
 
@@ -85,6 +93,24 @@
 **Definition.** The organisational scope of the evidence: owning organisation, tenant within it, and environment (`production`, `staging`, …) - stable opaque identifiers.
 **Purpose.** Tenant isolation is a first-class assurance claim ("no cross-tenant exposure") and every access, export and report is scoped by these three. They are also the boundary coordinates for cross-scope navigation (Module 08).
 **Rules.** All three mandatory on every envelope, inside the hash scope. Identifiers are opaque; display names live in the presentation layer. `environment_id` identifies *which* environment; whether execution was real is `execution_phase` (1.20) - the two must not be conflated.
+**Identifier companions (any identifier field).** Two optional attributes compose with any identifier:
+- `<identifier>_scope` - a value from `identifier_scope` (docs/06 §2.11). **Where absent, a consumer MUST NOT assume `global`.**
+- `<identifier>_resolution_authority` - a reference to the party able to resolve the identifier. A reference, never the resolution. AXES is not an identity service; linkage lives with the issuer and is reached through legal process.
+**AXES prefixed identifier syntax.** Where this corpus uses prefixed forms, the prefix is the namespace and what follows is opaque to consumers who do not implement that namespace. A consumer MAY NOT infer legal identity, correlation across relying parties, or control of the named party from the string alone.
+
+| Prefix | Meaning | What follows |
+|---|---|---|
+| `agent:` | runtime agent instance | issuer-local path (e.g. `caldera/ap-pilot`) |
+| `org:` | organisation | issuer-local org id |
+| `person:pseu/` | pseudonymous person key | opaque token; not a civil identity |
+| `tool:` | tool or API | issuer-local tool id |
+| `runtime:` | execution runtime | issuer-local runtime id |
+| `key:` | signing or verification key | issuer-local key id |
+| `connector:` | connector | issuer-local connector id |
+| `provider:` | service provider | issuer-local provider id |
+| `orchestrator:` | orchestrator | issuer-local orchestrator id |
+
+**Portability rule.** A conformance predicate MUST NOT be bound to one identity syntax. A predicate that cannot parse an identifier returns `verification_unavailable` (or the appropriate `derivation_outcome`), never a rejection: rejecting an unparseable identifier manufactures a false negative. Finding and credit: wowlegend (Tersign) in [axes#6](https://github.com/magentixai/axes/issues/6) (11 Aug 2026) - AXES `agent:`/`org:` forms were unparseable to a verifier bound to `0x` addresses, so both custody twins rejected including the one AXES accepts. `identifier_type` on identifier-set members (below) is the parse-rule declaration that finding empirically requires.
 **Privacy.** Low, but tenant identifiers can be commercially sensitive: exports to third parties may pseudonymise them under a declared redaction profile (Module 13) without breaking chain verification (post-P1-1).
 **Sources.** REQ-EXT-011; REQ-EXEC-016; alignment with the original ingest doctrine (tenant isolation).
 
@@ -148,6 +174,62 @@
 **Definition.** The namespaced extension container (`{"extensions": {"com.example": {...}}}`) with declaration, `must_understand` and `unknown_field_policy` semantics per docs/08.
 **Rules.** Extensions never override canonical fields; unknown extensions are preserved and forwarded; hashing treatment of unknown content is fixed by the canonicalisation spec so extensions cannot break verification.
 **Sources.** REQ-STD-006/021; harmonisation §2.10.
+
+## 1.24 Identifier sets (content-keyed objects)
+
+**Set versus sequence.** JCS sorts object members by UTF-16 code unit. It does **not** sort array elements. Converting a scalar identifier to an array would mean two emitters recording the same set in different orders produce different digests.
+
+- A **set** (members unique, order carries no meaning) becomes an **object keyed by a content-derived key** - the identifier value itself. JCS then sorts members. Each member is a field, so it composes with per-field selective disclosure.
+- A **sequence** (order is part of the fact, for example the acknowledgment ladder) stays an **array where every element carries an explicit sequence or rung field**, so order is stated data rather than implied by position.
+
+Illustrative shape (not a live corpus envelope; `example.test` / `0xEXAMPLE` are obviously illustrative):
+
+```json
+"payee_identifiers": {
+  "dns:example.test": {
+    "identifier_type": "dns",
+    "entry_basis": "observed_live_402",
+    "verification_status": "verified",
+    "verifier_ref": "org:example-verifier",
+    "verification_method": "live_402_payTo",
+    "verified_at": "2026-06-09T09:02:00.000Z",
+    "identifier_role": "primary",
+    "identifier_scope": "global"
+  },
+  "eip155:8453:0xEXAMPLE": {
+    "identifier_type": "caip10",
+    "entry_basis": "counterparty_asserted",
+    "verification_status": "unverified",
+    "identifier_role": "alternative",
+    "identifier_scope": "global"
+  }
+}
+```
+
+`identifier_type` is not decoration: it tells an external verifier which parse rule to apply (WO16 Task 17; axes#6).
+
+**Containment, not prevention.** Recording `verification_status` contains contaminated attribution, join poisoning, and laundering through a signed envelope. It does not prevent namespace squatting (registry governance, outside AXES). An unverified alternative recorded as established is worse than omitting it: the envelope would amplify the false claim.
+
+**Consumer rule.** A consumer MUST attribute only on identifiers whose `verification_status` meets its stated threshold. Unverified identifiers are recorded but are not attributable. A derivation asked to attribute value to a party whose only matching identifier is `unverified` MUST return `underivable_unverified_identifier` rather than a value.
+
+**Sources.** IDS-001..003; x402 Identity WG (Alfred Tom / OMA3 #3, #4; Nicole Dunn / Baselayer #10).
+
+## 1.25 `assertion_basis` at field or block scope
+
+**Definition.** Epistemic status (`observed` / `measured` / `asserted` / `inferred` / `derived` / `interpreted`) MAY be declared at field or block scope as well as envelope scope (`evidence_quality.assertion_basis`). The more specific declaration governs. An envelope-scope declaration MUST NOT be read as covering a field carrying its own.
+**Why this exists.** Envelope-scope `observed` with a stored derived latency, or with an unverified identifier, is a false epistemic declaration with no structural way to tell which field is which. Field-scope applicability resolves both defects. Four-part notes: [field-origin-notes.md](field-origin-notes.md).
+**Sources.** IDS-004; REQ-EXT-001; REQ-EXT-009.
+
+## 1.26 `anchor_requested_at` (pending gt-v2.1)
+
+**Definition.** ISO 8601 UTC instant when the emitter requested the external anchor. Catalogue-defined now; corpus values land in the announced Task 12 / Phase 1 regeneration. Until then the published envelopes still carry a stored derived latency field.
+**Named derivation.** `anchored_at − anchor_requested_at` = anchoring lag (not stored).
+**Sources.** Module 01 three-point time model; D-017; WO16 Task 4.
+
+## 1.27 `signer_presence` and `basis_status`
+
+**`signer_presence`.** Closed vocabulary (docs/06 §2.11). `stripped` MUST fail regardless of any strictness flag. Finding: Ryan Cason (orionsys); endorsement: Chou Deyu (Guardian). Deleting `signature` while leaving `signedBy` made a naive verifier return valid, even under a require-signatures flag, because the signature cannot sit inside its own hash input.
+**`basis_status`.** Closed companion (`demonstrated` | `stubbed` | `simulated`) alongside free-text authenticity and `anchoring_method` strings. Stub status MUST NOT live only in a parenthetical (`counterparty_signed (webhook mTLS, STUB)`, `write_once_store (SIMULATED)`). Finding: wowlegend in axes#6 - a disclosure only a human can read is not a control. Field definition lands now; corpus values land in Task 12. D-015 reading rule for SIMULATED anchors remains: a simulated method MUST NOT be read as a closed existence bound; `basis_status: simulated` makes that reachable by a verifier.
 
 ---
 

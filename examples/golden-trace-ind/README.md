@@ -34,7 +34,9 @@ out/reports/report_D_forensic.md    Forensic execution pack (incl. verification 
 
 ## What is real vs stubbed
 **Real and re-verifiable:** SHA-256 hash chain over canonical JSON (sorted keys, compact separators; `envelope_hash` and `signature` excluded from hash input; signing-key identity *included*), contiguous sequencing, time ordering, artifact hashes, manifest/bundle hash, all coverage and utilisation arithmetic. On anchor envelopes, `anchoring.chain_head_hash` is the real local chain head at that moment.
-**Stubbed and disclosed as such:** envelope signatures (`SIG-STUB`); the external anchor store (`anchoring_method: "write_once_store (SIMULATED)"`, demo `anchor_store_ref`); QMS mTLS authenticity of QIF results; MES batch-record signing. The reports disclose every stub - practising the scoped-assurance language the standard mandates.
+**Stubbed and disclosed as such:** envelope signatures (`SIG-STUB`); the external anchor store (`anchoring_method: "write_once_store (SIMULATED)"`, demo `anchor_store_ref`); QMS mTLS authenticity of QIF results; MES batch-record signing. The reports disclose every stub - practising the scoped-assurance language the standard mandates. Structured `basis_status` is specified in Module 01; corpus values land in gt-v2.1.
+
+**Illustrative stored latency (WO16 Task 4b).** Same class of defect as the financial bundle: the published gt-v2.0 anchor envelope stores a derived latency that does not reconcile with the envelope timestamps. Disclosed until the announced regeneration. See [`examples/golden-trace/README.md`](../golden-trace/README.md).
 
 **Reading rule for anchors (D-015):** `evidence_quality.corroboration_state: externally_anchored` on a SIMULATED method must **not** be treated as an independently verifiable existence bound. A third party cannot verify that the bytes existed unmodified at wall-clock time without trusting the generator. Local chain integrity != external existence. Golden Trace v2 replaces the stub with a real `anchoring_method` instance (see [`docs/interop/x402-and-anchoring.md`](../../docs/interop/x402-and-anchoring.md)).
 

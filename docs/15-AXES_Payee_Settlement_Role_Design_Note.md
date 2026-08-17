@@ -19,14 +19,15 @@ Two failure modes fall out of this, and both reach the AXES settle-time record:
  
 Add a declared `settlement_role` to each payee in the settle-time record. Enum, aligned to Mancy's discovery-descriptor role so a discovery-time declaration and a settlement-time record share one vocabulary:
  
-- `origin` - the party that earns the value: the resource provider whose payTo receives the payment as its own revenue. Earned volume is exactly the set of payments whose payee role is `origin`.
-- `facilitator` - the x402 facilitator relaying or settling on a seller's behalf. The observed wallet is a relay hop, not the earner.
-- `proxy_gateway` - a pass-through intermediary that fronts other services and routes payment onward.
+- `origin` - the principal: the party whose value it is, whether earned or spent. On the payee side that is typically the resource provider whose payTo receives the payment as its own revenue; on the payer side it is the party whose value is spent. Earned volume, when that is the question, is the set of payments whose *payee* role is `origin`.
+- `facilitator` - a relay settling on another party's behalf (including an x402 facilitator relaying or settling on a seller's behalf). The observed wallet is a relay hop, not the principal.
+- `proxy_gateway` - a pass-through intermediary that fronts other services and routes value onward.
 `facilitator` and `proxy_gateway` are pass-through and must not be counted as earned. This is the double-counting fix, moved from the aggregator's guess into the record's declaration.
  
 ## 3. Rules (what keeps it honest)
  
-- **Declared and checkable, not a badge.** Like `capture_relationship` (custody) and `corroboration_state`, the role is a load-bearing declaration. A payee claiming `origin` is checkable against the host's own live 402 response (does it advertise this payTo) and against observed on-chain behaviour (does the value stay, or flow onward). A role a payee's behaviour cannot support is a fraud signal to surface.
+- **Declared and checkable, not a badge.** Like `capture_relationship` (custody) and `corroboration_state`, the role is a load-bearing declaration. A payee claiming `origin` is checkable against the host's own live 402 response (does it advertise this payTo) and against observed on-chain behaviour (does the value stay, or flow onward). **The check runs against the `primary` identifier** in the identifier set (Module 01 §1.24). A mismatch on an `alternative` identifier is a signal, not a disqualification. A role a payee's behaviour cannot support is a fraud signal to surface.
+- **Correction to earlier wording.** Section 2 previously defined `origin` as "the party that earns the value". That token inverted on the payer side (who *funds* the value). The direction-neutral redefinition above replaces it; this line exists so an external quotation of the old sentence is not silently rewritten.
 - **Identity is carried by the attestation identity, never derived from `tx.from`.** The authorisation record's attestation identity is the source of truth for who authorised; the settle-time record's payee attribution plus `settlement_role` is the source of truth for who was paid and in what capacity. State this in doctrine with the relayer case as the worked example: an implementation that reads payer or payee from the chain sender is non-conformant.
 - **Category discipline holds.** `settlement_role` is a declared fact in the record. Whether to trust the declaration is the Assurance report / Evaluator layer, measured independently on top (Mancy's own scope note: reputation and outcomes stay out of the self-declared file). Do not fold reputation into the role.
 - **Corroboration composes.** A payee's `origin` claim may itself carry a `corroboration_state` (how independently the "this party earns it" claim is corroborated), so the two axes stack rather than collide.

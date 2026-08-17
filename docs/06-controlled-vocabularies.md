@@ -99,7 +99,64 @@
 - **`must_understand` + `unknown_field_policy` (SG 11.6): adopt** - they also settle unknown-field treatment during canonical hashing/verification.
 - **Naming conventions (§3 below):** no SG-source opinions exist; these are confirmed as editorial decisions for the Field Catalogue - ratify there.
 
-## 3. Open naming-convention decisions (route to Standards wave / catalogue)
+## 2.11 Alignment vocabs (WO16 / AGT #276 / x402 Identity WG) - closed sets
+
+Closed enumerations. Values are `lower_snake`. Additive-only after freeze.
+
+**`identifier_scope` (closed):**
+- `global` - comparable across all parties; the same value denotes the same subject everywhere
+- `relying_party_pairwise` - stable for one (subject, relying party) pair; uncorrelatable across relying parties by design
+- `issuer_internal` - meaningful only within the issuing system
+- `ephemeral` - valid for a single session or transaction; no cross-record continuity
+
+Where `<identifier>_scope` is absent, a consumer MUST NOT assume `global`. A defaulting reader is the failure this vocabulary prevents.
+
+**`entry_basis` (closed):** `counterparty_asserted` | `observed_live_402` | `credential_backed` | `third_party_attested`
+
+**`verification_status` (closed):** `unverified` | `verified` | `verification_failed` | `verification_unavailable`
+
+**`identifier_role` (closed):** `primary` | `alternative`
+
+**`signer_presence` (closed):**
+- `unsigned` - no signature was attempted; the record makes no authorship claim
+- `stripped` - an author is named but no signature is present; the authorship claim is unsupported. **MUST fail regardless of any strictness flag** (the attacker chooses whether the verifier runs strict)
+- `unverifiable` - a signature is present but the key or its authorisation cannot be resolved
+- `invalid` - a signature is present and resolvable and does not verify
+
+A top-level failure verdict is a fail-closed aggregate, not a claim that every lower property failed. AXES hashes the whole canonical envelope (self-referential signature excluded), which is what makes `stripped` detectable; see [docs/09a](09a-hash-scope-and-exclusions.md).
+
+**`hash_scope_exclusion_reason` (closed):** `self_referential` | `recipient_stamped` | `syntax_mutable`
+
+**`derivation_outcome` (closed):** each value supports a different conclusion for a reader.
+- `ok`
+- `underivable_missing_input` - a required input was never captured; a genuine evidence gap
+- `undisclosed` - committed at emission but not disclosed to this reader. NOT a gap. If redaction reads as missing evidence, an auditor concludes the opposite of the truth.
+- `not_independently_reproducible_keyed` - depends on a secret; a verifier without it can check consistency but not recompute. A designed privacy property working correctly.
+- `indeterminate_clock_skew` - clock provenance unknown on one side, or the margin falls inside the combined uncertainty
+- `underivable_identifier_scope` - the join crosses relying parties on a pairwise identifier; unsound by design, not unavailable by accident
+- `underivable_unverified_identifier` - attribution attempted on an identifier below the threshold
+- `derived_with_gap` - the span contains a recorded evidence gap
+- `superseded` - the source envelope has been superseded by an amendment
+- `underivable_conflicting_inputs` - inputs carry `corroboration_state: conflicting_evidence`; a derivation MUST NOT silently pick a side
+- `precision_insufficient` - input precision cannot support the requested output precision
+- `outside_capture_boundary` - the path was outside the capture boundary
+
+**`basis_status` (closed):** `demonstrated` | `stubbed` | `simulated` - structured companion to free-text authenticity / anchoring method strings. Status MUST NOT be embedded only in parenthetical prose.
+
+**`assertion_basis` field/block scope.** The existing envelope-scope values (`observed` / `measured` / `asserted` / `inferred` / `derived` / `interpreted`) remain. The more specific declaration governs. An envelope-scope declaration MUST NOT be read as covering a field or block that carries its own `assertion_basis`. This one change resolves two defects: a derived quantity sitting inside an envelope labelled observed, and an unverified identifier sitting inside an envelope labelled observed.
+
+**`settlement_role` (closed), direction-neutral:**
+- `origin` - the principal: the party whose value it is, whether earned or spent
+- `facilitator` - a relay settling on another party's behalf
+- `proxy_gateway` - a pass-through intermediary that fronts other services and routes value onward
+
+Correction: an earlier draft defined `origin` as "the party that earns the value", which inverts on the payer side. Checkability runs against the `primary` identifier; a mismatch on an `alternative` is a signal, not a disqualification. See [docs/15](15-AXES_Payee_Settlement_Role_Design_Note.md).
+
+## 3. Naming-convention decisions (route to catalogue)
+
+**Closed - casing.** Field keys are `lower_snake`; enum values are `lower_snake`. Rationale: ISO 20022 API/JSON best-practices whitepaper §7.1 recommends unabbreviated snake_case for JSON representations of ISO 20022 semantics; lowerCamelCase appears in none of ISO 20022's maintained representations (business model spaced title-case; XML vowel-stripped tags; JSON Schema generation draft retains those). AXES is internally consistent at this spelling. Concept-level interoperability uses declared representation pairs, never derived camel-to-snake transforms (ambiguous at digit boundaries and acronyms). Under JCS two spellings sort to different positions and produce different canonical bytes; see [docs/12](12-standards-alignment.md). Designed exception: a relying-party-scoped identifier (identifier_scope) legitimately produces different digests at different relying parties.
+
+Still open:
 1. Suffix discipline: `_flag` vs `_indicator` vs `_signal` - propose: `_indicator` for observed booleans, `_signal` for security/behaviour observations carrying confidence, no `_flag`.
 2. `_ref` vs `_id`: propose `_id` for identifiers minted within SE scope; `_ref` for pointers to external artifacts/systems.
 3. Effective-dating pattern: `*_version` + `effective_from`/`effective_until` standardised for every versioned reference (policy, delegation, control, model, terminology profile).

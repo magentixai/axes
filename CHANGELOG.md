@@ -4,6 +4,64 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-08-17 - Corpus of record (docs/17 Phase 0, D-018)
+- Tagged `corpus/2026-08-08-gt-v2` at `776cc0b` (externally verified Golden Trace v2) and `corpus/2026-08-15-pre-merge` at `b5b6d30` (retired default-branch lineage).
+- README corpus-of-record note; [`RELEASES.md`](RELEASES.md) and [`VERIFY.md`](VERIFY.md). Default-branch HEAD is not the corpus third parties verified.
+
+### 2026-08-17 - WO16 Task 12 - GATED
+- Corpus regeneration (remove stored anchoring-latency field, add `anchor_requested_at`, heartbeat rename, timestamp reconcile) is **not started**. It ships only as the announced gt-v2.1 supersession after the verified corpus is merged onto default. See [`docs/17-AXES_Corpus_of_Record_Remediation_Plan.md`](docs/17-AXES_Corpus_of_Record_Remediation_Plan.md) Phase 1.
+
+### 2026-08-17 - WO16 Task 1 - identifier_scope
+- Closed `identifier_scope` vocabulary; companion `_scope` / `_resolution_authority`; IDS-001..003. Absent scope MUST NOT default to global.
+
+### 2026-08-17 - WO16 Task 2 - identifier sets
+- Content-keyed identifier objects (JCS set-versus-sequence); `entry_basis`, `verification_status`, `identifier_role`; unverified identifiers recorded but not attributable.
+
+### 2026-08-17 - WO16 Task 3 - assertion_basis field scope
+- `assertion_basis` at field or block scope; more specific declaration governs (IDS-004). Resolves derived-in-observed and unverified-in-observed.
+
+### 2026-08-17 - WO16 Task 4 - derived values (catalogue only)
+- Specify removal of stored anchoring-latency in favour of `anchor_requested_at` and named lag; disclose gt-v2.0 timestamp inconsistency; heartbeat rename specified for Task 12; `size_bytes` exempted; BLD-011/026 amended. Corpus bytes unchanged.
+
+### 2026-08-17 - WO16 Task 5 - signer_presence
+- Closed four-value vocabulary; `stripped` MUST fail regardless of strictness flag.
+
+### 2026-08-17 - WO16 Task 7 - hash-scope note
+- New [`docs/09a-hash-scope-and-exclusions.md`](docs/09a-hash-scope-and-exclusions.md); `hash_scope_exclusion_reason`.
+
+### 2026-08-17 - WO16 Task 8 - CrossMsg citation
+- docs/09 no longer attributes an exclusion set to `ConversionRules`; declared-field-set / KVP inclusion; link to 09a §3.
+
+### 2026-08-17 - WO16 Task 9 - Derivation Profile Registry
+- DPR-001..015; `derivation_outcome`; `axes.authority_valid_at_action` three-state return; decision entries.
+
+### 2026-08-17 - WO16 Task 10 - casing
+- `lower_snake` ratified; casing closed in docs/06 §3; cross-layer spelling rule in docs/12 (JCS consequence; pairwise exception).
+
+### 2026-08-17 - WO16 Task 11 - custody, correlation, settlement_role
+- Not-self-declared custody rule; third identity coordinate; `correlation_finding` / `triage_disposition`; direction-neutral `settlement_role`.
+
+### 2026-08-17 - WO16 Task 13 - why this field exists
+- Four-part house style in the field-catalogue README; notes in [`docs/05-field-catalogue/field-origin-notes.md`](docs/05-field-catalogue/field-origin-notes.md).
+
+### 2026-08-17 - WO16 Task 14 - RFC8785-JCS
+- Normative dereferenceable `canonicalisation_version`; informal `RFC8785` retired.
+
+### 2026-08-17 - WO16 Task 17 - identity syntax portability
+- Prefix table; predicates MUST NOT bind to one syntax; credit wowlegend / axes#6.
+
+### 2026-08-17 - WO16 Task 6 - non-ASCII JCS vectors
+- Four new property vectors on `golden-trace-v2` (surrogate-pair key, NFC/NFD pair, ä/z collation, digest encoding) plus a locale-comparator negative check. Existing pinned values unchanged. A property that is only named is not pinned.
+
+### 2026-08-17 - WO16 Task 15 - reference verifier
+- `tools/axes_verify.py` on `golden-trace-v2`: offline JCS/digest, chain, `expected.json` including reject reason codes, custody twins. Typed outcomes. Vectors README: verifier shipped, not Planned P4.
+
+### 2026-08-17 - WO16 Task 16 - pass-and-fail predicates
+- Standing rule in `vectors/README.md`; TLC-008. Chain-break fail-set marked unexercised as a committed negative (would mutate the corpus of record).
+
+### 2026-08-17 - WO16 Task 18 - basis_status
+- Structured `demonstrated` \| `stubbed` \| `simulated`; GAP-EXEC-002 annotated with 0/43 confirming-party measurement. Corpus values gated.
+
 ### 2026-08-17 - Field naming: no unit in the key (D-017)
 - Renamed `anchoring_latency_ms` → `anchoring_latency` (unit = milliseconds, declared outside the identifier). Applies bar Rule 3 to our own corpus before raising it externally.
 - Golden Trace fin/ind generators and sample anchor envelopes regenerated so hash chains stay consistent.

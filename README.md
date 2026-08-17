@@ -6,6 +6,17 @@
 
 > **Status: Public Working Draft.** This standard is published early, deliberately. Breadth is visible from the first draft; maturity is governed openly. Every element carries a maturity label (`core` … `experimental`), every requirement is traceable in the [requirements register](registers/requirements-register.md), and every deferral or rejection is recorded with its reason in the [decision register](registers/decision-register.md). Nothing here is finished; everything here is governed. See the [ROADMAP](ROADMAP.md).
 
+## Corpus of record
+
+The Golden Trace corpus that external parties have independently verified is tagged **`corpus/2026-08-08-gt-v2`** (commit `776cc0b`).
+
+| Bundle | Chain head | Bundle digest |
+|---|---|---|
+| `golden-trace` (fin) | `71c10986320fa148ab89c65c3f92a4ddd12ebfaac2db4f9099fa0443ccb0b564` | `b45f7c47c81e06bceddb5694cd2b0f28cd2afd5082e5c1102b217c713d344352` |
+| `golden-trace-ind` | `93733e6a8b6f6be299f656ddfb951f13c9da4756f9d37470649ac3414056fba4` | `b926af903de3d5088a253a486044a7fc1bf8afd046958da0054ea152fc7c3463` |
+
+**The default branch currently carries a different, earlier corpus lineage that has not been externally verified.** If you are reproducing published figures, or following a verification result cited in a public thread, check out the tag above. A reconciliation is in progress and is tracked in [`RELEASES.md`](RELEASES.md). Reproduction commands: [`VERIFY.md`](VERIFY.md).
+
 ---
 
 ## The problem
@@ -134,6 +145,8 @@ Trimmed excerpt from the policy-check sample (full file linked above):
 | [`examples/`](examples/) | Golden Trace (current dialect) and [`examples/legacy/`](examples/legacy/) (archived May-sketch dialect) |
 | [`registers/`](registers/) | Requirements register, decision register, adjacent-standards watch, [three-layer evidence & control re-evaluation tracker](registers/three-layer-evidence-and-control-reevaluation.md) |
 | [`CONFORMANCE.md`](CONFORMANCE.md) | Operator guide: corpus verification vs SE-Cx claims ([docs/07](docs/07-conformance-levels.md) is the normative ladder home) |
+| [`RELEASES.md`](RELEASES.md) | Corpus release register: tags, chain heads, bundle digests, verification status |
+| [`VERIFY.md`](VERIFY.md) | Clone, checkout, regenerate and compare against published digests |
 | [`tools/`](tools/) | Reference validator and byte-level test vectors (in development) |
 | [`archive/`](archive/) | Design history, preserved with honest commentary - the standard shows its working |
 
