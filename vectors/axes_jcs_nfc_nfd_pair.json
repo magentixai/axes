@@ -1,0 +1,7 @@
+{
+  "se_version": "0.1-draft",
+  "event_kind": "jcs_property_check",
+  "note": "NFC and NFD of the same visual key are distinct members (RFC 8785 §3.1)",
+  "é": "composed",
+  "é": "decomposed"
+}

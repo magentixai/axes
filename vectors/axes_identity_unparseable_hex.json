@@ -1,0 +1,15 @@
+{
+  "se_version": "0.1-draft",
+  "event_kind": "jcs_property_check",
+  "note": "unparseable identity syntax is verification_unavailable, never a false-negative reject",
+  "custody": {
+    "capture_relationship": "independent_third_party",
+    "executor_id": "agent:caldera/ap-pilot",
+    "deployer_id": "org:caldera-robotics",
+    "capturer_id": "0xEXAMPLECAFE",
+    "signing_trust_ref": {
+      "ref": "custody-ref:external/notary-001",
+      "signer_id": "key:trustline/notary-2026q2"
+    }
+  }
+}
