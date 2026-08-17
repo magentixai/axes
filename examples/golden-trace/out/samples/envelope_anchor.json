@@ -58,7 +58,7 @@
     "anchored_at": "2026-06-09T09:05:00.000Z",
     "chain_head_hash": "41a6eea3a340606331195dca5d8cf6882ae29559943ff57b9ebab9364aa3ddc0",
     "anchor_store_ref": "anchorstore:trustline-demo/eu",
-    "anchoring_latency_ms": 740
+    "anchoring_latency": 740
   },
   "sequence_number": 37,
   "envelope_id": "env:APRUN-2026-06-09-A/0037",
@@ -68,7 +68,7 @@
     "previous_envelope_hash": "41a6eea3a340606331195dca5d8cf6882ae29559943ff57b9ebab9364aa3ddc0",
     "signing_key_id": "key:caldera/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
-    "envelope_hash": "b38db370d6724838709bad3d36a445860a71f6569d12bc31c466626256ae4c5c",
-    "signature": "SIG-STUB(b38db370d6724838)"
+    "envelope_hash": "085d26302c4e4adf37d40bcfa06ca64881735b0aa6eb25be5302f7b69d295fde",
+    "signature": "SIG-STUB(085d26302c4e4adf)"
   }
 }

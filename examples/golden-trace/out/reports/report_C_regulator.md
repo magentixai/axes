@@ -55,8 +55,8 @@ SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), 
 | Receipt | Anchored at | Chain head |
 |---|---|---|
 | anch:001 | 2026-06-09T09:05:00.000Z | `41a6eea3a3406063…` |
-| anch:002 | 2026-06-09T09:10:00.000Z | `19cc4313d3de3fcb…` |
-| anch:003 | 2026-06-09T09:10:52.000Z | `f2dd091a293dc236…` |
+| anch:002 | 2026-06-09T09:10:00.000Z | `30dfe018038a7065…` |
+| anch:003 | 2026-06-09T09:10:52.000Z | `7de9d1c3f9e54993…` |
 
 ## 9. Reliance boundary
 Evidence supports: internal audit reliance; external review with re-verification; insurer notification support. It does not constitute: a compliance certification; a fairness or legality determination; coverage of systems outside §4's declared boundary.

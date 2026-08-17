@@ -76,10 +76,10 @@
   "integrity": {
     "hash_algorithm": "SHA-256",
     "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "9b0cedb8ad5228e045688523a369d65170a5ab6c1bab70f346996ee28089342a",
+    "previous_envelope_hash": "2a3f6103a0c4588b6e601e254c7ac375dbaa090203b678414a7fea27c5823c84",
     "signing_key_id": "key:caldera/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
-    "envelope_hash": "8bb71bcb23578f1d4a3029f537b21e98b239b409dd6f5438f44ba15750c9ea47",
-    "signature": "SIG-STUB(8bb71bcb23578f1d)"
+    "envelope_hash": "e5d393604713d0cce8e6ff0619b657e14a359f5492c96a599d0c39d5688d8971",
+    "signature": "SIG-STUB(e5d393604713d0cc)"
   }
 }

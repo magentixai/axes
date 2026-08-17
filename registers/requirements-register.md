@@ -196,7 +196,7 @@ Source: the six second-eyes gap analyses. Tier-1 sourced gaps with schema/standa
 
 | ID | Gap/requirement | Severity | Layer | Implication | Dup |
 |---|---|---|---|---|---|
-| GAP-TECH-001 | External evidence anchoring: chain must terminate outside the system under investigation | HIGH | open_se + derived | external_anchor_ref, anchoring_method, anchored_at, anchoring_latency_ms; anchoring_verification_summary, unanchored_envelope_register | GAP-EXEC-003 |
+| GAP-TECH-001 | External evidence anchoring: chain must terminate outside the system under investigation | HIGH | open_se + derived | external_anchor_ref, anchoring_method, anchored_at, anchoring_latency; anchoring_verification_summary, unanchored_envelope_register | GAP-EXEC-003 |
 | GAP-TECH-002 | execution_mode - second-wave confirmation, core status | HIGH | open_se | execution_mode (core) | GAP-EXEC-001 |
 | GAP-TECH-003 | Emission fail-posture unrecorded; defines evidentiary meaning of silence | HIGH | open_se + derived | emission_fail_posture (fail_closed/fail_open/mixed/unknown); fail_posture_window_summary | - |
 | GAP-TECH-004 | Sampling/determinism parameters need defined structure | MED-HIGH | open_se | sampling_parameters block, random_seed_ref; "reproducible in distribution, not in instance" language | GAP-EXEC-011 |

@@ -128,7 +128,8 @@ class Chain:
                 "anchoring_method": "write_once_store (SIMULATED)",
                 "anchored_at": ts(sec), "chain_head_hash": self.prev,
                 "anchor_store_ref": "anchorstore:trustline-demo/eu",
-                "anchoring_latency_ms": 740}
+                "anchoring_latency": 740}
+
         self.anchors.append(rcpt)
         return rcpt
 
@@ -559,7 +560,7 @@ Signatures are placeholders; anchor store is simulated; QIF result webhook authe
 """
     for name, content in (("report_A_board.md", A), ("report_B_audit.md", B),
                           ("report_C_regulator.md", C), ("report_D_forensic.md", D)):
-        with open(os.path.join(OUT, "reports", name), "w") as f: f.write(content)
+        with open(os.path.join(OUT, "reports", name), "w", encoding="utf-8", newline="\n") as f: f.write(content)
 
 # ----------------------------------------------------------------------------
 # 6. Manifest, samples, verify, main
@@ -577,7 +578,7 @@ def verify(envs):
 
 def main():
     ch, rows, artifacts = build()
-    with open(os.path.join(OUT, "envelopes.jsonl"), "w") as f:
+    with open(os.path.join(OUT, "envelopes.jsonl"), "w", encoding="utf-8", newline="\n") as f:
         for e in ch.envelopes: f.write(json.dumps(e) + "\n")
     ok, msg = verify(ch.envelopes); assert ok, msg
     write_reports(ch, rows, artifacts)
@@ -587,7 +588,7 @@ def main():
              "envelope_anchor.json": lambda e: e["event_kind"]=="attestation_recorded"}
     for name, pred in picks.items():
         env = next(e for e in ch.envelopes if pred(e))
-        with open(os.path.join(OUT, "samples", name), "w") as f: json.dump(env, f, indent=2)
+        with open(os.path.join(OUT, "samples", name), "w", encoding="utf-8", newline="\n") as f: json.dump(env, f, indent=2)
     files = {}
     for root, _, fnames in os.walk(OUT):
         for fn in sorted(fnames):
@@ -600,7 +601,7 @@ def main():
                 "envelope_count": len(ch.envelopes), "chain_head": ch.prev,
                 "chain_verification": msg, "files": files,
                 "note": "Golden trace (industrial): hashes real; signatures and anchor store simulated."}
-    with open(os.path.join(OUT, "manifest.json"), "w") as f: json.dump(manifest, f, indent=2)
+    with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8", newline="\n") as f: json.dump(manifest, f, indent=2)
     print(msg)
     print(f"envelopes={len(ch.envelopes)} parts={len(rows)} artifacts={len(artifacts)} bundle={bundle_hash[:16]}…")
 

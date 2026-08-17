@@ -79,10 +79,10 @@
   "integrity": {
     "hash_algorithm": "SHA-256",
     "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "afc642fe037ed149abfcdf19ba55d8360bc7b92fb50e99db345ea800de38050e",
+    "previous_envelope_hash": "77faa67c20aa09fb56f72a4bea792378b156f8ffb05db86f8f564a804b388505",
     "signing_key_id": "key:ironmark/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
-    "envelope_hash": "88f9d604af3a531e4e1ae07b664427e8e48c4ac739e00ebda60e27e753d144bd",
-    "signature": "SIG-STUB(88f9d604af3a531e)"
+    "envelope_hash": "af4c453765acecf3e9bc45c14606d5227e3292297e24efae96dcc2abc5a89f38",
+    "signature": "SIG-STUB(af4c453765acecf3)"
   }
 }

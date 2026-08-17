@@ -4,6 +4,14 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-08-17 - Field naming: no unit in the key (D-017)
+- Renamed `anchoring_latency_ms` → `anchoring_latency` (unit = milliseconds, declared outside the identifier). Applies bar Rule 3 to our own corpus before raising it externally.
+- Golden Trace fin/ind generators and sample anchor envelopes regenerated so hash chains stay consistent.
+- Decision D-017 recorded; further `_ms` / `_s` key scrub tracked, not bulk-renamed in this change.
+
+### 2026-08-14 - x402 / AEP coherence tracker and outstanding landings
+- Coherence tracker, outstanding AXES landings (role enum, signing profile, identity provenance), payee settlement-role design note; ROADMAP and adjacent-standards watch pointers.
+
 ### 2026-07-24 - SCITT profile rules, Agent 365/Purview map, ARBITR import backlog
 - SCITT existence-bound profile rules expanded in [`docs/interop/x402-and-anchoring.md`](docs/interop/x402-and-anchoring.md); ROADMAP Band C detail + EB-006; adjacent-standards watch updated (RFC 9943 family).
 - Agent 365 OTel + Purview audit → SE mapping: [`docs/interop/agent365-purview-se-mapping.md`](docs/interop/agent365-purview-se-mapping.md) (incl. delegation/cross-estate/non-M365 gaps).

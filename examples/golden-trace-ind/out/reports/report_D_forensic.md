@@ -6,53 +6,53 @@
 ## 2. Envelope sequence (first 24 of 76; full stream in envelopes.jsonl)
 | Seq | event_kind | Part# | occurred_at | envelope_hash |
 |---|---|---|---|---|
-| 0001 | execution_started |  -  | 2026-06-11T07:00:00.000Z | `34a24129fcfb…` |
-| 0002 | context_retrieved |  -  | 2026-06-11T07:00:04.000Z | `c90ced1a9698…` |
-| 0003 | plan_created |  -  | 2026-06-11T07:00:09.000Z | `045294fe5ab9…` |
-| 0004 | policy_check_performed | 1 | 2026-06-11T07:00:12.000Z | `7a0dc8abbc7d…` |
-| 0005 | commit_attempted | 1 | 2026-06-11T07:00:18.000Z | `3a0af463b1ad…` |
-| 0006 | tool_invoked | 1 | 2026-06-11T07:00:19.000Z | `e0c3d1945807…` |
-| 0007 | commit_succeeded | 1 | 2026-06-11T07:00:21.000Z | `924aaeaf3347…` |
-| 0008 | policy_check_performed | 2 | 2026-06-11T07:00:57.000Z | `224a40453d20…` |
-| 0009 | heartbeat_event |  -  | 2026-06-11T07:01:00.000Z | `8ed8da57f4e7…` |
-| 0010 | commit_attempted | 2 | 2026-06-11T07:01:03.000Z | `5982f0c991df…` |
-| 0011 | tool_invoked | 2 | 2026-06-11T07:01:04.000Z | `c6b3502a6a2f…` |
-| 0012 | commit_succeeded | 2 | 2026-06-11T07:01:06.000Z | `c5674e144175…` |
-| 0013 | policy_check_performed | 3 | 2026-06-11T07:01:42.000Z | `423b40be6ac3…` |
-| 0014 | commit_attempted | 3 | 2026-06-11T07:01:48.000Z | `50ef7ef3543e…` |
-| 0015 | tool_invoked | 3 | 2026-06-11T07:01:49.000Z | `2caeae8ea0a5…` |
-| 0016 | commit_succeeded | 3 | 2026-06-11T07:01:51.000Z | `191bbbf919d8…` |
-| 0017 | heartbeat_event |  -  | 2026-06-11T07:02:00.000Z | `fd58e49de6c9…` |
-| 0018 | policy_check_performed | 4 | 2026-06-11T07:02:27.000Z | `bcb85ab98add…` |
-| 0019 | commit_attempted | 4 | 2026-06-11T07:02:33.000Z | `ad47f631a32c…` |
-| 0020 | tool_invoked | 4 | 2026-06-11T07:02:34.000Z | `3f2dfeba174f…` |
-| 0021 | commit_succeeded | 4 | 2026-06-11T07:02:36.000Z | `94e82bf0dc7d…` |
-| 0022 | heartbeat_event |  -  | 2026-06-11T07:03:00.000Z | `58a18aa638b4…` |
-| 0023 | policy_check_performed | 5 | 2026-06-11T07:03:12.000Z | `d33ea75dcc26…` |
-| 0024 | commit_attempted | 5 | 2026-06-11T07:03:18.000Z | `f64b07400c87…` |
+| 0001 | execution_started |  -  | 2026-06-11T07:00:00.000Z | `34a24129fcfbâ€¦` |
+| 0002 | context_retrieved |  -  | 2026-06-11T07:00:04.000Z | `c90ced1a9698â€¦` |
+| 0003 | plan_created |  -  | 2026-06-11T07:00:09.000Z | `045294fe5ab9â€¦` |
+| 0004 | policy_check_performed | 1 | 2026-06-11T07:00:12.000Z | `7a0dc8abbc7dâ€¦` |
+| 0005 | commit_attempted | 1 | 2026-06-11T07:00:18.000Z | `3a0af463b1adâ€¦` |
+| 0006 | tool_invoked | 1 | 2026-06-11T07:00:19.000Z | `e0c3d1945807â€¦` |
+| 0007 | commit_succeeded | 1 | 2026-06-11T07:00:21.000Z | `924aaeaf3347â€¦` |
+| 0008 | policy_check_performed | 2 | 2026-06-11T07:00:57.000Z | `224a40453d20â€¦` |
+| 0009 | heartbeat_event |  -  | 2026-06-11T07:01:00.000Z | `8ed8da57f4e7â€¦` |
+| 0010 | commit_attempted | 2 | 2026-06-11T07:01:03.000Z | `5982f0c991dfâ€¦` |
+| 0011 | tool_invoked | 2 | 2026-06-11T07:01:04.000Z | `c6b3502a6a2fâ€¦` |
+| 0012 | commit_succeeded | 2 | 2026-06-11T07:01:06.000Z | `c5674e144175â€¦` |
+| 0013 | policy_check_performed | 3 | 2026-06-11T07:01:42.000Z | `423b40be6ac3â€¦` |
+| 0014 | commit_attempted | 3 | 2026-06-11T07:01:48.000Z | `50ef7ef3543eâ€¦` |
+| 0015 | tool_invoked | 3 | 2026-06-11T07:01:49.000Z | `2caeae8ea0a5â€¦` |
+| 0016 | commit_succeeded | 3 | 2026-06-11T07:01:51.000Z | `191bbbf919d8â€¦` |
+| 0017 | heartbeat_event |  -  | 2026-06-11T07:02:00.000Z | `fd58e49de6c9â€¦` |
+| 0018 | policy_check_performed | 4 | 2026-06-11T07:02:27.000Z | `bcb85ab98addâ€¦` |
+| 0019 | commit_attempted | 4 | 2026-06-11T07:02:33.000Z | `ad47f631a32câ€¦` |
+| 0020 | tool_invoked | 4 | 2026-06-11T07:02:34.000Z | `3f2dfeba174fâ€¦` |
+| 0021 | commit_succeeded | 4 | 2026-06-11T07:02:36.000Z | `94e82bf0dc7dâ€¦` |
+| 0022 | heartbeat_event |  -  | 2026-06-11T07:03:00.000Z | `58a18aa638b4â€¦` |
+| 0023 | policy_check_performed | 5 | 2026-06-11T07:03:12.000Z | `d33ea75dcc26â€¦` |
+| 0024 | commit_attempted | 5 | 2026-06-11T07:03:18.000Z | `f64b07400c87â€¦` |
 
 ## 3. Part <-> artifact <-> confirmation linkage
-| # | Serial | Critical char (Ø25 H7 bore) | Material lot | QIF result hash | MES release hash | Released at |
+| # | Serial | Critical char (Ã˜25 H7 bore) | Material lot | QIF result hash | MES release hash | Released at |
 |---|---|---|---|---|---|---|
-| 01 | IMP4471-0001 | 25.0038 mm | HT-88213 | `474aaa15d4…` | `6aae6e47f5…` | 2026-06-11T07:00:21.000Z |
-| 02 | IMP4471-0002 | 25.0108 mm | HT-88213 | `459157aed0…` | `f88da7ef27…` | 2026-06-11T07:01:06.000Z |
-| 03 | IMP4471-0003 | 25.0201 mm | HT-88213 | `e3a1b6d646…` | `1fbeed755c…` | 2026-06-11T07:01:51.000Z |
-| 04 | IMP4471-0004 | 25.0078 mm | HT-88213 | `2fb0e9d794…` | `76f59f8d18…` | 2026-06-11T07:02:36.000Z |
-| 05 | IMP4471-0005 | 25.0028 mm | HT-88213 | `2e3f195f40…` | `2f2173c0b9…` | 2026-06-11T07:03:21.000Z |
-| 06 | IMP4471-0006 | 25.0131 mm | HT-88213 | `2963ae2607…` | `46c8bbcd1f…` | 2026-06-11T07:04:06.000Z |
-| 07 | IMP4471-0007 | 25.0065 mm | HT-88213 | `ec0f8b3026…` | `b629bfe6fa…` | 2026-06-11T07:04:51.000Z |
-| 08 | IMP4471-0008 | 25.0016 mm | HT-88213 | `f7758184a0…` | `b949347c49…` | 2026-06-11T07:05:36.000Z |
-| 09 | IMP4471-0009 | 25.0093 mm | HT-88213 | `918aaecd9e…` | `1a62e2d829…` | 2026-06-11T07:06:21.000Z |
-| 10 | IMP4471-0010 | 25.0058 mm | HT-88213 | `9de650fd53…` | `6f6adaa97d…` | 2026-06-11T07:07:06.000Z |
-| 11 | IMP4471-0011 | 25.0021 mm | HT-88213 | `0e1b25391e…` | `6410770987…` | 2026-06-11T07:07:51.000Z |
-| 12 | IMP4471-0012 | 25.0068 mm | HT-88213 | `6c51e7703d…` | `1b2ddd3147…` | 2026-06-11T07:08:36.000Z |
-| 13 | IMP4471-0013 | 25.0044 mm | HT-88213 | `36a4f54556…` | `ad5c5311c3…` | 2026-06-11T07:09:21.000Z |
-| 14 | IMP4471-0014 | 25.0038 mm | HT-88213 | `b807115d40…` | `d0e91b5386…` | 2026-06-11T07:10:06.000Z |
+| 01 | IMP4471-0001 | 25.0038 mm | HT-88213 | `474aaa15d4â€¦` | `6aae6e47f5â€¦` | 2026-06-11T07:00:21.000Z |
+| 02 | IMP4471-0002 | 25.0108 mm | HT-88213 | `459157aed0â€¦` | `f88da7ef27â€¦` | 2026-06-11T07:01:06.000Z |
+| 03 | IMP4471-0003 | 25.0201 mm | HT-88213 | `e3a1b6d646â€¦` | `1fbeed755câ€¦` | 2026-06-11T07:01:51.000Z |
+| 04 | IMP4471-0004 | 25.0078 mm | HT-88213 | `2fb0e9d794â€¦` | `76f59f8d18â€¦` | 2026-06-11T07:02:36.000Z |
+| 05 | IMP4471-0005 | 25.0028 mm | HT-88213 | `2e3f195f40â€¦` | `2f2173c0b9â€¦` | 2026-06-11T07:03:21.000Z |
+| 06 | IMP4471-0006 | 25.0131 mm | HT-88213 | `2963ae2607â€¦` | `46c8bbcd1fâ€¦` | 2026-06-11T07:04:06.000Z |
+| 07 | IMP4471-0007 | 25.0065 mm | HT-88213 | `ec0f8b3026â€¦` | `b629bfe6faâ€¦` | 2026-06-11T07:04:51.000Z |
+| 08 | IMP4471-0008 | 25.0016 mm | HT-88213 | `f7758184a0â€¦` | `b949347c49â€¦` | 2026-06-11T07:05:36.000Z |
+| 09 | IMP4471-0009 | 25.0093 mm | HT-88213 | `918aaecd9eâ€¦` | `1a62e2d829â€¦` | 2026-06-11T07:06:21.000Z |
+| 10 | IMP4471-0010 | 25.0058 mm | HT-88213 | `9de650fd53â€¦` | `6f6adaa97dâ€¦` | 2026-06-11T07:07:06.000Z |
+| 11 | IMP4471-0011 | 25.0021 mm | HT-88213 | `0e1b25391eâ€¦` | `6410770987â€¦` | 2026-06-11T07:07:51.000Z |
+| 12 | IMP4471-0012 | 25.0068 mm | HT-88213 | `6c51e7703dâ€¦` | `1b2ddd3147â€¦` | 2026-06-11T07:08:36.000Z |
+| 13 | IMP4471-0013 | 25.0044 mm | HT-88213 | `36a4f54556â€¦` | `ad5c5311c3â€¦` | 2026-06-11T07:09:21.000Z |
+| 14 | IMP4471-0014 | 25.0038 mm | HT-88213 | `b807115d40â€¦` | `d0e91b5386â€¦` | 2026-06-11T07:10:06.000Z |
 
 Released tolerance for the critical characteristic: 25.000 +0.021 / 0 mm (H7). Part 3 at 25.0201 mm sits at 95.6% of the tolerance band - inside tolerance, and the tightest unit in the batch.
 
 ## 4. Topology graph (declared = observed for this run)
-Nodes: agent mfg-pilot 3.1.0 · orchestrator shopfloor-orch 2.2 · model claude-sonnet-4-6 · gateway toolproxy-2 · connector opcua-gw 1.8.0 · cell cnc-cell-4 · mes ironmark/prod · runtime edge-mes-01.
+Nodes: agent mfg-pilot 3.1.0 Â· orchestrator shopfloor-orch 2.2 Â· model claude-sonnet-4-6 Â· gateway toolproxy-2 Â· connector opcua-gw 1.8.0 Â· cell cnc-cell-4 Â· mes ironmark/prod Â· runtime edge-mes-01.
 Edges: agent->orchestrator->model (inference); agent->gateway->connector->cell (release path); agent->mes (context and batch record, read/write). No undeclared touchpoints observed (third-party touchpoint set exhaustive for this run; basis: connector egress telemetry) [env:0074 | boundary_assessment.basis].
 
 ## 5. Chronology and silence semantics
