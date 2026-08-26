@@ -3,9 +3,15 @@
 AXES reference verifier (offline).
 
 Recomputes RFC 8785 JCS bytes and SHA-256 digests, evaluates vectors/expected.json
-including reject reason codes, walks Golden Trace chains, and exercises custody twins.
+including reject reason codes, walks Golden Trace chains, exercises custody twins,
+and enforces vectors/predicates.json (TLC-008).
 
 Typed outcomes, never a bare boolean. Stdlib plus the 'jcs' package. No network.
+
+Exit codes:
+  0 - all vectors and coverage observations ok
+  1 - conformance failure (a vector behaved wrongly)
+  2 - suite broken (predicate unaccounted for, missing fixture, declared outcome never observed)
 """
 
 from __future__ import annotations
@@ -25,8 +31,7 @@ from tools.axes_canonical import envelope_digest, hash_preimage, sha256_hex
 
 VECTORS_DIR = os.path.join(ROOT, "vectors")
 EXPECTED_PATH = os.path.join(VECTORS_DIR, "expected.json")
-EXECUTOR_ID = "agent:caldera/ap-pilot"
-DEPLOYER_ID = "org:caldera-robotics"
+PREDICATES_PATH = os.path.join(VECTORS_DIR, "predicates.json")
 
 
 class DuplicateKeyError(ValueError):
@@ -54,7 +59,11 @@ class CheckResult:
     detail: str = ""
 
     def ok(self) -> bool:
-        return self.outcome in {"ok", "reject_as_expected"}
+        return self.outcome in {
+            "ok",
+            "reject_as_expected",
+            "verification_unavailable",
+        }
 
 
 @dataclass
@@ -66,12 +75,9 @@ class Report:
         self.results.append(r)
         return r
 
-    def failed(self) -> list[CheckResult]:
-        return [r for r in self.results if not r.ok()]
-
 
 def germanish_collation_key(s: str) -> str:
-    """Locale-like key that sorts ä with ae, catching a collation comparator."""
+    """Locale-like key that sorts ae with a, catching a collation comparator."""
     return (
         s.replace("ä", "ae")
         .replace("ö", "oe")
@@ -184,7 +190,7 @@ def verify_vector(name: str, spec: dict, report: Report) -> None:
             if got == "ok":
                 report.add("custody_independence", name, "ok")
             elif got == "verification_unavailable":
-                report.add("custody_independence", name, "ok", "verification_unavailable")
+                report.add("custody_independence", name, "verification_unavailable")
             else:
                 report.add("custody_independence", name, got)
 
@@ -236,59 +242,90 @@ def locale_guard(report: Report) -> None:
             "locale-like comparator matched the pin; property is named not pinned",
         )
         return
-    report.add("locale_comparator_guard", name, "ok", "locale-like comparator diverges from pinned JCS")
+    report.add(
+        "locale_comparator_guard",
+        name,
+        "ok",
+        "locale-like comparator diverges from pinned JCS",
+    )
 
 
-def predicate_coverage(report: Report) -> None:
-    """Task 16 coverage against committed vectors (see vectors/README.md)."""
-    by_check: dict[str, set[str]] = {}
+def resolve_fixture_path(name: str) -> str:
+    if name.startswith("examples/"):
+        return os.path.join(ROOT, *name.split("/"))
+    return os.path.join(VECTORS_DIR, name)
+
+
+def enforce_predicate_manifest(report: Report, manifest: dict) -> list[str]:
+    """
+    Return a list of suite-broken messages (exit 2). Empty means coverage ok.
+    """
+    problems: list[str] = []
+    predicates = manifest.get("predicates") or []
+    if not predicates:
+        problems.append("predicates.json has no predicates")
+        return problems
+
+    observed: set[tuple[str, str, str | None]] = set()
     for r in report.results:
-        by_check.setdefault(r.check, set()).add(r.outcome)
+        observed.add((r.check, r.outcome, r.subject))
+        observed.add((r.check, r.outcome, None))
 
-    custody = by_check.get("custody_independence", set())
-    if "ok" in custody and "reject_as_expected" in custody:
-        report.add("predicate_coverage", "custody_independence", "ok", "pass and fail committed")
-    else:
-        report.add("predicate_coverage", "custody_independence", "unexercised", str(custody))
+    for pred in predicates:
+        pid = pred.get("id", "<missing-id>")
+        unexercised = bool(pred.get("unexercised"))
+        reason = (pred.get("unexercised_reason") or "").strip()
 
-    if "reject_as_expected" in by_check.get("canonicalisation_reject", set()):
-        report.add("predicate_coverage", "canonicalisation_reject", "ok", "fail committed; pass is any well-formed vector")
-    else:
-        report.add("predicate_coverage", "canonicalisation_reject", "unexercised", "no duplicate-key reject")
+        if unexercised and not reason:
+            problems.append(f"{pid}: unexercised without unexercised_reason")
 
-    if "ok" in by_check.get("canonical_bytes", set()) and "ok" in by_check.get("locale_comparator_guard", set()):
-        report.add("predicate_coverage", "canonical_bytes", "ok", "pass=pinned JCS; fail=locale-like comparator")
-    else:
-        report.add("predicate_coverage", "canonical_bytes", "unexercised", "missing pin or locale guard")
+        for key in ("pass_fixtures", "fail_fixtures"):
+            for name in pred.get(key) or []:
+                path = resolve_fixture_path(name)
+                if not os.path.isfile(path):
+                    problems.append(f"{pid}: missing fixture {name}")
 
-    if "ok" in by_check.get("chain_link", set()):
-        report.add(
-            "predicate_coverage",
-            "chain_link",
-            "ok",
-            "pass committed; fail unexercised (would mutate corpus of record)",
-        )
+        if not unexercised:
+            has_pass = bool(pred.get("pass_fixtures"))
+            has_fail = bool(pred.get("fail_fixtures"))
+            has_declared = bool(pred.get("declared_outcomes"))
+            has_fail_mech = bool(pred.get("fail_mechanism"))
+            has_obs = bool(pred.get("required_observations"))
+            if not has_pass:
+                problems.append(f"{pid}: no pass_fixtures and not unexercised")
+            if not (has_fail or has_declared or has_fail_mech or has_obs):
+                problems.append(
+                    f"{pid}: no fail_fixtures, declared_outcomes, fail_mechanism "
+                    "or required_observations, and not unexercised"
+                )
+
+        for req in pred.get("required_observations") or []:
+            check = req.get("check")
+            outcome = req.get("outcome")
+            subject = req.get("subject")
+            key = (check, outcome, subject) if subject else (check, outcome, None)
+            if key not in observed:
+                problems.append(
+                    f"{pid}: declared outcome not observed: check={check} outcome={outcome}"
+                    + (f" subject={subject}" if subject else "")
+                )
+
+    return problems
 
 
-def inject_negative_fixtures(report: Report) -> None:
-    """In-memory fail cases so the verifier's own predicates have a fail-set."""
-    report.add("canonical_bytes", "_injected_mismatch", "mismatch", "in-memory fail-set")
-    report.add("digest", "_injected_mismatch", "mismatch", "in-memory fail-set")
-    report.add("canonicalisation_reject", "_injected_clean_json", "accepted_malformed", "in-memory fail-set")
-    report.add("locale_comparator_guard", "_injected_inert", "guard_inert", "in-memory fail-set")
-    report.add("chain_link", "_injected_break", "break", "in-memory fail-set")
-    report.add("sequence_closure", "_injected_gap", "gap", "in-memory fail-set")
-    report.add("envelope_hash", "_injected_mismatch", "mismatch", "in-memory fail-set")
-
-
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="AXES offline reference verifier")
     parser.add_argument(
-        "--inject-fails",
-        action="store_true",
-        help="Add in-memory fail-set rows for predicates that have no committed negative vector",
+        "--predicates",
+        default=PREDICATES_PATH,
+        help="Path to predicates.json (default: vectors/predicates.json)",
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "--skip-coverage",
+        action="store_true",
+        help="Skip predicates.json enforcement (tests only)",
+    )
+    args = parser.parse_args(argv)
 
     report = Report()
     expected = json.load(open(EXPECTED_PATH, encoding="utf-8"))
@@ -307,38 +344,29 @@ def main() -> int:
             report.add("chain_link", label, "missing_corpus", path)
 
     locale_guard(report)
-    if args.inject_fails:
-        inject_negative_fixtures(report)
-    predicate_coverage(report)
-
-    failed = [
-        r
-        for r in report.results
-        if not r.ok()
-        and r.check != "predicate_coverage"
-        and not r.subject.startswith("_injected")
-    ]
-    coverage_issues = [
-        r
-        for r in report.results
-        if r.check == "predicate_coverage" and r.outcome not in {"ok", "unexercised_fail"}
-    ]
-    # unexercised_fail on injected-backed checks should not happen; on envelope_hash
-    # fail-set, injected rows make them ok.
 
     for r in report.results:
-        print(f"{r.outcome:24} {r.check:28} {r.subject} {r.detail}".rstrip())
+        print(f"{r.outcome:28} {r.check:28} {r.subject} {r.detail}".rstrip())
 
-    # Coverage rows with unexercised_* are warnings if --no-injected-fails
-    warn = [r for r in report.results if r.check == "predicate_coverage" and r.outcome != "ok"]
-    if warn:
-        print("--- predicate coverage ---")
-        for r in warn:
-            print(f"  {r.outcome}: {r.subject} ({r.detail})")
-
+    failed = [r for r in report.results if not r.ok()]
     if failed:
-        print(f"FAIL {len(failed)} check(s)")
+        print(f"FAIL {len(failed)} conformance check(s)")
         return 1
+
+    if not args.skip_coverage:
+        if not os.path.isfile(args.predicates):
+            print(f"SUITE BROKEN: missing predicates manifest {args.predicates}")
+            return 2
+        manifest = json.load(open(args.predicates, encoding="utf-8"))
+        problems = enforce_predicate_manifest(report, manifest)
+        if problems:
+            print("--- suite coverage (exit 2) ---")
+            for p in problems:
+                print(f"  {p}")
+            print(f"SUITE BROKEN: {len(problems)} coverage problem(s)")
+            return 2
+        print("OK coverage: every declared outcome observed")
+
     print(f"OK {len(report.results)} check rows")
     return 0
 

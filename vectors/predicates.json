@@ -1,0 +1,142 @@
+{
+  "schema": "axes.predicate-coverage/1",
+  "note": "TLC-008 machine-enforced coverage. Every normative predicate axes_verify.py evaluates must have committed fixtures for each declared outcome, or be marked unexercised with a reason. Counting fixtures is not enough: the verifier must observe each declared outcome during the run.",
+  "predicates": [
+    {
+      "id": "canonical_bytes",
+      "description": "Canonical UTF-8 bytes reproduce from the canonicaliser and match the pin",
+      "pass_fixtures": [
+        "axes_gt_0001_genesis.json",
+        "axes_gt_0004_policy_check_amount.json",
+        "axes_gt_0013_policy_check_peak_util.json",
+        "axes_gt_0037_attestation_recorded.json",
+        "axes_gt_0073_reconciliation.json",
+        "axes_adv_unicode_beneficiary.json",
+        "axes_adv_large_amount_string.json",
+        "axes_adv_usdc_amount.json",
+        "custody_deployer_captured_reject.json",
+        "custody_accept_independent_external.json",
+        "axes_jcs_surrogate_pair_key.json",
+        "axes_jcs_nfc_nfd_pair.json",
+        "axes_jcs_collation_ae.json",
+        "axes_jcs_digest_encoding.json",
+        "axes_identity_unparseable_hex.json"
+      ],
+      "fail_fixtures": ["axes_jcs_collation_ae.json"],
+      "fail_mechanism": "locale-like comparator substituted via tools/test_locale_comparator_guard.py and locale_guard() in axes_verify.py",
+      "required_observations": [
+        {"check": "canonical_bytes", "outcome": "ok"},
+        {"check": "locale_comparator_guard", "outcome": "ok"}
+      ]
+    },
+    {
+      "id": "digest",
+      "description": "SHA-256 of canonical bytes matches the pin",
+      "pass_fixtures": [
+        "axes_gt_0001_genesis.json",
+        "axes_gt_0004_policy_check_amount.json",
+        "axes_gt_0013_policy_check_peak_util.json",
+        "axes_gt_0037_attestation_recorded.json",
+        "axes_gt_0073_reconciliation.json",
+        "axes_adv_unicode_beneficiary.json",
+        "axes_adv_large_amount_string.json",
+        "axes_adv_usdc_amount.json",
+        "custody_deployer_captured_reject.json",
+        "custody_accept_independent_external.json",
+        "axes_jcs_surrogate_pair_key.json",
+        "axes_jcs_nfc_nfd_pair.json",
+        "axes_jcs_collation_ae.json",
+        "axes_jcs_digest_encoding.json",
+        "axes_identity_unparseable_hex.json"
+      ],
+      "fail_mechanism": "Any pin mismatch on sha256 is a digest failure; locale-like comparator also diverges the digest of axes_jcs_collation_ae.json",
+      "required_observations": [
+        {"check": "digest", "outcome": "ok"}
+      ]
+    },
+    {
+      "id": "canonicalisation_reject",
+      "description": "Duplicate object keys are rejected at the canonicalisation layer",
+      "pass_fixtures": ["axes_gt_0001_genesis.json"],
+      "fail_fixtures": ["axes_reject_duplicate_key.json"],
+      "required_observations": [
+        {"check": "canonicalisation_reject", "outcome": "reject_as_expected"}
+      ]
+    },
+    {
+      "id": "custody_independence",
+      "description": "Three-leg independence: deployer-as-capturer rejects; independent capturer passes",
+      "pass_fixtures": ["custody_accept_independent_external.json"],
+      "fail_fixtures": ["custody_deployer_captured_reject.json"],
+      "required_observations": [
+        {"check": "custody_independence", "outcome": "ok"},
+        {"check": "custody_independence", "outcome": "reject_as_expected"}
+      ]
+    },
+    {
+      "id": "identity_unparseable",
+      "description": "Unparseable identity syntax yields verification_unavailable, never a false-negative reject",
+      "pass_fixtures": ["axes_identity_unparseable_hex.json"],
+      "declared_outcomes": ["verification_unavailable"],
+      "required_observations": [
+        {"check": "custody_independence", "outcome": "verification_unavailable"}
+      ],
+      "note": "A verifier that returns custody_independence_reject on this fixture manufactures a false negative (wowlegend, axes#6)."
+    },
+    {
+      "id": "locale_comparator_guard",
+      "description": "A locale-like member comparator must not reproduce pinned JCS bytes (property pinned, not merely named)",
+      "pass_fixtures": ["axes_jcs_collation_ae.json"],
+      "fail_fixtures": ["axes_jcs_collation_ae.json"],
+      "fail_mechanism": "locale-like comparator substituted via tools/test_locale_comparator_guard.py and locale_guard() in axes_verify.py",
+      "required_observations": [
+        {"check": "locale_comparator_guard", "outcome": "ok"}
+      ],
+      "credit": "Ryan Cason / orionsys"
+    },
+    {
+      "id": "jcs_surrogate_utf16_sort",
+      "description": "UTF-16 code-unit member sort (RFC 8785 section 3.2.3), not code-point order",
+      "pass_fixtures": ["axes_jcs_surrogate_pair_key.json"],
+      "fail_mechanism": "A code-point sorter (Python sorted / json.dumps sort_keys) yields different member order for U+1D11E vs U+FF21; portable/jcs-properties asserts the divergence",
+      "required_observations": [
+        {"check": "canonical_bytes", "outcome": "ok", "subject": "axes_jcs_surrogate_pair_key.json"}
+      ]
+    },
+    {
+      "id": "jcs_nfc_nfd_no_normalisation",
+      "description": "NFC and NFD of the same visual key are distinct members (RFC 8785 section 3.1)",
+      "pass_fixtures": ["axes_jcs_nfc_nfd_pair.json"],
+      "fail_mechanism": "A normalising canonicaliser collapses NFC and NFD into one member; pin requires both to survive",
+      "required_observations": [
+        {"check": "canonical_bytes", "outcome": "ok", "subject": "axes_jcs_nfc_nfd_pair.json"}
+      ]
+    },
+    {
+      "id": "jcs_digest_encoding",
+      "description": "Bare lowercase hex and algorithm-prefixed digest forms are distinct pinned strings; digest is over UTF-8 JCS bytes",
+      "pass_fixtures": ["axes_jcs_digest_encoding.json"],
+      "fail_mechanism": "Treating bare hex and sha256:hex as interchangeable, or hashing a decoded string rather than UTF-8 bytes, diverges from the pin",
+      "required_observations": [
+        {"check": "canonical_bytes", "outcome": "ok", "subject": "axes_jcs_digest_encoding.json"},
+        {"check": "digest", "outcome": "ok", "subject": "axes_jcs_digest_encoding.json"}
+      ]
+    },
+    {
+      "id": "chain_link_sequence",
+      "description": "Envelope hash chain link, sequence closure and envelope_hash recompute across both Golden Trace corpora",
+      "pass_fixtures": [
+        "examples/golden-trace/out/envelopes.jsonl",
+        "examples/golden-trace-ind/out/envelopes.jsonl"
+      ],
+      "fail_fixtures": [],
+      "unexercised": true,
+      "unexercised_reason": "A committed broken-chain negative would mutate the corpus of record. Deliberately not shipped.",
+      "required_observations": [
+        {"check": "chain_link", "outcome": "ok"},
+        {"check": "sequence_closure", "outcome": "ok"},
+        {"check": "envelope_hash", "outcome": "ok"}
+      ]
+    }
+  ]
+}

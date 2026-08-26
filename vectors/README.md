@@ -32,7 +32,7 @@ python tools/test_locale_comparator_guard.py
 
 **A property that is only named is not pinned.** The original 11 vectors are ASCII-keyed, so agreement on them does not prove UTF-16 member-sort or no-normalisation. Four additional vectors pin those RFC 8785 properties (credit: Ryan Cason / orionsys; a locale-aware comparator left 148 tests passing while the bytes diverged). Substituting a locale-like comparator **must** fail `test_locale_comparator_guard.py`.
 
-**Standing rule (WO16 Task 16):** a check ships with at least one passing and one failing committed vector, or it ships marked as unexercised. TLC-008.
+**Standing rule (WO16 Task 16 / TLC-008, machine-enforced by WO17):** a check ships with at least one passing and one failing committed vector, or it ships marked as unexercised. The machine-readable account is [`predicates.json`](predicates.json). `python tools/axes_verify.py` exits **2** (suite broken) if a predicate is unaccounted for, a fixture is missing, or a declared outcome was never observed; exit **1** is reserved for a vector that behaved wrongly. Self-test: `python tools/test_coverage_rule_guard.py`.
 
 | Predicate | Pass (committed) | Fail (committed) |
 |---|---|---|
@@ -42,6 +42,8 @@ python tools/test_locale_comparator_guard.py
 | unparseable identity | `axes_identity_unparseable_hex.json` (`verification_unavailable`, not a reject) | (rejecting this fixture would be the false negative; the fail is a verifier that returns `custody_independence_reject` here) |
 | JCS surrogate / NFC-NFD / digest encoding | the four `axes_jcs_*` vectors | locale guard covers sort; NFC/NFD are two members that must both survive |
 | chain link / sequence / envelope_hash | both `examples/*/out/envelopes.jsonl` corpora | **unexercised as a committed negative** (a broken chain would mutate the corpus of record; do not ship one) |
+
+Liftable, AXES-independent copy of the four JCS property vectors: [`portable/jcs-properties/`](../portable/jcs-properties/) on the default branch (added by WO17).
 
 **Crypto Amount path:** `axes_adv_usdc_amount.json` uses `asset: caip19:eip155:8453/erc20:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` with `decimals: 6` alongside the Fin corpus's `iso4217:EUR` (`decimals: 2`).
 
