@@ -433,7 +433,7 @@ Source: programme decision D-014. Full task list, doctrine constraints, and acce
 | TLC-005 | Quarantine/label legacy example dialects | standards_package | D-007 |
 | TLC-006 | Wire README/CHANGELOG/standards watch | programme_action | BLD-019 |
 | TLC-007 | Claim-language review against doctrine §3.10 / §5 | conformance_rule | docs/01 |
-| TLC-008 | Every conformance predicate must have a demonstrated non-empty pass-set and fail-set, or be marked unexercised | conformance_rule | AXES #6, 11 Aug 2026; WO16 Task 16 |
+| TLC-008 | Every conformance predicate must have a demonstrated non-empty pass-set and fail-set, or be marked unexercised. **Machine-enforced** on `golden-trace-v2` via `vectors/predicates.json` and `tools/axes_verify.py` (declared outcomes must be observed at run time; exit 2 = suite broken). Portable JCS subset: `portable/jcs-properties/` on `main` | conformance_rule | AXES #6, 11 Aug 2026; WO16 Task 16; WO17; D-019 |
 | CRE-001 | Control-context snapshot composition (what must be hashed) | open_se | GAP-EXEC-021 |
 | CRE-002 | Catalogue: snapshot ref+digest, effective dating on control refs | open_se | GAP-EXEC-005, Modules 03/04/12 |
 | CRE-003 | Evaluated-input digest (normalized inputs, hash-scoped) | open_se | P1-1, Module 14 |

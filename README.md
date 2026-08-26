@@ -17,6 +17,8 @@ The Golden Trace corpus that external parties have independently verified is tag
 
 **The default branch currently carries a different, earlier corpus lineage that has not been externally verified.** If you are reproducing published figures, or following a verification result cited in a public thread, check out the tag above. A reconciliation is in progress and is tracked in [`RELEASES.md`](RELEASES.md). Reproduction commands: [`VERIFY.md`](VERIFY.md).
 
+**Conformance tooling until the announced merge:** the machine-enforced coverage rule (TLC-008), `vectors/predicates.json`, `tools/axes_verify.py`, and the full JCS property vector set live on branch [`golden-trace-v2`](https://github.com/magentixai/axes/tree/golden-trace-v2). A liftable, stdlib-only subset is on this branch at [`portable/jcs-properties/`](portable/jcs-properties/) (four RFC 8785 properties + independent `rfc8785` cross-check). Do not treat default-branch corpus bytes as the published pins.
+
 ---
 
 ## The problem

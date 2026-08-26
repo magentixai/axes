@@ -4,6 +4,10 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-08-26 - WO17 portable JCS properties + coverage enforcement pointers
+- Added liftable [`portable/jcs-properties/`](portable/jcs-properties/) on `main` (stdlib verifier, four RFC 8785 property vectors, `CROSSCHECK.md` vs `rfc8785` 0.1.4). Credit: Ryan Cason / orionsys.
+- TLC-008 machine enforcement and `vectors/predicates.json` live on `golden-trace-v2`; D-019 records run-time coverage. Root README and `tools/README` point both places. Corpus digests unchanged.
+
 ### 2026-08-17 - Corpus of record (docs/17 Phase 0, D-018)
 - Tagged `corpus/2026-08-08-gt-v2` at `776cc0b` (externally verified Golden Trace v2) and `corpus/2026-08-15-pre-merge` at `b5b6d30` (retired default-branch lineage).
 - README corpus-of-record note; [`RELEASES.md`](RELEASES.md) and [`VERIFY.md`](VERIFY.md). Default-branch HEAD is not the corpus third parties verified.
