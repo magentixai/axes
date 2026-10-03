@@ -1,0 +1,48 @@
+# Golden Trace and conformance vectors must give the same bytes on every OS.
+# Windows runners check out with core.autocrlf=true and a CP1252 default
+# encoding, which is exactly what an external verifier on Windows gets.
+name: cross-platform-verify
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.9", "3.13"]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dev dependency (jcs)
+        run: python -m pip install -r requirements-dev.txt
+      - name: Pinned bytes as checked out match published digests
+        run: python tools/check_corpus_bytes.py
+      - name: Reference verifier (vectors, chains, custody, coverage)
+        run: python tools/axes_verify.py
+      - name: Coverage-rule self-test
+        run: python tools/test_coverage_rule_guard.py
+      - name: Locale-comparator guard
+        run: python tools/test_locale_comparator_guard.py
+      - name: Regenerate both corpora
+        run: |
+          python examples/golden-trace/generate_golden_trace.py
+          python examples/golden-trace-ind/generate_golden_trace.py
+      - name: Regeneration is byte-identical
+        run: git diff --exit-code --stat -- examples/golden-trace/out examples/golden-trace-ind/out vectors
+      - name: Pinned bytes still match after regeneration
+        run: python tools/check_corpus_bytes.py

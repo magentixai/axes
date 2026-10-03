@@ -4,6 +4,13 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-03 - Cross-platform verification (Linux, macOS, Windows)
+- `tools/check_corpus_bytes.py` (standard library only) checks pinned bytes as checked out: no CR, valid UTF-8, forward-slash sorted manifest keys, every file matching its manifest entry, and chain heads and bundle digests equal to `tools/corpus_of_record.json` (gt-v2.0). Expectations change only in an announced release (D-018).
+- `.github/workflows/cross-platform-verify.yml` runs the verifier, guards, regeneration and byte check on Linux, macOS and Windows, Python 3.9 and 3.13.
+- `VERIFY.md`: clone directly at the tag, install `requirements-dev.txt`, byte check without regenerating, Windows notes.
+- `RELEASES.md`: the retired pre-merge lineage is recorded as not reproducible off Windows (CP1252 bytes, backslash manifest keys).
+- No corpus bytes changed; published digests unchanged.
+
 ### 2026-08-07 - Golden Trace v2 manifest portability fix
 - Generators write all corpus files as UTF-8 with explicit LF (`newline="\n"`); never platform text mode (fixes CRLF and CP1252 Ø in Ind QIF).
 - `.gitattributes` marks `examples/**/out/**`, `vectors/**`, and archived v1 corpora as `-text` so git cannot re-normalise pinned bytes.
