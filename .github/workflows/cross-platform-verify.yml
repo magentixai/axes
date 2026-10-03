@@ -1,0 +1,95 @@
+# Cross-platform checks run from the default branch.
+# 1. The portable RFC 8785 property pack (stdlib only).
+# 2. The corpus of record, reproduced exactly as VERIFY.md tells an external
+#    party to do it, on Linux, macOS and Windows (autocrlf=true, CP1252).
+name: cross-platform-verify
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 5 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  portable-jcs-properties:
+    name: portable / ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Portable JCS property suite (no pip install)
+        run: python portable/jcs-properties/verify.py
+
+  corpus-of-record:
+    name: corpus of record / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout default branch (for the checker and expectations)
+        uses: actions/checkout@v4
+        with:
+          path: default
+      - name: Checkout the corpus-of-record tag, as VERIFY.md instructs
+        uses: actions/checkout@v4
+        with:
+          ref: corpus/2026-08-08-gt-v2
+          path: cor
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install dev dependency (jcs)
+        run: python -m pip install -r cor/requirements-dev.txt
+      - name: Pinned bytes as checked out match published digests
+        run: python default/tools/check_corpus_bytes.py --root cor
+      - name: Regenerate both corpora at the tag
+        working-directory: cor
+        run: |
+          python examples/golden-trace/generate_golden_trace.py
+          python examples/golden-trace-ind/generate_golden_trace.py
+      - name: Regeneration is byte-identical
+        working-directory: cor
+        run: git diff --exit-code --stat -- examples/golden-trace/out examples/golden-trace-ind/out vectors
+      - name: Published digests after regeneration
+        run: python default/tools/check_corpus_bytes.py --root cor
+
+  clone-default-then-checkout-tag:
+    # The common real-world path: clone the default branch, then switch to the
+    # tag in the same tree. Fails if the default branch lacks .gitattributes.
+    name: clone default then switch to tag / windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: repo
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Switch to the tag inside the default-branch clone
+        working-directory: repo
+        run: |
+          cp tools/check_corpus_bytes.py tools/corpus_of_record.json "$RUNNER_TEMP/"
+          git fetch --tags --force
+          git checkout corpus/2026-08-08-gt-v2
+      - name: Pinned bytes as checked out match published digests
+        run: python "$RUNNER_TEMP/check_corpus_bytes.py" --root repo --expect "$RUNNER_TEMP/corpus_of_record.json"

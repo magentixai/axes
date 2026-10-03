@@ -1,0 +1,8 @@
+# Pinned corpora, conformance vectors and the portable property pack are
+# byte-identity fixtures. Never let git convert line endings on checkout:
+# digests must match the committed UTF-8 / LF bytes on every OS.
+examples/**/out/** -text
+vectors/** -text
+archive/golden-trace-v1-*/** -text
+portable/**/vectors/** -text
+portable/**/MANIFEST.json -text

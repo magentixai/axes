@@ -4,6 +4,14 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-03 - Cross-platform verification (Linux, macOS, Windows)
+- `tools/check_corpus_bytes.py` (standard library only) checks pinned bytes as checked out: no CR, valid UTF-8, forward-slash sorted manifest keys, every file matching its manifest entry, and chain heads and bundle digests equal to `tools/corpus_of_record.json` (gt-v2.0). Expectations change only in an announced release (D-018).
+- `.github/workflows/cross-platform-verify.yml` runs the verifier, guards, regeneration and byte check on Linux, macOS and Windows, Python 3.9 and 3.13.
+- `VERIFY.md`: clone directly at the tag, install `requirements-dev.txt`, byte check without regenerating, Windows notes.
+- `RELEASES.md`: the retired pre-merge lineage is recorded as not reproducible off Windows (CP1252 bytes, backslash manifest keys).
+- Default branch gains `.gitattributes` (`-text` on pinned corpora, vectors and the portable pack). Without it a Windows clone of the default branch converted 46 pinned files to CRLF, and switching to the tag in the same tree left them converted, so on-disk files no longer matched `manifest.json`.
+- No corpus bytes changed; published digests unchanged.
+
 ### 2026-08-26 - WO17 portable JCS properties + coverage enforcement pointers
 - Added liftable [`portable/jcs-properties/`](portable/jcs-properties/) on `main` (stdlib verifier, four RFC 8785 property vectors, `CROSSCHECK.md` vs `rfc8785` 0.1.4). Credit: Ryan Cason / orionsys.
 - TLC-008 machine enforcement and `vectors/predicates.json` live on `golden-trace-v2`; D-019 records run-time coverage. Root README and `tools/README` point both places. Corpus digests unchanged.
