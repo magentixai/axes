@@ -1,0 +1,106 @@
+{
+  "requirement_profile_id": "axes:x402_payee_attribution@1",
+  "requirement_profile_version": "1",
+  "profile_purpose_type": "sufficiency",
+  "publisher_id": "https://github.com/magentixai/axes",
+  "relying_party_roles": [
+    "origin",
+    "liability_holder",
+    "tax_authority"
+  ],
+  "subject_types": [
+    "envelope",
+    "stream_window"
+  ],
+  "effective_from": "2026-10-04T00:00:00.000Z",
+  "unsettled_question_notes": [
+    "Payee fragmentation across agent-operated addresses (wg-identity#23) is not resolved by any requirement here.",
+    "Percent-encoding of resource URLs inside the correlation core is not pinned."
+  ],
+  "vector_set_ref": "vectors/profiles/ on golden-trace-v2",
+  "requirements": [
+    {
+      "requirement_id": "pay_settled_01",
+      "check_type": "field_presence",
+      "subject_type": "envelope",
+      "field_path": "/settlement/settlement_transaction_ref",
+      "obligation_type": "required",
+      "floor_indicator": false,
+      "rationale_note": "Only a settled artifact counts as a payment; a verify is not a settlement.",
+      "source_refs": [
+        "x402#3226"
+      ]
+    },
+    {
+      "requirement_id": "pay_submitter_01",
+      "check_type": "field_presence",
+      "subject_type": "envelope",
+      "field_path": "/settlement/settlement_submitter_id",
+      "obligation_type": "required",
+      "floor_indicator": false,
+      "rationale_note": "Attribution is keyed on the settlement submitter, not the payee.",
+      "source_refs": [
+        "x402#2887",
+        "WO18 A4.6"
+      ]
+    },
+    {
+      "requirement_id": "pay_role_01",
+      "check_type": "field_presence",
+      "subject_type": "envelope",
+      "field_path": "/settlement/settlement_role",
+      "obligation_type": "required",
+      "accepted_values": [
+        "origin",
+        "facilitator",
+        "proxy_gateway"
+      ],
+      "floor_indicator": false,
+      "rationale_note": "The party's role in settlement is declared.",
+      "source_refs": [
+        "docs/15",
+        "docs/06 2.11"
+      ]
+    },
+    {
+      "requirement_id": "pay_supplier_01",
+      "check_type": "field_presence",
+      "subject_type": "envelope",
+      "field_path": "/supplier/supplier_identity_ref",
+      "obligation_type": "required",
+      "floor_indicator": false,
+      "rationale_note": "Supplier identity is bound to the supply.",
+      "source_refs": [
+        "wg-identity#22",
+        "wg-tax PR#5"
+      ]
+    },
+    {
+      "requirement_id": "pay_commitment_01",
+      "check_type": "settlement_commitment",
+      "subject_type": "envelope",
+      "field_path": "/settlement",
+      "obligation_type": "required",
+      "floor_indicator": false,
+      "rationale_note": "Amount, recipients and asset decoded from the settled artifact equal what was committed (the only under-report detector).",
+      "source_refs": [
+        "x402#3220 section 13"
+      ]
+    },
+    {
+      "requirement_id": "pay_purpose_01",
+      "check_type": "field_presence",
+      "subject_type": "envelope",
+      "field_path": "/settlement/settlement_purpose_type",
+      "obligation_type": "required",
+      "accepted_values": [
+        "demand"
+      ],
+      "floor_indicator": false,
+      "rationale_note": "A demand reading counts only settlements labelled demand; unlabeled is never demand.",
+      "source_refs": [
+        "x402#3226"
+      ]
+    }
+  ]
+}

@@ -30,6 +30,7 @@ if ROOT not in sys.path:
 
 from tools.axes_canonical import envelope_digest, hash_preimage, sha256_hex
 from tools import axes_anchoring_guard as anchoring_guard
+from tools import axes_evaluate as evaluator
 
 VECTORS_DIR = os.path.join(ROOT, "vectors")
 EXPECTED_PATH = os.path.join(VECTORS_DIR, "expected.json")
@@ -232,7 +233,7 @@ def verify_chain(label: str, jsonl_path: str, report: Report) -> None:
 def _fmt(r: dict | None) -> str:
     if r is None:
         return "none"
-    return (f"{r['verification_state']}/{r['verification_reason_code']}/{r['verification_condition_code']}"
+    return (f"{r['verification_state']}/{r.get('verification_reason_code')}/{r.get('verification_condition_code')}"
             f" subject={r['verification_subject_type']}")
 
 
@@ -268,6 +269,41 @@ def anchoring_corpus(label: str, jsonl_path: str, report: Report) -> None:
             cond = got["verification_condition_code"]
             outcome = cond if cond == "legacy_unstructured_anchor" else "unexpected_anchor_result"
             report.add("anchoring_corpus", f"{label}:{seq}", outcome, _fmt(got))
+
+
+PROFILE_VECTORS = os.path.join(VECTORS_DIR, "profiles")
+EVALUATIONS = [
+    ("axes:gt_fin_internal_audit@1", "evaluations/gt-v2.0/gt_fin_internal_audit__golden-trace.json"),
+    ("axes:gt_fin_regulator@1", "evaluations/gt-v2.0/gt_fin_regulator__golden-trace.json"),
+]
+
+
+def profile_vectors(report: Report) -> None:
+    """WO19: each case's decisive requirement result, the vocabulary mapping, and the published evaluations."""
+    spec_all = json.load(open(os.path.join(PROFILE_VECTORS, "expected.json"), encoding="utf-8"))["vectors"]
+    for name, spec in spec_all.items():
+        subject = os.path.join(PROFILE_VECTORS, "subjects", spec.get("subject_file_ref", name))
+        rec = evaluator.evaluate(spec["requirement_profile_ref"], subject, os.path.join(PROFILE_VECTORS, "test_profiles"), None)
+        got = rec["results"][-1]
+        want = spec["expected_verification"]
+        got_v = {k: v for k, v in got.items() if k.startswith("verification_")}
+        report.add("profile_evaluation", name, "ok" if got_v == want else "mismatch", _fmt(got) if got_v == want else f"got {got_v}")
+    mapping = json.load(open(os.path.join(PROFILE_VECTORS, "mapping.json"), encoding="utf-8"))["vectors"]
+    for name, spec in mapping.items():
+        m = evaluator.map_existing_value(spec["vocabulary_name"], spec["vocabulary_value"])
+        keys = ("verification_state", "verification_reason_code", "verification_condition_code", "verification_subject_type")
+        got_v = {k: v for k, v in zip(keys, m or ()) if v is not None}
+        report.add("vocabulary_mapping", name, "ok" if got_v == spec["expected_verification"] else "mismatch")
+    for ref, rel in EVALUATIONS:
+        path = os.path.join(ROOT, *rel.split("/"))
+        published = json.load(open(path, encoding="utf-8"))
+        again = evaluator.evaluate(ref, os.path.join(ROOT, "examples", "golden-trace", "out", "envelopes.jsonl"),
+                                   os.path.join(ROOT, "vendor", "main", "profiles"),
+                                   os.path.join(ROOT, "vendor", "main", "key-aliases.json"), "gt-v2.0", None,
+                                   published["evaluated_at"])
+        same = again["result_core_hash"] == published["result_core_hash"]
+        report.add("evaluation_reproduced", rel.split("/")[-1], "ok" if same else "mismatch",
+                   f"{published['overall_verification_state']} {published['result_core_hash'][:16]}")
 
 
 def locale_guard(report: Report) -> None:
@@ -392,6 +428,7 @@ def main(argv: list[str] | None = None) -> int:
 
     locale_guard(report)
     anchoring_vectors(report)
+    profile_vectors(report)
 
     for r in report.results:
         print(f"{r.outcome:28} {r.check:28} {r.subject} {r.detail}".rstrip())

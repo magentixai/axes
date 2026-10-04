@@ -1,0 +1,28 @@
+{
+  "requirement_profile_id": "example:settlement_matches@1",
+  "requirement_profile_version": "1",
+  "profile_purpose_type": "sufficiency",
+  "publisher_id": "https://github.com/magentixai/axes",
+  "relying_party_roles": [
+    "auditor"
+  ],
+  "subject_types": [
+    "bundle"
+  ],
+  "effective_from": "2026-10-04T00:00:00.000Z",
+  "unsettled_question_notes": [],
+  "requirements": [
+    {
+      "requirement_id": "r",
+      "check_type": "settlement_commitment",
+      "subject_type": "envelope",
+      "obligation_type": "required",
+      "floor_indicator": false,
+      "rationale_note": "test",
+      "source_refs": [
+        "WO19"
+      ],
+      "field_path": "/settlement"
+    }
+  ]
+}

@@ -243,6 +243,243 @@
           "subject": "anch_commitment_mismatch.json"
         }
       ]
+    },
+    {
+      "id": "profile_evaluation",
+      "description": "WO19 requirement evaluation: every condition the evaluator returns has a case that returns it and a case that does not (D5, D6, D9, D10, D12)",
+      "pass_fixtures": [
+        "profiles/expected.json"
+      ],
+      "fail_fixtures": [
+        "profiles/expected.json"
+      ],
+      "required_observations": [
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "presence_required_present.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "presence_required_absent.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "absence_declared_not_captured.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "absence_declared_withheld.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "absence_declared_redacted.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "absence_declared_not_applicable.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "prohibited_absent.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "prohibited_present.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "conditional_false.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "conditional_true_absent.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "predicate_unparseable.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "accepted_value.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "value_not_accepted.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "minimum_met.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "minimum_not_met.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "conflicting_never_satisfies.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "basis_demonstrated.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "basis_not_demonstrated.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "chain_intact.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "chain_broken.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "sequence_contiguous.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "sequence_gap.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "anchor_sufficient.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "anchor_simulated.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "anchor_lag_exceeded.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "settlement_matches.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "settlement_under_report.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "settlement_not_observed.jsonl"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "composition_floor_relaxed.case"
+        },
+        {
+          "check": "profile_evaluation",
+          "outcome": "ok",
+          "subject": "profile_unsupported.case"
+        }
+      ]
+    },
+    {
+      "id": "vocabulary_mapping",
+      "description": "WO19 section 4.5: existing AXES values map to one evaluation result each",
+      "pass_fixtures": [
+        "profiles/mapping.json"
+      ],
+      "fail_mechanism": "A changed mapping row returns mismatch",
+      "required_observations": [
+        {
+          "check": "vocabulary_mapping",
+          "outcome": "ok",
+          "subject": "derivation_outcome.underivable_missing_input"
+        },
+        {
+          "check": "vocabulary_mapping",
+          "outcome": "ok",
+          "subject": "derivation_outcome.undisclosed"
+        },
+        {
+          "check": "vocabulary_mapping",
+          "outcome": "ok",
+          "subject": "derivation_outcome.underivable_conflicting_inputs"
+        },
+        {
+          "check": "vocabulary_mapping",
+          "outcome": "ok",
+          "subject": "derivation_outcome.underivable_unverified_identifier"
+        },
+        {
+          "check": "vocabulary_mapping",
+          "outcome": "ok",
+          "subject": "derivation_outcome.outside_capture_boundary"
+        },
+        {
+          "check": "vocabulary_mapping",
+          "outcome": "ok",
+          "subject": "verification_status.verification_unavailable"
+        },
+        {
+          "check": "vocabulary_mapping",
+          "outcome": "ok",
+          "subject": "anchoring_guard.anchor_simulated_claims_external"
+        },
+        {
+          "check": "vocabulary_mapping",
+          "outcome": "ok",
+          "subject": "anchoring_guard.anchor_independence_unproven"
+        },
+        {
+          "check": "vocabulary_mapping",
+          "outcome": "ok",
+          "subject": "anchoring_guard.anchor_method_unverifiable"
+        }
+      ]
+    },
+    {
+      "id": "evaluation_reproduced",
+      "description": "WO19 D13: the published gt-v2.0 evaluations reproduce to the same result_core_hash",
+      "pass_fixtures": [
+        "examples/golden-trace/out/envelopes.jsonl"
+      ],
+      "fail_mechanism": "Any change to the evaluator, a profile or the subject changes result_core_hash",
+      "required_observations": [
+        {
+          "check": "evaluation_reproduced",
+          "outcome": "ok",
+          "subject": "gt_fin_internal_audit__golden-trace.json"
+        },
+        {
+          "check": "evaluation_reproduced",
+          "outcome": "ok",
+          "subject": "gt_fin_regulator__golden-trace.json"
+        }
+      ]
     }
   ]
 }

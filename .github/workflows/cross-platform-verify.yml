@@ -41,7 +41,13 @@ jobs:
       - name: Anchoring guard self-test
         run: python tools/test_anchoring_guard.py
       - name: Naming rules (docs/20 on main)
-        run: python tools/check_key_naming.py examples/golden-trace/out/envelopes.jsonl examples/golden-trace-ind/out/envelopes.jsonl vectors --baseline tools/naming_baseline.json
+        run: python tools/check_key_naming.py examples/golden-trace/out/envelopes.jsonl examples/golden-trace-ind/out/envelopes.jsonl vectors evaluations vendor --baseline tools/naming_baseline.json
+      - name: Evaluator guards (WO19)
+        run: python tools/test_evaluate_guards.py
+      - name: Profile vectors regenerate identically
+        run: |
+          python tools/generate_profile_vectors.py
+          git diff --exit-code --stat -- vectors/profiles
       - name: Regenerate both corpora
         run: |
           python examples/golden-trace/generate_golden_trace.py
@@ -50,3 +56,17 @@ jobs:
         run: git diff --exit-code --stat -- examples/golden-trace/out examples/golden-trace-ind/out vectors
       - name: Pinned bytes still match after regeneration
         run: python tools/check_corpus_bytes.py
+
+  vendor-sync:
+    name: vendored files match main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main_branch
+      - name: Profiles and key aliases are byte-identical to main
+        run: |
+          diff -r main_branch/profiles vendor/main/profiles
+          cmp main_branch/schema/key-aliases.json vendor/main/key-aliases.json
