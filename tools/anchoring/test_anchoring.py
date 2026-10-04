@@ -69,7 +69,7 @@ ess_cert_id_alg = sha256
 basicConstraints = critical,CA:FALSE
 extendedKeyUsage = critical,timeStamping
 keyUsage = critical,digitalSignature
-""" % {"r": root})
+""" % {"r": root.replace(os.sep, "/")})  # OpenSSL config reads backslash as an escape
     with open(os.path.join(root, "serial"), "w") as f:
         f.write("01\n")
     sh("openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", "ca.key", "-out", "tsa-ca.pem",
