@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "network": "eip155:84532",
+  "resourceUrl": "https://x402.magentix.ai/api/agent/reports",
+  "payer": "0x1351523B6469744CfA03DA15a0D7A8199f04c9f2",
+  "issuedAt": 1791158410,
+  "transaction": "0x0641f42b91f92bd6ca9fdb2e70d7e66abf576b935dcc7d5a8cf0cc9ed0246d17",
+  "correlationDigest": "094e4a2f863f08718f7d07f17419f4d4fd3d3ce3a7c7803752d4413fae1651dc",
+  "signature": "STUBBED: proposed version 2 member; signing format per offer-and-receipt"
+}

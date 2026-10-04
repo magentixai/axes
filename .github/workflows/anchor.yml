@@ -18,6 +18,10 @@ on:
         description: "Comma-separated methods"
         required: true
         default: "opentimestamps,timestamp_authority"
+      subject_type:
+        description: "anchored_subject_type"
+        required: true
+        default: "release_statement"
   schedule:
     - cron: "41 */6 * * *"   # upgrade pending OpenTimestamps proofs
 
@@ -36,7 +40,7 @@ jobs:
         run: python -m pip install -r tools/anchoring/requirements.txt
       - name: Stamp (manual runs)
         if: github.event_name == 'workflow_dispatch'
-        run: python tools/anchoring/produce.py stamp --subject "${{ inputs.subject }}" --out "${{ inputs.out }}" --methods "${{ inputs.methods }}"
+        run: python tools/anchoring/produce.py stamp --subject "${{ inputs.subject }}" --out "${{ inputs.out }}" --methods "${{ inputs.methods }}" --subject-type "${{ inputs.subject_type }}"
       - name: Upgrade pending OpenTimestamps proofs
         run: |
           for d in anchors/*/; do

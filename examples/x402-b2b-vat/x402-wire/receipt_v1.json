@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "network": "eip155:84532",
+  "resourceUrl": "https://x402.magentix.ai/api/agent/reports",
+  "payer": "0x1351523B6469744CfA03DA15a0D7A8199f04c9f2",
+  "issuedAt": 1791158410,
+  "transaction": "0x0641f42b91f92bd6ca9fdb2e70d7e66abf576b935dcc7d5a8cf0cc9ed0246d17",
+  "signature": "STUBBED: offer-and-receipt signing format to be aligned at x402@751590a"
+}

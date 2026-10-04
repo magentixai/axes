@@ -1,0 +1,7 @@
+{
+  "bundle_manifest_note": "seller record of the WO20 B2B VAT example, envelopes 1..5",
+  "hash_algorithm": "SHA-256",
+  "envelope_count": 5,
+  "chain_head_hash": "96819672151026507b8523ab226d3fdf7ee7ce4cd8279030bb1a98ebeafd3dd8",
+  "correlation_hash": "094e4a2f863f08718f7d07f17419f4d4fd3d3ce3a7c7803752d4413fae1651dc"
+}
