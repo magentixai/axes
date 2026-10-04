@@ -31,6 +31,35 @@ jobs:
       - name: Portable JCS property suite (no pip install)
         run: python portable/jcs-properties/verify.py
 
+  anchoring-tools:
+    name: anchoring tools / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    defaults:
+      run:
+        shell: bash
+    env:
+      AXES_REQUIRE_ANCHOR_DEPS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install anchoring tools
+        run: python -m pip install -r tools/anchoring/requirements.txt
+      - name: Two-sided self-test (synthetic fixtures)
+        run: python tools/anchoring/test_anchoring.py
+      - name: Verify committed real anchors
+        run: |
+          for d in anchors/*/; do
+            [ -f "$d/anchoring.json" ] || continue
+            subj=$(ls "$d"/*.json | grep -v -e anchoring.json -e last_run.json | head -1)
+            python tools/anchoring/verify_anchor.py "$d" --subject "$subj"
+          done
+
   corpus-of-record:
     name: corpus of record / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}

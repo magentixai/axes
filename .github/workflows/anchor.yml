@@ -1,0 +1,67 @@
+# Real anchoring runs for AXES subjects (WO18 A5). Runs on GitHub's runners so the
+# timestamping services are reachable and the run log is public provenance for the anchor.
+# A run never edits published corpus bytes: it only writes under anchors/.
+name: anchor
+
+on:
+  workflow_dispatch:
+    inputs:
+      subject:
+        description: "Subject file to anchor (path in repo)"
+        required: true
+        default: "anchors/gt-v2.0/release_statement.json"
+      out:
+        description: "Anchor directory"
+        required: true
+        default: "anchors/gt-v2.0"
+      methods:
+        description: "Comma-separated methods"
+        required: true
+        default: "opentimestamps,timestamp_authority"
+  schedule:
+    - cron: "41 */6 * * *"   # upgrade pending OpenTimestamps proofs
+
+permissions:
+  contents: write
+
+jobs:
+  anchor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install anchoring tools
+        run: python -m pip install -r tools/anchoring/requirements.txt
+      - name: Stamp (manual runs)
+        if: github.event_name == 'workflow_dispatch'
+        run: python tools/anchoring/produce.py stamp --subject "${{ inputs.subject }}" --out "${{ inputs.out }}" --methods "${{ inputs.methods }}"
+      - name: Upgrade pending OpenTimestamps proofs
+        run: |
+          for d in anchors/*/; do
+            if [ -f "$d/anchoring.json" ] && [ -f "$d/proofs/opentimestamps/subject.ots" ]; then
+              python tools/anchoring/produce.py upgrade --out "$d" || true
+            fi
+          done
+      - name: Verify every anchor offline
+        run: |
+          for d in anchors/*/; do
+            [ -f "$d/anchoring.json" ] || continue
+            subj=$(ls "$d"/*.json | grep -v -e anchoring.json -e last_run.json | head -1)
+            python tools/anchoring/verify_anchor.py "$d" --subject "$subj"
+          done
+      - name: Record run provenance and push to a review branch
+        run: |
+          if [ -z "$(git status --porcelain anchors)" ]; then echo "nothing changed"; exit 0; fi
+          for d in anchors/*/; do
+            [ -f "$d/anchoring.json" ] || continue
+            printf '{\n  "workflow_run": "%s/%s/actions/runs/%s",\n  "commit": "%s",\n  "event": "%s",\n  "runner_os": "%s"\n}\n' \
+              "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$GITHUB_SHA" "$GITHUB_EVENT_NAME" "$RUNNER_OS" > "$d/last_run.json"
+          done
+          git config user.name "axes-anchor-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "anchor-run/${GITHUB_RUN_ID}"
+          git add anchors
+          git commit -m "Anchoring run ${GITHUB_RUN_ID} (${GITHUB_EVENT_NAME})"
+          git push origin "anchor-run/${GITHUB_RUN_ID}"
