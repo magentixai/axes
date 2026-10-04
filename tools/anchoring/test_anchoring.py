@@ -181,6 +181,9 @@ def main():
         base = make_block(root)
         expect("rfc3161 verifies", only(base, "anch:tsa"), "verified")
         expect("ots verifies", only(base, "anch:ots"), "verified")
+        undo = mutate(base, lambda b: b["anchors"][0].update(anchor_record_ref="block:999999:" + "0" * 64))
+        expect("ots record names a block the proof does not attest", only(base, "anch:ots"), "contradicted", "anchor_commitment_mismatch")
+        undo()
 
         undo = mutate(base, lambda b: b["anchors"][1].update(anchored_at="2020-01-01T00:00:00.000Z"))
         expect("rfc3161 anchored_at altered", only(base, "anch:tsa"), "contradicted", "anchor_commitment_mismatch")

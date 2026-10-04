@@ -12,6 +12,7 @@ verification_condition_code, verification_subject_type, observed_note. A missing
 Exit status: 0 if no anchor is `contradicted`; 1 otherwise; 2 if the input cannot be read.
 """
 import argparse
+import re
 import io
 import json
 import os
@@ -77,7 +78,16 @@ def verify_ots(entry, files, commitment):
     if not btc or not entry.get("anchored_at"):
         return result(aid, "indeterminate", "anchor_pending", "absence", "operator",
                       "calendar commitment only; no Bitcoin attestation yet (run produce.py upgrade)")
-    for msg, att in btc:
+    # Several calendars may each attest in a different block; the anchor records one of them (the producer
+    # takes the earliest). Verify the attestation the record names, and only that one.
+    m = re.match(r"^block:(\d+):([0-9a-f]{64})$", entry.get("anchor_record_ref") or "")
+    if not m:
+        return result(aid, "contradicted", "anchor_commitment_mismatch", None, "artifact", "anchor_record_ref is not block:<height>:<hash>")
+    named = [(msg, att) for msg, att in btc if att.height == int(m.group(1))]
+    if not named:
+        return result(aid, "contradicted", "anchor_commitment_mismatch", None, "artifact",
+                      "no attestation in the proof for the block anchor_record_ref names")
+    for msg, att in named:
         hname = "bitcoin-header-%d.hex" % att.height
         if hname not in files:
             return result(aid, "not_evaluated", "anchor_proof_unresolvable", None, "network", "archived header missing for block %d" % att.height)
