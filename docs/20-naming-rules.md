@@ -104,8 +104,8 @@ Another standard's spelling never becomes an AXES key. Where AXES carries the sa
 | External spelling | Where | AXES key |
 |---|---|---|
 | `correlationDigest` | x402 receipt / evidence lane (WO20) | `correlation_hash` plus `correlation_hash_algorithm` |
-| `offered`, `required`, `chosen`, `profileRegistry` | x402 lane common contract (WO20) | `offered_profile_ids`, `required_indicator`, `chosen_profile_id`, `profile_registry_ref` |
-| `x402Version`, `payTo`, `validBefore` | x402 v2 | `x402_version`, `pay_to_id`, `authorization_valid_before` |
+| `offered`, `required`, `chosen`, `profileRegistry` | x402 lane common contract (WO20) | `offered_profile_refs`, `required_indicator`, `chosen_profile_ref`, `profile_registry_ref` |
+| `x402Version`, `payTo`, `payer`, `nonce`, `validBefore` | x402 v2 | `x402_version`, `pay_to_id`, `payer_id`, `authorization_nonce_id`, `authorization_expires_at` (unix seconds converted to an RFC 3339 instant) |
 | `state`, `state_reason`, `subject` | draft-krausz-verification-state-03 | `verification_state`, `verification_reason_code`, `verification_subject_type` |
 | `capture_relationship` | custody-ref-v1 | `capture_relationship_type` |
 | `mandateDigest`, `paymentId` | x402 `authority` (#3220) | `mandate_hash` (prefix stripped, algorithm in `mandate_hash_algorithm`), `payment_identifier_id` |

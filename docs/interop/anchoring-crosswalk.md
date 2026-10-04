@@ -50,6 +50,21 @@ The anchoring profile proposal (seritalien, x402#3389) maps one level up: it is 
 
 `anchor_record_ref` percent-encoding of identifiers that contain `:` is open question Q3. All three open questions are listed in `vectors/README.md` on `golden-trace-v2` under "Questions this corpus does not settle".
 
+## x402 `authority` spend-head anchors (#3220 §10)
+
+The x402 `authority` extension (whawk46, x402#3220, draft) anchors an accountant's signed spend head as UTF-8 calldata of a 0-value transaction: `x402note/1;<anchorDigest>;for=<mandateDigest>#<seq>;by=<accountant>`.
+
+| AXES key | #3220 counterpart |
+|---|---|
+| `anchoring_method` | `distributed_ledger` |
+| `anchor_commitment_hash` / `_algorithm` | `anchorDigest` with its `sha256:` prefix stripped / `SHA-256` |
+| `anchor_service_id` | CAIP-2 chain of the transaction |
+| `anchor_record_ref` | `tx:<hash>` |
+| `anchored_at` | block time |
+| `anchor_operator_id` | `null` (permissionless chain); the accountant is the signer of the head, not the anchor operator |
+
+Two rules from #3220 that AXES shares: an anchor orders bytes in time and never carries authority (`by=` is an unauthenticated hint), and "no qualifying anchor" means no floor, never zero.
+
 ## Worked example 1: one subject, two independent lanes
 
 The gt-v2.0 release statement is already anchored twice, for real: [`anchors/gt-v2.0/anchoring.json`](../../anchors/gt-v2.0/anchoring.json) carries an RFC 3161 anchor (verified offline) and an OpenTimestamps anchor (pending its Bitcoin block when first committed). [`examples/anchoring/dual-lane-tlog-and-chain.json`](../../examples/anchoring/dual-lane-tlog-and-chain.json) shows the next step: the same subject anchored by a witnessed transparency log (MarkovianProtocol) and an on-chain registry (argentum-core), side by side. Both entries carry `basis_status: simulated` and `CONFIRM-WITH-AUTHOR` placeholders until each owner produces the real anchor; they show that the two variations need only `anchoring_method` and `anchor_profile_ref` to differ.
