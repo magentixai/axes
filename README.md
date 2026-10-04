@@ -1,4 +1,4 @@
-![AXES](assets/axes-social-preview2.png)
+![AXES](assets/axes-social-preview3.png)
 
 # AXES - Autonomous eXecution Evidence Standard
 
