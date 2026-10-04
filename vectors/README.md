@@ -43,6 +43,31 @@ python tools/test_locale_comparator_guard.py
 | JCS surrogate / NFC-NFD / digest encoding | the four `axes_jcs_*` vectors | locale guard covers sort; NFC/NFD are two members that must both survive |
 | chain link / sequence / envelope_hash | both `examples/*/out/envelopes.jsonl` corpora | **unexercised as a committed negative** (a broken chain would mutate the corpus of record; do not ship one) |
 
+## Anchoring vectors (WO18 A4)
+
+[`anchoring/`](anchoring/) holds anchoring blocks with the decisive result each must produce, in the four-state vocabulary of draft-krausz-verification-state-03 (D-023): `state`, `state_reason`, `subject`, `condition`. Expected results and **per-vector provenance** (author, origin, date) live in [`anchoring/expected.json`](anchoring/expected.json); the verifier fails a vector without provenance. Evaluated by [`tools/axes_anchoring_guard.py`](../tools/axes_anchoring_guard.py) through `axes_verify.py`; self-test `python tools/test_anchoring_guard.py`.
+
+| Predicate | Pass (committed) | Fail (committed) |
+|---|---|---|
+| gt-v2.0 anchors read under gt-v2.0 rules | `anch_legacy_gt_v2_0.json` and the six anchored envelopes in both corpora: `indeterminate` / `absence` / `legacy_unstructured_anchor` | `anch_legacy_under_gt_v2_1.json`: the same block under gt-v2.1 is `contradicted` / `anchor_status_in_method` |
+| `externally_anchored` is earned (D-020) | `anch_simulated_honest.json` | `anch_simulated_claims_external.json` |
+| proof absent is a producer defect (A4.2) | `anch_canonical_contract.json` | `anch_proof_absent.json` |
+| canonical contract only (A4.4) | `anch_canonical_contract.json` | `anch_lookalike_contract.json`, `anch_plain_transfer.json`, `anch_commitment_mismatch.json` |
+
+Why the corpus reads as `legacy_unstructured_anchor` and not as a failure: gt-v2.0 declared its anchors simulated (`write_once_store (SIMULATED)`), and the D-015 reading rule already said a simulated anchor proves no existence bound. The verifier reports exactly that (`indeterminate`, nothing to verify) and does not re-judge a published release under rules written later. Superseded is not wrong. The gt-v2.0 release statement itself now carries real external anchors, detached, on the default branch (`anchors/gt-v2.0/`).
+
+The ledger vectors carry a pre-fetched `observed_ledger_event` so the check runs offline. Contract addresses and hashes in them are illustrative.
+
+## Questions this corpus does not settle
+
+A green run says nothing about readings no vector pins (stillmarcus24, x402 tsc#4). These are open, and an implementation may answer them either way today:
+
+1. **Reorganisation depth.** How many confirmations a `distributed_ledger` or `opentimestamps` anchor needs before `anchored_at` is final.
+2. **Checkpoint clock.** Which clock a transparency-log checkpoint time is read from, and so what `anchored_at` means for a `transparency_log` anchor.
+3. **Identifier encoding.** Percent-encoding of identifiers containing `:` inside `anchor_record_ref`.
+4. **Proof replay.** These vectors check the record and a pre-fetched observation; they do not replay RFC 3161 or OpenTimestamps proofs. The default branch's `tools/anchoring/` does, against its own two-sided fixtures and the real gt-v2.0 release-statement anchors.
+5. **Signatures.** gt-v2.0 envelopes carry `SIG-STUB`; recomputability from bytes is structural only until gt-v2.1 replaces it under a declared signing profile (WO18 A4.5).
+
 Liftable, AXES-independent copy of the four JCS property vectors: [`portable/jcs-properties/`](../portable/jcs-properties/) on the default branch (added by WO17).
 
 **Crypto Amount path:** `axes_adv_usdc_amount.json` uses `asset: caip19:eip155:8453/erc20:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` with `decimals: 6` alongside the Fin corpus's `iso4217:EUR` (`decimals: 2`).

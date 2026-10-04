@@ -38,6 +38,8 @@ jobs:
         run: python tools/test_coverage_rule_guard.py
       - name: Locale-comparator guard
         run: python tools/test_locale_comparator_guard.py
+      - name: Anchoring guard self-test
+        run: python tools/test_anchoring_guard.py
       - name: Regenerate both corpora
         run: |
           python examples/golden-trace/generate_golden_trace.py

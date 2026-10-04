@@ -1,0 +1,123 @@
+{
+  "schema": "axes.anchoring-vectors/1",
+  "note": "Expected decisive result per vector (four-state vocabulary, D-023) with per-vector provenance (WO18 A4.3). Values are illustrative except anch_legacy_gt_v2_0.json, copied from the corpus of record.",
+  "vectors": {
+    "anch_legacy_gt_v2_0.json": {
+      "expect": {
+        "state": "indeterminate",
+        "state_reason": "absence",
+        "condition": "legacy_unstructured_anchor",
+        "subject": "artifact"
+      },
+      "provenance": {
+        "author": "AXES maintainers (Magentix AI)",
+        "origin": "Golden Trace v2.0 envelope 37 (fin), anchoring and evidence_quality members copied byte for byte; D-015 reading rule",
+        "date": "2026-10-04"
+      }
+    },
+    "anch_legacy_under_gt_v2_1.json": {
+      "expect": {
+        "state": "contradicted",
+        "state_reason": "divergence",
+        "condition": "anchor_status_in_method",
+        "subject": "artifact"
+      },
+      "provenance": {
+        "author": "AXES maintainers (Magentix AI)",
+        "origin": "Same block presented as gt-v2.1; catalogue 1.27 retires status inside the method value",
+        "date": "2026-10-04"
+      }
+    },
+    "anch_simulated_honest.json": {
+      "expect": {
+        "state": "indeterminate",
+        "state_reason": "absence",
+        "condition": "basis_not_demonstrated",
+        "subject": "operator"
+      },
+      "provenance": {
+        "author": "AXES maintainers (Magentix AI)",
+        "origin": "WO18 A2: simulated anchor that claims nothing external",
+        "date": "2026-10-04"
+      }
+    },
+    "anch_simulated_claims_external.json": {
+      "expect": {
+        "state": "contradicted",
+        "state_reason": "divergence",
+        "condition": "anchor_simulated_claims_external",
+        "subject": "artifact"
+      },
+      "provenance": {
+        "author": "AXES maintainers (Magentix AI)",
+        "origin": "D-020: externally_anchored is earned, never asserted",
+        "date": "2026-10-04"
+      }
+    },
+    "anch_proof_absent.json": {
+      "expect": {
+        "state": "indeterminate",
+        "state_reason": "absence",
+        "condition": "anchor_proof_absent",
+        "subject": "operator"
+      },
+      "provenance": {
+        "author": "AXES maintainers (Magentix AI)",
+        "origin": "WO18 A4.2: absent proof is a producer defect, distinct from unresolvable",
+        "date": "2026-10-04"
+      }
+    },
+    "anch_canonical_contract.json": {
+      "expect": {
+        "state": "verified",
+        "state_reason": null,
+        "condition": null,
+        "subject": "artifact"
+      },
+      "provenance": {
+        "author": "AXES maintainers (Magentix AI)",
+        "origin": "WO18 A4.4 pass twin: commitment event from the contract named in anchor_service_ref",
+        "date": "2026-10-04"
+      }
+    },
+    "anch_lookalike_contract.json": {
+      "expect": {
+        "state": "contradicted",
+        "state_reason": "divergence",
+        "condition": "anchor_noncanonical_contract",
+        "subject": "artifact"
+      },
+      "provenance": {
+        "author": "AXES maintainers (Magentix AI)",
+        "origin": "WO18 A4.4 fail twin: identical event from a lookalike contract (address poisoning, babyblueviper1, x402#2887)",
+        "date": "2026-10-04"
+      }
+    },
+    "anch_plain_transfer.json": {
+      "expect": {
+        "state": "contradicted",
+        "state_reason": "divergence",
+        "condition": "anchor_not_a_commitment",
+        "subject": "artifact"
+      },
+      "provenance": {
+        "author": "AXES maintainers (Magentix AI)",
+        "origin": "WO18 A4.4: a token transfer at the canonical contract carries no commitment",
+        "date": "2026-10-04"
+      }
+    },
+    "anch_commitment_mismatch.json": {
+      "expect": {
+        "state": "contradicted",
+        "state_reason": "divergence",
+        "condition": "anchor_commitment_mismatch",
+        "subject": "artifact"
+      },
+      "provenance": {
+        "author": "AXES maintainers (Magentix AI)",
+        "origin": "Commitment event at the canonical contract for a different digest",
+        "date": "2026-10-04"
+      }
+    }
+  }
+}

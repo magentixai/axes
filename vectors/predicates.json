@@ -137,6 +137,112 @@
         {"check": "sequence_closure", "outcome": "ok"},
         {"check": "envelope_hash", "outcome": "ok"}
       ]
+    },
+    {
+      "id": "anchoring_legacy_gt_v2_0",
+      "description": "gt-v2.0 anchoring blocks are read under gt-v2.0 rules: indeterminate / absence / legacy_unstructured_anchor (declared simulated, D-015), never verified and never re-judged under later rules",
+      "pass_fixtures": [
+        "anchoring/anch_legacy_gt_v2_0.json",
+        "examples/golden-trace/out/envelopes.jsonl",
+        "examples/golden-trace-ind/out/envelopes.jsonl"
+      ],
+      "fail_fixtures": [
+        "anchoring/anch_legacy_under_gt_v2_1.json"
+      ],
+      "required_observations": [
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_legacy_gt_v2_0.json"
+        },
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_legacy_under_gt_v2_1.json"
+        },
+        {
+          "check": "anchoring_corpus",
+          "outcome": "legacy_unstructured_anchor"
+        }
+      ]
+    },
+    {
+      "id": "anchoring_externally_anchored_earned",
+      "description": "externally_anchored over an anchor that is not demonstrated is contradicted (D-020)",
+      "pass_fixtures": [
+        "anchoring/anch_simulated_honest.json"
+      ],
+      "fail_fixtures": [
+        "anchoring/anch_simulated_claims_external.json"
+      ],
+      "required_observations": [
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_simulated_honest.json"
+        },
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_simulated_claims_external.json"
+        }
+      ]
+    },
+    {
+      "id": "anchoring_proof_absent",
+      "description": "A demonstrated anchor with no proof reference is indeterminate / absence, subject operator (WO18 A4.2)",
+      "pass_fixtures": [
+        "anchoring/anch_canonical_contract.json"
+      ],
+      "fail_fixtures": [
+        "anchoring/anch_proof_absent.json"
+      ],
+      "required_observations": [
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_canonical_contract.json"
+        },
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_proof_absent.json"
+        }
+      ]
+    },
+    {
+      "id": "anchoring_canonical_contract",
+      "description": "A ledger commitment counts only from the contract named in anchor_service_ref, only as a commitment event, and only for the anchored digest (WO18 A4.4)",
+      "pass_fixtures": [
+        "anchoring/anch_canonical_contract.json"
+      ],
+      "fail_fixtures": [
+        "anchoring/anch_lookalike_contract.json",
+        "anchoring/anch_plain_transfer.json",
+        "anchoring/anch_commitment_mismatch.json"
+      ],
+      "required_observations": [
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_canonical_contract.json"
+        },
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_lookalike_contract.json"
+        },
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_plain_transfer.json"
+        },
+        {
+          "check": "anchoring",
+          "outcome": "ok",
+          "subject": "anch_commitment_mismatch.json"
+        }
+      ]
     }
   ]
 }

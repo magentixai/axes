@@ -1,0 +1,18 @@
+{
+  "release": "gt-v2.1",
+  "record": {
+    "evidence_quality": {
+      "evidence_origin": "runtime",
+      "assertion_basis": "observed",
+      "corroboration_state": "externally_anchored"
+    },
+    "anchoring": {
+      "anchor_receipt_id": "anch:001",
+      "anchoring_method": "write_once_store (SIMULATED)",
+      "anchored_at": "2026-06-09T09:05:00.000Z",
+      "chain_head_hash": "bb8c3c3402fb5a55b2d59289407aca05cc4e6457c350080744df523b047ccff0",
+      "anchor_store_ref": "anchorstore:trustline-demo/eu",
+      "anchoring_latency_ms": 740
+    }
+  }
+}

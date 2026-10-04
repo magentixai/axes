@@ -4,6 +4,7 @@ AXES reference verifier (offline).
 
 Recomputes RFC 8785 JCS bytes and SHA-256 digests, evaluates vectors/expected.json
 including reject reason codes, walks Golden Trace chains, exercises custody twins,
+evaluates anchoring blocks in the four-state vocabulary (vectors/anchoring, WO18 A4),
 and enforces vectors/predicates.json (TLC-008).
 
 Typed outcomes, never a bare boolean. Stdlib plus the 'jcs' package. No network.
@@ -28,10 +29,12 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from tools.axes_canonical import envelope_digest, hash_preimage, sha256_hex
+from tools import axes_anchoring_guard as anchoring_guard
 
 VECTORS_DIR = os.path.join(ROOT, "vectors")
 EXPECTED_PATH = os.path.join(VECTORS_DIR, "expected.json")
 PREDICATES_PATH = os.path.join(VECTORS_DIR, "predicates.json")
+ANCHORING_DIR = os.path.join(VECTORS_DIR, "anchoring")
 
 
 class DuplicateKeyError(ValueError):
@@ -63,6 +66,8 @@ class CheckResult:
             "ok",
             "reject_as_expected",
             "verification_unavailable",
+            # gt-v2.0 anchors are declared simulated (D-015): indeterminate, not a failure.
+            "legacy_unstructured_anchor",
         }
 
 
@@ -224,6 +229,45 @@ def verify_chain(label: str, jsonl_path: str, report: Report) -> None:
     report.add("sequence_closure", label, "ok", f"n={expected_seq - 1}")
 
 
+def _fmt(r: dict | None) -> str:
+    if r is None:
+        return "none"
+    return f"{r['state']}/{r['state_reason']}/{r['condition']} subject={r['subject']}"
+
+
+def anchoring_vectors(report: Report) -> None:
+    """WO18 A4: four-state anchoring results; each vector pins its decisive result."""
+    path = os.path.join(ANCHORING_DIR, "expected.json")
+    if not os.path.isfile(path):
+        report.add("anchoring", "vectors/anchoring", "missing_fixture", path)
+        return
+    expected = json.load(open(path, encoding="utf-8"))["vectors"]
+    for name, spec in expected.items():
+        prov = spec.get("provenance") or {}
+        if not all(prov.get(k) for k in ("author", "origin", "date")):
+            report.add("anchoring_provenance", name, "missing_provenance")
+        vec = load_json_reject_duplicates(open(os.path.join(ANCHORING_DIR, name), encoding="utf-8").read())
+        got = anchoring_guard.decisive(anchoring_guard.evaluate(
+            vec["record"], vec["release"], vec.get("observed_ledger_event")))
+        want = spec["expect"]
+        same = got is not None and all(got[k] == want[k] for k in ("state", "state_reason", "condition", "subject"))
+        report.add("anchoring", name, "ok" if same else "mismatch",
+                   _fmt(got) if same else f"got {_fmt(got)} want {_fmt(want)}")
+
+
+def anchoring_corpus(label: str, jsonl_path: str, report: Report) -> None:
+    """Every anchored envelope in the gt-v2.0 corpus reads as legacy_unstructured_anchor."""
+    with open(jsonl_path, encoding="utf-8") as f:
+        for line in f:
+            env = json.loads(line)
+            got = anchoring_guard.decisive(anchoring_guard.evaluate(env, "gt-v2.0"))
+            if got is None:
+                continue
+            seq = env.get("sequence_number")
+            outcome = got["condition"] if got["condition"] == "legacy_unstructured_anchor" else "unexpected_anchor_result"
+            report.add("anchoring_corpus", f"{label}:{seq}", outcome, _fmt(got))
+
+
 def locale_guard(report: Report) -> None:
     name = "axes_jcs_collation_ae.json"
     spec_path = os.path.join(VECTORS_DIR, name)
@@ -340,10 +384,12 @@ def main(argv: list[str] | None = None) -> int:
         path = os.path.join(ROOT, rel)
         if os.path.isfile(path):
             verify_chain(label, path, report)
+            anchoring_corpus(label, path, report)
         else:
             report.add("chain_link", label, "missing_corpus", path)
 
     locale_guard(report)
+    anchoring_vectors(report)
 
     for r in report.results:
         print(f"{r.outcome:28} {r.check:28} {r.subject} {r.detail}".rstrip())
