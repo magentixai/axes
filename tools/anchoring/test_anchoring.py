@@ -33,6 +33,13 @@ def expect(name, results, state, condition=None):
     print("%s %-44s -> %s/%s" % ("ok  " if ok else "FAIL", name, r["state"], r["condition"]))
     if not ok:
         FAILS.append(name)
+        annotate("%s -> %s/%s (%s)" % (name, r["state"], r["condition"], r.get("observed", "")))
+
+
+def annotate(msg):
+    """Surface failures as GitHub annotations (readable through the checks API)."""
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print("::error title=anchoring self-test::" + msg.replace("\n", " | ")[:900])
 
 
 def sh(*args, cwd=None, data=None):
@@ -245,4 +252,12 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except Exception as exc:  # report setup faults (e.g. openssl differences) visibly
+        import traceback
+        tb = traceback.format_exc()
+        if isinstance(exc, subprocess.CalledProcessError):
+            tb += " stderr: " + (exc.stderr or b"").decode("utf-8", "replace")
+        annotate(tb[-900:])
+        raise
