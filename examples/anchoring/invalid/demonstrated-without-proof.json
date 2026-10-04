@@ -9,7 +9,7 @@
       "basis_status": "demonstrated",
       "anchor_commitment_hash": "2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881",
       "anchor_commitment_hash_algorithm": "SHA-256",
-      "anchor_service_ref": "example:store"
+      "anchor_service_id": "example:store"
     }
   ]
 }

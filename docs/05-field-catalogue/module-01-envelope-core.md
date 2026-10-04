@@ -17,8 +17,8 @@
 | 1.5 | `emitted_at` | RFC 3339 timestamp | M | core | C0 |
 | 1.6 | `recorded_at` | RFC 3339 timestamp | R | recommended | C5 |
 | 1.7 | `timestamp_source` | string (controlled vocab) | R | recommended | C1 |
-| 1.8 | `clock_skew_ms` / `clock_sync_confidence` | integer / enum | O | recommended | C5 |
-| 1.9 | `org_id` | string (stable identifier) | M | core | C0 |
+| 1.8 | `clock_skew` / `clock_sync_confidence_level` | ISO 8601 duration / enum | O | recommended | C5 |
+| 1.9 | `organization_id` | string (stable identifier) | M | core | C0 |
 | 1.10 | `tenant_id` | string (stable identifier) | M | core | C0 |
 | 1.11 | `environment_id` | string (stable identifier) | M | core | C0 |
 | 1.12 | `trace_id` | string | M | core | C1 |
@@ -41,7 +41,7 @@
 **Definition.** The exact version of the SE envelope specification this envelope conforms to (e.g. `se-0.1.0`).
 **Purpose.** Lets any verifier or consumer select the correct schema, vocabularies and canonicalisation rules - including years later, from an evidence archive.
 **Rules.** MUST identify a published spec version; MUST sit inside the hash scope. Consumers encountering an unknown version follow `unknown_field_policy` (docs/08), never guess.
-**Canonicalisation registry.** Companion field `integrity.canonicalisation_version` is the closed registry identifier **`RFC8785-JCS`**. What it dereferences to (RFC 8785 revision, UTF-8 output, UTF-16 code-unit member sort, no Unicode normalisation, digest algorithm and encoding declared separately) is stated in [docs/09](../09-canonicalisation-and-hashing.md). The earlier form `RFC8785` is retired. A change in any of those properties is a new identifier.
+**Canonicalisation registry.** Companion field `integrity.canonicalization_version` (`canonicalisation_version` in gt-v2.0; docs/19, D-024) is the closed registry identifier **`RFC8785-JCS`**. What it dereferences to (RFC 8785 revision, UTF-8 output, UTF-16 code-unit member sort, no Unicode normalisation, digest algorithm and encoding declared separately) is stated in [docs/09](../09-canonicalisation-and-hashing.md). The earlier form `RFC8785` is retired. A change in any of those properties is a new identifier.
 **Report / audit usage.** Report manifests state the version(s) of every envelope relied on; mixed-version evidence sets are disclosed.
 **Misinterpretations.** This is the *spec* version, not the emitter's software version (Module 02) and not the schema-file URI.
 **Sources.** REQ-STD-001/007/015; REQ-EXEC-021.
@@ -80,7 +80,7 @@ The custody axis records who produced the finding, when, and how far confirmed. 
 **Misinterpretations.** None of the three is "the trusted time" by itself - trusted time requires `timestamp_source` plus external anchoring (Module 14). Backfilled evidence shows honest old `occurred_at` with new `emitted_at`, never rewritten timestamps.
 **Sources.** REQ-TECH-002; REQ-IA-002; GAP-EXEC-003; BPO-011.
 
-## 1.7 `timestamp_source` · 1.8 `clock_skew_ms`, `clock_sync_confidence`
+## 1.7 `timestamp_source` · 1.8 `clock_skew`, `clock_sync_confidence_level`
 
 **Definition.** Provenance of the emitter's clock (`ntp_synced`, `ptp_synced`, `os_clock_unsynced`, `external_authority`, `unknown`), with measured skew and a confidence grade where available.
 **Purpose.** A timeline is only as strong as its clocks; auditors and forensic investigators weight ordering claims by clock provenance.
@@ -88,7 +88,7 @@ The custody axis records who produced the finding, when, and how far confirmed. 
 **Misinterpretations.** Not a substitute for trusted timestamps (RFC 3161 anchoring, Module 14) - this discloses the emitter's clock quality; anchoring proves a ceiling on when the envelope existed.
 **Sources.** Harmonisation §1 (clock provenance); REQ-IA-002; GAP-IA-001.
 
-## 1.9 `org_id` · 1.10 `tenant_id` · 1.11 `environment_id`
+## 1.9 `organization_id` · 1.10 `tenant_id` · 1.11 `environment_id`
 
 **Definition.** The organisational scope of the evidence: owning organisation, tenant within it, and environment (`production`, `staging`, …) - stable opaque identifiers.
 **Purpose.** Tenant isolation is a first-class assurance claim ("no cross-tenant exposure") and every access, export and report is scoped by these three. They are also the boundary coordinates for cross-scope navigation (Module 08).

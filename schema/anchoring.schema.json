@@ -25,20 +25,20 @@
     },
     "anchor": {
       "type": "object",
-      "required": ["anchor_id", "anchoring_method", "basis_status", "anchor_commitment_hash", "anchor_commitment_hash_algorithm", "anchor_service_ref"],
+      "required": ["anchor_id", "anchoring_method", "basis_status", "anchor_commitment_hash", "anchor_commitment_hash_algorithm", "anchor_service_id"],
       "additionalProperties": false,
       "properties": {
         "anchor_id": {"type": "string", "minLength": 1},
         "anchoring_method": {"$ref": "#/$defs/anchoring_method"},
-        "anchor_profile_id": {"type": "string", "pattern": "^[a-z0-9_.-]+:[A-Za-z0-9_.-]+@[A-Za-z0-9_.-]+$"},
+        "anchor_profile_ref": {"type": "string", "pattern": "^[a-z0-9_.-]+:[A-Za-z0-9_.-]+@[A-Za-z0-9_.-]+$"},
         "basis_status": {"enum": ["demonstrated", "stubbed", "simulated"]},
         "anchor_commitment_hash": {"$ref": "#/$defs/hex_digest"},
         "anchor_commitment_hash_algorithm": {"type": "string", "minLength": 1},
         "anchor_requested_at": {"$ref": "#/$defs/timestamp"},
         "anchored_at": {"$ref": "#/$defs/timestamp"},
-        "anchor_service_ref": {"type": "string", "minLength": 1},
+        "anchor_service_id": {"type": "string", "minLength": 1},
         "anchor_record_ref": {"type": "string", "minLength": 1},
-        "anchor_operator_ref": {"type": ["string", "null"]},
+        "anchor_operator_id": {"type": ["string", "null"]},
         "anchor_proof_ref": {"type": "string", "minLength": 1},
         "anchor_proof_hash": {"$ref": "#/$defs/hex_digest"},
         "anchor_verification_procedure_ref": {"type": "string", "minLength": 1}
@@ -46,7 +46,7 @@
       "allOf": [
         {
           "if": {"properties": {"basis_status": {"const": "demonstrated"}}},
-          "then": {"required": ["anchor_profile_id", "anchor_requested_at", "anchor_proof_ref", "anchor_proof_hash", "anchor_verification_procedure_ref"]}
+          "then": {"required": ["anchor_profile_ref", "anchor_requested_at", "anchor_proof_ref", "anchor_proof_hash", "anchor_verification_procedure_ref"]}
         },
         {
           "if": {"required": ["anchored_at"]},

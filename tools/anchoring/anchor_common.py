@@ -12,8 +12,8 @@ PROOF_MANIFEST = "proof_manifest.json"
 
 # Registry identifiers for the procedures defined in docs/anchoring-profiles.md.
 # An identifier is immutable: a changed procedure gets a new identifier.
-PROFILE_OTS = "axes:opentimestamps-sha256-digest@1"
-PROFILE_RFC3161 = "axes:rfc3161-sha256-imprint@1"
+PROFILE_OTS = "axes:opentimestamps_sha256_digest@1"
+PROFILE_RFC3161 = "axes:rfc3161_sha256_imprint@1"
 
 # CAIP-2 identifier of Bitcoin mainnet (genesis block hash prefix).
 BITCOIN_MAINNET = "bip122:000000000019d6689c085ae165831e93"
@@ -64,7 +64,7 @@ def write_proof_manifest(proof_dir, files, description):
     entries = {}
     for name in sorted(files):
         entries[name] = sha256_file(os.path.join(proof_dir, name))
-    manifest = {"description": description, "files": entries}
+    manifest = {"manifest_note": description, "file_hash_algorithm": "SHA-256", "file_hashes": entries}
     path = os.path.join(proof_dir, PROOF_MANIFEST)
     write_json(path, manifest)
     return sha256_file(path)

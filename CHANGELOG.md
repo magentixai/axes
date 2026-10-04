@@ -4,6 +4,12 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-04 - Naming rules made normative (D-024)
+- `docs/20-naming-rules.md`: one method for every key, enum value and AXES identifier (N1 to N15). Booleans end `_indicator`; American spelling in code; `_id` for who or what acts, `_ref` for what is fetched and read (D-022 restated); class word last fixes the value type; no unit or algorithm in a key.
+- `tools/check_key_naming.py` (standard library) in CI on both branches; frozen bytes listed in `tools/naming_baseline.json` with the docs/19 entry that corrects them.
+- docs/19: every gt-v2.0 key the rules correct, with change type and implementer action, mirrored in `schema/key-aliases.json`; same-day draft names superseded (anchoring `anchor_service_id`, `anchor_operator_id`, `anchor_profile_ref`; profile identifiers `axes:<lower_snake>@<version>`; verifier result keys `verification_*`; proof manifest and run record keys).
+- Real anchors re-checked after the manifest key change: RFC 3161 still verifies; OpenTimestamps still pending its Bitcoin block. No corpus bytes changed.
+
 ### 2026-10-04 - WO18 anchoring model: catalogue, schema, change index, crosswalk
 - Module 14 (External anchoring) catalogue draft: one subject block plus `anchors[]`; verifier-derived lag, pending, custody relationship and earned `externally_anchored`.
 - `schema/anchoring.schema.json` (JSON Schema 2020-12). Rejects status inside the method value, `anchored_at` without `anchor_record_ref`, and `demonstrated` without proof material.

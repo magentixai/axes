@@ -6,32 +6,32 @@
     {
       "anchor_id": "anch:ots",
       "anchoring_method": "opentimestamps",
-      "anchor_profile_id": "axes:opentimestamps-sha256-digest@1",
+      "anchor_profile_ref": "axes:opentimestamps_sha256_digest@1",
       "basis_status": "demonstrated",
       "anchor_commitment_hash": "d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216",
       "anchor_commitment_hash_algorithm": "SHA-256",
       "anchor_requested_at": "2026-10-04T13:53:50.000Z",
-      "anchor_service_ref": "bip122:000000000019d6689c085ae165831e93",
-      "anchor_operator_ref": null,
+      "anchor_service_id": "bip122:000000000019d6689c085ae165831e93",
+      "anchor_operator_id": null,
       "anchor_proof_ref": "proofs/opentimestamps/proof_manifest.json",
-      "anchor_proof_hash": "3935b381d8a60ee493adeb331623a34573aa4a79f3e1e91b78082489f32e2399",
-      "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axes-opentimestamps-sha256-digest-1"
+      "anchor_proof_hash": "1b890a6ef5900b53675f4ab300056412075bc69cf63df0cc83a9a9b093ad3aa2",
+      "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesopentimestamps_sha256_digest1"
     },
     {
       "anchor_id": "anch:tsa-freetsa",
       "anchoring_method": "timestamp_authority",
-      "anchor_profile_id": "axes:rfc3161-sha256-imprint@1",
+      "anchor_profile_ref": "axes:rfc3161_sha256_imprint@1",
       "basis_status": "demonstrated",
       "anchor_commitment_hash": "d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216",
       "anchor_commitment_hash_algorithm": "SHA-256",
       "anchor_requested_at": "2026-10-04T13:53:53.000Z",
       "anchored_at": "2026-10-04T13:53:53.000Z",
-      "anchor_service_ref": "https://freetsa.org/tsr",
+      "anchor_service_id": "https://freetsa.org/tsr",
       "anchor_record_ref": "serial:0x08DE791D",
-      "anchor_operator_ref": "https://freetsa.org",
+      "anchor_operator_id": "https://freetsa.org",
       "anchor_proof_ref": "proofs/timestamp_authority/proof_manifest.json",
-      "anchor_proof_hash": "2c9b7af44db12199a535c6ee5a878eb9cd80318b0ecffb58546746c0790e55ab",
-      "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axes-rfc3161-sha256-imprint-1"
+      "anchor_proof_hash": "b66ac04a10d1e087285a1e4272f73410c41432938d4ed2816eafedd84046345f",
+      "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesrfc3161_sha256_imprint1"
     }
   ]
 }

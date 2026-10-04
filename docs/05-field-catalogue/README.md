@@ -2,6 +2,8 @@
 
 One file per module. Per-field descriptor: canonical key - definition - purpose - type - required status - maturity - conformance level - allowed values - example - report/audit/security usage - privacy sensitivity - redaction behaviour - derivability - confidence considerations - common misinterpretations - implementation notes - source requirement IDs (traceable to registers/requirements-register.md). Canonical keys and enums follow the harmonisation decisions in docs/06.
 
+**Naming.** Every key follows [docs/20 naming rules](../20-naming-rules.md) (D-024): a reader can predict a field's type from its last word. Catalogue review checks the rules a lint cannot (N10 `_id` versus `_ref`).
+
 **Why this field exists (house style).** Every catalogue field, starting with Module 01 and every field Work Order 16 touches, carries a four-part note: **What it records** / **Why it exists** / **What it does NOT do** / **Origin**. Worked exemplar and the first set of notes: [field-origin-notes.md](field-origin-notes.md). "What it does NOT do" is the lane boundary and is not optional. Credit public sources only; never credit anyone for something they did not say.
 
 | Module | Status |

@@ -184,16 +184,16 @@ def cmd_stamp(args):
         ac.upsert_anchor(block, {
             "anchor_id": "anch:ots",
             "anchoring_method": "opentimestamps",
-            "anchor_profile_id": ac.PROFILE_OTS,
+            "anchor_profile_ref": ac.PROFILE_OTS,
             "basis_status": "demonstrated",
             "anchor_commitment_hash": digest_hex,
             "anchor_commitment_hash_algorithm": "SHA-256",
             "anchor_requested_at": requested,
-            "anchor_service_ref": ac.BITCOIN_MAINNET,
-            "anchor_operator_ref": None,
+            "anchor_service_id": ac.BITCOIN_MAINNET,
+            "anchor_operator_id": None,
             "anchor_proof_ref": "proofs/opentimestamps/" + ac.PROOF_MANIFEST,
             "anchor_proof_hash": proof_hash,
-            "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axes-opentimestamps-sha256-digest-1",
+            "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesopentimestamps_sha256_digest1",
         })
     if "timestamp_authority" in methods:
         pdir = os.path.join(args.out, "proofs", "timestamp_authority")
@@ -203,18 +203,18 @@ def cmd_stamp(args):
         ac.upsert_anchor(block, {
             "anchor_id": "anch:tsa-freetsa",
             "anchoring_method": "timestamp_authority",
-            "anchor_profile_id": ac.PROFILE_RFC3161,
+            "anchor_profile_ref": ac.PROFILE_RFC3161,
             "basis_status": "demonstrated",
             "anchor_commitment_hash": digest_hex,
             "anchor_commitment_hash_algorithm": "SHA-256",
             "anchor_requested_at": requested,
             "anchored_at": openssl_time_to_iso(gen),
-            "anchor_service_ref": TSA_URL,
+            "anchor_service_id": TSA_URL,
             "anchor_record_ref": "serial:" + serial,
-            "anchor_operator_ref": TSA_OPERATOR,
+            "anchor_operator_id": TSA_OPERATOR,
             "anchor_proof_ref": "proofs/timestamp_authority/" + ac.PROOF_MANIFEST,
             "anchor_proof_hash": proof_hash,
-            "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axes-rfc3161-sha256-imprint-1",
+            "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesrfc3161_sha256_imprint1",
         })
     ac.write_json(os.path.join(args.out, ac.ANCHORING_FILE), block)
     print("wrote", os.path.join(args.out, ac.ANCHORING_FILE))

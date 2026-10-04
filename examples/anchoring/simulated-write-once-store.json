@@ -11,9 +11,9 @@
       "anchor_commitment_hash_algorithm": "SHA-256",
       "anchor_requested_at": "2026-08-01T09:00:00.000Z",
       "anchored_at": "2026-08-01T09:00:00.250Z",
-      "anchor_service_ref": "example:simulated-worm-store",
+      "anchor_service_id": "example:simulated-worm-store",
       "anchor_record_ref": "object:illustrative-0001",
-      "anchor_operator_ref": "example:emitter-operated"
+      "anchor_operator_id": "example:emitter-operated"
     }
   ]
 }

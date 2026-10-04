@@ -1,0 +1,61 @@
+{
+  "note": "Known naming violations in frozen bytes (corpus of record, harness files, anchored statements; D-018). CI fails only on violations not listed here. Each entry names where its correction is indexed.",
+  "violations": [
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "axes_corpus_release",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "canonicalisation",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "canonicalisation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "chain_head",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "commit",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "digest_alg",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "digest_alg",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "tag",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    }
+  ]
+}

@@ -56,7 +56,7 @@ jobs:
           if [ -z "$(git status --porcelain anchors)" ]; then echo "nothing changed"; exit 0; fi
           for d in anchors/*/; do
             [ -f "$d/anchoring.json" ] || continue
-            printf '{\n  "workflow_run": "%s/%s/actions/runs/%s",\n  "commit": "%s",\n  "event": "%s",\n  "runner_os": "%s"\n}\n' \
+            printf '{\n  "workflow_run_ref": "%s/%s/actions/runs/%s",\n  "source_commit_ref": "%s",\n  "trigger_event_type": "%s",\n  "runner_os_type": "%s"\n}\n' \
               "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$GITHUB_SHA" "$GITHUB_EVENT_NAME" "$RUNNER_OS" > "$d/last_run.json"
           done
           git config user.name "axes-anchor-bot"

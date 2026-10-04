@@ -14,10 +14,10 @@
 | Commit boundary marker | `commit_boundary_indicator` + `commit_boundary_status` | `commit_boundary_crossed` | `commit_boundary` (sources) | `commit_boundary_status` (enum) + drop boolean | Status enum subsumes the boolean; "crossed" only captures one state |
 | Hash chain predecessor | `previous_event_hash` | `previous_envelope_hash` | `previous_envelope_hash` | `previous_envelope_hash` | Envelope is the hashed unit; 2:1 usage |
 | Untrusted content | `untrusted_content_present_flag` | `untrusted_content_exposure` | `untrusted_content_indicator` | `untrusted_content_indicator` | Pair with `input_trust_classification` (graded) as primary; boolean as derived rollup |
-| Injection signal | `prompt_injection_signal_flag` | `prompt_injection_signal` | `prompt_injection_signal` | `prompt_injection_signal` | Drop `_flag` suffix convention for signals |
-| Clock provenance | `clock_source` | `timestamp_source` | `timestamp_source` | `timestamp_source` | Add `clock_skew_ms`, `clock_sync_confidence` from TG/IA |
+| Injection signal | `prompt_injection_signal_flag` | `prompt_injection_signal` | `prompt_injection_signal` | `prompt_injection_signal_indicator` (D-024) | Drop `_flag` suffix convention for signals |
+| Clock provenance | `clock_source` | `timestamp_source` | `timestamp_source` | `timestamp_source` | Add `clock_skew` (ISO 8601 duration) and `clock_sync_confidence_level` from TG/IA (D-024) |
 | Approval (human) | `human_approval_required` / `human_approval_present` | `approval_required` / `approval_status` + `human_review_required` / `human_review_obtained` | (reuses TG) | `approval_required` + `approval_status` + `approver_type` | One approval cluster; human-vs-system as `approver_type`, review vs approval as `approval_kind` |
-| Personal data | `personal_data_flag` | `personal_data_flag` | `personal_data_involved` | `personal_data_flag` | Keep IA's `special_category_data_indicator` and `sensitive_data_involved` as separate fields (distinct legal concepts) |
+| Personal data | `personal_data_flag` | `personal_data_flag` | `personal_data_involved` | `personal_data_indicator` (D-024) | Keep IA's `special_category_data_indicator` and `sensitive_data_involved` as separate fields (distinct legal concepts) |
 | Evidence completeness | `evidence_completeness_status` | `evidence_quality` | `evidence_completeness_indicator` | Split two axes: `evidence_completeness_status` + `evidence_provenance_class` | TG's enum mixes completeness with provenance (reconstructed/backfilled/redacted); separate the axes |
 | Delegator identity | - (approver_id only) | - | `delegator_user_id` (sources) | `delegator_id` | New field, all waves lacked it; the principal who granted the delegation |
 | Coverage measure | - (gap 2.6) | `coverage_ratio` | expected/received sequence counts + reconciliation | `evidence_coverage_ratio` + `evidence_population_ref` | Two proof mechanisms: sequence continuity (stream) + source-system reconciliation (estate) |
@@ -167,9 +167,9 @@ Other mechanisms use a namespaced identifier `<namespace>:<id>` and MUST carry `
 
 **`basis_status`** (§2.11) applies per anchor. It is written by the producing tool from what the anchoring service returned, never by hand.
 
-**Anchoring verification results.** Each check is reported in the four-state vocabulary of draft-krausz-verification-state-03 (D-023): `state` (`verified` | `contradicted` | `indeterminate` | `not_evaluated`), `state_reason` (`divergence` | `absence` | `instrument_failure`), `subject` (`artifact` | `operator` | `network` | `verifier`) and a closed `condition`:
+**Anchoring verification results.** Each check is reported in the four-state vocabulary of draft-krausz-verification-state-03 (D-023), under AXES key names (docs/20 N14): `verification_state` (`verified` | `contradicted` | `indeterminate` | `not_evaluated`), `verification_reason_code` (`divergence` | `absence` | `instrument_failure`), `verification_subject_type` (`artifact` | `operator` | `network` | `verifier`), a closed `verification_condition_code`, and `observed_note`:
 
-| `condition` | State | Meaning |
+| `verification_condition_code` | State | Meaning |
 |---|---|---|
 | `anchor_commitment_mismatch` | `contradicted` | The commitment does not recompute from the subject under the profile, or the proof attests a different digest, time or record than the block states |
 | `anchor_proof_hash_mismatch` | `contradicted` | A proof file or the manifest differs from `anchor_proof_hash` |
@@ -183,11 +183,13 @@ Other mechanisms use a namespaced identifier `<namespace>:<id>` and MUST carry `
 
 ## 3. Naming-convention decisions (route to catalogue)
 
+**All naming rules are now normative in [docs/20](20-naming-rules.md) (D-024) and checked by `tools/check_key_naming.py`. This section keeps the casing rationale and the open-item history.**
+
 **Closed - casing.** Field keys are `lower_snake`; enum values are `lower_snake`. Rationale: ISO 20022 API/JSON best-practices whitepaper §7.1 recommends unabbreviated snake_case for JSON representations of ISO 20022 semantics; lowerCamelCase appears in none of ISO 20022's maintained representations (business model spaced title-case; XML vowel-stripped tags; JSON Schema generation draft retains those). AXES is internally consistent at this spelling. Concept-level interoperability uses declared representation pairs, never derived camel-to-snake transforms (ambiguous at digit boundaries and acronyms). Under JCS two spellings sort to different positions and produce different canonical bytes; see [docs/12](12-standards-alignment.md). Designed exception: a relying-party-scoped identifier (identifier_scope) legitimately produces different digests at different relying parties.
 
 Still open:
-1. Suffix discipline: `_flag` vs `_indicator` vs `_signal` - propose: `_indicator` for observed booleans, `_signal` for security/behaviour observations carrying confidence, no `_flag`.
+1. ~~Suffix discipline~~ **Closed by D-024:** every boolean ends `_indicator`; no `_flag`; a signal carrying confidence is an object, not a boolean (docs/20 N5).
 2. ~~`_ref` vs `_id`~~ **Closed by D-022 (2026-10-04):** `_id` for identifiers this record mints and owns; `_ref` for locators or identifiers minted elsewhere, dereferenceable by a third party or naming a public network (CAIP-2).
-3. Effective-dating pattern: `*_version` + `effective_from`/`effective_until` standardised for every versioned reference (policy, delegation, control, model, terminology profile).
-4. Boolean polarity: always positive-presence (`redaction_applied`, not `unredacted`).
+3. ~~Effective-dating pattern~~ **Closed by D-024:** `<x>_version` plus `effective_from` / `effective_until` instants for every versioned reference (docs/20 N3, N9).
+4. ~~Boolean polarity~~ **Closed by D-024:** positive condition plus `_indicator` (`redaction_applied_indicator`, never `unredacted`) (docs/20 N5).
 5. `delegation_scope` serialisation structure (`scope_json` question) - W6.

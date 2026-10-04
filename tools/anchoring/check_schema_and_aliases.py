@@ -68,7 +68,7 @@ def index_rows(md):
     for line in md.splitlines():
         m = re.match(r"^## (\S+) to (\S+)", line)
         if m:
-            section = (m.group(1), m.group(2))
+            section = (m.group(1), m.group(2).rstrip(":,;"))
             continue
         if not line.startswith("|") or section is None:
             continue
@@ -106,12 +106,12 @@ def check_aliases():
             if leafname not in ticked_text:
                 print("FAIL alias %s: `%s` not in docs/19" % (name, leafname))
                 FAILS.append(name)
-        if decision_text(a["decision"]) not in md:
-            print("FAIL alias %s: decision %s not in docs/19" % (name, a["decision"]))
+        if decision_text(a["decision_ref"]) not in md:
+            print("FAIL alias %s: decision %s not in docs/19" % (name, a["decision_ref"]))
             FAILS.append(name)
     for (rf, rt), row, line in rows:
         ctype = row.get("Change type", "").strip("`")
-        same = [a for a in aliases if a["release_from"] == rf and a["release_to"] == rt and a["change_type"] == ctype]
+        same = [a for a in aliases if a["from_release_ref"] == rf and a["to_release_ref"] == rt and a["change_type"] == ctype]
         hit = [a for a in same if any(l and ("`%s" % l in line or "%s`" % l in line or l in line)
                                       for l in (leaf(a["from_path"]), leaf(a["to_path"])))]
         if not hit:

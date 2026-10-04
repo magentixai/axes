@@ -1,6 +1,6 @@
 # Anchor profiles and verification procedures
 
-Each `anchor_profile_id` below is an immutable registry entry (WO18 A2, decision on registry identifiers): it dereferences to exactly this statement, and any change to the procedure produces a new identifier. Each section is also the target of `anchor_verification_procedure_ref` for anchors made with it.
+Each `anchor_profile_ref` below is an immutable registry entry (WO18 A2, decision on registry identifiers): it dereferences to exactly this statement, and any change to the procedure produces a new identifier. Each section is also the target of `anchor_verification_procedure_ref` for anchors made with it.
 
 Reference tooling: `tools/anchoring/produce.py` (makes anchors), `tools/anchoring/verify_anchor.py` (checks them offline). Results use the four verification states of draft-krausz-verification-state-03 (`verified`, `contradicted`, `indeterminate`, `not_evaluated`) with a closed `condition`.
 
@@ -11,11 +11,11 @@ Reference tooling: `tools/anchoring/produce.py` (makes anchors), `tools/anchorin
 - **Status.** Only `basis_status: demonstrated` can verify. `simulated` or `stubbed` is `indeterminate` / `basis_not_demonstrated`, never `verified`.
 - **Tooling absent.** If the verifier lacks a library or binary a method needs, the result is `not_evaluated`, reason `instrument_failure`, condition `anchor_method_unverifiable`, subject `verifier`. It is never a pass and never a finding about the anchor.
 
-## `axes:opentimestamps-sha256-digest@1`
+## `axes:opentimestamps_sha256_digest@1`
 
 **What is anchored.** The subject's SHA-256 is submitted to public OpenTimestamps calendars. The calendars aggregate it into a Bitcoin transaction; once mined, the proof upgrades to a Bitcoin block header attestation.
 
-**Fields.** `anchoring_method: opentimestamps`; `anchor_service_ref: bip122:000000000019d6689c085ae165831e93` (Bitcoin mainnet, CAIP-2); `anchor_operator_ref: null` (the completed proof depends only on Bitcoin; calendars are transport); `anchor_record_ref: block:<height>:<block hash>`; `anchored_at`: the block header time. Before the Bitcoin attestation exists the entry has `anchor_requested_at` and no `anchored_at`: the anchor is pending (derived, not stored).
+**Fields.** `anchoring_method: opentimestamps`; `anchor_service_id: bip122:000000000019d6689c085ae165831e93` (Bitcoin mainnet, CAIP-2); `anchor_operator_id: null` (the completed proof depends only on Bitcoin; calendars are transport); `anchor_record_ref: block:<height>:<block hash>`; `anchored_at`: the block header time. Before the Bitcoin attestation exists the entry has `anchor_requested_at` and no `anchored_at`: the anchor is pending (derived, not stored).
 
 **Proof bundle.** `subject.ots` (OpenTimestamps detached proof) and `bitcoin-header-<height>.hex` (the 80-byte block header, archived when the proof is upgraded).
 
@@ -28,11 +28,11 @@ Reference tooling: `tools/anchoring/produce.py` (makes anchors), `tools/anchorin
 
 **What this does and does not establish.** It proves the subject digest was committed into a Bitcoin block header with valid proof of work. That the block is in Bitcoin's main chain is a separate check against any Bitcoin node or block explorer, by block hash; the verifier reports the hash so the check takes one lookup. It says nothing about the subject's content beyond its digest.
 
-## `axes:rfc3161-sha256-imprint@1`
+## `axes:rfc3161_sha256_imprint@1`
 
 **What is anchored.** An RFC 3161 time-stamp request carrying the subject's SHA-256 as the message imprint is sent to a public time-stamp authority, which returns a signed token.
 
-**Fields.** `anchoring_method: timestamp_authority`; `anchor_service_ref`: the TSA endpoint; `anchor_operator_ref`: the TSA operator; `anchor_record_ref: serial:<token serial>`; `anchored_at`: the token's `genTime`.
+**Fields.** `anchoring_method: timestamp_authority`; `anchor_service_id`: the TSA endpoint; `anchor_operator_id`: the TSA operator; `anchor_record_ref: serial:<token serial>`; `anchored_at`: the token's `genTime`.
 
 **Proof bundle.** `token.tsr` (the RFC 3161 response), `tsa-ca.pem` (the TSA's root certificate), `tsa.crt` (the TSA signing certificate), as published by the TSA at the time of the run.
 

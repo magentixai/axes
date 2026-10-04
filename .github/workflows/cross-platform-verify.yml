@@ -54,6 +54,8 @@ jobs:
         run: python tools/anchoring/test_anchoring.py
       - name: Schema examples and key change index agree
         run: python tools/anchoring/check_schema_and_aliases.py
+      - name: Naming rules (docs/20)
+        run: python tools/check_key_naming.py schema examples/anchoring anchors --baseline tools/naming_baseline.json
       - name: Verify committed real anchors
         run: |
           for d in anchors/*/; do

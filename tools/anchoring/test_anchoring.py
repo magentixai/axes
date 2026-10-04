@@ -29,11 +29,11 @@ FAILS = []
 
 def expect(name, results, state, condition=None):
     r = results[-1]
-    ok = r["state"] == state and (condition is None or r["condition"] == condition)
-    print("%s %-44s -> %s/%s" % ("ok  " if ok else "FAIL", name, r["state"], r["condition"]))
+    ok = r["verification_state"] == state and (condition is None or r["verification_condition_code"] == condition)
+    print("%s %-44s -> %s/%s" % ("ok  " if ok else "FAIL", name, r["verification_state"], r["verification_condition_code"]))
     if not ok:
         FAILS.append(name)
-        annotate("%s -> %s/%s (%s)" % (name, r["state"], r["condition"], r.get("observed", "")))
+        annotate("%s -> %s/%s (%s)" % (name, r["verification_state"], r["verification_condition_code"], r.get("observed_note", "")))
 
 
 def annotate(msg):
@@ -131,10 +131,10 @@ def make_block(root):
     for n in ("token.tsr", "tsa-ca.pem", "tsa.crt"):
         shutil.copy(os.path.join(tsa_root, n), tdir)
     ac.upsert_anchor(block, {
-        "anchor_id": "anch:tsa", "anchoring_method": "timestamp_authority", "anchor_profile_id": ac.PROFILE_RFC3161,
+        "anchor_id": "anch:tsa", "anchoring_method": "timestamp_authority", "anchor_profile_ref": ac.PROFILE_RFC3161,
         "basis_status": "demonstrated", "anchor_commitment_hash": DHEX, "anchor_commitment_hash_algorithm": "SHA-256",
-        "anchor_requested_at": gen, "anchored_at": gen, "anchor_service_ref": "local-test-tsa",
-        "anchor_record_ref": "serial:" + serial, "anchor_operator_ref": "local-test-tsa",
+        "anchor_requested_at": gen, "anchored_at": gen, "anchor_service_id": "local-test-tsa",
+        "anchor_record_ref": "serial:" + serial, "anchor_operator_id": "local-test-tsa",
         "anchor_proof_ref": "proofs/timestamp_authority/" + ac.PROOF_MANIFEST,
         "anchor_proof_hash": ac.write_proof_manifest(tdir, ["token.tsr", "tsa-ca.pem", "tsa.crt"], "synthetic"),
         "anchor_verification_procedure_ref": "docs/anchoring-profiles.md"})
@@ -143,11 +143,11 @@ def make_block(root):
     os.makedirs(odir)
     height, bhash, t = build_ots(odir)
     ac.upsert_anchor(block, {
-        "anchor_id": "anch:ots", "anchoring_method": "opentimestamps", "anchor_profile_id": ac.PROFILE_OTS,
+        "anchor_id": "anch:ots", "anchoring_method": "opentimestamps", "anchor_profile_ref": ac.PROFILE_OTS,
         "basis_status": "demonstrated", "anchor_commitment_hash": DHEX, "anchor_commitment_hash_algorithm": "SHA-256",
         "anchor_requested_at": ac.iso_from_unix(t - 600), "anchored_at": ac.iso_from_unix(t),
-        "anchor_service_ref": ac.BITCOIN_MAINNET, "anchor_record_ref": "block:%d:%s" % (height, bhash),
-        "anchor_operator_ref": None, "anchor_proof_ref": "proofs/opentimestamps/" + ac.PROOF_MANIFEST,
+        "anchor_service_id": ac.BITCOIN_MAINNET, "anchor_record_ref": "block:%d:%s" % (height, bhash),
+        "anchor_operator_id": None, "anchor_proof_ref": "proofs/opentimestamps/" + ac.PROOF_MANIFEST,
         "anchor_proof_hash": ac.write_proof_manifest(odir, ["subject.ots", "bitcoin-header-%d.hex" % height], "synthetic"),
         "anchor_verification_procedure_ref": "docs/anchoring-profiles.md"})
     ac.write_json(os.path.join(base, ac.ANCHORING_FILE), block)

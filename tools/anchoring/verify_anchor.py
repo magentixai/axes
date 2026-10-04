@@ -4,8 +4,9 @@
   python tools/anchoring/verify_anchor.py DIR [--subject FILE] [--json]
 
 DIR holds anchoring.json (WO18 A2 block) and the proof files it points to. No network access.
-Results use the draft-krausz-verification-state-03 vocabulary (WO19 D5): state, state_reason,
-condition, subject, observed. A missing optional dependency is `not_evaluated` with reason
+Results use the draft-krausz-verification-state-03 vocabulary (WO19 D5) under AXES key names
+(docs/20): verification_state, verification_reason_code,
+verification_condition_code, verification_subject_type, observed_note. A missing optional dependency is `not_evaluated` with reason
 `instrument_failure`: never a pass and never a fault in the anchor.
 
 Exit status: 0 if no anchor is `contradicted`; 1 otherwise; 2 if the input cannot be read.
@@ -25,8 +26,9 @@ DEMONSTRATED = "demonstrated"
 
 
 def result(anchor_id, state, condition=None, reason=None, subject="artifact", observed=""):
-    return {"anchor_id": anchor_id, "state": state, "state_reason": reason,
-            "condition": condition, "subject": subject, "observed": observed}
+    return {"anchor_id": anchor_id, "verification_state": state, "verification_reason_code": reason,
+            "verification_condition_code": condition, "verification_subject_type": subject,
+            "observed_note": observed}
 
 
 def check_manifest(base, entry):
@@ -42,13 +44,13 @@ def check_manifest(base, entry):
         return None, result(aid, "contradicted", "anchor_proof_hash_mismatch", None, "artifact", "manifest bytes differ from anchor_proof_hash")
     manifest = ac.read_json(path)
     pdir = os.path.dirname(path)
-    for name, digest in manifest.get("files", {}).items():
+    for name, digest in manifest.get("file_hashes", {}).items():
         fp = os.path.join(pdir, name)
         if not os.path.isfile(fp):
             return None, result(aid, "not_evaluated", "anchor_proof_unresolvable", None, "network", "listed proof file missing: " + name)
         if ac.sha256_file(fp) != digest:
             return None, result(aid, "contradicted", "anchor_proof_hash_mismatch", None, "artifact", "proof file altered: " + name)
-    return {n: os.path.join(pdir, n) for n in manifest.get("files", {})}, None
+    return {n: os.path.join(pdir, n) for n in manifest.get("file_hashes", {})}, None
 
 
 def bits_to_target(bits):
@@ -149,7 +151,7 @@ def verify_block(base, subject=None):
                               "basis_status is %s" % entry.get("basis_status")))
             continue
         commitment = entry.get("anchor_commitment_hash")
-        if entry.get("anchor_profile_id") in IDENTITY_PROFILES and commitment != shash:
+        if entry.get("anchor_profile_ref") in IDENTITY_PROFILES and commitment != shash:
             out.append(result(aid, "contradicted", "anchor_commitment_mismatch", None, "artifact",
                               "identity profile requires commitment == subject hash"))
             continue
@@ -184,9 +186,9 @@ def main():
         print(json.dumps(results, indent=2))
     else:
         for r in results:
-            extra = "/".join(x for x in (r["state_reason"], r["condition"]) if x)
-            print("%-14s %-18s %-40s %s" % (r["state"], r["anchor_id"], extra, r["observed"]))
-    return 1 if any(r["state"] == "contradicted" for r in results) else 0
+            extra = "/".join(x for x in (r["verification_reason_code"], r["verification_condition_code"]) if x)
+            print("%-14s %-18s %-40s %s" % (r["verification_state"], r["anchor_id"], extra, r["observed_note"]))
+    return 1 if any(r["verification_state"] == "contradicted" for r in results) else 0
 
 
 if __name__ == "__main__":
