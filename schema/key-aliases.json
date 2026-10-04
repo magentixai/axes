@@ -1,0 +1,157 @@
+{
+  "description": "Machine-readable twin of docs/19-key-change-index.md. A validator maps an earlier-release record to the later shape mechanically; translation is an explicit, reported step, never silent.",
+  "entries": [
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": "anchoring",
+      "to_path": "anchoring",
+      "change_type": "restructured",
+      "decision": "D-021"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": "anchoring.chain_head_hash",
+      "to_path": "anchoring.anchored_subject_hash",
+      "change_type": "renamed",
+      "decision": "D-021"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchored_subject_hash_algorithm",
+      "change_type": "added",
+      "decision": "WO18-A2"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": "anchoring.anchor_receipt_id",
+      "to_path": "anchoring.anchors[].anchor_id",
+      "change_type": "renamed",
+      "decision": "D-021"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": "anchoring.anchoring_method",
+      "to_path": "anchoring.anchors[].anchoring_method",
+      "change_type": "value_tightened",
+      "decision": "D-015"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": "anchoring.anchored_at",
+      "to_path": "anchoring.anchors[].anchored_at",
+      "change_type": "restructured",
+      "decision": "WO18-A2"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": "anchoring.anchor_store_ref",
+      "to_path": "anchoring.anchors[].anchor_service_ref",
+      "change_type": "renamed",
+      "decision": "D-021"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": "anchoring.anchoring_latency_ms",
+      "to_path": null,
+      "change_type": "removed",
+      "decision": "D-017"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].anchor_requested_at",
+      "change_type": "added",
+      "decision": "WO18-A2"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].anchor_profile_id",
+      "change_type": "added",
+      "decision": "WO18-A2"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].anchor_commitment_hash",
+      "change_type": "added",
+      "decision": "WO18-A2"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].anchor_commitment_hash_algorithm",
+      "change_type": "added",
+      "decision": "WO18-A2"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].anchor_record_ref",
+      "change_type": "added",
+      "decision": "WO18-A2"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].anchor_operator_ref",
+      "change_type": "added",
+      "decision": "WO18-A2"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].anchor_proof_ref",
+      "change_type": "added",
+      "decision": "WO18-A5"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].anchor_proof_hash",
+      "change_type": "added",
+      "decision": "WO18-A5"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].anchor_verification_procedure_ref",
+      "change_type": "added",
+      "decision": "WO18-A2"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": null,
+      "to_path": "anchoring.anchors[].basis_status",
+      "change_type": "added",
+      "decision": "WO16-T18"
+    },
+    {
+      "release_from": "gt-v2.0",
+      "release_to": "gt-v2.1",
+      "from_path": "evidence_quality.corroboration_state",
+      "to_path": "evidence_quality.corroboration_state",
+      "change_type": "value_tightened",
+      "decision": "D-020"
+    }
+  ]
+}

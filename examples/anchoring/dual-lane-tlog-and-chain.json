@@ -1,0 +1,29 @@
+{
+  "anchored_subject_type": "release_statement",
+  "anchored_subject_hash": "d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216",
+  "anchored_subject_hash_algorithm": "SHA-256",
+  "anchors": [
+    {
+      "anchor_id": "anch:markovian-tlog",
+      "anchoring_method": "transparency_log",
+      "anchor_profile_id": "markovianprotocol:CONFIRM-WITH-AUTHOR@0",
+      "basis_status": "simulated",
+      "anchor_commitment_hash": "d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216",
+      "anchor_commitment_hash_algorithm": "SHA-256",
+      "anchor_service_ref": "CONFIRM-WITH-AUTHOR: log origin",
+      "anchor_operator_ref": "CONFIRM-WITH-AUTHOR",
+      "anchor_verification_procedure_ref": "CONFIRM-WITH-AUTHOR: published tlog-proof plus OpenTimestamps procedure"
+    },
+    {
+      "anchor_id": "anch:argentum-chain",
+      "anchoring_method": "distributed_ledger",
+      "anchor_profile_id": "argentum:CONFIRM-WITH-AUTHOR@0",
+      "basis_status": "simulated",
+      "anchor_commitment_hash": "d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216",
+      "anchor_commitment_hash_algorithm": "SHA-256",
+      "anchor_service_ref": "CONFIRM-WITH-AUTHOR: CAIP-2 chain and canonical registry contract",
+      "anchor_operator_ref": null,
+      "anchor_verification_procedure_ref": "CONFIRM-WITH-AUTHOR: draft-etcheverry-action-ref verification"
+    }
+  ]
+}

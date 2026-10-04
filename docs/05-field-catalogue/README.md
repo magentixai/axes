@@ -7,6 +7,7 @@ One file per module. Per-field descriptor: canonical key - definition - purpose 
 | Module | Status |
 |---|---|
 | [01 - Envelope Core](module-01-envelope-core.md) | **DRAFT published - open for challenge** (23 entries plus WO16 identifier/time/signature companions) |
+| [14 - External anchoring](module-14-external-anchoring.md) | **DRAFT published - open for challenge** (WO18 A2: subject block plus `anchors[]`; schema, examples and crosswalk). Numbered 14 because the anchoring cluster was registered as Module 14 (EB-002); integrity, hashing and signature fields join it when that module is drafted |
 | [Custody axis](custody-axis.md) | Working note (not-self-declared rule; three identity coordinates) |
 | [Field origin notes](field-origin-notes.md) | Four-part "why this field exists" notes |
 | 02 Actor/Agent/Model/Runtime · 03 Authority & Delegation · 04 Capability & Scope · 05 Target/Resource/Operation · 06 Commit Boundary & Consequence · 07 Topology & Lineage · 08 Boundary Entry/Exit · 09 Evidence Artifact Refs · 10 Evidence Quality · 11 Behaviour & Security Signals · 12 Risk/Control/Exception · 13 Data/Privacy/Redaction · 14 Integrity/Hashing/Signature · 15 Attestation · 16 Reportability | Queued - modules ship as individual commits (Roadmap P2). Module 06 (Commit Boundary & Consequence) is next: it is where community record-shape discussions (receipts, refund/slash states, settlement-vs-correctness separation) land |

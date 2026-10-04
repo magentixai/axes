@@ -1,0 +1,53 @@
+{
+  "description": "WO20 section 7: each party anchors its own envelope; both envelopes carry the same correlation_digest (axes:x402-correlation@1). Illustrative values, basis_status simulated.",
+  "records": [
+    {
+      "party": "buyer",
+      "correlation_digest": "57316f21720b14aa394aa216f75bb8403d5f995cb4fcd4ba5c411aa49e2fa548",
+      "anchoring": {
+        "anchored_subject_type": "envelope",
+        "anchored_subject_hash": "fc7ceafef860fc0716472e01a0e9ebabe2731c1cac9ef822af788aa43c00149f",
+        "anchored_subject_hash_algorithm": "SHA-256",
+        "anchors": [
+          {
+            "anchor_id": "anch:buyer-tsa",
+            "anchoring_method": "timestamp_authority",
+            "anchor_profile_id": "axes:rfc3161-sha256-imprint@1",
+            "basis_status": "simulated",
+            "anchor_commitment_hash": "fc7ceafef860fc0716472e01a0e9ebabe2731c1cac9ef822af788aa43c00149f",
+            "anchor_commitment_hash_algorithm": "SHA-256",
+            "anchor_requested_at": "2026-10-03T08:00:02.000Z",
+            "anchored_at": "2026-10-03T08:00:02.000Z",
+            "anchor_service_ref": "https://tsa.example/tsr",
+            "anchor_record_ref": "serial:0x0000B1",
+            "anchor_operator_ref": "https://tsa.example"
+          }
+        ]
+      }
+    },
+    {
+      "party": "seller",
+      "correlation_digest": "57316f21720b14aa394aa216f75bb8403d5f995cb4fcd4ba5c411aa49e2fa548",
+      "anchoring": {
+        "anchored_subject_type": "envelope",
+        "anchored_subject_hash": "512d8675c7f6e6dd8b938816406c1f21aa8128f5abcb325bf6e563886b624454",
+        "anchored_subject_hash_algorithm": "SHA-256",
+        "anchors": [
+          {
+            "anchor_id": "anch:seller-tsa",
+            "anchoring_method": "timestamp_authority",
+            "anchor_profile_id": "axes:rfc3161-sha256-imprint@1",
+            "basis_status": "simulated",
+            "anchor_commitment_hash": "512d8675c7f6e6dd8b938816406c1f21aa8128f5abcb325bf6e563886b624454",
+            "anchor_commitment_hash_algorithm": "SHA-256",
+            "anchor_requested_at": "2026-10-03T08:00:03.000Z",
+            "anchored_at": "2026-10-03T08:00:03.000Z",
+            "anchor_service_ref": "https://tsa.example/tsr",
+            "anchor_record_ref": "serial:0x00005E",
+            "anchor_operator_ref": "https://tsa.example"
+          }
+        ]
+      }
+    }
+  ]
+}

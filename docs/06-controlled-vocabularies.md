@@ -152,13 +152,42 @@ A top-level failure verdict is a fail-closed aggregate, not a claim that every l
 
 Correction: an earlier draft defined `origin` as "the party that earns the value", which inverts on the payer side. Checkability runs against the `primary` identifier; a mismatch on an `alternative` is a signal, not a disqualification. See [docs/15](15-AXES_Payee_Settlement_Role_Design_Note.md).
 
+## 2.12 Anchoring (WO18, Module 14)
+
+**`anchoring_method` (open registry).** Seeded values, each a family of mechanisms, not a product:
+- `timestamp_authority` - an RFC 3161 (or equivalent) time-stamp authority signs the commitment and a time
+- `opentimestamps` - the commitment is aggregated by OpenTimestamps calendars into a Bitcoin block
+- `transparency_log` - the commitment is a leaf in an append-only, verifiable log (SCITT, C2SP tlog, Rekor and similar)
+- `distributed_ledger` - the commitment is recorded by a canonical contract or registry on a ledger
+- `write_once_store` - the commitment is held in storage that refuses overwrite, with a third-party verification path
+
+Other mechanisms use a namespaced identifier `<namespace>:<id>` and MUST carry `anchor_verification_procedure_ref`. Registration is additive. Status never appears in the value: `write_once_store (SIMULATED)` is retired (catalogue 1.27); simulation is `basis_status: simulated`. The registry is open because a closed list would make every new mechanism a schema change; the strong claim is protected instead by making `externally_anchored` earned (D-020).
+
+**`anchored_subject_type` (closed):** `chain_head` | `envelope` | `bundle_manifest` | `release_statement`.
+
+**`basis_status`** (§2.11) applies per anchor. It is written by the producing tool from what the anchoring service returned, never by hand.
+
+**Anchoring verification results.** Each check is reported in the four-state vocabulary of draft-krausz-verification-state-03 (D-023): `state` (`verified` | `contradicted` | `indeterminate` | `not_evaluated`), `state_reason` (`divergence` | `absence` | `instrument_failure`), `subject` (`artifact` | `operator` | `network` | `verifier`) and a closed `condition`:
+
+| `condition` | State | Meaning |
+|---|---|---|
+| `anchor_commitment_mismatch` | `contradicted` | The commitment does not recompute from the subject under the profile, or the proof attests a different digest, time or record than the block states |
+| `anchor_proof_hash_mismatch` | `contradicted` | A proof file or the manifest differs from `anchor_proof_hash` |
+| `anchor_simulated_claims_external` | `contradicted` | `externally_anchored` asserted over an anchor that is simulated or stubbed |
+| `anchor_pending` | `indeterminate` / `absence` | Requested, not yet attested (no `anchored_at`); upgrade and re-verify |
+| `basis_not_demonstrated` | `indeterminate` / `absence` | `basis_status` is `simulated` or `stubbed`; nothing to verify |
+| `anchor_proof_absent` | `indeterminate` / `absence`, subject `operator` | No proof reference: a producer defect |
+| `anchor_independence_unproven` | `indeterminate` / `absence` | The proof verifies but the operator is not shown independent of executor and deployer |
+| `anchor_proof_unresolvable` | `not_evaluated`, subject `network` | A proof reference that cannot be retrieved at audit time: an availability fact, never the same value as absent |
+| `anchor_method_unverifiable` | `not_evaluated` / `instrument_failure`, subject `verifier` | The verifier lacks the library, binary or procedure for the method; never a pass and never a finding about the anchor |
+
 ## 3. Naming-convention decisions (route to catalogue)
 
 **Closed - casing.** Field keys are `lower_snake`; enum values are `lower_snake`. Rationale: ISO 20022 API/JSON best-practices whitepaper §7.1 recommends unabbreviated snake_case for JSON representations of ISO 20022 semantics; lowerCamelCase appears in none of ISO 20022's maintained representations (business model spaced title-case; XML vowel-stripped tags; JSON Schema generation draft retains those). AXES is internally consistent at this spelling. Concept-level interoperability uses declared representation pairs, never derived camel-to-snake transforms (ambiguous at digit boundaries and acronyms). Under JCS two spellings sort to different positions and produce different canonical bytes; see [docs/12](12-standards-alignment.md). Designed exception: a relying-party-scoped identifier (identifier_scope) legitimately produces different digests at different relying parties.
 
 Still open:
 1. Suffix discipline: `_flag` vs `_indicator` vs `_signal` - propose: `_indicator` for observed booleans, `_signal` for security/behaviour observations carrying confidence, no `_flag`.
-2. `_ref` vs `_id`: propose `_id` for identifiers minted within SE scope; `_ref` for pointers to external artifacts/systems.
+2. ~~`_ref` vs `_id`~~ **Closed by D-022 (2026-10-04):** `_id` for identifiers this record mints and owns; `_ref` for locators or identifiers minted elsewhere, dereferenceable by a third party or naming a public network (CAIP-2).
 3. Effective-dating pattern: `*_version` + `effective_from`/`effective_until` standardised for every versioned reference (policy, delegation, control, model, terminology profile).
 4. Boolean polarity: always positive-presence (`redaction_applied`, not `unredacted`).
 5. `delegation_scope` serialisation structure (`scope_json` question) - W6.

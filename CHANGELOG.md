@@ -4,6 +4,19 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-04 - WO18 anchoring model: catalogue, schema, change index, crosswalk
+- Module 14 (External anchoring) catalogue draft: one subject block plus `anchors[]`; verifier-derived lag, pending, custody relationship and earned `externally_anchored`.
+- `schema/anchoring.schema.json` (JSON Schema 2020-12). Rejects status inside the method value, `anchored_at` without `anchor_record_ref`, and `demonstrated` without proof material.
+- `docs/19-key-change-index.md` and `schema/key-aliases.json`: every gt-v2.0 to gt-v2.1 key change, with reason, decision and implementer action. CI checks the two agree (`tools/anchoring/check_schema_and_aliases.py`).
+- `docs/interop/anchoring-crosswalk.md`: eight schemes mapped key by key, gaps stated, two worked examples.
+- `examples/anchoring/`: illustrative blocks (all `basis_status: simulated`) and five must-reject examples, validated in CI on three operating systems.
+- docs/06 §2.12 anchoring vocabularies and verification conditions; `_ref` versus `_id` closed.
+- Decisions D-020 (open registry, earned `externally_anchored`), D-021 (rule 8 before v1), D-022 (`_ref` versus `_id`), D-023 (four-state verification vocabulary). EB-002/003/004 status recorded.
+- No corpus bytes changed. Corpus values move to this shape only in the announced gt-v2.1 release (D-018).
+
+### 2026-10-04 - WO18 A5: real external anchors for the gt-v2.0 release statement
+- RFC 3161 (FreeTSA, verified offline) and OpenTimestamps (Bitcoin; upgraded automatically by the scheduled `anchor` workflow) anchors over the RFC 8785 release statement committing to both gt-v2.0 chain heads and bundle digests. `tools/anchoring/` producers, offline verifier and two-sided self-test.
+
 ### 2026-10-03 - Cross-platform verification (Linux, macOS, Windows)
 - `tools/check_corpus_bytes.py` (standard library only) checks pinned bytes as checked out: no CR, valid UTF-8, forward-slash sorted manifest keys, every file matching its manifest entry, and chain heads and bundle digests equal to `tools/corpus_of_record.json` (gt-v2.0). Expectations change only in an announced release (D-018).
 - `.github/workflows/cross-platform-verify.yml` runs the verifier, guards, regeneration and byte check on Linux, macOS and Windows, Python 3.9 and 3.13.

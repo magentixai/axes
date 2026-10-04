@@ -1,0 +1,19 @@
+{
+  "anchored_subject_type": "chain_head",
+  "anchored_subject_hash": "0bbfbaff5478ac36a7d7f573b9518b8b4a848518184e0f581747e2500a20ac37",
+  "anchored_subject_hash_algorithm": "SHA-256",
+  "anchors": [
+    {
+      "anchor_id": "anch:004",
+      "anchoring_method": "write_once_store",
+      "basis_status": "simulated",
+      "anchor_commitment_hash": "0bbfbaff5478ac36a7d7f573b9518b8b4a848518184e0f581747e2500a20ac37",
+      "anchor_commitment_hash_algorithm": "SHA-256",
+      "anchor_requested_at": "2026-08-01T09:00:00.000Z",
+      "anchored_at": "2026-08-01T09:00:00.250Z",
+      "anchor_service_ref": "example:simulated-worm-store",
+      "anchor_record_ref": "object:illustrative-0001",
+      "anchor_operator_ref": "example:emitter-operated"
+    }
+  ]
+}

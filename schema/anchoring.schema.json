@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/magentixai/axes/schema/anchoring.schema.json",
+  "title": "AXES anchoring block (Module 14, WO18 A2)",
+  "description": "One anchored subject and one or more independent anchors of it. Field definitions: docs/05-field-catalogue/module-14-external-anchoring.md.",
+  "type": "object",
+  "required": ["anchored_subject_type", "anchored_subject_hash", "anchored_subject_hash_algorithm", "anchors"],
+  "additionalProperties": false,
+  "properties": {
+    "anchored_subject_type": {"enum": ["chain_head", "envelope", "bundle_manifest", "release_statement"]},
+    "anchored_subject_hash": {"$ref": "#/$defs/hex_digest"},
+    "anchored_subject_hash_algorithm": {"type": "string", "minLength": 1},
+    "anchors": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/anchor"}}
+  },
+  "$defs": {
+    "hex_digest": {"type": "string", "pattern": "^[0-9a-f]{40,128}$"},
+    "timestamp": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3,}Z$"},
+    "anchoring_method": {
+      "description": "Seeded registry values, or a namespaced identifier <namespace>:<id>. Status never appears in the value.",
+      "type": "string",
+      "anyOf": [
+        {"enum": ["distributed_ledger", "transparency_log", "timestamp_authority", "opentimestamps", "write_once_store"]},
+        {"pattern": "^[a-z0-9_.-]+:[a-z0-9_.:-]+$"}
+      ]
+    },
+    "anchor": {
+      "type": "object",
+      "required": ["anchor_id", "anchoring_method", "basis_status", "anchor_commitment_hash", "anchor_commitment_hash_algorithm", "anchor_service_ref"],
+      "additionalProperties": false,
+      "properties": {
+        "anchor_id": {"type": "string", "minLength": 1},
+        "anchoring_method": {"$ref": "#/$defs/anchoring_method"},
+        "anchor_profile_id": {"type": "string", "pattern": "^[a-z0-9_.-]+:[A-Za-z0-9_.-]+@[A-Za-z0-9_.-]+$"},
+        "basis_status": {"enum": ["demonstrated", "stubbed", "simulated"]},
+        "anchor_commitment_hash": {"$ref": "#/$defs/hex_digest"},
+        "anchor_commitment_hash_algorithm": {"type": "string", "minLength": 1},
+        "anchor_requested_at": {"$ref": "#/$defs/timestamp"},
+        "anchored_at": {"$ref": "#/$defs/timestamp"},
+        "anchor_service_ref": {"type": "string", "minLength": 1},
+        "anchor_record_ref": {"type": "string", "minLength": 1},
+        "anchor_operator_ref": {"type": ["string", "null"]},
+        "anchor_proof_ref": {"type": "string", "minLength": 1},
+        "anchor_proof_hash": {"$ref": "#/$defs/hex_digest"},
+        "anchor_verification_procedure_ref": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"basis_status": {"const": "demonstrated"}}},
+          "then": {"required": ["anchor_profile_id", "anchor_requested_at", "anchor_proof_ref", "anchor_proof_hash", "anchor_verification_procedure_ref"]}
+        },
+        {
+          "if": {"required": ["anchored_at"]},
+          "then": {"required": ["anchor_record_ref"]}
+        },
+        {
+          "if": {"properties": {"anchoring_method": {"pattern": ":"}}},
+          "then": {"required": ["anchor_verification_procedure_ref"]}
+        }
+      ]
+    }
+  }
+}

@@ -454,6 +454,11 @@ Source: programme decision D-014. Full task list, doctrine constraints, and acce
 | EB-005 | Conformance rejects silent overclaim of external anchoring | conformance_rule | EB-001, EB-004 |
 | EB-006 | Ack-ladder vs existence-bound discipline (SCITT/TSA ≠ business ack; optional dual registration) | open_se + package | P1-4, GT-003 |
 
+**EB status, 2026-10-04 (WO18):**
+- **EB-002 drafted.** Open `anchoring_method` registry with seeded families and namespaced extension ([docs/06 §2.12](../docs/06-controlled-vocabularies.md)); per-anchor verify path (`anchor_profile_id`, `anchor_proof_ref`, `anchor_proof_hash`, `anchor_verification_procedure_ref`) in [Module 14](../docs/05-field-catalogue/module-14-external-anchoring.md) and [`schema/anchoring.schema.json`](../schema/anchoring.schema.json). SCITT is one `transparency_log` profile, not mandatory. D-020.
+- **EB-003 partly met.** RFC 3161 and OpenTimestamps are published profiles with offline procedures ([docs/anchoring-profiles.md](../docs/anchoring-profiles.md)); EvidenceAnchor, Rekor, SCITT, EAS, tlog and the on-chain registry are mapped concept by concept in [docs/interop/anchoring-crosswalk.md](../docs/interop/anchoring-crosswalk.md), with profiles still to be authored by their owners.
+- **EB-004 anchor half met for the release statement.** The gt-v2.0 release statement carries a verified RFC 3161 anchor and an OpenTimestamps anchor (`anchors/gt-v2.0/`), detached, with no corpus byte changed. Anchors inside corpus envelopes and the `SIG-STUB` replacement land in gt-v2.1 (D-018; WO18 A4.5).
+
 ---
 
 **Register totals:** 113 primary REQ rows · 81 GAP rows · 24 TRK rows · 31 BLD rows · 6 GT rows · 9 EU rows · TLC/CRE/EB programme rows as indexed above. TLC/CRE/EB/BLD-031 are programme or implementation tasks, not primary REQs.

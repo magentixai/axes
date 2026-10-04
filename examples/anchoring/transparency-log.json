@@ -1,0 +1,23 @@
+{
+  "anchored_subject_type": "envelope",
+  "anchored_subject_hash": "e9e67b6268cadb4af50f02f2ab0abcec769ba1bf47d976d68a3f45782021e4ea",
+  "anchored_subject_hash_algorithm": "SHA-256",
+  "anchors": [
+    {
+      "anchor_id": "anch:tlog-1",
+      "anchoring_method": "transparency_log",
+      "anchor_profile_id": "example:tlog-sha256-leaf@0",
+      "basis_status": "simulated",
+      "anchor_commitment_hash": "e9e67b6268cadb4af50f02f2ab0abcec769ba1bf47d976d68a3f45782021e4ea",
+      "anchor_commitment_hash_algorithm": "SHA-256",
+      "anchor_requested_at": "2026-10-01T10:00:00.000Z",
+      "anchored_at": "2026-10-01T10:00:01.000Z",
+      "anchor_service_ref": "example.org/log",
+      "anchor_record_ref": "index:123456@size:123460",
+      "anchor_operator_ref": "https://example.org",
+      "anchor_proof_ref": "proofs/transparency_log/proof_manifest.json",
+      "anchor_proof_hash": "8b755984e8b2076ffd48b39a6ab4fdf6c2bcf32789f868a95a2e0c39a23e9a90",
+      "anchor_verification_procedure_ref": "https://example.org/log/verification"
+    }
+  ]
+}

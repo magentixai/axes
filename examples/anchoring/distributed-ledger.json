@@ -1,0 +1,23 @@
+{
+  "anchored_subject_type": "bundle_manifest",
+  "anchored_subject_hash": "e86a47848f63ba8438396e2c0cab1cace8e3d4ab33ea3eadca03432ac3c12673",
+  "anchored_subject_hash_algorithm": "SHA-256",
+  "anchors": [
+    {
+      "anchor_id": "anch:chain-1",
+      "anchoring_method": "distributed_ledger",
+      "anchor_profile_id": "example:registry-event-sha256@0",
+      "basis_status": "simulated",
+      "anchor_commitment_hash": "e86a47848f63ba8438396e2c0cab1cace8e3d4ab33ea3eadca03432ac3c12673",
+      "anchor_commitment_hash_algorithm": "SHA-256",
+      "anchor_requested_at": "2026-10-02T12:00:00.000Z",
+      "anchored_at": "2026-10-02T12:00:12.000Z",
+      "anchor_service_ref": "eip155:114:0x0000000000000000000000000000000000c0ffee",
+      "anchor_record_ref": "tx:0x4a17c7e97752304fa5e2f9e76a830f75809f7d3a40b9d5e5d36c05dc7ce2decb",
+      "anchor_operator_ref": null,
+      "anchor_proof_ref": "proofs/distributed_ledger/proof_manifest.json",
+      "anchor_proof_hash": "4e73bf0ac0e66e5ad22436360ae36bbd7e4ff51ddfa0aa4cb31b01e66bffae74",
+      "anchor_verification_procedure_ref": "CONFIRM-WITH-PABLO: LFDT lab procedure for registry-event anchors"
+    }
+  ]
+}

@@ -5,8 +5,9 @@
 | `produce.py` | `stamp` a subject with OpenTimestamps and an RFC 3161 time-stamp authority; `upgrade` pending OpenTimestamps proofs to Bitcoin attestations. Needs network access. |
 | `verify_anchor.py` | Verify every anchor in an `anchoring.json` block offline. Four-state results with closed conditions. |
 | `test_anchoring.py` | Two-sided self-test on synthetic fixtures (local test TSA, regtest-difficulty header). No network. |
+| `check_schema_and_aliases.py` | Validates real anchors and `examples/anchoring/` against `schema/anchoring.schema.json` (and that every `invalid/` example is rejected); checks `docs/19-key-change-index.md` and `schema/key-aliases.json` agree. |
 | `anchor_common.py` | Shared helpers, profile identifiers. |
 
-Dependencies (kept out of the core verifier): `pip install -r tools/anchoring/requirements.txt` (OpenTimestamps library, `jcs`) and the `openssl` binary for RFC 3161. If either is missing, verification returns `not_evaluated` / `instrument_failure` for the affected method.
+Dependencies (kept out of the core verifier): `pip install -r tools/anchoring/requirements.txt` (OpenTimestamps library, `jcs`, `jsonschema`) and the `openssl` binary for RFC 3161. If either is missing, verification returns `not_evaluated` / `instrument_failure` for the affected method.
 
 Procedures: [`docs/anchoring-profiles.md`](../../docs/anchoring-profiles.md).
