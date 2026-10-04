@@ -3,3 +3,5 @@
 examples/**/out/** -text
 vectors/** -text
 archive/golden-trace-v1-*/** -text
+vendor/** -text
+evaluations/** -text

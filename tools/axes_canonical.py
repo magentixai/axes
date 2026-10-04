@@ -46,7 +46,8 @@ def hash_preimage(envelope: dict) -> bytes:
     env = json.loads(json.dumps(envelope))
     integ = env.get("integrity", {})
     integ.pop("envelope_hash", None)
-    integ.pop("signature", None)
+    integ.pop("signature", None)           # gt-v2.0 name
+    integ.pop("envelope_signature", None)  # gt-v2.1 name (docs/19, D-024); absent from gt-v2.0, so its digests are unchanged
     return canonical_bytes(env)
 
 

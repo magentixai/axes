@@ -336,7 +336,11 @@ def check_settlement(req, env, tr):
         return result(ref, "indeterminate", "absence", "settlement_not_observed", "artifact", "no decoded settled artifact", [eid])
     if not committed:
         return result(ref, "indeterminate", "absence", "field_absent_undeclared", "artifact", "no committed terms", [eid])
-    for key in ("asset_id", "total_amount", "payment_legs"):
+    keys = ("asset_id", "total_amount_value", "payment_legs")
+    if not all(k in committed for k in keys):
+        return result(ref, "indeterminate", "absence", "field_absent_undeclared", "artifact",
+                      "committed terms lack %s" % ", ".join(k for k in keys if k not in committed), [eid])
+    for key in keys:
         if settled.get(key) != committed.get(key):
             return result(ref, "contradicted", "divergence", "settlement_commitment_mismatch", "artifact",
                           "%s differs between committed terms and the settled artifact" % key, [eid])

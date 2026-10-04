@@ -1,0 +1,122 @@
+{
+  "requirement_profile_id": "axes:x402_b2b_buyer_audit@1",
+  "requirement_profile_version": "1",
+  "profile_purpose_type": "sufficiency",
+  "publisher_id": "https://github.com/magentixai/axes",
+  "relying_party_roles": [
+    "auditor"
+  ],
+  "subject_types": [
+    "bundle"
+  ],
+  "effective_from": "2026-10-04T00:00:00.000Z",
+  "unsettled_question_notes": [
+    "Whether a supplier identity reference must resolve at audit time is not pinned."
+  ],
+  "vector_set_ref": "examples/x402-b2b-vat/evaluations",
+  "requirements": [
+    {
+      "requirement_id": "x402_correlation_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "obligation_type": "conditional",
+      "floor_indicator": false,
+      "field_path": "/x402/correlation_hash",
+      "condition_expression": "present(/x402)",
+      "rationale_note": "Every record about the payment carries the shared correlation hash (WO20 section 6).",
+      "source_refs": [
+        "WO20 A1.2"
+      ]
+    },
+    {
+      "requirement_id": "x402_chain_01",
+      "check_type": "chain_integrity",
+      "subject_type": "bundle",
+      "obligation_type": "required",
+      "floor_indicator": false,
+      "rationale_note": "The party's record is one unbroken chain.",
+      "source_refs": [
+        "docs/09"
+      ]
+    },
+    {
+      "requirement_id": "x402_settlement_01",
+      "check_type": "settlement_commitment",
+      "subject_type": "bundle",
+      "obligation_type": "conditional",
+      "floor_indicator": false,
+      "field_path": "/settlement",
+      "condition_expression": "equals(/event_kind, \"commit_succeeded\")",
+      "rationale_note": "Decoded settlement equals the committed terms; the only under-report detector.",
+      "source_refs": [
+        "x402#3220 section 13"
+      ]
+    },
+    {
+      "requirement_id": "x402_settled_basis_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "obligation_type": "conditional",
+      "floor_indicator": false,
+      "field_path": "/settlement/settled_artifact",
+      "condition_expression": "equals(/event_kind, \"commit_succeeded\")",
+      "required_basis_status": "demonstrated",
+      "rationale_note": "The settled artifact is decoded from a real settlement, not simulated.",
+      "source_refs": [
+        "x402#3226"
+      ]
+    },
+    {
+      "requirement_id": "x402_anchor_01",
+      "check_type": "anchoring",
+      "subject_type": "bundle",
+      "obligation_type": "conditional",
+      "floor_indicator": false,
+      "field_path": "/anchoring",
+      "condition_expression": "equals(/event_kind, \"attestation_recorded\")",
+      "required_basis_status": "demonstrated",
+      "anchoring": {
+        "minimum_independent_anchor_count": 1,
+        "accepted_anchoring_methods": [
+          "timestamp_authority",
+          "opentimestamps",
+          "transparency_log",
+          "distributed_ledger"
+        ],
+        "maximum_anchoring_lag": "PT24H"
+      },
+      "rationale_note": "Each party anchors its own record independently (completeness by counterparty).",
+      "source_refs": [
+        "WO20 section 7",
+        "wg-identity#25"
+      ]
+    },
+    {
+      "requirement_id": "buyer_supplier_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "obligation_type": "conditional",
+      "floor_indicator": false,
+      "field_path": "/supplier/supplier_identity_ref",
+      "condition_expression": "equals(/event_kind, \"commit_succeeded\")",
+      "rationale_note": "Finance can book the spend to a supplier.",
+      "source_refs": [
+        "wg-identity#22"
+      ]
+    },
+    {
+      "requirement_id": "buyer_supplier_02",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "obligation_type": "conditional",
+      "floor_indicator": false,
+      "field_path": "/supplier/supplier_vat_id",
+      "condition_expression": "equals(/event_kind, \"commit_succeeded\")",
+      "rationale_note": "The supplier VAT identifier is bound to the supply.",
+      "source_refs": [
+        "wg-identity#22",
+        "wg-tax PR#5"
+      ]
+    }
+  ]
+}

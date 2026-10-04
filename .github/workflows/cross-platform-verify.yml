@@ -70,3 +70,16 @@ jobs:
         run: |
           diff -r main_branch/profiles vendor/main/profiles
           cmp main_branch/schema/key-aliases.json vendor/main/key-aliases.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: The x402 example evaluations on main reproduce with this evaluator
+        run: |
+          python -m pip install -r requirements-dev.txt
+          for f in main_branch/examples/x402-b2b-vat/evaluations/*.json; do
+            base=$(basename "$f" .json); profile="axes:${base%%__*}@1"; party="${base##*__}"
+            python tools/axes_evaluate.py --profile "$profile" --subject "main_branch/examples/x402-b2b-vat/$party/envelopes.jsonl" \
+              --evaluated-at "$(python -c "import json,sys;print(json.load(open(sys.argv[1]))['evaluated_at'])" "$f")" --out /tmp/again.json
+            python -c "import json,sys;a=json.load(open(sys.argv[1]));b=json.load(open(sys.argv[2]));sys.exit(0 if a['result_core_hash']==b['result_core_hash'] else 1)" "$f" /tmp/again.json
+            echo "reproduced $base"
+          done

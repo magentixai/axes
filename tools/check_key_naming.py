@@ -196,8 +196,8 @@ def lint(targets):
     found = []
     for f in files_in(targets):
         rel = f.replace(os.sep, "/")
-        if os.path.basename(f).startswith(CANONICALIZATION_FIXTURES):
-            continue
+        if os.path.basename(f).startswith(CANONICALIZATION_FIXTURES) or "/x402-wire/" in "/" + rel:
+            continue  # N12: test data keys, and x402 wire messages and schemas in x402's own spelling
         out = []
         with open(f, encoding="utf-8") as fh:
             if f.endswith(".jsonl"):

@@ -83,12 +83,12 @@ ANCHOR_OK = {"anchored_subject_type": "envelope", "anchored_subject_hash": "a" *
                           "anchor_service_id": "https://tsa.example/tsr", "anchor_record_ref": "serial:0x01",
                           "anchor_proof_ref": "proofs/x/proof_manifest.json", "anchor_proof_hash": "b" * 64}]}
 SETTLE = {"settlement_transaction_ref": "tx:0x" + "c" * 64, "settlement_submitter_id": "eip155:84532:0x" + "1" * 40,
-          "committed_terms": {"asset_id": "0x" + "2" * 40, "total_amount": {"value": "10000", "asset": "usdc", "decimals": 6},
-                              "payment_legs": [{"pay_to_id": "0x" + "3" * 40, "leg_amount": {"value": "10000", "asset": "usdc", "decimals": 6}}]}}
+          "committed_terms": {"asset_id": "0x" + "2" * 40, "total_amount_value": "10000",
+                              "payment_legs": [{"pay_to_id": "0x" + "3" * 40, "leg_amount_value": "10000"}]}}
 SETTLE["settled_artifact"] = copy.deepcopy(SETTLE["committed_terms"])
 UNDER = copy.deepcopy(SETTLE)
-UNDER["settled_artifact"]["total_amount"]["value"] = "1000000"
-UNDER["settled_artifact"]["payment_legs"][0]["leg_amount"]["value"] = "1000000"
+UNDER["settled_artifact"]["total_amount_value"] = "1000000"
+UNDER["settled_artifact"]["payment_legs"][0]["leg_amount_value"] = "1000000"
 
 
 def anchored(**kw):
