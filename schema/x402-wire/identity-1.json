@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/magentixai/axes/schema/x402-wire/identity-1.json",
+  "title": "x402 identity lane info (WO20, x402 wire spelling)",
+  "description": "Server info in PaymentRequired.extensions.identity.info; the client echoes it unchanged and appends chosen (one offered profile, or declined when not required) and presentation. Lane names, keys and namespaces are proposals for the owning working group. Keys keep x402 spelling (docs/20 N14).",
+  "type": "object",
+  "required": [
+    "offered",
+    "required"
+  ],
+  "properties": {
+    "offered": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3
+      },
+      "minItems": 1
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "floor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "profileRegistry": {
+      "type": "string"
+    },
+    "chosen": {
+      "type": "string"
+    },
+    "presentation": {
+      "type": "object"
+    },
+    "supplier": {
+      "type": "object",
+      "required": [
+        "legalName",
+        "vatId",
+        "identityRef"
+      ],
+      "properties": {
+        "legalName": {
+          "type": "string"
+        },
+        "vatId": {
+          "type": "string"
+        },
+        "identityRef": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "chosen": {
+        "const": "declined"
+      }
+    },
+    "required": [
+      "chosen"
+    ]
+  },
+  "then": {
+    "properties": {
+      "required": {
+        "const": false
+      }
+    }
+  }
+}

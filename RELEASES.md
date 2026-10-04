@@ -19,7 +19,7 @@ Each release statement is anchored outside AXES so a third party can confirm the
 | Release | Release statement digest | Anchor | Method | Status |
 |---|---|---|---|---|
 | gt-v2.0 | `d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216` | FreeTSA, serial `0x08DE791D`, 2026-10-04T13:53:53Z | RFC 3161 time-stamp authority | verified offline |
-| gt-v2.0 | same | OpenTimestamps (Bitcoin) | OpenTimestamps | pending Bitcoin attestation; upgraded automatically |
+| gt-v2.0 | same | Bitcoin `block:969860:000000000000000000021172cf9dff46a5b9c878d233d44a26cc1151614f20d1`, 2026-10-04T14:28:53Z | OpenTimestamps | verified offline (header proof of work; main-chain membership checkable against any Bitcoin node) |
 
 Further independent lanes (a witnessed transparency log, an on-chain registry) are added as their operators run them.
 

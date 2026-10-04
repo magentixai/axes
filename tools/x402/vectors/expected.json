@@ -1,0 +1,195 @@
+{
+  "vector_format_ref": "axes:x402_correlation_vectors@1",
+  "correlation_recipe_ref": "axes:x402_correlation@1",
+  "summary_note": "Two-sided vectors for the correlation core. Each case changes one thing in the B2B VAT example messages. Inputs are x402 wire messages; expected outcomes use AXES key names.",
+  "baseline_correlation_hash": "094e4a2f863f08718f7d07f17419f4d4fd3d3ce3a7c7803752d4413fae1651dc",
+  "vectors": {
+    "baseline": {
+      "wire_dir_ref": "x402-wire/baseline",
+      "expected_outcome": {
+        "correlation_hash": "094e4a2f863f08718f7d07f17419f4d4fd3d3ce3a7c7803752d4413fae1651dc",
+        "baseline_relation_type": "baseline"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "B2B VAT example as published"
+      }
+    },
+    "address_checksum_case": {
+      "wire_dir_ref": "x402-wire/address_checksum_case",
+      "expected_outcome": {
+        "correlation_hash": "094e4a2f863f08718f7d07f17419f4d4fd3d3ce3a7c7803752d4413fae1651dc",
+        "baseline_relation_type": "same"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "same hash: addresses are normalized to lowercase"
+      }
+    },
+    "payment_identifier_null": {
+      "wire_dir_ref": "x402-wire/payment_identifier_null",
+      "expected_outcome": {
+        "correlation_hash": "094e4a2f863f08718f7d07f17419f4d4fd3d3ce3a7c7803752d4413fae1651dc",
+        "baseline_relation_type": "same"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "same hash: an optional member that is null is omitted, never encoded as null"
+      }
+    },
+    "amount_changed": {
+      "wire_dir_ref": "x402-wire/amount_changed",
+      "expected_outcome": {
+        "correlation_hash": "cf2a656f053f74631c633658e1b339532acc269b139eacea9d1b79f4ad90acde",
+        "baseline_relation_type": "different"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "different hash"
+      }
+    },
+    "nonce_changed": {
+      "wire_dir_ref": "x402-wire/nonce_changed",
+      "expected_outcome": {
+        "correlation_hash": "d28a9639fef4eea59dd460db28124a0fd23503fbe2c7786a99bc9eed365b73ab",
+        "baseline_relation_type": "different"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "different hash"
+      }
+    },
+    "lane_choice_changed": {
+      "wire_dir_ref": "x402-wire/lane_choice_changed",
+      "expected_outcome": {
+        "correlation_hash": "5dd3dc75a0f8b550a396145cd96e41ad2e96c8c45f39c2ee8e46c2e82a3725de",
+        "baseline_relation_type": "different"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "different hash"
+      }
+    },
+    "lane_information_changed": {
+      "wire_dir_ref": "x402-wire/lane_information_changed",
+      "expected_outcome": {
+        "correlation_hash": "f3121e50477459cee1c5f46903b27ae3f6dab968482a8d30c7484570777bbc46",
+        "baseline_relation_type": "different"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "different hash"
+      }
+    },
+    "lookalike_asset_contract": {
+      "wire_dir_ref": "x402-wire/lookalike_asset_contract",
+      "expected_outcome": {
+        "correlation_hash": "9233fcc4b2d011ae67424f5aafadf296d34188d696fa3ac4360f12f4797c0326",
+        "baseline_relation_type": "different"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "different hash: the asset is the canonical contract, not a name"
+      }
+    },
+    "server_information_deleted": {
+      "wire_dir_ref": "x402-wire/server_information_deleted",
+      "expected_outcome": {
+        "verification_condition_code": "value_not_accepted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: a client must not delete echoed server information"
+      }
+    },
+    "choice_not_offered": {
+      "wire_dir_ref": "x402-wire/choice_not_offered",
+      "expected_outcome": {
+        "verification_condition_code": "value_not_accepted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: a choice must be one of the offered profiles"
+      }
+    },
+    "required_lane_declined": {
+      "wire_dir_ref": "x402-wire/required_lane_declined",
+      "expected_outcome": {
+        "verification_condition_code": "value_not_accepted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: a required lane cannot be declined"
+      }
+    },
+    "lane_not_echoed": {
+      "wire_dir_ref": "x402-wire/lane_not_echoed",
+      "expected_outcome": {
+        "verification_condition_code": "field_absent_undeclared"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: an advertised lane must be echoed"
+      }
+    },
+    "server_salt_absent": {
+      "wire_dir_ref": "x402-wire/server_salt_absent",
+      "expected_outcome": {
+        "verification_condition_code": "binding_salt_absent"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "indeterminate, never refused: a missing salt is a publication fact"
+      }
+    },
+    "splits_present": {
+      "wire_dir_ref": "x402-wire/splits_present",
+      "expected_outcome": {
+        "verification_condition_code": "check_type_unsupported"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused under the EIP-3009 exact recipe: a leg it cannot verify is never skipped"
+      }
+    },
+    "non_evm_network": {
+      "wire_dir_ref": "x402-wire/non_evm_network",
+      "expected_outcome": {
+        "verification_condition_code": "check_type_unsupported"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: recipe @1 covers the exact scheme on EVM networks only"
+      }
+    }
+  },
+  "nonce_derivation_vectors": {
+    "mandate_bound": {
+      "authorization_nonce_id": "0x5aa71c23c84e6763bdb31a473f1981fd37ccf93945205b77eb84e0c271c1e74b",
+      "mandate_hash": "445fed871d7c43d2b775e68124103c77646fc0f096fb42c9ea3d9f00c960ca05",
+      "payment_identifier_id": "pay-001",
+      "expected_nonce_derivation_type": "x402_mandate_binding"
+    },
+    "random_nonce": {
+      "authorization_nonce_id": "0x5cc570ffbba0a3602173b929ee6b668efed3029027f6ecf1adb200dedd9bbdd4",
+      "mandate_hash": "445fed871d7c43d2b775e68124103c77646fc0f096fb42c9ea3d9f00c960ca05",
+      "payment_identifier_id": "pay-001",
+      "expected_nonce_derivation_type": "unbindable"
+    }
+  }
+}

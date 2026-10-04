@@ -55,7 +55,13 @@ jobs:
       - name: Schema examples and key change index agree
         run: python tools/anchoring/check_schema_and_aliases.py
       - name: Naming rules (docs/20)
-        run: python tools/check_key_naming.py schema examples/anchoring anchors profiles --baseline tools/naming_baseline.json
+        run: python tools/check_key_naming.py schema examples/anchoring examples/x402-b2b-vat anchors profiles tools/x402/vectors --baseline tools/naming_baseline.json
+      - name: x402 correlation recipe self-test (WO20)
+        run: python tools/x402/test_x402_correlation.py
+      - name: x402 correlation vectors regenerate identically
+        run: |
+          python tools/x402/generate_correlation_vectors.py
+          git diff --exit-code --stat -- tools/x402/vectors
       - name: Verify committed real anchors
         run: |
           for d in anchors/*/; do

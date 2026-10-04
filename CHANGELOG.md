@@ -4,6 +4,13 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-04 - WO20 x402 trust lanes and the B2B VAT worked example
+- `tools/x402/x402_correlation.py`: `axes:x402_correlation@1` (multi-recipient core, off-chain salts, opaque nonce, #3220 binding recomputation, receipt and party checks); 15 two-sided vectors plus nonce-derivation vectors, regenerated identically in CI.
+- `schema/x402-wire/`: identity, tax and evidence lane info schemas in x402 spelling.
+- `examples/x402-b2b-vat/`: real EIP-3009 and envelope signatures (test keys), both party records, real RFC 3161 and OpenTimestamps anchors per party, evaluations under three new profiles. Settlement is simulated and labelled; every evaluation is `indeterminate` on that one requirement only.
+- `docs/x402-trust-lanes-solution.md` for the working-group chairs. Decisions D-038 to D-041.
+- Fix: the anchor verifier checks the OpenTimestamps attestation the record names. The gt-v2.0 release statement is now verified in Bitcoin block 969860.
+
 ### 2026-10-04 - WO19 requirement profiles and evaluation
 - docs/07: the profile mechanism is normative (trust computed, never stored; both sides named in any conformance statement; composition; deterministic evaluation; reproducible `result_core_hash`).
 - `schema/requirement-profile.schema.json`, `schema/evaluation-record.schema.json`; three reference profiles in `profiles/`.

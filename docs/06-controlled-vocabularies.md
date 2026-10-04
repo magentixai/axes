@@ -220,6 +220,8 @@ Closed sets, lower_snake, American (docs/20).
 | `settlement_commitment_mismatch`, `cap_exceeded` | `contradicted` / `divergence` / `artifact` |
 | `settlement_not_observed` | `indeterminate` / `absence` / `artifact` |
 | `nonce_unbindable`, `binding_salt_absent` | `indeterminate` / `absence` / `operator` |
+| `correlation_hash_mismatch` | `contradicted` / `divergence` / `artifact` (a receipt binds a different core) |
+| `correlation_divergence` | `indeterminate` / `divergence` / `artifact` (the parties computed different cores; never pick a side) |
 | `profile_conflict` | `indeterminate` / `divergence` / `verifier` |
 | `profile_unsupported`, `predicate_unparseable`, `value_ladder_unsupported`, `check_type_unsupported`, `evaluator_fault`, `requirement_profile_hash_unpinned` | `not_evaluated` / `instrument_failure` / `verifier` |
 | `external_evidence_stale` | `not_evaluated` / - / `network` |

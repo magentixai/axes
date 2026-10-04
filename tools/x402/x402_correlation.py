@@ -167,6 +167,27 @@ def correlation_hash(core: dict) -> str:
     return sha256_hex(canonical(core))
 
 
+# ---------- receipt and party comparison (WO20 sections 5 and 6) ----------
+
+def check_receipt(receipt: dict, core_hash: str) -> dict:
+    """Option 2: a version 2 receipt carries correlationDigest; it must equal the recomputed hash."""
+    if receipt.get("version") != 2 or "correlationDigest" not in receipt:
+        return {"verification_state": "not_evaluated", "verification_subject_type": "operator",
+                "verification_condition_code": "field_absent_declared", "observed_note": "receipt carries no correlationDigest (option 1 or none)"}
+    if receipt["correlationDigest"] != core_hash:
+        return {"verification_state": "contradicted", "verification_reason_code": "divergence", "verification_subject_type": "artifact",
+                "verification_condition_code": "correlation_hash_mismatch", "observed_note": "receipt correlationDigest differs from the recomputed core"}
+    return {"verification_state": "verified", "verification_subject_type": "artifact", "observed_note": "receipt binds this core"}
+
+
+def compare_parties(own_hash: str, counterparty_hash: str) -> dict:
+    """Divergence is evidence, not an error: record it, never pick a side (WO20 section 6)."""
+    if own_hash == counterparty_hash:
+        return {"verification_state": "verified", "verification_subject_type": "artifact", "observed_note": "both parties computed the same core"}
+    return {"verification_state": "indeterminate", "verification_reason_code": "divergence", "verification_subject_type": "artifact",
+            "verification_condition_code": "correlation_divergence", "observed_note": "parties computed different cores"}
+
+
 # ---------- nonce derivation (A1.3, A1.4) ----------
 
 def mandate_binding(mandate_digest: str, payment_id: str) -> str:

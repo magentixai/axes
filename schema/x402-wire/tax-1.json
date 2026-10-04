@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/magentixai/axes/schema/x402-wire/tax-1.json",
+  "title": "x402 tax lane info (WO20, x402 wire spelling)",
+  "description": "Server info in PaymentRequired.extensions.tax.info; the client echoes it unchanged and appends chosen (one offered profile, or declined when not required) and presentation. Lane names, keys and namespaces are proposals for the owning working group. Keys keep x402 spelling (docs/20 N14).",
+  "type": "object",
+  "required": [
+    "offered",
+    "required"
+  ],
+  "properties": {
+    "offered": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3
+      },
+      "minItems": 1
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "floor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "profileRegistry": {
+      "type": "string"
+    },
+    "chosen": {
+      "type": "string"
+    },
+    "presentation": {
+      "type": "object"
+    },
+    "quote": {
+      "type": "object",
+      "required": [
+        "determinationStatus",
+        "taxResultRef"
+      ],
+      "properties": {
+        "determinationStatus": {
+          "type": "string"
+        },
+        "taxResultRef": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "if": {
+    "properties": {
+      "chosen": {
+        "const": "declined"
+      }
+    },
+    "required": [
+      "chosen"
+    ]
+  },
+  "then": {
+    "properties": {
+      "required": {
+        "const": false
+      }
+    }
+  }
+}

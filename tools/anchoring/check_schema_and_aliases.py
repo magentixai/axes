@@ -57,6 +57,15 @@ def check_schema():
         print("%s profile %s%s" % ("ok  " if not errs else "FAIL", rel, "" if not errs else ": " + errs[0].message))
         if errs:
             FAILS.append(rel)
+    for lane in ("identity", "tax", "evidence"):
+        lv = jsonschema.Draft202012Validator(load(p("schema", "x402-wire", lane + "-1.json")))
+        for msg in sorted(glob.glob(p("examples", "x402-b2b-vat", "x402-wire", "payment_*.json"))):
+            info = ((load(msg).get("extensions") or {}).get(lane) or {}).get("info")
+            errs = list(lv.iter_errors(info)) if info is not None else []
+            rel = os.path.relpath(msg, ROOT).replace(os.sep, "/")
+            print("%s %s lane %s" % ("ok  " if not errs else "FAIL", lane, rel))
+            if errs:
+                FAILS.append(rel + ":" + lane)
     for path in sorted(glob.glob(p("examples", "anchoring", "invalid", "*.json"))):
         errs = list(validator.iter_errors(load(path)))
         rel = os.path.relpath(path, ROOT).replace(os.sep, "/")
