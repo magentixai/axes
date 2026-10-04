@@ -1,0 +1,1314 @@
+{
+  "note": "Known naming violations in frozen bytes (corpus of record, harness files, anchored statements; D-018). CI fails only on violations not listed here. Each entry names where its correction is indexed.",
+  "violations": [
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_artifact_hash",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_artifact_ref",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_authenticity_basis",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_code",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_layer",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_reason_code",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_scheme",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_timestamp",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_timestamp",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "ack_timestamp",
+      "rule": "N9",
+      "detail": "time key must end _at (instant) or _on (date)",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "anchoring_latency_ms",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "anchoring_latency_ms",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "basis",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "cell_boundary_crossed",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "characteristic",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "commit_mechanism",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "cpk",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "cpk_floor",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "cross_programme_exposure_indicator",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "drawing_revision",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "expected_count_mes",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "idempotency_key_forwarded",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "input_trust_classification",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "material_grade",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "measured_mm",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "measured_mm",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "minimum_cpk_observed",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "name",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "nominal_mm",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "nominal_mm",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "operation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "personal_data_flag",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "quantity",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "reasoning_artifact_availability",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "redaction_applied",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "result",
+      "rule": "N7",
+      "detail": "object key ends in a scalar class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "sha256",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "sha256",
+      "rule": "N8",
+      "detail": "algorithm name in key; use <x>_hash plus <x>_hash_algorithm",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "signature",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "tolerance_lower_mm",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "tolerance_lower_mm",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "tolerance_upper_mm",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace-ind/out/envelopes.jsonl",
+      "key": "tolerance_upper_mm",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_artifact_hash",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_artifact_ref",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_authenticity_basis",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_code",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_layer",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_reason_code",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_scheme",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_timestamp",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_timestamp",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "ack_timestamp",
+      "rule": "N9",
+      "detail": "time key must end _at (instant) or _on (date)",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "anchoring_latency_ms",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "anchoring_latency_ms",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "basis",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "commit_mechanism",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "expected_count_erp",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "idempotency_key_forwarded",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "input_trust_classification",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "name",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "operation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "personal_data_flag",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "reasoning_artifact_availability",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "redaction_applied",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "result",
+      "rule": "N7",
+      "detail": "object key ends in a scalar class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "sha256",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "sha256",
+      "rule": "N8",
+      "detail": "algorithm name in key; use <x>_hash plus <x>_hash_algorithm",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "signature",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "statement_count_bank",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "examples/golden-trace/out/envelopes.jsonl",
+      "key": "tenant_boundary_crossed",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/anchoring/anch_legacy_gt_v2_0.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "by design: the vector carries the gt-v2.0 block verbatim"
+    },
+    {
+      "file": "vectors/anchoring/anch_legacy_gt_v2_0.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "by design: the vector carries the gt-v2.0 block verbatim"
+    },
+    {
+      "file": "vectors/anchoring/anch_legacy_under_gt_v2_1.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "by design: the vector carries the gt-v2.0 block verbatim"
+    },
+    {
+      "file": "vectors/anchoring/anch_legacy_under_gt_v2_1.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "by design: the vector carries the gt-v2.0 block verbatim"
+    },
+    {
+      "file": "vectors/axes_adv_large_amount_string.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_large_amount_string.json",
+      "key": "capture_relationship",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_large_amount_string.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_large_amount_string.json",
+      "key": "commit_mechanism",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_large_amount_string.json",
+      "key": "operation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_large_amount_string.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_large_amount_string.json",
+      "key": "signing_trust_ref",
+      "rule": "N7",
+      "detail": "object key ends in a scalar class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_unicode_beneficiary.json",
+      "key": "beneficiary",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_unicode_beneficiary.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_unicode_beneficiary.json",
+      "key": "capture_relationship",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_unicode_beneficiary.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_unicode_beneficiary.json",
+      "key": "commit_mechanism",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_unicode_beneficiary.json",
+      "key": "operation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_unicode_beneficiary.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_unicode_beneficiary.json",
+      "key": "signing_trust_ref",
+      "rule": "N7",
+      "detail": "object key ends in a scalar class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_usdc_amount.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_usdc_amount.json",
+      "key": "capture_relationship",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_usdc_amount.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_usdc_amount.json",
+      "key": "commit_mechanism",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_usdc_amount.json",
+      "key": "operation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_usdc_amount.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_adv_usdc_amount.json",
+      "key": "signing_trust_ref",
+      "rule": "N7",
+      "detail": "object key ends in a scalar class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0001_genesis.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0001_genesis.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0001_genesis.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0001_genesis.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0001_genesis.json",
+      "key": "operation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0001_genesis.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0001_genesis.json",
+      "key": "personal_data_flag",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0001_genesis.json",
+      "key": "redaction_applied",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0004_policy_check_amount.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0004_policy_check_amount.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0004_policy_check_amount.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0004_policy_check_amount.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0004_policy_check_amount.json",
+      "key": "name",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0004_policy_check_amount.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0004_policy_check_amount.json",
+      "key": "personal_data_flag",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0004_policy_check_amount.json",
+      "key": "redaction_applied",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0013_policy_check_peak_util.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0013_policy_check_peak_util.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0013_policy_check_peak_util.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0013_policy_check_peak_util.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0013_policy_check_peak_util.json",
+      "key": "name",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0013_policy_check_peak_util.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0013_policy_check_peak_util.json",
+      "key": "personal_data_flag",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0013_policy_check_peak_util.json",
+      "key": "redaction_applied",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0037_attestation_recorded.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0037_attestation_recorded.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0037_attestation_recorded.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0037_attestation_recorded.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0037_attestation_recorded.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0037_attestation_recorded.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0037_attestation_recorded.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0037_attestation_recorded.json",
+      "key": "personal_data_flag",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0037_attestation_recorded.json",
+      "key": "redaction_applied",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "ack_authenticity_basis",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "ack_layer",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "ack_scheme",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "declared_heartbeat_interval_s",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "expected_count_erp",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "personal_data_flag",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "redaction_applied",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "sha256",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "sha256",
+      "rule": "N8",
+      "detail": "algorithm name in key; use <x>_hash plus <x>_hash_algorithm",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_gt_0073_reconciliation.json",
+      "key": "statement_count_bank",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_identity_unparseable_hex.json",
+      "key": "capture_relationship",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_identity_unparseable_hex.json",
+      "key": "note",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/axes_identity_unparseable_hex.json",
+      "key": "signing_trust_ref",
+      "rule": "N7",
+      "detail": "object key ends in a scalar class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_accept_independent_external.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_accept_independent_external.json",
+      "key": "capture_relationship",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_accept_independent_external.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_accept_independent_external.json",
+      "key": "commit_mechanism",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_accept_independent_external.json",
+      "key": "operation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_accept_independent_external.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_accept_independent_external.json",
+      "key": "signing_trust_ref",
+      "rule": "N7",
+      "detail": "object key ends in a scalar class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_deployer_captured_reject.json",
+      "key": "canonicalisation_version",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_deployer_captured_reject.json",
+      "key": "capture_relationship",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_deployer_captured_reject.json",
+      "key": "clock_sync_confidence",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_deployer_captured_reject.json",
+      "key": "commit_mechanism",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_deployer_captured_reject.json",
+      "key": "operation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_deployer_captured_reject.json",
+      "key": "org_id",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/custody_deployer_captured_reject.json",
+      "key": "signing_trust_ref",
+      "rule": "N7",
+      "detail": "object key ends in a scalar class word",
+      "change_index_ref": "docs/19, gt-v2.0 to gt-v2.1: naming rules (D-024)"
+    },
+    {
+      "file": "vectors/expected.json",
+      "key": "canonical_utf8",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/expected.json",
+      "key": "expect",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/expected.json",
+      "key": "reject",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/expected.json",
+      "key": "sha256",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/expected.json",
+      "key": "sha256",
+      "rule": "N8",
+      "detail": "algorithm name in key; use <x>_hash plus <x>_hash_algorithm",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "check",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "credit",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "description",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "fail_mechanism",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "id",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "note",
+      "rule": "N3",
+      "detail": "bare class word; keys are fully qualified outside registered datatypes",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "outcome",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "schema",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "subject",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "unexercised",
+      "rule": "N5",
+      "detail": "boolean must end _indicator",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "vectors/predicates.json",
+      "key": "unexercised_reason",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    }
+  ]
+}

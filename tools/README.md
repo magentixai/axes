@@ -9,6 +9,7 @@
 | [`test_locale_comparator_guard.py`](test_locale_comparator_guard.py) | Negative check: a locale-like comparator must not match pinned JCS bytes |
 | [`test_coverage_rule_guard.py`](test_coverage_rule_guard.py) | Negative check: a broken predicates manifest must yield exit 2 |
 | [`axes_anchoring_guard.py`](axes_anchoring_guard.py) | Anchoring block evaluation in the four-state vocabulary (WO18 A4, D-020, D-023); release-scoped, so gt-v2.0 blocks read as `legacy_unstructured_anchor` |
+| [`check_key_naming.py`](check_key_naming.py) | Naming rules lint (docs/20 on `main`, D-024); known gt-v2.0 violations in [`naming_baseline.json`](naming_baseline.json), each mapped to its gt-v2.1 key change index entry |
 | [`test_anchoring_guard.py`](test_anchoring_guard.py) | Negative check: a guard that reads every anchor as verified must fail the suite (exit 1) |
 
 Liftable JCS property subset (no AXES corpus dependency): [`portable/jcs-properties/`](../portable/jcs-properties/) on the default branch (`main`). Full predicate suite stays on this branch.

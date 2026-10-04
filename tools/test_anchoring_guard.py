@@ -21,7 +21,8 @@ from tools import axes_verify  # noqa: E402
 def main() -> int:
     real = guard.evaluate
     guard.evaluate = lambda record, release, ev=None: (
-        [{"state": "verified", "state_reason": None, "condition": None, "subject": "artifact", "anchor_id": None}]
+        [{"verification_state": "verified", "verification_reason_code": None, "verification_condition_code": None,
+          "verification_subject_type": "artifact", "anchor_id": None}]
         if record.get("anchoring") else [])
     try:
         with contextlib.redirect_stdout(io.StringIO()):

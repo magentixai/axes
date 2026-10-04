@@ -232,7 +232,8 @@ def verify_chain(label: str, jsonl_path: str, report: Report) -> None:
 def _fmt(r: dict | None) -> str:
     if r is None:
         return "none"
-    return f"{r['state']}/{r['state_reason']}/{r['condition']} subject={r['subject']}"
+    return (f"{r['verification_state']}/{r['verification_reason_code']}/{r['verification_condition_code']}"
+            f" subject={r['verification_subject_type']}")
 
 
 def anchoring_vectors(report: Report) -> None:
@@ -244,13 +245,13 @@ def anchoring_vectors(report: Report) -> None:
     expected = json.load(open(path, encoding="utf-8"))["vectors"]
     for name, spec in expected.items():
         prov = spec.get("provenance") or {}
-        if not all(prov.get(k) for k in ("author", "origin", "date")):
+        if not all(prov.get(k) for k in ("author_name", "origin_note", "authored_on")):
             report.add("anchoring_provenance", name, "missing_provenance")
         vec = load_json_reject_duplicates(open(os.path.join(ANCHORING_DIR, name), encoding="utf-8").read())
         got = anchoring_guard.decisive(anchoring_guard.evaluate(
-            vec["record"], vec["release"], vec.get("observed_ledger_event")))
-        want = spec["expect"]
-        same = got is not None and all(got[k] == want[k] for k in ("state", "state_reason", "condition", "subject"))
+            vec["record"], vec["corpus_release_ref"], vec.get("observed_ledger_event")))
+        want = spec["expected_verification"]
+        same = got is not None and all(got[k] == want[k] for k in want)
         report.add("anchoring", name, "ok" if same else "mismatch",
                    _fmt(got) if same else f"got {_fmt(got)} want {_fmt(want)}")
 
@@ -264,7 +265,8 @@ def anchoring_corpus(label: str, jsonl_path: str, report: Report) -> None:
             if got is None:
                 continue
             seq = env.get("sequence_number")
-            outcome = got["condition"] if got["condition"] == "legacy_unstructured_anchor" else "unexpected_anchor_result"
+            cond = got["verification_condition_code"]
+            outcome = cond if cond == "legacy_unstructured_anchor" else "unexpected_anchor_result"
             report.add("anchoring_corpus", f"{label}:{seq}", outcome, _fmt(got))
 
 

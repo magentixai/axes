@@ -45,7 +45,7 @@ python tools/test_locale_comparator_guard.py
 
 ## Anchoring vectors (WO18 A4)
 
-[`anchoring/`](anchoring/) holds anchoring blocks with the decisive result each must produce, in the four-state vocabulary of draft-krausz-verification-state-03 (D-023): `state`, `state_reason`, `subject`, `condition`. Expected results and **per-vector provenance** (author, origin, date) live in [`anchoring/expected.json`](anchoring/expected.json); the verifier fails a vector without provenance. Evaluated by [`tools/axes_anchoring_guard.py`](../tools/axes_anchoring_guard.py) through `axes_verify.py`; self-test `python tools/test_anchoring_guard.py`.
+[`anchoring/`](anchoring/) holds anchoring blocks with the decisive result each must produce, in the four-state vocabulary of draft-krausz-verification-state-03 (D-023), under AXES key names (docs/20): `verification_state`, `verification_reason_code`, `verification_subject_type`, `verification_condition_code`. Expected results and **per-vector provenance** (`author_name`, `origin_note`, `authored_on`) live in [`anchoring/expected.json`](anchoring/expected.json); the verifier fails a vector without provenance. Evaluated by [`tools/axes_anchoring_guard.py`](../tools/axes_anchoring_guard.py) through `axes_verify.py`; self-test `python tools/test_anchoring_guard.py`.
 
 | Predicate | Pass (committed) | Fail (committed) |
 |---|---|---|

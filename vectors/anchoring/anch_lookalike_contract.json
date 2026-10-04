@@ -1,5 +1,5 @@
 {
-  "release": "gt-v2.1",
+  "corpus_release_ref": "gt-v2.1",
   "record": {
     "evidence_quality": {
       "evidence_origin": "runtime",
@@ -14,26 +14,26 @@
         {
           "anchor_id": "anch:v1",
           "anchoring_method": "distributed_ledger",
-          "anchor_profile_id": "example:registry-event-sha256@0",
+          "anchor_profile_ref": "example:registry_event_sha256@0",
           "basis_status": "demonstrated",
           "anchor_commitment_hash": "36db3127c42719e5db45f47a451c85c3176ee5a7bd9551fd9cd4b76ffcae74c2",
           "anchor_commitment_hash_algorithm": "SHA-256",
           "anchor_requested_at": "2026-10-04T12:00:00.000Z",
           "anchored_at": "2026-10-04T12:00:12.000Z",
-          "anchor_service_ref": "eip155:114:0x00000000000000000000000000000000000a0c4e",
+          "anchor_service_id": "eip155:114:0x00000000000000000000000000000000000a0c4e",
           "anchor_record_ref": "tx:0x1b5b9ccb3e8d006a5230de9bda23ff91edc794d4f56410560830b418528e446c",
-          "anchor_operator_ref": null,
+          "anchor_operator_id": null,
           "anchor_proof_ref": "proofs/distributed_ledger/proof_manifest.json",
           "anchor_proof_hash": "05b3abf2579a5eb66403cd78be557fd860633a1fe2103c7642030defe32c657f",
-          "anchor_verification_procedure_ref": "example:registry-event-procedure"
+          "anchor_verification_procedure_ref": "example:registry_event_procedure"
         }
       ]
     }
   },
   "observed_ledger_event": {
-    "chain": "eip155:114",
-    "emitting_contract": "0x00000000000000000000000000000000000a0c4f",
-    "kind": "commitment_event",
+    "network_id": "eip155:114",
+    "emitting_contract_id": "0x00000000000000000000000000000000000a0c4f",
+    "event_type": "commitment_event",
     "committed_hash": "36db3127c42719e5db45f47a451c85c3176ee5a7bd9551fd9cd4b76ffcae74c2"
   }
 }

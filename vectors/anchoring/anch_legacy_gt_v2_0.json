@@ -1,5 +1,5 @@
 {
-  "release": "gt-v2.0",
+  "corpus_release_ref": "gt-v2.0",
   "record": {
     "evidence_quality": {
       "evidence_origin": "runtime",

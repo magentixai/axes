@@ -5,10 +5,12 @@ Anchoring guard for the AXES reference verifier (WO18 A4, D-020, D-023).
 Evaluates the `anchoring` block of a record and returns verification results in the
 four-state vocabulary of draft-krausz-verification-state-03:
 
-  state         verified | contradicted | indeterminate | not_evaluated
-  state_reason  divergence | absence | instrument_failure | None
-  subject       artifact | operator | network | verifier
-  condition     closed list below
+  verification_state          verified | contradicted | indeterminate | not_evaluated
+  verification_reason_code    divergence | absence | instrument_failure | None
+  verification_subject_type   artifact | operator | network | verifier
+  verification_condition_code closed list below
+
+(AXES key names per docs/20; the draft's own names are state, state_reason, subject.)
 
 This guard checks what can be checked from the record alone plus a pre-fetched observation
 (`observed_ledger_event` in a vector). It does not replay proofs; tools/anchoring on the
@@ -41,8 +43,9 @@ CONDITIONS = {
 
 
 def _r(state, reason=None, condition=None, subject="artifact", anchor_id=None):
-    return {"state": state, "state_reason": reason, "condition": condition,
-            "subject": subject, "anchor_id": anchor_id}
+    return {"verification_state": state, "verification_reason_code": reason,
+            "verification_condition_code": condition, "verification_subject_type": subject,
+            "anchor_id": anchor_id}
 
 
 def _contract_of(service_ref: str) -> str | None:
@@ -107,10 +110,10 @@ def _ledger(a: dict, block: dict, ev: dict | None) -> dict:
     aid = a.get("anchor_id")
     if ev is None:
         return _r("not_evaluated", "instrument_failure", "anchor_method_unverifiable", "verifier", aid)
-    if ev.get("kind") != "commitment_event":
+    if ev.get("event_type") != "commitment_event":
         return _r("contradicted", "divergence", "anchor_not_a_commitment", "artifact", aid)
-    if _chain_of(a.get("anchor_service_ref")) != ev.get("chain") or \
-            _contract_of(a.get("anchor_service_ref")) != str(ev.get("emitting_contract", "")).lower():
+    if _chain_of(a.get("anchor_service_id")) != ev.get("network_id") or \
+            _contract_of(a.get("anchor_service_id")) != str(ev.get("emitting_contract_id", "")).lower():
         return _r("contradicted", "divergence", "anchor_noncanonical_contract", "artifact", aid)
     if ev.get("committed_hash") != a.get("anchor_commitment_hash") or \
             a.get("anchor_commitment_hash") != block.get("anchored_subject_hash"):
@@ -121,4 +124,4 @@ def _ledger(a: dict, block: dict, ev: dict | None) -> dict:
 def decisive(results: list[dict]) -> dict | None:
     if not results:
         return None
-    return max(results, key=lambda r: SEVERITY[r["state"]])
+    return max(results, key=lambda r: SEVERITY[r["verification_state"]])
