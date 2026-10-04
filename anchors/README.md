@@ -24,4 +24,4 @@ No network access is used. Procedures and what each anchor does and does not est
 
 ## Produce
 
-Anchors are produced by the `anchor` workflow (`.github/workflows/anchor.yml`), dispatched manually; a scheduled run upgrades pending OpenTimestamps proofs. Each run pushes to an `anchor-run/<run id>` branch for review before merge. `basis_status` is written by the tool from what the anchoring service returned, never by hand.
+Anchors are produced by the `anchor` workflow (`.github/workflows/anchor.yml`), dispatched manually; a scheduled run every six hours upgrades pending OpenTimestamps proofs. Each run commits its results under `anchors/` with `last_run.json` pointing at the public run log. `basis_status` is written by the tool from what the anchoring service returned, never by hand.

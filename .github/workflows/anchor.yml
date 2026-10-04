@@ -51,7 +51,7 @@ jobs:
             subj=$(ls "$d"/*.json | grep -v -e anchoring.json -e last_run.json | head -1)
             python tools/anchoring/verify_anchor.py "$d" --subject "$subj"
           done
-      - name: Record run provenance and push to a review branch
+      - name: Record run provenance and commit to main
         run: |
           if [ -z "$(git status --porcelain anchors)" ]; then echo "nothing changed"; exit 0; fi
           for d in anchors/*/; do
@@ -61,7 +61,7 @@ jobs:
           done
           git config user.name "axes-anchor-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b "anchor-run/${GITHUB_RUN_ID}"
           git add anchors
           git commit -m "Anchoring run ${GITHUB_RUN_ID} (${GITHUB_EVENT_NAME})"
-          git push origin "anchor-run/${GITHUB_RUN_ID}"
+          for i in 1 2 3; do git pull --rebase -q origin main && git push origin HEAD:main && exit 0; sleep 5; done
+          exit 1

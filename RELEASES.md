@@ -12,6 +12,17 @@ Reproduce a release with [`VERIFY.md`](VERIFY.md).
 
 **Until gt-v2.1 ships:** treat **gt-v2.0** as the corpus of record for any third-party citation. Do not expect those digests from default-branch HEAD.
 
+## External anchors
+
+Each release statement is anchored outside AXES so a third party can confirm the published digests existed by a stated time without trusting the maintainers. Verify with [`VERIFY.md`](VERIFY.md#check-the-external-anchors); procedures in [`docs/anchoring-profiles.md`](docs/anchoring-profiles.md).
+
+| Release | Release statement digest | Anchor | Method | Status |
+|---|---|---|---|---|
+| gt-v2.0 | `d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216` | FreeTSA, serial `0x08DE791D`, 2026-10-04T13:53:53Z | RFC 3161 time-stamp authority | verified offline |
+| gt-v2.0 | same | OpenTimestamps (Bitcoin) | OpenTimestamps | pending Bitcoin attestation; upgraded automatically |
+
+Further independent lanes (a witnessed transparency log, an on-chain registry) are added as their operators run them.
+
 ## Governance
 
 The corpus changes only in announced releases. No regeneration lands on the default branch outside a tagged release with a row in this file, published digests, and notice to anyone who has published a verification result against the previous release. A field rename or schema correction may be decided at any time; it lands in the corpus at the next release.
