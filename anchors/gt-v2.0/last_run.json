@@ -1,0 +1,6 @@
+{
+  "workflow_run": "https://github.com/magentixai/axes/actions/runs/37207248702",
+  "commit": "25615f62b8fdde303fb6e84d75a29573aaca8000",
+  "event": "workflow_dispatch",
+  "runner_os": "Linux"
+}

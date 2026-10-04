@@ -1,0 +1,8 @@
+{
+  "description": "RFC 3161 token from https://freetsa.org/tsr with the TSA certificate chain",
+  "files": {
+    "token.tsr": "8e77e9878164ec69c3fea53c7a2fa1e3b23589546d7d6ce1e5ff8874238087f5",
+    "tsa-ca.pem": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+    "tsa.crt": "8bfb0305bb64e2571ca507552ef3245cb1c2fee8728e0ff8689225081ea13467"
+  }
+}
