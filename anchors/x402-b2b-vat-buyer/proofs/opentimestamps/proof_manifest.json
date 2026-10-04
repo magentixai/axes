@@ -1,7 +1,8 @@
 {
-  "manifest_note": "OpenTimestamps proof; pending until upgraded. Calendars: https://a.pool.opentimestamps.org, https://b.pool.opentimestamps.org, https://a.pool.eternitywall.com",
+  "manifest_note": "OpenTimestamps proof with archived Bitcoin block headers",
   "file_hash_algorithm": "SHA-256",
   "file_hashes": {
-    "subject.ots": "3165826c6029a319d6779dd7ef907816d6f4e7d3795c4281f56cc9a14a77c50d"
+    "bitcoin-header-969876.hex": "a47487976a46ccbe97eba1763a6d718f62829637c8da55953240c0102bf0484d",
+    "subject.ots": "2e0d488eaf7b4910a50eb1730f2ad043eb0c59eaa7b2ba37d9e97e0f8231e527"
   }
 }

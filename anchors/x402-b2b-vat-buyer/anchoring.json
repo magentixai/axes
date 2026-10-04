@@ -14,8 +14,10 @@
       "anchor_service_id": "bip122:000000000019d6689c085ae165831e93",
       "anchor_operator_id": null,
       "anchor_proof_ref": "proofs/opentimestamps/proof_manifest.json",
-      "anchor_proof_hash": "9b514f4dfb3b59d1a0329608c333d679f9e2a7ea141c1bf0b5861eb4bc430aaa",
-      "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesopentimestamps_sha256_digest1"
+      "anchor_proof_hash": "3ad269c60a6697376ce9bfb8d9d5f83d0cebed006768089a642785d2e6c1dea3",
+      "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesopentimestamps_sha256_digest1",
+      "anchored_at": "2026-10-04T17:01:00.000Z",
+      "anchor_record_ref": "block:969876:000000000000000000012d19498c55fdb7b676947e449b3cdb17dcc63e214d14"
     },
     {
       "anchor_id": "anch:tsa-freetsa",
