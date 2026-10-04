@@ -4,6 +4,13 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-04 - WO19 requirement profiles and evaluation
+- docs/07: the profile mechanism is normative (trust computed, never stored; both sides named in any conformance statement; composition; deterministic evaluation; reproducible `result_core_hash`).
+- `schema/requirement-profile.schema.json`, `schema/evaluation-record.schema.json`; three reference profiles in `profiles/`.
+- docs/06 2.13: profile, evaluation, absence, settlement-purpose and nonce-derivation vocabularies; the closed condition registry.
+- Decisions D-025 to D-037 (WO19 D1 to D13).
+- On `golden-trace-v2`: `tools/axes_evaluate.py`, 30 two-sided evaluation vectors, the vocabulary mapping vectors, and published gt-v2.0 evaluations. Under the regulator profile gt-v2.0 is `indeterminate` with `basis_not_demonstrated` and `anchor_insufficient`.
+
 ### 2026-10-04 - Naming rules made normative (D-024)
 - `docs/20-naming-rules.md`: one method for every key, enum value and AXES identifier (N1 to N15). Booleans end `_indicator`; American spelling in code; `_id` for who or what acts, `_ref` for what is fetched and read (D-022 restated); class word last fixes the value type; no unit or algorithm in a key.
 - `tools/check_key_naming.py` (standard library) in CI on both branches; frozen bytes listed in `tools/naming_baseline.json` with the docs/19 entry that corrects them.

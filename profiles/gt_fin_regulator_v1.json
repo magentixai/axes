@@ -1,0 +1,62 @@
+{
+  "requirement_profile_id": "axes:gt_fin_regulator@1",
+  "requirement_profile_version": "1",
+  "profile_purpose_type": "sufficiency",
+  "publisher_id": "https://github.com/magentixai/axes",
+  "relying_party_roles": [
+    "regulator"
+  ],
+  "subject_types": [
+    "bundle"
+  ],
+  "extended_profile_refs": [
+    "axes:gt_fin_internal_audit@1"
+  ],
+  "effective_from": "2026-10-04T00:00:00.000Z",
+  "unsettled_question_notes": [
+    "Reorganisation depth before a distributed_ledger or opentimestamps anchor is final is not pinned.",
+    "Which clock a transparency-log checkpoint time is read from is not pinned."
+  ],
+  "vector_set_ref": "vectors/profiles/ on golden-trace-v2",
+  "requirements": [
+    {
+      "requirement_id": "reg_anchor_01",
+      "check_type": "anchoring",
+      "subject_type": "bundle",
+      "field_path": "/anchoring",
+      "obligation_type": "conditional",
+      "condition_expression": "equals(/event_kind, \"attestation_recorded\")",
+      "required_basis_status": "demonstrated",
+      "anchoring": {
+        "minimum_independent_anchor_count": 1,
+        "accepted_anchoring_methods": [
+          "distributed_ledger",
+          "transparency_log",
+          "timestamp_authority",
+          "opentimestamps"
+        ],
+        "maximum_anchoring_lag": "PT24H"
+      },
+      "floor_indicator": true,
+      "rationale_note": "An existence bound independent of the emitter.",
+      "source_refs": [
+        "GAP-TECH-001",
+        "x402#2887"
+      ]
+    },
+    {
+      "requirement_id": "reg_signature_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "field_path": "/integrity/envelope_signature",
+      "obligation_type": "required",
+      "required_basis_status": "demonstrated",
+      "floor_indicator": true,
+      "rationale_note": "Every envelope carries a real signature under a declared signing profile.",
+      "source_refs": [
+        "EB-004",
+        "WO18 A4.5"
+      ]
+    }
+  ]
+}

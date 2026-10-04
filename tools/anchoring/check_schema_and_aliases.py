@@ -50,6 +50,13 @@ def check_schema():
             print("%s valid   %s%s" % ("ok  " if not errs else "FAIL", rel, "" if not errs else ": " + errs[0].message))
             if errs:
                 FAILS.append(rel)
+    pv = jsonschema.Draft202012Validator(load(p("schema", "requirement-profile.schema.json")))
+    for path in sorted(glob.glob(p("profiles", "*.json"))):
+        errs = list(pv.iter_errors(load(path)))
+        rel = os.path.relpath(path, ROOT).replace(os.sep, "/")
+        print("%s profile %s%s" % ("ok  " if not errs else "FAIL", rel, "" if not errs else ": " + errs[0].message))
+        if errs:
+            FAILS.append(rel)
     for path in sorted(glob.glob(p("examples", "anchoring", "invalid", "*.json"))):
         errs = list(validator.iter_errors(load(path)))
         rel = os.path.relpath(path, ROOT).replace(os.sep, "/")

@@ -181,6 +181,49 @@ Other mechanisms use a namespaced identifier `<namespace>:<id>` and MUST carry `
 | `anchor_proof_unresolvable` | `not_evaluated`, subject `network` | A proof reference that cannot be retrieved at audit time: an availability fact, never the same value as absent |
 | `anchor_method_unverifiable` | `not_evaluated` / `instrument_failure`, subject `verifier` | The verifier lacks the library, binary or procedure for the method; never a pass and never a finding about the anchor |
 
+## 2.13 Requirement profiles and evaluation (WO19, D-025 to D-037)
+
+Closed sets, lower_snake, American (docs/20).
+
+- **`profile_purpose_type`:** `sufficiency` | `disclosure`.
+- **`subject_type`** (evaluation subject): `envelope` | `bundle` | `stream_window` | `release`.
+- **`check_type`:** `field_presence` | `chain_integrity` | `sequence_continuity` | `anchoring` | `settlement_commitment`.
+- **`obligation_type`:** `required` | `conditional` | `optional` | `prohibited` (strictness order `prohibited` > `required` > `conditional` > `optional`).
+- **`relying_party_role`:** the `settlement_role` values plus `auditor`, `regulator`, `insurer`, `tax_authority`, `liability_holder`, `forensic_investigator`, `board`.
+- **`absence_reason_code`** (envelope `field_absences[]`): `not_applicable` | `not_captured` | `withheld` | `redacted`. `withheld` and `redacted` are never read as absent.
+- **`verification_subject_type`** adds `access` (the reader's entitlement) to the anchoring set.
+- **`guarantee_type`:** `conditional` | `unconditional`.
+- **`settlement_purpose_type`:** `demand` | `self_test` | `keep_alive` | `conformance` | `scripted_load` | `demo`. Absent means unlabeled, never `demand` (x402#3226).
+- **`nonce_derivation_type`:** `random` | `x402_mandate_binding` | `resource_binding` | `unbindable` (WO20 A1.4). `unbindable` is `indeterminate`, never a failure.
+- **Value ladders** (for `minimum_value`): `axes:corroboration_state_ladder@1` = `uncorroborated` < `internally_corroborated` < `source_system_corroborated` < `third_party_confirmed` < `externally_anchored` (`conflicting_evidence` never satisfies a minimum); `axes:verification_status_ladder@1` = `unverified` < `verification_unavailable` < `verified` (`verification_failed` never satisfies).
+
+**Evaluation conditions (`verification_condition_code`), class not cause; the cause goes in `observed_note`:**
+
+| Condition | State / reason / subject |
+|---|---|
+| `field_absent_undeclared` | `indeterminate` / `absence` / `artifact` |
+| `field_absent_declared` | `indeterminate` / `absence` / `operator` |
+| `field_declared_not_applicable` | `contradicted` / `divergence` / `artifact` (required field declared not applicable) |
+| `field_withheld` | `not_evaluated` / - / `operator` |
+| `field_redacted` | `not_evaluated` / - / `access` |
+| `access_restricted` | `not_evaluated` / - / `access` |
+| `prohibited_field_present` | `contradicted` / `divergence` / `artifact` |
+| `value_not_accepted` | `contradicted` / `divergence` / `artifact` |
+| `value_below_minimum` | `indeterminate` / `absence` / `artifact` |
+| `conflicting_evidence` | `indeterminate` / `divergence` / `artifact` |
+| `basis_not_demonstrated` | `indeterminate` / `absence` / `operator` |
+| `identifier_unverified` | `indeterminate` / `absence` / `artifact` |
+| `chain_break`, `envelope_hash_mismatch` | `contradicted` / `divergence` / `artifact` |
+| `sequence_gap` | `indeterminate` / `absence` / `artifact` |
+| `anchor_insufficient`, `anchor_lag_exceeded` | `indeterminate` / `absence` / `artifact` |
+| anchoring conditions (2.12) | as 2.12 |
+| `settlement_commitment_mismatch`, `cap_exceeded` | `contradicted` / `divergence` / `artifact` |
+| `settlement_not_observed` | `indeterminate` / `absence` / `artifact` |
+| `nonce_unbindable`, `binding_salt_absent` | `indeterminate` / `absence` / `operator` |
+| `profile_conflict` | `indeterminate` / `divergence` / `verifier` |
+| `profile_unsupported`, `predicate_unparseable`, `value_ladder_unsupported`, `check_type_unsupported`, `evaluator_fault`, `requirement_profile_hash_unpinned` | `not_evaluated` / `instrument_failure` / `verifier` |
+| `external_evidence_stale` | `not_evaluated` / - / `network` |
+
 ## 3. Naming-convention decisions (route to catalogue)
 
 **All naming rules are now normative in [docs/20](20-naming-rules.md) (D-024) and checked by `tools/check_key_naming.py`. This section keeps the casing rationale and the open-item history.**
