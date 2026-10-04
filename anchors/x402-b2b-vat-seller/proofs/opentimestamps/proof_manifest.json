@@ -1,0 +1,7 @@
+{
+  "manifest_note": "OpenTimestamps proof; pending until upgraded. Calendars: https://a.pool.opentimestamps.org, https://b.pool.opentimestamps.org, https://a.pool.eternitywall.com",
+  "file_hash_algorithm": "SHA-256",
+  "file_hashes": {
+    "subject.ots": "8565baae559fd3e64e51112503a6b650eeca9e453a87fb2d44271ac29e3d5fb3"
+  }
+}

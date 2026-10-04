@@ -1,0 +1,9 @@
+{
+  "manifest_note": "RFC 3161 token from https://freetsa.org/tsr with the TSA certificate chain",
+  "file_hash_algorithm": "SHA-256",
+  "file_hashes": {
+    "token.tsr": "a65c16d018b2102dc5f2c139716ddfab5834fb6ecdc39b968937364b5a63fc94",
+    "tsa-ca.pem": "2151b61137ffa86bf664691ba67e7da0b19f98c758e3d228d5d8ebf27e044438",
+    "tsa.crt": "8bfb0305bb64e2571ca507552ef3245cb1c2fee8728e0ff8689225081ea13467"
+  }
+}
