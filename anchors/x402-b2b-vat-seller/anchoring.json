@@ -14,7 +14,7 @@
       "anchor_service_id": "bip122:000000000019d6689c085ae165831e93",
       "anchor_operator_id": null,
       "anchor_proof_ref": "proofs/opentimestamps/proof_manifest.json",
-      "anchor_proof_hash": "385bcac00c93aa85d4411b9742e6c870578738a1ece9ca822f867cac651a1b68",
+      "anchor_proof_hash": "95309703e54dfa6e14e6f5fccaaf7fc13cfb7fb89d0cd2abe7f911be7cd8fcf1",
       "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesopentimestamps_sha256_digest1",
       "anchored_at": "2026-10-04T17:01:00.000Z",
       "anchor_record_ref": "block:969876:000000000000000000012d19498c55fdb7b676947e449b3cdb17dcc63e214d14"

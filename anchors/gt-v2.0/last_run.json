@@ -1,6 +1,6 @@
 {
-  "workflow_run_ref": "https://github.com/magentixai/axes/actions/runs/37238071128",
-  "source_commit_ref": "47b84106e4dfd18469a22ead72e9f521e4302ec4",
+  "workflow_run_ref": "https://github.com/magentixai/axes/actions/runs/37331438722",
+  "source_commit_ref": "a6a7c28c1ba317b318e716224c17e0bd5488067d",
   "trigger_event_type": "schedule",
   "runner_os_type": "Linux"
 }

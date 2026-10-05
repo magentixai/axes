@@ -3,6 +3,7 @@
   "file_hash_algorithm": "SHA-256",
   "file_hashes": {
     "bitcoin-header-969876.hex": "a47487976a46ccbe97eba1763a6d718f62829637c8da55953240c0102bf0484d",
-    "subject.ots": "61427fc2dde79ba1a951bf921cea2cd40677b7a52fd6e97eac00e891f34adc5f"
+    "bitcoin-header-969969.hex": "d4552d890dcff667c0d02944dd284d300b93d859a7709a147a4a8b74ce663df4",
+    "subject.ots": "244c0a53c14890807a385614caeb3bb12f65874260e9e9b4b08f97e8469bd63a"
   }
 }
