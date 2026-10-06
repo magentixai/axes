@@ -6,6 +6,7 @@ All notable changes to the AXES specification and repository.
 
 ### 2026-10-06 - x402 correlation: input checks tightened, cross-check with the tsc#4 payment fingerprint
 - Fix: `axes:x402_correlation@1` accepted non-hex addresses and nonces and non-ASCII digits in amounts and `validBefore`. All now refused with `value_not_accepted`. No valid input changes hash; three refusal vectors added (18 in total).
+- Fix: amounts above uint256 and malformed CAIP-2 eip155 references (for example `eip155:0`) are refused. Two refusal vectors added (20 in total). Trailing newlines were already refused (full-match patterns).
 - `tools/x402/crosscheck_payment_fingerprint.py`: the 11 CC0 vectors of `x402-payment-fingerprint/0` (tsc#4) run through the correlation core. Both recipes partition them identically; version 1 copies are refused, never split. Run in CI.
 
 ### 2026-10-04 - WO20 x402 trust lanes and the B2B VAT worked example

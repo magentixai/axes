@@ -1,0 +1,94 @@
+{
+  "x402Version": 2,
+  "resource": {
+    "url": "https://x402.magentix.ai/api/agent/reports",
+    "description": "ARBITR evidence report (test bed)",
+    "mimeType": "application/json"
+  },
+  "accepted": {
+    "scheme": "exact",
+    "network": "eip155:84532",
+    "amount": "115792089237316195423570985008687907853269984665640564039457584007913129639936",
+    "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "payTo": "0x1BD45964Ed3C85F0693f9f6822d37e5b7C778f11",
+    "maxTimeoutSeconds": 120,
+    "extra": {
+      "name": "USDC",
+      "version": "2"
+    }
+  },
+  "payload": {
+    "signature": "0x829432067e269e08c2dac20b45d35801d8587430b3960fccc3c77c43771b57b354d4bae3c990734bed90294747a5fe5655deacd47926a9b0d013eeb69eb7da421b",
+    "authorization": {
+      "from": "0x1351523B6469744CfA03DA15a0D7A8199f04c9f2",
+      "to": "0x1BD45964Ed3C85F0693f9f6822d37e5b7C778f11",
+      "value": "115792089237316195423570985008687907853269984665640564039457584007913129639936",
+      "validAfter": "1791158340",
+      "validBefore": "1791159000",
+      "nonce": "0x5cc570ffbba0a3602173b929ee6b668efed3029027f6ecf1adb200dedd9bbdd4"
+    }
+  },
+  "extensions": {
+    "identity": {
+      "info": {
+        "offered": [
+          "axes:x402_disclosure_business_buyer@1",
+          "axes:x402_disclosure_anonymous@1"
+        ],
+        "required": false,
+        "floor": null,
+        "supplier": {
+          "legalName": "Exemple SAS",
+          "vatId": "FR00000000000",
+          "identityRef": "did:web:exemple.example"
+        },
+        "chosen": "axes:x402_disclosure_business_buyer@1",
+        "presentation": {
+          "legalName": "Buyer GmbH",
+          "vatId": "DE000000000",
+          "principalAttributionRef": "sha256:4d17fec7be3e5fce9dcad51b836103af9e1c238e8d6e3367a40cfb1d1378e8bd"
+        }
+      },
+      "schema": {
+        "$ref": "https://github.com/magentixai/axes/schema/x402-wire/identity-1.json"
+      }
+    },
+    "tax": {
+      "info": {
+        "offered": [
+          "x402-tax:eu-vat@rev6"
+        ],
+        "required": false,
+        "quote": {
+          "determinationStatus": "DETERMINED",
+          "taxResultRef": "sha256:e364d47c481fb010174c923ca36829d53a218ad9e135084dc0962d2d74e1479e"
+        },
+        "chosen": "x402-tax:eu-vat@rev6",
+        "presentation": {
+          "buyerDeclarationRef": "sha256:bea2bde423960856b52869f31d594b100c4192a7307d7eb07d7934794acbf798"
+        }
+      },
+      "schema": {
+        "$ref": "https://github.com/magentixai/axes/schema/x402-wire/tax-1.json"
+      }
+    },
+    "evidence": {
+      "info": {
+        "offered": [
+          "axes:x402_correlation@1"
+        ],
+        "required": false,
+        "anchorServices": [
+          "https://freetsa.org/tsr",
+          "bip122:000000000019d6689c085ae165831e93"
+        ],
+        "correlationSalt": "1fc598b464ad79ca9fb09de66c29206e31a083f2136f48747f5b3a92616d1369",
+        "chosen": "axes:x402_correlation@1",
+        "clientSalt": "d43629fbc9fbcf0beec6ff3d18b8ce33e6d195695c636151eb798ad64144ebc7"
+      },
+      "schema": {
+        "$ref": "https://github.com/magentixai/axes/schema/x402-wire/evidence-1.json"
+      }
+    }
+  }
+}

@@ -31,6 +31,9 @@ HEX32 = 64
 ADDRESS_PATTERN = re.compile(r"0x[0-9a-fA-F]{40}")
 NONCE_PATTERN = re.compile(r"0x[0-9a-fA-F]{64}")
 DECIMAL_PATTERN = re.compile(r"0|[1-9][0-9]*")
+# CAIP-2 eip155 reference: a decimal chain id, 1 to 32 characters, never 0.
+EIP155_NETWORK_PATTERN = re.compile(r"eip155:[1-9][0-9]{0,31}")
+UINT256_MAX = 2 ** 256 - 1
 
 
 class CorrelationError(ValueError):
@@ -59,6 +62,8 @@ def address(value, what):
 def atomic(value, what):
     if not isinstance(value, str) or not DECIMAL_PATTERN.fullmatch(value):
         raise CorrelationError("value_not_accepted", "%s must be a decimal string of atomic units" % what)
+    if len(value) > 78 or int(value) > UINT256_MAX:
+        raise CorrelationError("value_not_accepted", "%s exceeds uint256" % what)
     return value
 
 
@@ -125,6 +130,8 @@ def build_core(payment_required: dict, payment_payload: dict, offer: dict | None
     accepted = payment_payload.get("accepted") or {}
     if accepted.get("scheme") != "exact" or not str(accepted.get("network", "")).startswith("eip155:"):
         raise CorrelationError("check_type_unsupported", "recipe @1 covers the exact scheme on EVM networks only")
+    if not EIP155_NETWORK_PATTERN.fullmatch(accepted["network"]):
+        raise CorrelationError("value_not_accepted", "network is not a CAIP-2 eip155 chain id")
     if accepted not in (payment_required.get("accepts") or []):
         raise CorrelationError("value_not_accepted", "accepted requirements were not among those offered")
     auth = (payment_payload.get("payload") or {}).get("authorization") or {}

@@ -199,6 +199,28 @@
         "origin_note": "refused: the nonce must be 32 bytes of ASCII hex"
       }
     },
+    "amount_exceeds_uint256": {
+      "wire_dir_ref": "x402-wire/amount_exceeds_uint256",
+      "expected_outcome": {
+        "verification_condition_code": "value_not_accepted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: an EIP-3009 value is a uint256"
+      }
+    },
+    "network_reference_malformed": {
+      "wire_dir_ref": "x402-wire/network_reference_malformed",
+      "expected_outcome": {
+        "verification_condition_code": "value_not_accepted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: the CAIP-2 eip155 reference is a chain id of 1 to 32 digits, never 0"
+      }
+    },
     "non_evm_network": {
       "wire_dir_ref": "x402-wire/non_evm_network",
       "expected_outcome": {

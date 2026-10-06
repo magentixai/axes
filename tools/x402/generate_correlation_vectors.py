@@ -58,6 +58,8 @@ CASES = [
     ("payer_not_hex", lambda pr, pp: pp["payload"]["authorization"].__setitem__("from", "0x" + "zz" * 20), "refused: an address must be 20 bytes of ASCII hex"),
     ("amount_non_ascii_digit", lambda pr, pp: (set_accepted("amount", "1٣")(pr, pp), pp["payload"]["authorization"].__setitem__("value", "1٣")), "refused: amounts are ASCII decimal digits only"),
     ("nonce_not_hex", lambda pr, pp: pp["payload"]["authorization"].__setitem__("nonce", "0x" + "zz" * 32), "refused: the nonce must be 32 bytes of ASCII hex"),
+    ("amount_exceeds_uint256", lambda pr, pp: (set_accepted("amount", str(2 ** 256))(pr, pp), pp["payload"]["authorization"].__setitem__("value", str(2 ** 256))), "refused: an EIP-3009 value is a uint256"),
+    ("network_reference_malformed", lambda pr, pp: set_accepted("network", "eip155:0")(pr, pp), "refused: the CAIP-2 eip155 reference is a chain id of 1 to 32 digits, never 0"),
     ("non_evm_network", lambda pr, pp: (set_accepted("network", "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp")(pr, pp)), "refused: recipe @1 covers the exact scheme on EVM networks only"),
 ]
 EXPECT = {
