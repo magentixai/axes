@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from datetime import datetime, timezone
 
@@ -26,6 +27,10 @@ except ImportError:  # pragma: no cover
 RECIPE_REF = "axes:x402_correlation@1"
 LANE_TYPES = ("identity", "tax", "evidence")
 HEX32 = 64
+# ASCII only: str.isdigit() and a bare length check accept non-ASCII digits and non-hex characters.
+ADDRESS_PATTERN = re.compile(r"0x[0-9a-fA-F]{40}")
+NONCE_PATTERN = re.compile(r"0x[0-9a-fA-F]{64}")
+DECIMAL_PATTERN = re.compile(r"0|[1-9][0-9]*")
 
 
 class CorrelationError(ValueError):
@@ -46,13 +51,13 @@ def canonical(obj) -> bytes:
 
 
 def address(value, what):
-    if not isinstance(value, str) or not value.startswith("0x") or len(value) != 42:
+    if not isinstance(value, str) or not ADDRESS_PATTERN.fullmatch(value):
         raise CorrelationError("value_not_accepted", "%s is not a 20-byte hex address" % what)
     return value.lower()
 
 
 def atomic(value, what):
-    if not isinstance(value, str) or not value.isdigit() or (len(value) > 1 and value[0] == "0"):
+    if not isinstance(value, str) or not DECIMAL_PATTERN.fullmatch(value):
         raise CorrelationError("value_not_accepted", "%s must be a decimal string of atomic units" % what)
     return value
 
@@ -85,7 +90,7 @@ def payment_legs(accepted):
 
 
 def expires_at(valid_before):
-    if not isinstance(valid_before, str) or not valid_before.isdigit():
+    if not isinstance(valid_before, str) or not DECIMAL_PATTERN.fullmatch(valid_before):
         raise CorrelationError("value_not_accepted", "authorization.validBefore must be decimal unix seconds")
     return datetime.fromtimestamp(int(valid_before), tz=timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
@@ -123,9 +128,10 @@ def build_core(payment_required: dict, payment_payload: dict, offer: dict | None
     if accepted not in (payment_required.get("accepts") or []):
         raise CorrelationError("value_not_accepted", "accepted requirements were not among those offered")
     auth = (payment_payload.get("payload") or {}).get("authorization") or {}
-    nonce = str(auth.get("nonce", "")).lower()
-    if not nonce.startswith("0x") or len(nonce) != 66:
+    raw_nonce = auth.get("nonce")
+    if not isinstance(raw_nonce, str) or not NONCE_PATTERN.fullmatch(raw_nonce):
         raise CorrelationError("value_not_accepted", "authorization.nonce must be 32 bytes of hex")
+    nonce = raw_nonce.lower()
     if (accepted.get("extra") or {}).get("splits"):
         # One EIP-3009 authorization moves value to one address. Splits (#3221) need a scheme recipe that can
         # verify every leg; a leg this recipe cannot check is refused, never skipped.

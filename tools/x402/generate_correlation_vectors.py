@@ -55,6 +55,9 @@ CASES = [
     ("lane_not_echoed", lambda pr, pp: pp["extensions"].pop("tax"), "refused: an advertised lane must be echoed"),
     ("server_salt_absent", lambda pr, pp: (pr["extensions"]["evidence"]["info"].pop("correlationSalt"), pp["extensions"]["evidence"]["info"].pop("correlationSalt")), "indeterminate, never refused: a missing salt is a publication fact"),
     ("splits_present", lambda pr, pp: (pr["accepts"][0]["extra"].__setitem__("splits", [{"payTo": "0x" + "4" * 40, "amount": "1000"}]), pp["accepted"]["extra"].__setitem__("splits", [{"payTo": "0x" + "4" * 40, "amount": "1000"}])), "refused under the EIP-3009 exact recipe: a leg it cannot verify is never skipped"),
+    ("payer_not_hex", lambda pr, pp: pp["payload"]["authorization"].__setitem__("from", "0x" + "zz" * 20), "refused: an address must be 20 bytes of ASCII hex"),
+    ("amount_non_ascii_digit", lambda pr, pp: (set_accepted("amount", "1٣")(pr, pp), pp["payload"]["authorization"].__setitem__("value", "1٣")), "refused: amounts are ASCII decimal digits only"),
+    ("nonce_not_hex", lambda pr, pp: pp["payload"]["authorization"].__setitem__("nonce", "0x" + "zz" * 32), "refused: the nonce must be 32 bytes of ASCII hex"),
     ("non_evm_network", lambda pr, pp: (set_accepted("network", "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp")(pr, pp)), "refused: recipe @1 covers the exact scheme on EVM networks only"),
 ]
 EXPECT = {

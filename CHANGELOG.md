@@ -4,6 +4,10 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-06 - x402 correlation: input checks tightened, cross-check with the tsc#4 payment fingerprint
+- Fix: `axes:x402_correlation@1` accepted non-hex addresses and nonces and non-ASCII digits in amounts and `validBefore`. All now refused with `value_not_accepted`. No valid input changes hash; three refusal vectors added (18 in total).
+- `tools/x402/crosscheck_payment_fingerprint.py`: the 11 CC0 vectors of `x402-payment-fingerprint/0` (tsc#4) run through the correlation core. Both recipes partition them identically; version 1 copies are refused, never split. Run in CI.
+
 ### 2026-10-04 - WO20 x402 trust lanes and the B2B VAT worked example
 - `tools/x402/x402_correlation.py`: `axes:x402_correlation@1` (multi-recipient core, off-chain salts, opaque nonce, #3220 binding recomputation, receipt and party checks); 15 two-sided vectors plus nonce-derivation vectors, regenerated identically in CI.
 - `schema/x402-wire/`: identity, tax and evidence lane info schemas in x402 spelling.

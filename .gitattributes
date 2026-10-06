@@ -9,4 +9,5 @@ portable/**/MANIFEST.json -text
 anchors/** -text
 examples/x402-b2b-vat/** -text
 tools/x402/vectors/** -text
+tools/x402/external/** -text
 profiles/** -text

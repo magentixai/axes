@@ -166,6 +166,39 @@
         "origin_note": "refused under the EIP-3009 exact recipe: a leg it cannot verify is never skipped"
       }
     },
+    "payer_not_hex": {
+      "wire_dir_ref": "x402-wire/payer_not_hex",
+      "expected_outcome": {
+        "verification_condition_code": "value_not_accepted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: an address must be 20 bytes of ASCII hex"
+      }
+    },
+    "amount_non_ascii_digit": {
+      "wire_dir_ref": "x402-wire/amount_non_ascii_digit",
+      "expected_outcome": {
+        "verification_condition_code": "value_not_accepted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: amounts are ASCII decimal digits only"
+      }
+    },
+    "nonce_not_hex": {
+      "wire_dir_ref": "x402-wire/nonce_not_hex",
+      "expected_outcome": {
+        "verification_condition_code": "value_not_accepted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "refused: the nonce must be 32 bytes of ASCII hex"
+      }
+    },
     "non_evm_network": {
       "wire_dir_ref": "x402-wire/non_evm_network",
       "expected_outcome": {
