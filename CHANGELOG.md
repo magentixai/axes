@@ -4,6 +4,9 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-08 - Completeness wording corrected
+- Two-party anchoring is described as exposing one side's omission, not as evidence that nothing was omitted (wg-identity#25, x402#2853). Crosswalk and anchoring examples README updated; erratum recorded for the two x402 B2B audit profiles, whose `@1` bytes stay unchanged.
+
 ### 2026-10-06 - x402 correlation: input checks tightened, cross-check with the tsc#4 payment fingerprint
 - Fix: `axes:x402_correlation@1` accepted non-hex addresses and nonces and non-ASCII digits in amounts and `validBefore`. All now refused with `value_not_accepted`. No valid input changes hash; three refusal vectors added (18 in total).
 - Fix: amounts above uint256 and malformed CAIP-2 eip155 references (for example `eip155:0`) are refused. Two refusal vectors added (20 in total). Trailing newlines were already refused (full-match patterns).

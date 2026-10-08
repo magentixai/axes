@@ -73,7 +73,7 @@ The gt-v2.0 release statement is already anchored twice, for real: [`anchors/gt-
 
 In an x402 payment each party keeps its own AXES record and anchors it independently. Both records carry the same `correlation_hash` (recipe `axes:x402_correlation@1`), computed by each party from bytes both hold when the payer authorises. [`examples/anchoring/two-party-correlation.json`](../../examples/anchoring/two-party-correlation.json) holds the buyer's and the seller's anchoring blocks, each with `anchored_subject_type: envelope`.
 
-What this gives a third party: two independent commitments to records about the same payment. Neither side can quietly drop a payment the other has anchored (completeness by counterparty, wowlegend, wg-identity#25). If the parties' recomputed cores differ, each records `indeterminate` / `divergence`; a verifier never picks a side.
+What this gives a third party: two independent commitments to records about the same payment. If one side omits a payment, the other side's anchored record exposes that omission. This is not evidence that nothing was omitted: neither side's own sequence or anchors show that, and the cross-check reaches only the counterparties a relying party is told about (wowlegend, wg-identity#25; x402#2853; Tersign vector `n34`). If the parties' recomputed cores differ, each records `indeterminate` / `divergence`; a verifier never picks a side.
 
 ## Sources
 

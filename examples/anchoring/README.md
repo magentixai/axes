@@ -18,7 +18,7 @@ Every value below is illustrative and every entry carries `basis_status: simulat
 | `transparency-log.json` | A transparency-log anchor: log origin, leaf index at a checkpoint size, proof manifest | `example:` namespace profile; open question Q2 (checkpoint clock) applies |
 | `distributed-ledger.json` | An on-chain registry anchor on a test network, with the canonical contract in `anchor_service_id` | The procedure reference is marked `CONFIRM-WITH-PABLO` until the LFDT lab procedure is agreed. A matching event from any other contract is not evidence (WO18 A4.4) |
 | `dual-lane-tlog-and-chain.json` | The real gt-v2.0 release statement digest anchored by two further lanes side by side | Profile, service and procedure values are `CONFIRM-WITH-AUTHOR` placeholders for MarkovianProtocol and argentum-core to replace with real anchors |
-| `two-party-correlation.json` | Buyer and seller each anchor their own envelope; both carry the same `correlation_hash` (WO20) | Completeness by counterparty |
+| `two-party-correlation.json` | Buyer and seller each anchor their own envelope; both carry the same `correlation_hash` (WO20) | One side's omission exposed by the other's record (not evidence that nothing was omitted) |
 
 ## Invalid examples (must be rejected)
 
