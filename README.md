@@ -164,7 +164,16 @@ Conformance is graded, so weak implementations cannot claim full equivalence: **
 
 - **ARBITR** (Magentix AI) - proprietary interpretation, scoring and report-generation layer; the first consumer of AXES envelopes and the reference report generator. ARBITR conforms to AXES, not the other way round. Anyone can emit, validate, exchange and interpret AXES envelopes without it.
 
-An open reference emitter and validator are part of this repository's roadmap - a second independent implementation is an explicit goal and the trigger for venue incubation (see [GOVERNANCE](GOVERNANCE.md)).
+Independent verification. A second independent implementation was set as the trigger for venue incubation. Independent third parties have now verified the Golden Trace corpus against the published specification alone, with no dependency on this repository's tooling:
+
+- **argentum-core** ([giskard09](https://github.com/giskard09) / Pablo Etcheverry) - contributed the `custody-ref` reference implementation and a real on-chain `distributed_ledger` anchor instance, and runs its own content-addressed `-ref` primitives and verifiers against the corpus. See axes#3.
+- **evidence-record-conformance** ([Tersign](https://github.com/wowlegend) / Kevin Zhang) - a two-sided conformance verifier for the independence and completeness disqualifications; matches the pinned custody-twin verdicts 2/2. See [axes#2](https://github.com/magentixai/axes/issues/2) and [axes#6](https://github.com/magentixai/axes/issues/6).
+- **canoncheck** ([MarkovianProtocol](https://github.com/MarkovianProtocol) / Colin H Winter) - an independent cross-language JCS + SHA-256 byte-identity harness; reproduced the corpus 152/152 at tag `corpus/2026-08-08-gt-v2`. See [axes#6](https://github.com/magentixai/axes/issues/6).
+- **proofbundle** (b7n0de) - an independent RFC 6962 inclusion recomputation written from the specification, reproducing a checkpoint root from leaf bytes and verifying it with third-party witness keys; a single flipped payload bit fails inclusion. See b7n0de/proofbundle#7 and [#136](https://github.com/b7n0de/proofbundle/pull/136).
+
+These are independent verification and conformance implementations that reproduce and check the corpus from the specification; an open reference emitter and validator in this repository remain on the roadmap. What they establish is that the evidence a competent third party needs to reconstruct and check an AXES corpus without proprietary tooling is now demonstrated by more than one external party. Whether this satisfies the incubation trigger is a stewardship determination recorded in [GOVERNANCE](GOVERNANCE.md); per-contribution credits are in registers/decision-register.md and [PROVENANCE.md](PROVENANCE.md).
+
+Honest limits, kept deliberately on the face of it: corpus verification is not an SE-Cx conformance badge (decision D-008), and the witnessed-checkpoint lane currently runs a single log operator - the 4-of-7 external witness quorum detects a silently forked log, it does not remove the fact of one operator.
 
 ## Call for review - design partners wanted
 
