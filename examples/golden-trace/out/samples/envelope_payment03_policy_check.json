@@ -1,16 +1,16 @@
 {
   "se_version": "0.1-draft",
-  "profile_id": "se-profile:payments-emitter/0.1-draft",
+  "implementation_profile_ref": "se-profile:payments-emitter/0.1-draft",
   "event_kind": "policy_check_performed",
   "occurred_at": "2026-06-09T09:01:42.000Z",
   "emitted_at": "2026-06-09T09:01:42.400Z",
   "recorded_at": "2026-06-09T09:01:42.900Z",
   "timestamp_source": "ntp:cluster-sync",
-  "clock_sync_confidence": "high",
+  "clock_sync_confidence_level": "high",
   "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
   "span_id": "span-pay-03",
   "parent_span_id": "span-batch",
-  "org_id": "org:caldera-robotics",
+  "organization_id": "org:caldera-robotics",
   "tenant_id": "tenant:caldera-prod",
   "environment_id": "env:prod-eu",
   "environment_type": "production",
@@ -30,8 +30,8 @@
     "provider_id": "provider:first-meridian-bank"
   },
   "authority": {
-    "authority_context_id": "AD-7844",
-    "delegation_receipt_id": "delrec:AD-7844/2026-04-02",
+    "authority_context_ref": "AD-7844",
+    "delegation_receipt_ref": "delrec:AD-7844/2026-04-02",
     "delegator_id": "person:pseu/cfo-9f31",
     "policy_ref": "policy:caldera/ap-payments",
     "policy_version": "3.2",
@@ -43,7 +43,7 @@
     "capture_layer": "runtime_sdk",
     "capture_status": "captured",
     "emission_fail_posture": "fail_closed",
-    "declared_heartbeat_interval_s": 60
+    "declared_heartbeat_interval": "PT60S"
   },
   "evidence_quality": {
     "evidence_origin": "runtime",
@@ -51,8 +51,8 @@
     "corroboration_state": "internally_corroborated"
   },
   "privacy": {
-    "personal_data_flag": false,
-    "redaction_applied": false
+    "personal_data_indicator": false,
+    "redaction_applied_indicator": false
   },
   "payment_index": 3,
   "controls": {
@@ -61,23 +61,30 @@
     "checks": [
       {
         "control_id": "CTL-BENEF-01",
-        "name": "beneficiary on approved supplier master",
+        "control_name": "beneficiary on approved supplier master",
         "control_result": "passed",
         "evidence_ref": "suppliermaster:v2026-05/SUP-003"
       },
       {
         "control_id": "CTL-LIMIT-02",
-        "name": "per-payment limit",
+        "control_name": "per-payment limit",
         "control_result": "passed",
         "observed": {
-          "amount": 23900.0,
-          "limit": 25000.0,
-          "authority_utilisation_ratio": 0.956
+          "amount": {
+            "value": "2390000",
+            "decimals": 2,
+            "asset": "iso4217:EUR"
+          },
+          "limit": {
+            "value": "2500000",
+            "decimals": 2,
+            "asset": "iso4217:EUR"
+          }
         }
       },
       {
         "control_id": "CTL-DUPL-03",
-        "name": "duplicate instruction (idempotency key unseen)",
+        "control_name": "duplicate instruction (idempotency key unseen)",
         "control_result": "passed",
         "idempotency_key": "idem:APRUN-2026-06-09-A/0003"
       }
@@ -87,11 +94,12 @@
   "envelope_id": "env:APRUN-2026-06-09-A/0013",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "GT-JCS-0",
-    "previous_envelope_hash": "30083260e8b8b5609c3cf43e8ff4343592851b966cdef0976d905b841cf5c7ae",
+    "canonicalization_version": "RFC8785-JCS",
+    "previous_envelope_hash": "c4013507b775e1134eeb552806f056178496d4f3e4ecb78e9b280e11083f3432",
     "signing_key_id": "key:caldera/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
-    "envelope_hash": "8c0fbc5b10ab6b1a01202ed2122b3229dca593a8a6469971337f0d9fe95c3377",
-    "signature": "SIG-STUB(8c0fbc5b10ab6b1a)"
+    "envelope_signature_basis_status": "stubbed",
+    "envelope_hash": "a6b6a30ab2238565be68800f874ce480010195641e63bd98e1a7c26ca120baa2",
+    "envelope_signature": "SIG-STUB(a6b6a30ab2238565)"
   }
 }

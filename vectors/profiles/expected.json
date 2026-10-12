@@ -1,0 +1,406 @@
+{
+  "vector_format_ref": "axes:profile_vectors@1",
+  "summary_note": "WO19 evaluation vectors. Each case evaluates one requirement of a test profile against a synthetic subject; the expected result is the decisive result for that requirement. Subjects use gt-v2.1 key names.",
+  "vectors": {
+    "presence_required_present.jsonl": {
+      "requirement_profile_ref": "example:presence_required_present@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "D6 required field present"
+      }
+    },
+    "presence_required_absent.jsonl": {
+      "requirement_profile_ref": "example:presence_required_absent@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "field_absent_undeclared"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "D6 undeclared absence"
+      }
+    },
+    "absence_declared_not_captured.jsonl": {
+      "requirement_profile_ref": "example:absence_declared_not_captured@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "operator",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "field_absent_declared"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "WO19 section 5"
+      }
+    },
+    "absence_declared_withheld.jsonl": {
+      "requirement_profile_ref": "example:absence_declared_withheld@1",
+      "expected_verification": {
+        "verification_state": "not_evaluated",
+        "verification_subject_type": "operator",
+        "verification_condition_code": "field_withheld"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "WO19 section 5: withheld is never absent"
+      }
+    },
+    "absence_declared_redacted.jsonl": {
+      "requirement_profile_ref": "example:absence_declared_redacted@1",
+      "expected_verification": {
+        "verification_state": "not_evaluated",
+        "verification_subject_type": "access",
+        "verification_condition_code": "field_redacted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "WO19 section 5: redacted is a fact about the reader"
+      }
+    },
+    "absence_declared_not_applicable.jsonl": {
+      "requirement_profile_ref": "example:absence_declared_not_applicable@1",
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "field_declared_not_applicable"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "WO19 section 5"
+      }
+    },
+    "prohibited_absent.jsonl": {
+      "requirement_profile_ref": "example:prohibited_absent@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "D11 disclosure limit respected"
+      }
+    },
+    "prohibited_present.jsonl": {
+      "requirement_profile_ref": "example:prohibited_present@1",
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "prohibited_field_present"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "D11 disclosure limit breached"
+      }
+    },
+    "conditional_false.jsonl": {
+      "requirement_profile_ref": "example:conditional_false@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "condition false"
+      }
+    },
+    "conditional_true_absent.jsonl": {
+      "requirement_profile_ref": "example:conditional_true_absent@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "field_absent_undeclared"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "condition true"
+      }
+    },
+    "predicate_unparseable.jsonl": {
+      "requirement_profile_ref": "example:predicate_unparseable@1",
+      "expected_verification": {
+        "verification_state": "not_evaluated",
+        "verification_subject_type": "verifier",
+        "verification_reason_code": "instrument_failure",
+        "verification_condition_code": "predicate_unparseable"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "D12 closed predicate language"
+      }
+    },
+    "accepted_value.jsonl": {
+      "requirement_profile_ref": "example:accepted_value@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "accepted set"
+      }
+    },
+    "value_not_accepted.jsonl": {
+      "requirement_profile_ref": "example:value_not_accepted@1",
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "value_not_accepted"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "accepted set"
+      }
+    },
+    "minimum_met.jsonl": {
+      "requirement_profile_ref": "example:minimum_met@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "ladder minimum"
+      }
+    },
+    "minimum_not_met.jsonl": {
+      "requirement_profile_ref": "example:minimum_not_met@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "value_below_minimum"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "ladder minimum"
+      }
+    },
+    "conflicting_never_satisfies.jsonl": {
+      "requirement_profile_ref": "example:conflicting_never_satisfies@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "conflicting_evidence"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "conflicting_evidence never satisfies a minimum"
+      }
+    },
+    "basis_demonstrated.jsonl": {
+      "requirement_profile_ref": "example:basis_demonstrated@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "catalogue 1.27"
+      }
+    },
+    "basis_not_demonstrated.jsonl": {
+      "requirement_profile_ref": "example:basis_not_demonstrated@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "operator",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "basis_not_demonstrated"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "catalogue 1.27; gt-v2.0 SIG-STUB"
+      }
+    },
+    "chain_intact.jsonl": {
+      "requirement_profile_ref": "example:chain_intact@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "docs/09"
+      }
+    },
+    "chain_broken.jsonl": {
+      "requirement_profile_ref": "example:chain_broken@1",
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "chain_break"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "docs/09"
+      }
+    },
+    "sequence_contiguous.jsonl": {
+      "requirement_profile_ref": "example:sequence_contiguous@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "Module 01"
+      }
+    },
+    "sequence_gap.jsonl": {
+      "requirement_profile_ref": "example:sequence_gap@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "sequence_gap"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "Module 01"
+      }
+    },
+    "anchor_sufficient.jsonl": {
+      "requirement_profile_ref": "example:anchor_sufficient@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "WO18 A2"
+      }
+    },
+    "anchor_simulated.jsonl": {
+      "requirement_profile_ref": "example:anchor_simulated@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "anchor_insufficient"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "D-020"
+      }
+    },
+    "anchor_lag_exceeded.jsonl": {
+      "requirement_profile_ref": "example:anchor_lag_exceeded@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "anchor_lag_exceeded"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "WO19 section 3"
+      }
+    },
+    "settlement_matches.jsonl": {
+      "requirement_profile_ref": "example:settlement_matches@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "x402#3220 section 13"
+      }
+    },
+    "settlement_under_report.jsonl": {
+      "requirement_profile_ref": "example:settlement_under_report@1",
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "settlement_commitment_mismatch"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "x402#3220 section 13 rule (a): the only under-report detector"
+      }
+    },
+    "settlement_not_observed.jsonl": {
+      "requirement_profile_ref": "example:settlement_not_observed@1",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_subject_type": "artifact",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "settlement_not_observed"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "x402#3226: a verify is not a settlement"
+      }
+    },
+    "composition_floor_relaxed.case": {
+      "requirement_profile_ref": "example:composition_child@1",
+      "subject_file_ref": "composition.jsonl",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "profile_conflict",
+        "verification_subject_type": "verifier"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "D10: a floor cannot be relaxed by an extending profile"
+      }
+    },
+    "profile_unsupported.case": {
+      "requirement_profile_ref": "example:not_published@1",
+      "subject_file_ref": "presence_required_present.jsonl",
+      "expected_verification": {
+        "verification_state": "not_evaluated",
+        "verification_reason_code": "instrument_failure",
+        "verification_condition_code": "profile_unsupported",
+        "verification_subject_type": "verifier"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "D9: an unsupported profile is never a pass"
+      }
+    }
+  }
+}

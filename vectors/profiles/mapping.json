@@ -1,0 +1,136 @@
+{
+  "vector_format_ref": "axes:vocabulary_mapping_vectors@1",
+  "summary_note": "WO19 section 4.5: each existing AXES value maps to one evaluation result. outside_capture_boundary is an admissibility exclusion, not one of the four states.",
+  "vectors": {
+    "derivation_outcome.underivable_missing_input": {
+      "vocabulary_name": "derivation_outcome",
+      "vocabulary_value": "underivable_missing_input",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "field_absent_undeclared",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO19 section 4.5 mapping table",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "derivation_outcome.undisclosed": {
+      "vocabulary_name": "derivation_outcome",
+      "vocabulary_value": "undisclosed",
+      "expected_verification": {
+        "verification_state": "not_evaluated",
+        "verification_condition_code": "access_restricted",
+        "verification_subject_type": "access"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO19 section 4.5 mapping table",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "derivation_outcome.underivable_conflicting_inputs": {
+      "vocabulary_name": "derivation_outcome",
+      "vocabulary_value": "underivable_conflicting_inputs",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "conflicting_evidence",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO19 section 4.5 mapping table",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "derivation_outcome.underivable_unverified_identifier": {
+      "vocabulary_name": "derivation_outcome",
+      "vocabulary_value": "underivable_unverified_identifier",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "identifier_unverified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO19 section 4.5 mapping table",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "derivation_outcome.outside_capture_boundary": {
+      "vocabulary_name": "derivation_outcome",
+      "vocabulary_value": "outside_capture_boundary",
+      "expected_verification": {
+        "verification_state": "admissibility_excluded"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO19 section 4.5 mapping table",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "verification_status.verification_unavailable": {
+      "vocabulary_name": "verification_status",
+      "vocabulary_value": "verification_unavailable",
+      "expected_verification": {
+        "verification_state": "not_evaluated",
+        "verification_condition_code": "verification_unavailable",
+        "verification_subject_type": "network"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO19 section 4.5 mapping table",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anchoring_guard.anchor_simulated_claims_external": {
+      "vocabulary_name": "anchoring_guard",
+      "vocabulary_value": "anchor_simulated_claims_external",
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "anchor_simulated_claims_external",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO19 section 4.5 mapping table",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anchoring_guard.anchor_independence_unproven": {
+      "vocabulary_name": "anchoring_guard",
+      "vocabulary_value": "anchor_independence_unproven",
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "anchor_independence_unproven",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO19 section 4.5 mapping table",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anchoring_guard.anchor_method_unverifiable": {
+      "vocabulary_name": "anchoring_guard",
+      "vocabulary_value": "anchor_method_unverifiable",
+      "expected_verification": {
+        "verification_state": "not_evaluated",
+        "verification_reason_code": "instrument_failure",
+        "verification_condition_code": "anchor_method_unverifiable",
+        "verification_subject_type": "verifier"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO19 section 4.5 mapping table",
+        "authored_on": "2026-10-04"
+      }
+    }
+  }
+}

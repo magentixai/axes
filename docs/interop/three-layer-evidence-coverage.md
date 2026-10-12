@@ -67,7 +67,7 @@ Exemplar: [`envelope_payment03_commit_succeeded.json`](../../examples/golden-tra
 
 ## Custody and faithful capture (out of scope for this page)
 
-Sealed, canonical bytes prove integrity **after** capture. They do not by themselves prove the runtime faithfully recorded what it evaluated, nor that the bytes existed at a wall-clock time independent of the emitter. Basis fields (`assertion_basis`, `capture_layer`) and attestation/custody work address the first; **external existence bounds** (`anchoring.*`, TRK-001 / EB-*) address the second. Golden Trace v1's SIMULATED anchor must not be read as closing that bound (D-015). See [`x402-and-anchoring.md`](x402-and-anchoring.md) and programme item CRE-D01 / EB-*.
+Sealed, canonical bytes prove integrity **after** capture. They do not by themselves prove the runtime faithfully recorded what it evaluated, nor that the bytes existed at a wall-clock time independent of the emitter. Basis fields (`assertion_basis`, `capture_layer`) and attestation/custody work address the first; **external existence bounds** (`anchoring.*`, TRK-001 / EB-*) address the second. Golden Trace in-trace anchors are simulated and do not close that bound: gt-v2.0 said so in a parenthetical (`write_once_store (SIMULATED)`, reading rule D-015), gt-v2.1 says so in `basis_status: simulated`, and the gt-v2.1 release statement is externally anchored instead (RFC 3161, OpenTimestamps). See [`x402-and-anchoring.md`](x402-and-anchoring.md) and programme item CRE-D01 / EB-*.
 
 ## Related
 

@@ -21,14 +21,34 @@ Outputs (under ./out):
   reports/report_D_forensic.md    - Forensic execution pack
 
 Design notes:
-  * Same structural skeleton as examples/golden-trace/ (76 envelopes, GT-JCS-0).
-  * Signatures and external anchor receipts are STUBS (clearly marked). Hashes are real.
+  * Same structural skeleton as examples/golden-trace/ (76 envelopes, RFC 8785 JCS).
+  * No JSON floats in hash scope: measurements/Cpk as exact decimal strings; ratios report-layer.
+  * gt-v2.1 (docs/19): every authenticity claim carries `basis_status`. Signatures are
+    `stubbed`; in-trace anchors are `simulated` (a synthetic trace cannot be anchored at
+    fictional past instants) and never assert `externally_anchored`. Hashes are real.
+    The release statement over this corpus is anchored for real under anchors/.
   * Deterministic: fixed timestamps, no randomness.
 """
 
-import json, hashlib, os
+import json, hashlib, os, sys
 from collections import OrderedDict
 from datetime import datetime, timedelta, timezone
+from decimal import Decimal
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+from tools.axes_canonical import (
+    CANONICALISATION_VERSION,
+    assert_manifest_matches_files,
+    assert_no_floats_in_hash_scope,
+    canonical_bytes,
+    decimal_str,
+    envelope_digest,
+    sha256_hex,
+    write_json_utf8_lf,
+    write_text_utf8_lf,
+)
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 
@@ -38,7 +58,7 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 SE_VERSION = "0.1-draft"
 PROFILE_ID = "se-profile:manufacturing-emitter/0.1-draft"
 CONFORMANCE_LEVEL = "SE-C4-assurance-report-capable (claimed, golden-trace-ind)"
-CANON = "GT-JCS-0"
+CANON = CANONICALISATION_VERSION
 
 ORG = "org:ironmark-precision"
 TENANT = "tenant:ironmark-prod"
@@ -54,22 +74,22 @@ ACTOR = {
     "connector_id": "connector:opcua-gw/1.8.0",
     "provider_id": "cell:ironmark/cnc-cell-4",
 }
-SAMPLING = {"temperature": 0.2, "top_p": 0.9, "max_tokens": 4096,
+SAMPLING = {"temperature": "0.2", "top_p": "0.9", "max_tokens": 4096,
             "reproducibility_note": "non-zero temperature: reproducible in distribution, not in instance"}
 
 AUTHORITY = {
-    "authority_context_id": "MD-5120",
-    "delegation_receipt_id": "delrec:MD-5120/2026-04-15",
+    "authority_context_ref": "MD-5120",
+    "delegation_receipt_ref": "delrec:MD-5120/2026-04-15",
     "delegator_id": "person:pseu/quality-director-7c20",
     "policy_ref": "policy:ironmark/part-release", "policy_version": "5.1",
     "policy_effective_from": "2026-05-01T00:00:00Z",
     "capability_id": "cap:release-conforming-part",
     "engineering_release_ref": "drawing:IMP-4471/revD + wi:WI-4471/v5.1",
     "scope": {"authorised_order_quantity": 14,
-              "part_number": "IMP-4471", "drawing_revision": "D",
+              "part_number": "IMP-4471", "drawing_version": "D",
               "critical_characteristic": "\u00d825 H7 bore (25.000 +0.021 / 0 mm)",
-              "cpk_floor": 1.33,
-              "material_grade": "15-5PH stainless",
+              "cpk_floor": "1.33",
+              "material_grade_name": "15-5PH stainless",
               "material_heat": "HT-88213",
               "approval_rule": "no quality-engineer disposition required for characteristics inside tolerance on a released drawing revision",
               "valid_from": "2026-04-15T00:00:00Z", "valid_until": "2026-12-31T23:59:59Z"},
@@ -83,11 +103,12 @@ UTILS = [0.179, 0.515, 0.956, 0.370, 0.133, 0.624, 0.311, 0.078,
          0.441, 0.276, 0.099, 0.325, 0.209, 0.181]
 CPKS = [1.92, 1.71, 1.41, 1.80, 1.95, 1.63, 1.83, 1.98,
         1.74, 1.86, 1.97, 1.82, 1.89, 1.90]
-TOL_UPPER, TOL_LOWER, TOL_RANGE = 25.021, 25.0, 0.021
+TOL_UPPER, TOL_LOWER, TOL_RANGE = Decimal("25.021"), Decimal("25.0"), Decimal("0.021")
 CHARACTERISTIC = "\u00d825 H7 bore"
 
 def measured_mm(util):
-    return round(TOL_LOWER + util * TOL_RANGE, 4)
+    """Exact measured value as Decimal (stored as decimal string in envelopes)."""
+    return (TOL_LOWER + Decimal(str(util)) * TOL_RANGE).quantize(Decimal("0.0001"))
 
 SERIALS = [f"IMP4471-{n:04d}" for n in range(1, 15)]
 ORDER_QTY = AUTHORITY["scope"]["authorised_order_quantity"]
@@ -95,82 +116,105 @@ CPK_FLOOR = AUTHORITY["scope"]["cpk_floor"]
 
 TRACE_ID = "7c1de4a90b6f42e8b3a5c0d9e1f28a44"
 HEARTBEAT_INTERVAL_S = 60
+HEARTBEAT_INTERVAL = "PT60S"            # ISO 8601 duration (D-017, D-024 N4)
 ANCHOR_INTERVAL_S = 300
 
 # ----------------------------------------------------------------------------
 # 2. Hashing, chaining, stub signing
 # ----------------------------------------------------------------------------
-def sha256_hex(b: bytes) -> str: return hashlib.sha256(b).hexdigest()
-def canonical(obj) -> bytes: return json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()
+def canonical(obj) -> bytes:
+    return canonical_bytes(obj)
 
 class Chain:
     def __init__(self):
         self.prev = "0" * 64; self.seq = 0; self.envelopes = []; self.anchors = []
+        self.prev_emitted_at = None
     def emit(self, env: dict) -> dict:
         self.seq += 1
         env["sequence_number"] = self.seq
         env["envelope_id"] = f"env:MRUN-2026-06-11-A/{self.seq:04d}"
         env.setdefault("integrity", {})
         env["integrity"].update({
-            "hash_algorithm": "SHA-256", "canonicalisation_version": CANON,
+            "hash_algorithm": "SHA-256", "canonicalization_version": CANON,
             "previous_envelope_hash": self.prev,
             "signing_key_id": "key:ironmark/se-emitter-2026q2",
             "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
+            "envelope_signature_basis_status": "stubbed",     # catalogue 1.27; inside the hash
         })
-        h = sha256_hex(canonical(env))
+        assert_no_floats_in_hash_scope(env)
+        h = envelope_digest(env)
         env["integrity"]["envelope_hash"] = h
-        env["integrity"]["signature"] = "SIG-STUB(" + h[:16] + ")"
+        env["integrity"]["envelope_signature"] = "SIG-STUB(" + h[:16] + ")"
         self.prev = h
+        self.prev_emitted_at = env["emitted_at"]
         self.envelopes.append(env)
         return env
     def anchor(self, sec):
-        rcpt = {"anchor_receipt_id": f"anch:{len(self.anchors)+1:03d}",
-                "anchoring_method": "write_once_store (SIMULATED)",
-                "anchored_at": ts(sec), "chain_head_hash": self.prev,
-                "anchor_store_ref": "anchorstore:trustline-demo/eu",
-                "anchoring_latency": 740}
+        """Module 14 block over the current chain head (gt-v2.1, docs/19).
 
-        self.anchors.append(rcpt)
-        return rcpt
+        Simulated: the trace is synthetic, so nothing is written to a mechanism and the
+        status is stated in `basis_status`, never in the method value (catalogue 1.27).
+        Timing: requested at the anchoring tick, after the anchored record was emitted;
+        anchored 250 ms later; the lag is derived, never stored (D-017)."""
+        anchor_id = f"anch:{len(self.anchors)+1:03d}"
+        requested, anchored = ts(sec), ts(sec + 0.25)
+        assert self.prev_emitted_at <= requested, "anchor requested before the anchored record was emitted"
+        block = {"anchored_subject_type": "chain_head",
+                 "anchored_subject_hash": self.prev,
+                 "anchored_subject_hash_algorithm": "SHA-256",
+                 "anchors": [{
+                     "anchor_id": anchor_id,
+                     "anchoring_method": "write_once_store",
+                     "basis_status": "simulated",
+                     "anchor_commitment_hash": self.prev,
+                     "anchor_commitment_hash_algorithm": "SHA-256",
+                     "anchor_requested_at": requested,
+                     "anchored_at": anchored,
+                     "anchor_service_id": "anchorstore:trustline-demo/eu",
+                     "anchor_record_ref": "object:trustline-demo/eu/" + anchor_id.split(":")[1],
+                     "anchor_operator_id": "org:trustline-demo"}]}
+        self.anchors.append(block)
+        return block
 
 def base_env(kind, sec, phase, span, parent=None, part=None):
     e = OrderedDict()
-    e["se_version"], e["profile_id"] = SE_VERSION, PROFILE_ID
+    e["se_version"], e["implementation_profile_ref"] = SE_VERSION, PROFILE_ID
     e["event_kind"] = kind
     e["occurred_at"], e["emitted_at"], e["recorded_at"] = ts(sec), ts(sec + 0.4), ts(sec + 0.9)
-    e["timestamp_source"] = "ntp:cluster-sync"; e["clock_sync_confidence"] = "high"
+    e["timestamp_source"] = "ntp:cluster-sync"; e["clock_sync_confidence_level"] = "high"
     e["trace_id"], e["span_id"] = TRACE_ID, span
     if parent: e["parent_span_id"] = parent
-    e["org_id"], e["tenant_id"] = ORG, TENANT
+    e["organization_id"], e["tenant_id"] = ORG, TENANT
     e["environment_id"], e["environment_type"] = ENV_ID, ENV_TYPE
     e["execution_phase"] = phase
     e["execution_mode"] = "autonomous"
     e["actor"] = dict(ACTOR)
     e["authority"] = {k: AUTHORITY[k] for k in
-                      ("authority_context_id", "delegation_receipt_id", "delegator_id",
+                      ("authority_context_ref", "delegation_receipt_ref", "delegator_id",
                        "policy_ref", "policy_version", "capability_id", "engineering_release_ref")}
     e["emission"] = {"capture_layer": "runtime_sdk", "capture_status": "captured",
                      "emission_fail_posture": "fail_closed",
-                     "declared_heartbeat_interval_s": HEARTBEAT_INTERVAL_S}
+                     "declared_heartbeat_interval": HEARTBEAT_INTERVAL}
     e["evidence_quality"] = {"evidence_origin": "runtime", "assertion_basis": "observed",
                              "corroboration_state": "internally_corroborated"}
-    e["privacy"] = {"personal_data_flag": False, "redaction_applied": False}
+    e["privacy"] = {"personal_data_indicator": False, "redaction_applied_indicator": False}
     if part is not None: e["part_index"] = part
     return e
 
 def subject(serial):
-    return {"part_number": "IMP-4471", "drawing_revision": "D", "serial_number": serial}
+    return {"part_number": "IMP-4471", "drawing_version": "D", "serial_number": serial}
 
 # ----------------------------------------------------------------------------
 # 3. Manufacturing artifact stand-ins (synthetic, minimal)
 # ----------------------------------------------------------------------------
 def qif_xml(i, serial, measured):
     sn = f"SN{i:04d}"
+    meas_s = decimal_str(measured, 4)
     return f"""<QIFDocument xmlns="http://qifstandards.org/xsd/qif3">
   <Product><PartNumber>IMP-4471</PartNumber><SerialNumber>{serial}</SerialNumber></Product>
   <ResultsSummary>
     <Characteristic name="{CHARACTERISTIC}" nominal="25.000" upper="{TOL_UPPER}" lower="{TOL_LOWER}">
-      <MeasuredValue unit="mm">{measured:.4f}</MeasuredValue>
+      <MeasuredValue unit="mm">{meas_s}</MeasuredValue>
       <Disposition>CONFORMING</Disposition>
     </Characteristic>
     <InspectionRecord id="{sn}"/>
@@ -236,26 +280,26 @@ def build():
 
     def save_artifact(name, content):
         p = os.path.join(OUT, "artifacts", name)
-        with open(p, "w") as f: f.write(content)
-        h = sha256_hex(content.encode()); artifacts[name] = h; return h
+        write_text_utf8_lf(p, content)
+        h = sha256_hex(content.encode("utf-8")); artifacts[name] = h; return h
 
     def later(sec, env): pending.append((sec, len(pending), env))
 
     # --- batch start / context / plan -------------------------------------
     e = base_env("execution_started", 0, "execution", "span-batch")
-    e["operation"] = {"operation": "mfg_batch_release_run", "batch_id": "MRUN-2026-06-11-A",
+    e["operation"] = {"operation_type": "mfg_batch_release_run", "batch_id": "MRUN-2026-06-11-A",
                       "target_system_id": "mes:ironmark/prod", "target_resource_type": "production_order"}
     later(0, e)
 
     e = base_env("context_retrieved", 4, "advisory", "span-plan", "span-batch")
-    e["operation"] = {"operation": "load_production_order", "target_system_id": "mes:ironmark/prod",
+    e["operation"] = {"operation_type": "load_production_order", "target_system_id": "mes:ironmark/prod",
                       "target_resource_type": "production_order", "record_count": 14}
     e["context"] = {"context_artifact_refs": ["mes:ironmark/PO-IRN-2026-4471-06",
                     "drawing:IMP-4471/revD", "matcert:EN10204-3.1/HT-88213"],
-                    "input_trust_classification": "trusted_internal_system",
+                    "input_trust_class": "trusted_internal_system",
                     "untrusted_content_indicator": False}
     e["model"] = {"sampling_parameters": SAMPLING,
-                  "reasoning_artifact_availability": "provider_withheld"}
+                  "reasoning_artifact_availability_status": "provider_withheld"}
     later(4, e)
 
     e = base_env("plan_created", 9, "advisory", "span-plan", "span-batch")
@@ -273,24 +317,27 @@ def build():
         qif_name = f"qif_SN{i:04d}.xml"
         mes_name = f"mes_release_SN{i:04d}.xml"
 
+        meas_s = decimal_str(meas, 4)
+        cpk_s = decimal_str(cpk, 2)
         e = base_env("policy_check_performed", p0, "approval", span, "span-batch", part=i)
         e["subject"] = subject(serial)
         e["controls"] = {"control_evaluation_phase": "pre_commit", "control_set_ref": "ctl:part-release/v5.1",
             "checks": [
-                {"control_id": "CTL-DIM-01", "name": "critical dimension within released tolerance",
+                {"control_id": "CTL-DIM-01", "control_name": "critical dimension within released tolerance",
                  "control_result": "passed",
-                 "observed": {"characteristic": CHARACTERISTIC, "nominal_mm": 25.0,
-                              "tolerance_upper_mm": TOL_UPPER, "tolerance_lower_mm": TOL_LOWER,
-                              "measured_mm": meas, "tolerance_utilisation_ratio": util,
+                 "observed": {"characteristic_name": CHARACTERISTIC, "nominal_value": "25.000",
+                              "tolerance_upper_value": decimal_str(TOL_UPPER, 3),
+                              "tolerance_lower_value": decimal_str(TOL_LOWER, 3),
+                              "measured_value": meas_s, "measurement_unit": "mm",
                               "measurement_artifact_ref": f"artifacts/{qif_name}",
                               "measurement_scheme": "ISO23952-QIF-3.0"}},
-                {"control_id": "CTL-SPC-02", "name": "process in statistical control",
+                {"control_id": "CTL-SPC-02", "control_name": "process in statistical control",
                  "control_result": "passed",
-                 "observed": {"cpk": cpk, "cpk_floor": CPK_FLOOR,
+                 "observed": {"cpk_value": cpk_s, "cpk_floor_value": CPK_FLOOR,
                               "subgroup_ref": "spc:IMP-4471/revD/2026-06-11"}},
-                {"control_id": "CTL-MAT-03", "name": "material lot verified to certified heat",
+                {"control_id": "CTL-MAT-03", "control_name": "material lot verified to certified heat",
                  "control_result": "passed", "evidence_ref": "matcert:EN10204-3.1/HT-88213",
-                 "material_grade": "15-5PH stainless"}]}
+                 "material_grade_name": "15-5PH stainless"}]}
         e["authority"]["approval_status"] = "not_required"
         e["authority"]["approval_basis"] = AUTHORITY["scope"]["approval_rule"]
         later(p0, e)
@@ -299,16 +346,16 @@ def build():
         mes_hash = save_artifact(mes_name, mes_release_xml(i, serial))
         e = base_env("commit_attempted", p0 + 6, "commit", span, "span-batch", part=i)
         e["subject"] = subject(serial)
-        e["operation"] = {"operation": "release_conforming_part",
+        e["operation"] = {"operation_type": "release_conforming_part",
             "target_system_id": "mes:ironmark/prod", "target_resource_type": "part_release",
             "commit_boundary_status": "commit_attempted",
-            "commit_mechanism": "quality_disposition", "commit_impact_class": "material_state_change",
-            "transaction_ref": serial, "idempotency_key": idem, "idempotency_key_forwarded": True,
-            "subject": {**subject(serial), "quantity": 1, "unit": "each"},
-            "instruction_artifact": {"ref": f"artifacts/{mes_name}", "sha256": mes_hash,
+            "commit_method": "quality_disposition", "commit_impact_class": "material_state_change",
+            "transaction_ref": serial, "idempotency_key": idem, "idempotency_key_forwarded_indicator": True,
+            "subject": {**subject(serial), "quantity_value": 1, "quantity_unit": "each"},
+            "instruction_artifact": {"ref": f"artifacts/{mes_name}", "hash": mes_hash, "hash_algorithm": "SHA-256",
                                      "scheme": "mes:ironmark/release-v3"}}
-        e["privacy"] = {"personal_data_flag": True, "redaction_applied": True,
-                        "redaction_profile_id": "redact:operator-pii/v1",
+        e["privacy"] = {"personal_data_indicator": True, "redaction_applied_indicator": True,
+                        "redaction_profile_ref": "redact:operator-pii/v1",
                         "redaction_method": "hash_substitution",
                         "redacted_fields": ["operator_badge_id", "shift_supervisor_id"]}
         e["correlation_keys"] = [{"key_type": "serial", "key_scheme": "ironmark:serial",
@@ -316,31 +363,31 @@ def build():
         later(p0 + 6, e)
 
         e = base_env("tool_invoked", p0 + 7, "commit", span, "span-batch", part=i)
-        e["operation"] = {"operation": "OPC-UA Write ReleaseDisposition", "transaction_ref": serial,
+        e["operation"] = {"operation_type": "OPC-UA Write ReleaseDisposition", "transaction_ref": serial,
                           "target_system_id": "cell:ironmark/cnc-cell-4"}
         e["tool"] = {"tool_manifest_ref": "manifest:opcua/part-release@1.8",
                      "tool_manifest_hash": sha256_hex(b"manifest:opcua/part-release@1.8")}
         later(p0 + 7, e)
 
         e = base_env("commit_succeeded", p0 + 9, "commit", span, "span-batch", part=i)
-        e["operation"] = {"operation": "release_conforming_part", "transaction_ref": serial,
+        e["operation"] = {"operation_type": "release_conforming_part", "transaction_ref": serial,
                           "commit_boundary_status": "committed",
-                          "commit_mechanism": "quality_disposition",
+                          "commit_method": "quality_disposition",
                           "commit_impact_class": "material_state_change",
-                          "subject": {**subject(serial), "quantity": 1, "unit": "each"}}
-        e["result"] = {"result_status": "success", "side_effect_confirmation_status": "confirmed"}
+                          "subject": {**subject(serial), "quantity_value": 1, "quantity_unit": "each"}}
+        e["outcome"] = {"result_status": "success", "side_effect_confirmation_status": "confirmed"}
         e["acknowledgments"] = [
-            {"ack_layer": "transport", "ack_scheme": "OPC-UA", "ack_code": "Good",
-             "ack_timestamp": ts(p0 + 7.3), "ack_authenticity_basis": "channel_secured"},
-            {"ack_layer": "machine", "ack_scheme": "mes:ironmark/v3", "ack_code": "ACCEPTED",
-             "ack_reason_code": f"release:{serial}", "ack_timestamp": ts(p0 + 7.6),
-             "ack_authenticity_basis": "channel_secured"},
-            {"ack_layer": "quality", "ack_scheme": "ISO23952-QIF-3.0", "ack_code": "CONFORMING",
-             "ack_timestamp": ts(p0 + 8.8), "ack_artifact_ref": f"artifacts/{qif_name}",
-             "ack_artifact_hash": qif_hash, "ack_authenticity_basis": "qms_signed (QMS record, STUB)"}]
+            {"acknowledgment_layer": "transport", "acknowledgment_scheme": "OPC-UA", "acknowledgment_code": "Good",
+             "acknowledged_at": ts(p0 + 7.3), "acknowledgment_authenticity_basis": "channel_secured", "basis_status": "simulated"},
+            {"acknowledgment_layer": "machine", "acknowledgment_scheme": "mes:ironmark/v3", "acknowledgment_code": "ACCEPTED",
+             "acknowledgment_reason_code": f"release:{serial}", "acknowledged_at": ts(p0 + 7.6),
+             "acknowledgment_authenticity_basis": "channel_secured", "basis_status": "simulated"},
+            {"acknowledgment_layer": "quality", "acknowledgment_scheme": "ISO23952-QIF-3.0", "acknowledgment_code": "CONFORMING",
+             "acknowledged_at": ts(p0 + 8.8), "acknowledgment_artifact_ref": f"artifacts/{qif_name}",
+             "acknowledgment_artifact_hash": qif_hash, "acknowledgment_authenticity_basis": "qms_signed", "basis_status": "stubbed"}]
         e["evidence_quality"]["corroboration_state"] = "third_party_confirmed"
         later(p0 + 9, e)
-        part_rows.append({"i": i, "serial": serial, "measured": meas, "util": util, "cpk": cpk,
+        part_rows.append({"i": i, "serial": serial, "measured": meas_s, "util": util, "cpk": cpk_s,
                           "qif_hash": qif_hash, "mes_hash": mes_hash, "t_commit": ts(p0 + 9)})
 
     end_sec = 12 + 14 * 45 + 10
@@ -348,16 +395,19 @@ def build():
     # --- heartbeats --------------------------------------------------------
     for s in range(HEARTBEAT_INTERVAL_S, int(end_sec), HEARTBEAT_INTERVAL_S):
         e = base_env("heartbeat_event", s, "execution", "span-batch")
-        e["liveness"] = {"liveness_status": "alive", "declared_heartbeat_interval_s": HEARTBEAT_INTERVAL_S}
+        e["liveness"] = {"liveness_status": "alive", "declared_heartbeat_interval": HEARTBEAT_INTERVAL}
         later(s, e)
 
     # --- anchors -----------------------------------------------------------
+    # The anchor covers the chain head as it stood at the tick, so it sorts before any
+    # other event in the same second. corroboration_state stays internally_corroborated:
+    # a simulated anchor never earns externally_anchored (D-020).
     anchor_secs = list(range(ANCHOR_INTERVAL_S, int(end_sec) + ANCHOR_INTERVAL_S, ANCHOR_INTERVAL_S))
     for s in anchor_secs:
-        e = base_env("attestation_recorded", min(s, end_sec), "execution", "span-anchor", "span-batch")
-        e["anchoring"] = "__FILL_AT_CHAIN_TIME__"
-        e["evidence_quality"]["corroboration_state"] = "externally_anchored"
-        later(min(s, end_sec), e)
+        tick = min(s, end_sec)
+        e = base_env("attestation_recorded", tick, "execution", "span-anchor", "span-batch")
+        e["anchoring"] = ("__FILL_AT_CHAIN_TIME__", tick)
+        later(tick - 0.5, e)
 
     # --- batch-level artifacts + reconciliation ----------------------------
     save_artifact("matcert_HT-88213.xml", matcert_xml())
@@ -370,45 +420,45 @@ def build():
         "evidence_population_ref": "population:mes-production-order PO-IRN-2026-4471-06@2026-06-11T06:55Z "
                                    "(14 planned) + goods-receipt GRN-2026-06-11-IMP4471",
         "population_basis": "independently_reconciled",
-        "expected_count_mes": 14, "goods_receipt_count": 14, "envelope_commit_count": 14,
+        "mes_expected_count": 14, "goods_receipt_count": 14, "envelope_commit_count": 14,
         "scrap_count": 0,
-        "evidence_coverage_ratio": 1.0, "tamper_evident_coverage_ratio": 1.0,
         "batch_record_count": 14,
         "settlement_artifact": {"ref": "artifacts/b2mml_batchrecord_MRUN-2026-06-11-A.xml",
-                                  "sha256": b2mml_hash, "scheme": "ISA95-B2MML"},
-        "acknowledgment_rung": {"ack_layer": "settlement", "ack_scheme": "ISA95-B2MML",
-                                "ack_authenticity_basis": "source_system_signed (MES batch record, STUB)"}}
+                                  "hash": b2mml_hash, "hash_algorithm": "SHA-256", "scheme": "ISA95-B2MML"},
+        "acknowledgment_rung": {"acknowledgment_layer": "settlement", "acknowledgment_scheme": "ISA95-B2MML",
+                                "acknowledgment_authenticity_basis": "source_system_signed", "basis_status": "stubbed"}}
     e["evidence_quality"]["corroboration_state"] = "source_system_corroborated"
     later(recon_sec, e)
 
     e = base_env("result_observed", recon_sec + 60, "execution", "span-close", "span-batch")
-    e["boundary_assessment"] = {"cell_boundary_crossed": False, "cross_order_exposure_indicator": False,
-                                "cross_programme_exposure_indicator": False,
-                                "basis": "single-cell runtime; MES order lock on PO-IRN-2026-4471-06; "
+    e["boundary_assessment"] = {"cell_boundary_crossed_indicator": False, "cross_order_exposure_indicator": False,
+                                "cross_program_exposure_indicator": False,
+                                "boundary_assessment_basis": "single-cell runtime; MES order lock on PO-IRN-2026-4471-06; "
                                          "connector telemetry shows no other production orders touched"}
     later(recon_sec + 60, e)
 
     e = base_env("execution_completed", recon_sec + 90, "execution", "span-batch")
-    peak_util = max(r["util"] for r in part_rows)
     min_cpk = min(r["cpk"] for r in part_rows)
     e["summary"] = {"released_count": 14, "exception_count": 0, "scrap_count": 0,
                     "human_intervention_count": 0,
                     "order_ref": "PO-IRN-2026-4471-06",
-                    "peak_tolerance_utilisation_ratio": peak_util,
-                    "minimum_cpk_observed": min_cpk}
+                    "observed_minimum_cpk_value": min_cpk}
     later(recon_sec + 90, e)
 
     e = base_env("evidence_exported", recon_sec + 120, "execution", "span-export", "span-batch")
-    e["export"] = {"evidence_bundle_id": "bundle:MRUN-2026-06-11-A",
-                   "final_anchor": "__FILL_AT_CHAIN_TIME__"}
+    e["export"] = {"evidence_bundle_ref": "bundle:MRUN-2026-06-11-A",
+                   "final_anchor": ("__FILL_AT_CHAIN_TIME__", recon_sec + 120)}
     later(recon_sec + 120, e)
 
     pending.sort(key=lambda t: (t[0], t[1]))
     for sec, _, env in pending:
-        if env.get("anchoring") == "__FILL_AT_CHAIN_TIME__":
-            env["anchoring"] = ch.anchor(sec)
-        if isinstance(env.get("export"), dict) and env["export"].get("final_anchor") == "__FILL_AT_CHAIN_TIME__":
-            env["export"]["final_anchor"] = ch.anchor(sec)
+        if isinstance(env.get("anchoring"), tuple):
+            env["anchoring"] = ch.anchor(env["anchoring"][1])     # block over current chain head
+        if isinstance(env.get("export"), dict) and isinstance(env["export"].get("final_anchor"), tuple):
+            env["export"]["final_anchor"] = ch.anchor(env["export"]["final_anchor"][1])
+        for blk in (env.get("anchoring"), (env.get("export") or {}).get("final_anchor")):
+            if isinstance(blk, dict):   # anchored before the carrying record is emitted
+                assert blk["anchors"][0]["anchored_at"] <= env["emitted_at"], env["event_kind"]
         ch.emit(env)
 
     return ch, part_rows, artifacts
@@ -429,8 +479,8 @@ def write_reports(ch, rows, artifacts):
     exported = by_kind["evidence_exported"][0]
     anchors = by_kind["attestation_recorded"]
     hbs = by_kind["heartbeat_event"]
-    peak = done["summary"]["peak_tolerance_utilisation_ratio"]
-    min_cpk = done["summary"]["minimum_cpk_observed"]
+    peak = max(r["util"] for r in rows)
+    min_cpk = done["summary"]["observed_minimum_cpk_value"]
     n_env = len(ch.envelopes)
     part3_policy = policy[2]
 
@@ -438,28 +488,28 @@ def write_reports(ch, rows, artifacts):
 **Organisation:** Ironmark Precision Ltd · **Period:** 2026-06-11 07:00–07:11 UTC (batch reconciled T+0 end of shift) · **Assurance basis:** SE v0.1-draft evidence, scoped - see Reliance Boundary.
 
 ## The assurance statement
-> **An authorised autonomous process released 14 machined parts under delegated authority MD-5120.** {cite(commit_ok[0],'authority.authority_context_id')} {cite(done,'summary.released_count')} - all 14 release events carry `authority_context_id = MD-5120` with delegation receipt `delrec:MD-5120/2026-04-15` granted by the Quality Director {cite(commit_ok[0],'authority.delegation_receipt_id')} {cite(commit_ok[0],'authority.delegator_id')} under part-release policy v5.1 in force throughout {cite(commit_ok[0],'authority.policy_version')}, against released engineering drawing IMP-4471 rev D and work instruction WI-4471 v5.1.
+> **An authorised autonomous process released 14 machined parts under delegated authority MD-5120.** {cite(commit_ok[0],'authority.authority_context_ref')} {cite(done,'summary.released_count')} - all 14 release events carry `authority_context_ref = MD-5120` with delegation receipt `delrec:MD-5120/2026-04-15` granted by the Quality Director {cite(commit_ok[0],'authority.delegation_receipt_ref')} {cite(commit_ok[0],'authority.delegator_id')} under part-release policy v5.1 in force throughout {cite(commit_ok[0],'authority.policy_version')}, against released engineering drawing IMP-4471 rev D and work instruction WI-4471 v5.1.
 >
-> **Every part remained within released engineering tolerance.** Each of the 14 units passed three pre-release quality gates - critical-dimension conformance, statistical process control, and material-lot verification - evaluated *before* the part was dispositioned conforming, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. The tightest characteristic ran at {peak:.1%} of the released tolerance band (part 3, SN IMP4471-0003, {CHARACTERISTIC}) {cite(part3_policy,'controls.checks[0].observed.tolerance_utilisation_ratio')}; the lowest process capability observed was Cpk {min_cpk:.2f} against a 1.33 floor (part 3) {cite(part3_policy,'controls.checks[1].observed.cpk')}.
+> **Every part remained within released engineering tolerance.** Each of the 14 units passed three pre-release quality gates - critical-dimension conformance, statistical process control, and material-lot verification - evaluated *before* the part was dispositioned conforming, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. The tightest characteristic ran at {peak:.1%} of the released tolerance band (part 3, SN IMP4471-0003, {CHARACTERISTIC}, report-layer derived from measured_mm vs tolerance band) {cite(part3_policy,'controls.checks[0].observed.measured_mm')}; the lowest process capability observed was Cpk {min_cpk} against a 1.33 floor (part 3) {cite(part3_policy,'controls.checks[1].observed.cpk')}.
 >
 > **No exceptions requiring human intervention occurred.** Exception count 0, scrap count 0, human-intervention count 0 {cite(done,'summary.exception_count')} {cite(done,'summary.scrap_count')} {cite(done,'summary.human_intervention_count')}; no quality-engineer disposition was required under the policy rule for parts inside tolerance on a released drawing {cite(policy[0],'authority.approval_status')} {cite(policy[0],'authority.approval_basis')}.
 >
-> **Evidence integrity validated.** All {n_env} envelopes form an unbroken SHA-256 hash chain (re-verified at report generation), externally anchored at 5-minute intervals - {len(anchors)} anchor receipts {cite(anchors[0],'anchoring.anchor_receipt_id')}; emission ran fail-closed for release-boundary actions throughout {cite(commit_ok[0],'emission.emission_fail_posture')}; liveness heartbeats present for every 60-second interval of the run with zero silent windows {cite(hbs[0],'liveness.liveness_status')}.
+> **Evidence integrity validated.** All {n_env} envelopes form an unbroken SHA-256 hash chain (re-verified at report generation), with the chain head recorded every 5 minutes in {len(anchors)} in-trace anchors that are simulated and say so (`basis_status: simulated`, never `externally_anchored`) {cite(anchors[0],'anchoring.anchors[0].basis_status')}; emission ran fail-closed for release-boundary actions throughout {cite(commit_ok[0],'emission.emission_fail_posture')}; liveness heartbeats present for every 60-second interval of the run with zero silent windows {cite(hbs[0],'liveness.liveness_status')}.
 >
-> **No cross-programme contamination detected.** Cell-boundary and cross-order exposure indicators are false, on the stated basis that the cell processed only order PO-IRN-2026-4471-06 during the window {cite(bound,'boundary_assessment.cross_order_exposure_indicator')} {cite(bound,'boundary_assessment.basis')}.
+> **No cross-programme contamination detected.** Cell-boundary and cross-order exposure indicators are false, on the stated basis that the cell processed only order PO-IRN-2026-4471-06 during the window {cite(bound,'boundary_assessment.cross_order_exposure_indicator')} {cite(bound,'boundary_assessment.boundary_assessment_basis')}.
 
 ## What the board should know
 - **External confirmation, not self-assertion:** every release carries a three-rung acknowledgment ladder - transport (OPC-UA Good), machine (MES ACCEPTED), quality (QIF 3.0 / ISO 23952 inspection result **CONFORMING**) {cite(commit_ok[0],'acknowledgments[*]')} - and the end-of-shift ISA-95 batch record reconciles **14 of 14** units against the production order {cite(recon,'reconciliation.batch_record_count')}.
-- **Completeness is measured, not asserted:** the in-scope population is independently defined (MES production order PO-IRN-2026-4471-06: 14 planned; finished-goods goods-receipt: 14 booked; scrap: 0) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% {cite(recon,'reconciliation.evidence_population_ref')} {cite(recon,'reconciliation.evidence_coverage_ratio')}.
+- **Completeness is measured, not asserted:** the in-scope population is independently defined (MES production order PO-IRN-2026-4471-06: 14 planned; finished-goods goods-receipt: 14 booked; scrap: 0) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% (report-layer derived) {cite(recon,'reconciliation.evidence_population_ref')} {cite(recon,'reconciliation.envelope_commit_count')}.
 - **Leading indicator:** one part ran at {peak:.1%} of its tolerance band; nothing out of tolerance, but characteristic headroom on the {CHARACTERISTIC} is worth a process-capability review before the next batch.
 - **Recommended position:** continue autonomous release at current scope; no restriction indicated by this run's evidence.
 
 ## Reliance boundary
-This report evidences this run only; it supports internal assurance, quality-management reliance, and customer source-surveillance for the stated period and population. It is **not** an airworthiness or conformity certification, and statements are bounded by the capture boundary declared in the Conformity Assessment Pack (§4). Signatures and anchor receipts in this golden trace are stubs pending the SE v0.1 signing profile.
+This report evidences this run only; it supports internal assurance, quality-management reliance, and customer source-surveillance for the stated period and population. It is **not** an airworthiness or conformity certification, and statements are bounded by the capture boundary declared in the Conformity Assessment Pack (§4). In this golden trace envelope signatures are stubs (`envelope_signature_basis_status: stubbed`) and in-trace anchors are simulated (`basis_status: simulated`); neither is an independently verifiable claim.
 """
 
     ctl_rows = "\n".join(
-        f"| {r['i']:02d} | {r['serial']} | {CHARACTERISTIC} | passed ({r['util']:.1%}) | passed (Cpk {r['cpk']:.2f}) | passed (HT-88213) | not_required |"
+        f"| {r['i']:02d} | {r['serial']} | {CHARACTERISTIC} | passed ({r['util']:.1%}) | passed (Cpk {r['cpk']}) | passed (HT-88213) | not_required |"
         for r in rows)
     B = f"""# Quality and Control View - MRUN-2026-06-11-A
 
@@ -474,27 +524,27 @@ Three preventive quality gates (control set `ctl:part-release/v5.1`) were evalua
 
 ## 2. Population and completeness (IPE basis)
 - Population definition: MES production order PO-IRN-2026-4471-06 at 06:55Z (14 planned) reconciled against finished-goods goods-receipt GRN-2026-06-11-IMP4471 (14 booked, 0 scrap) - **independently reconciled**, not self-reported {cite(recon,'reconciliation.population_basis')}.
-- Coverage: envelopes 14/14 (100%); tamper-evident 100% {cite(recon,'reconciliation.evidence_coverage_ratio')}.
-- Sequence continuity: envelope sequence numbers 0001-{n_env:04d} contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) {cite(hbs[0],'liveness.declared_heartbeat_interval_s')}.
+- Coverage: envelopes 14/14 (100%); tamper-evident 100% (report-layer derived from envelope_commit_count).
+- Sequence continuity: envelope sequence numbers 0001-{n_env:04d} contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) {cite(hbs[0],'liveness.declared_heartbeat_interval')}.
 
 ## 3. Evidence quality
 - Origin/basis: runtime-observed on the shop-floor edge; release confirmations are **quality-system confirmed** (QIF 3.0 CONFORMING per unit) and **source-system corroborated** (ISA-95 batch record) {cite(commit_ok[0],'evidence_quality.corroboration_state')} {cite(recon,'evidence_quality.corroboration_state')}.
-- Corroboration coverage decomposition: anchored 100% · quality-receipted 14/14 · provider-only 0.
+- Corroboration coverage decomposition: externally anchored 0 (in-trace anchors are `basis_status: simulated`) · quality-receipted 14/14 · provider-only 0.
 - Point-in-time validity: policy v5.1 effective from 2026-05-01, in force at every event {cite(commit_ok[0],'authority.policy_version')}; drawing rev D released 2026-03-20; delegation valid 2026-04-15 to 2026-12-31.
-- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped - *reproducible in distribution, not in instance* {cite(by_kind['context_retrieved'][0],'model.sampling_parameters')}; reasoning artifacts `provider_withheld` - disclosed, not silent {cite(by_kind['context_retrieved'][0],'model.reasoning_artifact_availability')}.
+- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9 as exact decimal strings); replay claim scoped - *reproducible in distribution, not in instance* {cite(by_kind['context_retrieved'][0],'model.sampling_parameters')}; reasoning artifacts `provider_withheld` - disclosed, not silent {cite(by_kind['context_retrieved'][0],'model.reasoning_artifact_availability_status')}.
 
 ## 4. Findings register
-No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak characteristic utilisation {peak:.1%} with the lowest capability of the batch at Cpk {min_cpk:.2f} - recommend a process-capability review for the {CHARACTERISTIC} before the next batch. Owner: manufacturing process owner. Due: next production cycle.
+No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak characteristic utilisation {peak:.1%} with the lowest capability of the batch at Cpk {min_cpk} - recommend a process-capability review for the {CHARACTERISTIC} before the next batch. Owner: manufacturing process owner. Due: next production cycle.
 """
 
     art_rows = "\n".join(f"| {n} | `{h[:16]}…` |" for n, h in sorted(artifacts.items()))
     anch_rows = "\n".join(
-        f"| {a['anchoring']['anchor_receipt_id']} | {a['anchoring']['anchored_at']} | `{a['anchoring']['chain_head_hash'][:16]}…` |"
+        f"| {a['anchoring']['anchors'][0]['anchor_id']} | {a['anchoring']['anchors'][0]['anchor_requested_at']} | {a['anchoring']['anchors'][0]['anchored_at']} | `{a['anchoring']['anchored_subject_hash'][:16]}…` | {a['anchoring']['anchors'][0]['basis_status']} |"
         for a in anchors)
     C = f"""# Conformity Assessment / Notified-Body Evidence Pack - MRUN-2026-06-11-A
 
 ## 1. Scope of evidence
-Autonomous production batch release by Ironmark Precision Ltd, run MRUN-2026-06-11-A, 2026-06-11 07:00–07:11 UTC, batch reconciliation T+0 end of shift. Part IMP-4471 hydraulic manifold, drawing rev D, 14 units. Evidence bundle `bundle:MRUN-2026-06-11-A` {cite(exported,'export.evidence_bundle_id')} - {n_env} envelopes, {len(artifacts)} referenced artifacts.
+Autonomous production batch release by Ironmark Precision Ltd, run MRUN-2026-06-11-A, 2026-06-11 07:00–07:11 UTC, batch reconciliation T+0 end of shift. Part IMP-4471 hydraulic manifold, drawing rev D, 14 units. Evidence bundle `bundle:MRUN-2026-06-11-A` {cite(exported,'export.evidence_bundle_ref')} - {n_env} envelopes, {len(artifacts)} referenced artifacts.
 
 ## 2. Systems involved (execution topology)
 agent:ironmark/mfg-pilot 3.1.0 -> orchestrator:ironmark/shopfloor-orch 2.2 -> model:anthropic/claude-sonnet-4-6 -> gateway:ironmark/toolproxy-2 -> connector:opcua-gw 1.8.0 -> cell:ironmark/cnc-cell-4 (machining + in-line CMM) · context source mes:ironmark/prod (ISA-95) · runtime edge:ironmark/edge-mes-01 (on-premise) {cite(commit_ok[0],'actor')}. One authority chain spans all nodes (MD-5120).
@@ -503,22 +553,22 @@ agent:ironmark/mfg-pilot 3.1.0 -> orchestrator:ironmark/shopfloor-orch 2.2 -> mo
 Delegation MD-5120: Quality Director -> manufacturing agent; per-part release inside released drawing rev D tolerances for critical characteristics; batch release up to authorised order quantity (14); released-engineering constraint (drawing IMP-4471 rev D + work instruction WI-4471 v5.1 only); validity 2026-04-15 to 2026-12-31; policy `ironmark/part-release` v5.1 in force {cite(commit_ok[0],'authority.policy_ref')}. The granting principal (`delegator_id`) is recorded pseudonymously; resolution is available to authorised reviewers via the access model.
 
 ## 4. Evidence completeness and capture boundary
-Coverage 14/14 against an independently reconciled population (MES production order + finished-goods goods-receipt) {cite(recon,'reconciliation.evidence_coverage_ratio')}. **Declared capture boundary:** downstream heat-treatment and plating performed by an external subcontractor are *outside* the emitter's capture boundary and are evidenced indirectly via the incoming EN 10204 3.1 material certificate and the subcontractor's certificate of conformance; this is disclosed, not inferred. Emission posture fail-closed for release-boundary actions {cite(commit_ok[0],'emission.emission_fail_posture')}.
+Coverage 14/14 against an independently reconciled population (MES production order + finished-goods goods-receipt) {cite(recon,'reconciliation.envelope_commit_count')}. **Declared capture boundary:** downstream heat-treatment and plating performed by an external subcontractor are *outside* the emitter's capture boundary and are evidenced indirectly via the incoming EN 10204 3.1 material certificate and the subcontractor's certificate of conformance; this is disclosed, not inferred. Emission posture fail-closed for release-boundary actions {cite(commit_ok[0],'emission.emission_fail_posture')}.
 
 ## 5. Exceptions and material events
 None. 14/14 released conforming; 0 exceptions; 0 scrap; 0 human interventions; 0 control failures {cite(done,'summary')}.
 
 ## 6. Cryptographic sealing status
-SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), contiguous sequence 0001-{n_env:04d}; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Operator identity and any personal data carried by reference with hash-substitution redaction (`redact:operator-pii/v1`); redacted fields enumerated per envelope {cite(by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
+SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalization_version = {CANON}`), contiguous sequence 0001-{n_env:04d}; chain re-verified at generation. In-trace anchoring every 300s to `anchorstore:trustline-demo/eu` is **simulated** (`anchoring_method: write_once_store`, `basis_status: simulated`), and no envelope asserts `externally_anchored` (D-020). Envelope signatures are **stubs** (`envelope_signature_basis_status: stubbed`) pending the SE signing profile. Every stub and simulation is stated in a `basis_status` field a verifier reads, not only in this prose (catalogue 1.27). Operator identity and any personal data carried by reference with hash-substitution redaction (`redact:operator-pii/v1`); redacted fields enumerated per envelope {cite(by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
 
 ## 7. Appendix A - artifact register (manufacturing interop standards)
 | Artifact | SHA-256 |
 |---|---|
 {art_rows}
 
-## 8. Appendix B - anchor receipts
-| Receipt | Anchored at | Chain head |
-|---|---|---|
+## 8. Appendix B - in-trace anchors (simulated)
+| Anchor | Requested at | Anchored at | Chain head | basis_status |
+|---|---|---|---|---|
 {anch_rows}
 
 ## 9. Reliance boundary
@@ -529,12 +579,12 @@ Evidence supports: internal quality-management reliance; customer source-surveil
         f"| {e['sequence_number']:04d} | {e['event_kind']} | {e.get('part_index',' - ')} | {e['occurred_at']} | `{e['integrity']['envelope_hash'][:12]}…` |"
         for e in ch.envelopes[:24])
     part_link_rows = "\n".join(
-        f"| {r['i']:02d} | {r['serial']} | {r['measured']:.4f} mm | HT-88213 | `{r['qif_hash'][:10]}…` | `{r['mes_hash'][:10]}…` | {r['t_commit']} |"
+        f"| {r['i']:02d} | {r['serial']} | {r['measured']} mm | HT-88213 | `{r['qif_hash'][:10]}…` | `{r['mes_hash'][:10]}…` | {r['t_commit']} |"
         for r in rows)
     D = f"""# Forensic Execution Pack - MRUN-2026-06-11-A
 
 ## 1. Verification procedure (vendor-neutral)
-1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with sorted keys and compact separators; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64x'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Conformity Assessment Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1-4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
+1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.envelope_signature`; serialise with RFC 8785 JCS; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64x'0'). 4. Confirm sequence numbers are contiguous. 5. Confirm `anchoring.anchored_subject_hash` at each `attestation_recorded` event equals the chain head before it, and that `anchor_requested_at` is not before that record's `emitted_at`. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1-6 are reproducible from the bundle alone. Step 5 shows internal consistency only: the in-trace anchors are `basis_status: simulated`. The external existence bound is on the release, not the trace: the release statement committing to this corpus is anchored with RFC 3161 and OpenTimestamps (repository `RELEASES.md`, `VERIFY.md`).
 
 ## 2. Envelope sequence (first 24 of {n_env}; full stream in envelopes.jsonl)
 | Seq | event_kind | Part# | occurred_at | envelope_hash |
@@ -546,21 +596,21 @@ Evidence supports: internal quality-management reliance; customer source-surveil
 |---|---|---|---|---|---|---|
 {part_link_rows}
 
-Released tolerance for the critical characteristic: 25.000 +0.021 / 0 mm (H7). Part 3 at {rows[2]['measured']:.4f} mm sits at {rows[2]['util']:.1%} of the tolerance band - inside tolerance, and the tightest unit in the batch.
+Released tolerance for the critical characteristic: 25.000 +0.021 / 0 mm (H7). Part 3 at {rows[2]['measured']} mm sits at {rows[2]['util']:.1%} of the tolerance band - inside tolerance, and the tightest unit in the batch.
 
 ## 4. Topology graph (declared = observed for this run)
 Nodes: agent mfg-pilot 3.1.0 · orchestrator shopfloor-orch 2.2 · model claude-sonnet-4-6 · gateway toolproxy-2 · connector opcua-gw 1.8.0 · cell cnc-cell-4 · mes ironmark/prod · runtime edge-mes-01.
-Edges: agent->orchestrator->model (inference); agent->gateway->connector->cell (release path); agent->mes (context and batch record, read/write). No undeclared touchpoints observed (third-party touchpoint set exhaustive for this run; basis: connector egress telemetry) {cite(bound,'boundary_assessment.basis')}.
+Edges: agent->orchestrator->model (inference); agent->gateway->connector->cell (release path); agent->mes (context and batch record, read/write). No undeclared touchpoints observed (third-party touchpoint set exhaustive for this run; basis: connector egress telemetry) {cite(bound,'boundary_assessment.boundary_assessment_basis')}.
 
 ## 5. Chronology and silence semantics
-Run window 07:00:00-07:10:52Z; heartbeats every 60s ({len(hbs)} beats, 0 silent windows); anchors at 300s cadence ({len(anchors)} receipts); end-of-shift reconciliation 16:10Z. Emission fail-closed => within the declared boundary, absence of an envelope implies absence of a release-boundary action.
+Run window 07:00:00-07:10:52Z; heartbeats every 60s ({len(hbs)} beats, 0 silent windows); simulated in-trace anchors at 300s cadence ({len(anchors)}); end-of-shift reconciliation 16:10Z. Emission fail-closed => within the declared boundary, absence of an envelope implies absence of a release-boundary action.
 
-## 6. Known stubs and limitations (golden trace)
-Signatures are placeholders; anchor store is simulated; QIF result webhook authenticity (QMS mTLS) is asserted not demonstrated; the subcontracted heat-treatment and plating legs are outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and part-to-artifact linkage are real and re-verifiable.
+## 6. Known stubs and limitations (golden trace gt-v2.1)
+Signatures are placeholders (`envelope_signature_basis_status: stubbed`). In-trace anchors are simulated (`basis_status: simulated`). The QIF result (QMS mTLS) and MES batch-record authenticity rungs are stubs (`basis_status: stubbed`); the OPC-UA and MES-acceptance rungs are `simulated` because the trace is synthetic. Each status is in a field a verifier reads (catalogue 1.27). A real on-chain anchor lane (EB-004, axes#3) remains open; the subcontracted heat-treatment and plating legs are outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and part-to-artifact linkage are real and re-verifiable under RFC 8785 JCS with no JSON floats in hash scope.
 """
     for name, content in (("report_A_board.md", A), ("report_B_audit.md", B),
                           ("report_C_regulator.md", C), ("report_D_forensic.md", D)):
-        with open(os.path.join(OUT, "reports", name), "w", encoding="utf-8", newline="\n") as f: f.write(content)
+        write_text_utf8_lf(os.path.join(OUT, "reports", name), content)
 
 # ----------------------------------------------------------------------------
 # 6. Manifest, samples, verify, main
@@ -569,7 +619,7 @@ def verify(envs):
     prev = "0" * 64
     for n, e in enumerate(envs, 1):
         e2 = json.loads(json.dumps(e)); integ = e2["integrity"]
-        stored = integ.pop("envelope_hash"); integ.pop("signature")
+        stored = integ.pop("envelope_hash"); integ.pop("envelope_signature")
         if e["sequence_number"] != n: return False, f"sequence gap at {n}"
         if integ["previous_envelope_hash"] != prev: return False, f"chain break at {n}"
         if sha256_hex(canonical(e2)) != stored: return False, f"hash mismatch at {n}"
@@ -578,8 +628,10 @@ def verify(envs):
 
 def main():
     ch, rows, artifacts = build()
-    with open(os.path.join(OUT, "envelopes.jsonl"), "w", encoding="utf-8", newline="\n") as f:
-        for e in ch.envelopes: f.write(json.dumps(e) + "\n")
+    write_text_utf8_lf(
+        os.path.join(OUT, "envelopes.jsonl"),
+        "".join(json.dumps(e, ensure_ascii=False) + "\n" for e in ch.envelopes),
+    )
     ok, msg = verify(ch.envelopes); assert ok, msg
     write_reports(ch, rows, artifacts)
     picks = {"envelope_part03_quality_gate.json": lambda e: e["event_kind"]=="policy_check_performed" and e.get("part_index")==3,
@@ -588,20 +640,25 @@ def main():
              "envelope_anchor.json": lambda e: e["event_kind"]=="attestation_recorded"}
     for name, pred in picks.items():
         env = next(e for e in ch.envelopes if pred(e))
-        with open(os.path.join(OUT, "samples", name), "w", encoding="utf-8", newline="\n") as f: json.dump(env, f, indent=2)
+        write_json_utf8_lf(os.path.join(OUT, "samples", name), env)
     files = {}
+    rel_paths = []
     for root, _, fnames in os.walk(OUT):
-        for fn in sorted(fnames):
-            if fn == "manifest.json": continue
-            p = os.path.join(root, fn)
-            files[os.path.relpath(p, OUT).replace("\\", "/")] = sha256_hex(open(p, "rb").read())
+        for fn in fnames:
+            if fn == "manifest.json":
+                continue
+            rel_paths.append(os.path.relpath(os.path.join(root, fn), OUT).replace("\\", "/"))
+    for rel in sorted(rel_paths):
+        files[rel] = sha256_hex(open(os.path.join(OUT, *rel.split("/")), "rb").read())
+    assert_manifest_matches_files(OUT, files)
     bundle_hash = sha256_hex(canonical(files))
-    manifest = {"evidence_bundle_id": "bundle:MRUN-2026-06-11-A",
+    manifest = {"evidence_bundle_ref": "bundle:MRUN-2026-06-11-A",
                 "bundle_manifest_hash": bundle_hash, "generated_at": ts(0),
                 "envelope_count": len(ch.envelopes), "chain_head": ch.prev,
                 "chain_verification": msg, "files": files,
-                "note": "Golden trace (industrial): hashes real; signatures and anchor store simulated."}
-    with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8", newline="\n") as f: json.dump(manifest, f, indent=2)
+                "note": "Golden Trace gt-v2.1 (industrial): hashes real (RFC 8785 JCS); signatures stubbed and in-trace anchors simulated, each stated in basis_status."}
+    write_json_utf8_lf(os.path.join(OUT, "manifest.json"), manifest)
+    assert_manifest_matches_files(OUT, files)
     print(msg)
     print(f"envelopes={len(ch.envelopes)} parts={len(rows)} artifacts={len(artifacts)} bundle={bundle_hash[:16]}…")
 

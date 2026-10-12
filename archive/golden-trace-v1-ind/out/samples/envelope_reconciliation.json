@@ -1,0 +1,88 @@
+{
+  "se_version": "0.1-draft",
+  "profile_id": "se-profile:manufacturing-emitter/0.1-draft",
+  "event_kind": "source_system_reconciliation",
+  "occurred_at": "2026-06-11T16:10:52.000Z",
+  "emitted_at": "2026-06-11T16:10:52.400Z",
+  "recorded_at": "2026-06-11T16:10:52.900Z",
+  "timestamp_source": "ntp:cluster-sync",
+  "clock_sync_confidence": "high",
+  "trace_id": "7c1de4a90b6f42e8b3a5c0d9e1f28a44",
+  "span_id": "span-recon",
+  "parent_span_id": "span-batch",
+  "org_id": "org:ironmark-precision",
+  "tenant_id": "tenant:ironmark-prod",
+  "environment_id": "env:prod-eu",
+  "environment_type": "production",
+  "execution_phase": "execution",
+  "execution_mode": "autonomous",
+  "actor": {
+    "agent_id": "agent:ironmark/mfg-pilot",
+    "agent_version": "3.1.0",
+    "orchestrator_id": "orchestrator:ironmark/shopfloor-orch",
+    "orchestrator_version": "2.2.0",
+    "model_id": "model:anthropic/claude-sonnet-4-6",
+    "model_version": "2025-09-29",
+    "runtime_id": "runtime:ironmark/edge-mes-01",
+    "tool_id": "tool:opcua/part-release",
+    "tool_gateway_id": "gateway:ironmark/toolproxy-2",
+    "connector_id": "connector:opcua-gw/1.8.0",
+    "provider_id": "cell:ironmark/cnc-cell-4"
+  },
+  "authority": {
+    "authority_context_id": "MD-5120",
+    "delegation_receipt_id": "delrec:MD-5120/2026-04-15",
+    "delegator_id": "person:pseu/quality-director-7c20",
+    "policy_ref": "policy:ironmark/part-release",
+    "policy_version": "5.1",
+    "capability_id": "cap:release-conforming-part",
+    "engineering_release_ref": "drawing:IMP-4471/revD + wi:WI-4471/v5.1"
+  },
+  "emission": {
+    "capture_layer": "runtime_sdk",
+    "capture_status": "captured",
+    "emission_fail_posture": "fail_closed",
+    "declared_heartbeat_interval_s": 60
+  },
+  "evidence_quality": {
+    "evidence_origin": "runtime",
+    "assertion_basis": "observed",
+    "corroboration_state": "source_system_corroborated"
+  },
+  "privacy": {
+    "personal_data_flag": false,
+    "redaction_applied": false
+  },
+  "reconciliation": {
+    "evidence_population_ref": "population:mes-production-order PO-IRN-2026-4471-06@2026-06-11T06:55Z (14 planned) + goods-receipt GRN-2026-06-11-IMP4471",
+    "population_basis": "independently_reconciled",
+    "expected_count_mes": 14,
+    "goods_receipt_count": 14,
+    "envelope_commit_count": 14,
+    "scrap_count": 0,
+    "evidence_coverage_ratio": 1.0,
+    "tamper_evident_coverage_ratio": 1.0,
+    "batch_record_count": 14,
+    "settlement_artifact": {
+      "ref": "artifacts/b2mml_batchrecord_MRUN-2026-06-11-A.xml",
+      "sha256": "a9b32ae60e13c22b93e641996a8856bc4145a1337fc48c0d6843b7e1c9ea30ff",
+      "scheme": "ISA95-B2MML"
+    },
+    "acknowledgment_rung": {
+      "ack_layer": "settlement",
+      "ack_scheme": "ISA95-B2MML",
+      "ack_authenticity_basis": "source_system_signed (MES batch record, STUB)"
+    }
+  },
+  "sequence_number": 73,
+  "envelope_id": "env:MRUN-2026-06-11-A/0073",
+  "integrity": {
+    "hash_algorithm": "SHA-256",
+    "canonicalisation_version": "GT-JCS-0",
+    "previous_envelope_hash": "afc642fe037ed149abfcdf19ba55d8360bc7b92fb50e99db345ea800de38050e",
+    "signing_key_id": "key:ironmark/se-emitter-2026q2",
+    "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
+    "envelope_hash": "88f9d604af3a531e4e1ae07b664427e8e48c4ac739e00ebda60e27e753d144bd",
+    "signature": "SIG-STUB(88f9d604af3a531e)"
+  }
+}

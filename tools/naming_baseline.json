@@ -1,6 +1,34 @@
 {
-  "note": "Known naming violations in frozen bytes (corpus of record, harness files, anchored statements; D-018). CI fails only on violations not listed here. Each entry names where its correction is indexed.",
+  "note": "Known naming violations in frozen bytes: anchored release statements, legacy and must-reject fixtures that must keep an earlier form, and one unused schema. The gt-v2.1 corpus and harness have none. CI fails on any violation not listed here.",
   "violations": [
+    {
+      "file": "vectors/anchoring/anch_legacy_gt_v2_0.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19 anchoring block; legacy fixture that must keep the gt-v2.0 form (WO21)"
+    },
+    {
+      "file": "vectors/anchoring/anch_legacy_gt_v2_0.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19 anchoring block; legacy fixture that must keep the gt-v2.0 form (WO21)"
+    },
+    {
+      "file": "vectors/anchoring/anch_legacy_under_gt_v2_1.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19 anchoring block; legacy fixture that must keep the gt-v2.0 form (WO21)"
+    },
+    {
+      "file": "vectors/anchoring/anch_legacy_under_gt_v2_1.json",
+      "key": "anchoring_latency_ms",
+      "rule": "N4",
+      "detail": "unit in key",
+      "change_index_ref": "docs/19 anchoring block; legacy fixture that must keep the gt-v2.0 form (WO21)"
+    },
     {
       "file": "anchors/gt-v2.0/release_statement.json",
       "key": "axes_corpus_release",
@@ -56,6 +84,20 @@
       "rule": "N3",
       "detail": "no class word",
       "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "schema/ratio.schema.json",
+      "key": "numerator",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "Ratio type is not used in any published corpus; member names are fixed under docs/20 before first use"
+    },
+    {
+      "file": "schema/ratio.schema.json",
+      "key": "denominator",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "Ratio type is not used in any published corpus; member names are fixed under docs/20 before first use"
     }
   ]
 }

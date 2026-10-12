@@ -1,0 +1,30 @@
+{
+  "requirement_profile_id": "example:conflicting_never_satisfies@1",
+  "requirement_profile_version": "1",
+  "profile_purpose_type": "sufficiency",
+  "publisher_id": "https://github.com/magentixai/axes",
+  "relying_party_roles": [
+    "auditor"
+  ],
+  "subject_types": [
+    "bundle"
+  ],
+  "effective_from": "2026-10-04T00:00:00.000Z",
+  "unsettled_question_notes": [],
+  "requirements": [
+    {
+      "requirement_id": "r",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "obligation_type": "required",
+      "floor_indicator": false,
+      "rationale_note": "test",
+      "source_refs": [
+        "WO19"
+      ],
+      "field_path": "/evidence_quality/corroboration_state",
+      "minimum_value": "uncorroborated",
+      "value_ladder_ref": "axes:corroboration_state_ladder@1"
+    }
+  ]
+}

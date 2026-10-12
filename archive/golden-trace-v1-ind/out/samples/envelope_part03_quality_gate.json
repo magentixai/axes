@@ -1,0 +1,113 @@
+{
+  "se_version": "0.1-draft",
+  "profile_id": "se-profile:manufacturing-emitter/0.1-draft",
+  "event_kind": "policy_check_performed",
+  "occurred_at": "2026-06-11T07:01:42.000Z",
+  "emitted_at": "2026-06-11T07:01:42.400Z",
+  "recorded_at": "2026-06-11T07:01:42.900Z",
+  "timestamp_source": "ntp:cluster-sync",
+  "clock_sync_confidence": "high",
+  "trace_id": "7c1de4a90b6f42e8b3a5c0d9e1f28a44",
+  "span_id": "span-part-03",
+  "parent_span_id": "span-batch",
+  "org_id": "org:ironmark-precision",
+  "tenant_id": "tenant:ironmark-prod",
+  "environment_id": "env:prod-eu",
+  "environment_type": "production",
+  "execution_phase": "approval",
+  "execution_mode": "autonomous",
+  "actor": {
+    "agent_id": "agent:ironmark/mfg-pilot",
+    "agent_version": "3.1.0",
+    "orchestrator_id": "orchestrator:ironmark/shopfloor-orch",
+    "orchestrator_version": "2.2.0",
+    "model_id": "model:anthropic/claude-sonnet-4-6",
+    "model_version": "2025-09-29",
+    "runtime_id": "runtime:ironmark/edge-mes-01",
+    "tool_id": "tool:opcua/part-release",
+    "tool_gateway_id": "gateway:ironmark/toolproxy-2",
+    "connector_id": "connector:opcua-gw/1.8.0",
+    "provider_id": "cell:ironmark/cnc-cell-4"
+  },
+  "authority": {
+    "authority_context_id": "MD-5120",
+    "delegation_receipt_id": "delrec:MD-5120/2026-04-15",
+    "delegator_id": "person:pseu/quality-director-7c20",
+    "policy_ref": "policy:ironmark/part-release",
+    "policy_version": "5.1",
+    "capability_id": "cap:release-conforming-part",
+    "engineering_release_ref": "drawing:IMP-4471/revD + wi:WI-4471/v5.1",
+    "approval_status": "not_required",
+    "approval_basis": "no quality-engineer disposition required for characteristics inside tolerance on a released drawing revision"
+  },
+  "emission": {
+    "capture_layer": "runtime_sdk",
+    "capture_status": "captured",
+    "emission_fail_posture": "fail_closed",
+    "declared_heartbeat_interval_s": 60
+  },
+  "evidence_quality": {
+    "evidence_origin": "runtime",
+    "assertion_basis": "observed",
+    "corroboration_state": "internally_corroborated"
+  },
+  "privacy": {
+    "personal_data_flag": false,
+    "redaction_applied": false
+  },
+  "part_index": 3,
+  "subject": {
+    "part_number": "IMP-4471",
+    "drawing_revision": "D",
+    "serial_number": "IMP4471-0003"
+  },
+  "controls": {
+    "control_evaluation_phase": "pre_commit",
+    "control_set_ref": "ctl:part-release/v5.1",
+    "checks": [
+      {
+        "control_id": "CTL-DIM-01",
+        "name": "critical dimension within released tolerance",
+        "control_result": "passed",
+        "observed": {
+          "characteristic": "\u00d825 H7 bore",
+          "nominal_mm": 25.0,
+          "tolerance_upper_mm": 25.021,
+          "tolerance_lower_mm": 25.0,
+          "measured_mm": 25.0201,
+          "tolerance_utilisation_ratio": 0.956,
+          "measurement_artifact_ref": "artifacts/qif_SN0003.xml",
+          "measurement_scheme": "ISO23952-QIF-3.0"
+        }
+      },
+      {
+        "control_id": "CTL-SPC-02",
+        "name": "process in statistical control",
+        "control_result": "passed",
+        "observed": {
+          "cpk": 1.41,
+          "cpk_floor": 1.33,
+          "subgroup_ref": "spc:IMP-4471/revD/2026-06-11"
+        }
+      },
+      {
+        "control_id": "CTL-MAT-03",
+        "name": "material lot verified to certified heat",
+        "control_result": "passed",
+        "evidence_ref": "matcert:EN10204-3.1/HT-88213",
+        "material_grade": "15-5PH stainless"
+      }
+    ]
+  },
+  "sequence_number": 13,
+  "envelope_id": "env:MRUN-2026-06-11-A/0013",
+  "integrity": {
+    "hash_algorithm": "SHA-256",
+    "canonicalisation_version": "GT-JCS-0",
+    "previous_envelope_hash": "c5674e144175692c96011bbce53bbcdd4ad4664daec64e6b2213f9bf29e88970",
+    "signing_key_id": "key:ironmark/se-emitter-2026q2",
+    "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
+    "envelope_hash": "423b40be6ac39c6a68df68713dbcc70a72d52795212e6987626575133f47e172",
+    "signature": "SIG-STUB(423b40be6ac39c6a)"
+  }
+}

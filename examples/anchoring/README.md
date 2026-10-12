@@ -14,7 +14,7 @@ Every value below is illustrative and every entry carries `basis_status: simulat
 
 | File | Shows | Notes |
 |---|---|---|
-| `simulated-write-once-store.json` | The gt-v2.0 stub `"write_once_store (SIMULATED)"` expressed correctly: method as a registry value, status in `basis_status` | What gt-v2.1 corpora carry where no real anchor exists |
+| `simulated-write-once-store.json` | The gt-v2.0 stub `"write_once_store (SIMULATED)"` expressed correctly: method as a registry value, status in `basis_status` | What the gt-v2.1 corpus carries (see [`examples/golden-trace/`](../golden-trace/)) |
 | `transparency-log.json` | A transparency-log anchor: log origin, leaf index at a checkpoint size, proof manifest | `example:` namespace profile; open question Q2 (checkpoint clock) applies |
 | `distributed-ledger.json` | An on-chain registry anchor on a test network, with the canonical contract in `anchor_service_id` | The procedure reference is marked `CONFIRM-WITH-PABLO` until the LFDT lab procedure is agreed. A matching event from any other contract is not evidence (WO18 A4.4) |
 | `dual-lane-tlog-and-chain.json` | The real gt-v2.0 release statement digest anchored by two further lanes side by side | Profile, service and procedure values are `CONFIRM-WITH-AUTHOR` placeholders for MarkovianProtocol and argentum-core to replace with real anchors |

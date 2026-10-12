@@ -24,14 +24,14 @@ Three preventive quality gates (control set `ctl:part-release/v5.1`) were evalua
 
 ## 2. Population and completeness (IPE basis)
 - Population definition: MES production order PO-IRN-2026-4471-06 at 06:55Z (14 planned) reconciled against finished-goods goods-receipt GRN-2026-06-11-IMP4471 (14 booked, 0 scrap) - **independently reconciled**, not self-reported [env:0073 | reconciliation.population_basis].
-- Coverage: envelopes 14/14 (100%); tamper-evident 100% [env:0073 | reconciliation.evidence_coverage_ratio].
-- Sequence continuity: envelope sequence numbers 0001-0076 contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) [env:0009 | liveness.declared_heartbeat_interval_s].
+- Coverage: envelopes 14/14 (100%); tamper-evident 100% (report-layer derived from envelope_commit_count).
+- Sequence continuity: envelope sequence numbers 0001-0076 contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) [env:0009 | liveness.declared_heartbeat_interval].
 
 ## 3. Evidence quality
 - Origin/basis: runtime-observed on the shop-floor edge; release confirmations are **quality-system confirmed** (QIF 3.0 CONFORMING per unit) and **source-system corroborated** (ISA-95 batch record) [env:0007 | evidence_quality.corroboration_state] [env:0073 | evidence_quality.corroboration_state].
-- Corroboration coverage decomposition: anchored 100% · quality-receipted 14/14 · provider-only 0.
+- Corroboration coverage decomposition: externally anchored 0 (in-trace anchors are `basis_status: simulated`) · quality-receipted 14/14 · provider-only 0.
 - Point-in-time validity: policy v5.1 effective from 2026-05-01, in force at every event [env:0007 | authority.policy_version]; drawing rev D released 2026-03-20; delegation valid 2026-04-15 to 2026-12-31.
-- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped - *reproducible in distribution, not in instance* [env:0002 | model.sampling_parameters]; reasoning artifacts `provider_withheld` - disclosed, not silent [env:0002 | model.reasoning_artifact_availability].
+- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9 as exact decimal strings); replay claim scoped - *reproducible in distribution, not in instance* [env:0002 | model.sampling_parameters]; reasoning artifacts `provider_withheld` - disclosed, not silent [env:0002 | model.reasoning_artifact_availability_status].
 
 ## 4. Findings register
 No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak characteristic utilisation 95.6% with the lowest capability of the batch at Cpk 1.41 - recommend a process-capability review for the Ø25 H7 bore before the next batch. Owner: manufacturing process owner. Due: next production cycle.

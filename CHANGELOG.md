@@ -4,6 +4,17 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-12 - gt-v2.1 released (corpus of record)
+Tag `corpus/2026-10-12-gt-v2.1`. Every change is indexed with its reason in [docs/19](docs/19-key-change-index.md) and machine-readably in `schema/key-aliases.json`.
+- **Anchoring (Module 14):** the `write_once_store (SIMULATED)` form is retired. In-trace anchors are `write_once_store` with `basis_status: simulated`; no envelope asserts `externally_anchored` over a simulated anchor (D-015, D-020, D-021). The export's final anchor uses the same block.
+- **Timing (D-017):** stored `anchoring_latency_ms` removed; `anchor_requested_at` added; the lag is derived. Anchors are requested after the anchored record is emitted and complete before the carrying record is emitted (asserted by the generators). The first anchor is now envelope 36.
+- **`basis_status` (catalogue 1.27):** `integrity.envelope_signature_basis_status: stubbed`; every acknowledgment rung states `stubbed` or `simulated`; parenthetical status removed from values.
+- **Naming (D-024):** every rename in docs/19, `*.sha256` to `hash` plus `hash_algorithm`, `declared_heartbeat_interval: PT60S`. Naming baseline 195 to 14 (frozen gt-v2.0 release statement, legacy fixtures, unused Ratio schema).
+- **Harness:** `vectors/expected.json` and `vectors/predicates.json` use gt-v2.1 key names; `axes_gt_0037_attestation_recorded.json` is now `axes_gt_0036_attestation_recorded.json`. New two-sided vectors: gt-v2.0 envelope 37 mapped to the gt-v2.1 shape is `contradicted` (`anchor_simulated_claims_external`); gt-v2.1 envelope 36 is `indeterminate` (`basis_not_demonstrated`). The verifier checks every anchoring block in both corpora.
+- **Release anchors:** the gt-v2.1 release statement (RFC 8785, both chain heads and bundle digests) is anchored with RFC 3161 (FreeTSA) and OpenTimestamps through the `anchor` workflow; see RELEASES.md.
+- **One tree:** `golden-trace-v2` and `main` merged. The retired pre-merge lineage moved to `archive/golden-trace-pre-merge-*` (bytes unchanged). gt-v2.0 still verifies at its tag in CI (`tools/releases/gt-v2.0.json`). The `anchor` workflow commits back to the branch it ran on.
+- **Notice (D-018):** MarkovianProtocol, wowlegend/Tersign and giskard09 published results against gt-v2.0 and are invited to re-verify gt-v2.1. gt-v2.1 is not described as independently verified until someone has.
+
 ### 2026-10-08 - Completeness wording corrected
 - Two-party anchoring is described as exposing one side's omission, not as evidence that nothing was omitted (wg-identity#25, x402#2853). Crosswalk and anchoring examples README updated; erratum recorded for the two x402 B2B audit profiles, whose `@1` bytes stay unchanged.
 
@@ -122,6 +133,21 @@ All notable changes to the AXES specification and repository.
 
 ### 2026-08-14 - x402 / AEP coherence tracker and outstanding landings
 - Coherence tracker, outstanding AXES landings (role enum, signing profile, identity provenance), payee settlement-role design note; ROADMAP and adjacent-standards watch pointers.
+### 2026-08-07 - Golden Trace v2 manifest portability fix
+- Generators write all corpus files as UTF-8 with explicit LF (`newline="\n"`); never platform text mode (fixes CRLF and CP1252 Ø in Ind QIF).
+- `.gitattributes` marks `examples/**/out/**`, `vectors/**`, and archived v1 corpora as `-text` so git cannot re-normalise pinned bytes.
+- Generator self-check: `assert_manifest_matches_files` before exit. Bundle hashes change once to portable values; chain heads unchanged.
+- Verification report: [`docs/13b-AXES_Golden_Trace_v2_Linux_Verification.md`](docs/13b-AXES_Golden_Trace_v2_Linux_Verification.md).
+
+### 2026-08-07 - Golden Trace v2 (P1-1 canonicalisation ruling)
+- **RFC 8785 JCS** replaces GT-JCS-0; `tools/axes_canonical.py` + `requirements-dev.txt` (`jcs` package).
+- **Numeric kinds:** `Amount` for money/limits with namespaced `asset` (`iso4217:EUR` in Fin; `caip19:…` USDC decimals=6 in vectors); derived ratios removed from hash scope; `temperature`/`top_p` and industrial measurements/Cpk as exact decimal strings; zero JSON floats in hash scope (generator assertion).
+- Golden Trace **Fin and Ind** corpora regenerated; v1 archived at [`archive/golden-trace-v1-fin/`](archive/golden-trace-v1-fin/) and [`archive/golden-trace-v1-ind/`](archive/golden-trace-v1-ind/).
+- **Conformance vectors:** [`vectors/`](vectors/) (canoncheck layout) including custody deployer-capturer twins and USDC Amount example; `tools/generate_conformance_vectors.py`.
+- **Schema:** [`schema/amount.schema.json`](schema/amount.schema.json), [`schema/ratio.schema.json`](schema/ratio.schema.json).
+- **Docs:** [`docs/09-canonicalisation-and-hashing.md`](docs/09-canonicalisation-and-hashing.md) expanded; decision register P1-1 partial decision recorded (MarkovianProtocol, Tersign credits).
+- EB-004 real `distributed_ledger` anchor deferred pending giskard09 confirmation on axes#3 (SIMULATED stub retained, honestly disclosed).
+- Rule-layer custody verdicts are declared via `reject_code` on vectors; proven by two-sided interop (custody-ref-v1), not an in-repo verifier (Planned, P4).
 
 ### 2026-07-24 - SCITT profile rules, Agent 365/Purview map, ARBITR import backlog
 - SCITT existence-bound profile rules expanded in [`docs/interop/x402-and-anchoring.md`](docs/interop/x402-and-anchoring.md); ROADMAP Band C detail + EB-006; adjacent-standards watch updated (RFC 9943 family).

@@ -4,6 +4,9 @@
 examples/**/out/** -text
 vectors/** -text
 archive/golden-trace-v1-*/** -text
+archive/**/out/** -text
+vendor/** -text
+evaluations/** -text
 portable/**/vectors/** -text
 portable/**/MANIFEST.json -text
 anchors/** -text

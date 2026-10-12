@@ -22,16 +22,37 @@ Outputs (under ./out):
 
 Design notes:
   * Field names follow the Cross-Wave Vocabulary Harmonisation sheet (draft canonical keys).
-  * Hash chain: SHA-256 over canonical JSON (sorted keys, compact separators),
-    excluding `integrity.envelope_hash` and `integrity.signature` at hash time.
-    `canonicalisation_version` = "GT-JCS-0" (golden-trace stand-in for a real JCS profile).
-  * Signatures and external anchor receipts are STUBS (clearly marked). Hashes are real.
+  * Hash chain: SHA-256 over RFC 8785 JCS canonical JSON,
+    excluding `integrity.envelope_hash` and `integrity.envelope_signature` at hash time.
+    `canonicalization_version` = "RFC8785-JCS". Monetary fields use Amount (integer
+    atomic EUR minor units); derived ratios render in the report layer only.
+  * gt-v2.1 (docs/19): every authenticity claim carries `basis_status`. Signatures are
+    `stubbed`; in-trace anchors are `simulated` (a synthetic trace cannot be anchored at
+    fictional past instants) and never assert `externally_anchored`. Hashes are real.
+    The release statement over this corpus is anchored for real under anchors/.
   * Deterministic: fixed timestamps, no randomness.
 """
 
-import json, hashlib, os
+import json, hashlib, os, sys
 from collections import OrderedDict
 from datetime import datetime, timedelta, timezone
+from decimal import Decimal
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+from tools.axes_canonical import (
+    CANONICALISATION_VERSION,
+    amount_from_decimal,
+    assert_manifest_matches_files,
+    assert_no_floats_in_hash_scope,
+    canonical_bytes,
+    envelope_digest,
+    ratio_display,
+    sha256_hex,
+    write_json_utf8_lf,
+    write_text_utf8_lf,
+)
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 
@@ -41,7 +62,13 @@ OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out")
 SE_VERSION = "0.1-draft"
 PROFILE_ID = "se-profile:payments-emitter/0.1-draft"
 CONFORMANCE_LEVEL = "SE-C4-assurance-report-capable (claimed, golden-trace)"
-CANON = "GT-JCS-0"
+CANON = CANONICALISATION_VERSION
+CORPUS_ASSET_NOTE = (
+    "Golden Trace v2: monetary fields use Amount with asset iso4217:EUR "
+    "(decimals=2 minor units); canonical form is RFC 8785 JCS; digest is "
+    "SHA-256 over canonical bytes (declared, agile). Crypto Amounts "
+    "(e.g. caip19:… USDC decimals=6) are exercised in vectors/."
+)
 
 ORG = "org:caldera-robotics"
 TENANT = "tenant:caldera-prod"
@@ -57,18 +84,18 @@ ACTOR = {
     "connector_id": "connector:openbank-gw/2.2.0",
     "provider_id": "provider:first-meridian-bank",
 }
-SAMPLING = {"temperature": 0.2, "top_p": 0.9, "max_tokens": 4096,
+SAMPLING = {"temperature": "0.2", "top_p": "0.9", "max_tokens": 4096,
             "reproducibility_note": "non-zero temperature: reproducible in distribution, not in instance"}
 
 AUTHORITY = {
-    "authority_context_id": "AD-7844",
-    "delegation_receipt_id": "delrec:AD-7844/2026-04-02",
+    "authority_context_ref": "AD-7844",
+    "delegation_receipt_ref": "delrec:AD-7844/2026-04-02",
     "delegator_id": "person:pseu/cfo-9f31",          # pseudonymous key, held separately
     "policy_ref": "policy:caldera/ap-payments", "policy_version": "3.2",
     "policy_effective_from": "2026-05-01T00:00:00Z",
     "capability_id": "cap:sepa-inst-credit-transfer",
-    "scope": {"per_payment_limit": {"amount": 25000.00, "currency": "EUR"},
-              "batch_aggregate_limit": {"amount": 150000.00, "currency": "EUR"},
+    "scope": {"per_payment_limit": amount_from_decimal("25000.00"),
+              "batch_aggregate_limit": amount_from_decimal("150000.00"),
               "beneficiary_constraint": "supplier-master:v2026-05 (approved list only)",
               "approval_rule": "no human approval required at/below per-payment limit to approved beneficiaries",
               "valid_from": "2026-04-02T00:00:00Z", "valid_until": "2026-12-31T23:59:59Z"},
@@ -90,72 +117,94 @@ AMOUNTS = [4475.00, 12880.50, 23900.00, 9240.10, 3318.75, 15602.00, 7777.77,
            1949.99, 11025.40, 6890.00, 2475.25, 8112.60, 5230.95, 4527.87]
 INVOICES = [f"INV-2026-{n}" for n in (3318, 3325, 3327, 3340, 3341, 3355, 3360,
                                       3361, 3372, 3375, 3380, 3384, 3390, 3391)]
-BATCH_LIMIT = AUTHORITY["scope"]["batch_aggregate_limit"]["amount"]
-PER_LIMIT = AUTHORITY["scope"]["per_payment_limit"]["amount"]
+BATCH_LIMIT = AUTHORITY["scope"]["batch_aggregate_limit"]
+PER_LIMIT = AUTHORITY["scope"]["per_payment_limit"]
 
 TRACE_ID = "4bf92f3577b34da6a3ce929d0e0e4736"   # W3C Trace Context compatible
 HEARTBEAT_INTERVAL_S = 60
+HEARTBEAT_INTERVAL = "PT60S"            # ISO 8601 duration (D-017, D-024 N4)
 ANCHOR_INTERVAL_S = 300
 
 # ----------------------------------------------------------------------------
 # 2. Hashing, chaining, stub signing
 # ----------------------------------------------------------------------------
-def sha256_hex(b: bytes) -> str: return hashlib.sha256(b).hexdigest()
-def canonical(obj) -> bytes: return json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()
+def canonical(obj) -> bytes:
+    return canonical_bytes(obj)
 
 class Chain:
     def __init__(self):
         self.prev = "0" * 64; self.seq = 0; self.envelopes = []; self.anchors = []
+        self.prev_emitted_at = None
     def emit(self, env: dict) -> dict:
         self.seq += 1
         env["sequence_number"] = self.seq
         env["envelope_id"] = f"env:APRUN-2026-06-09-A/{self.seq:04d}"
         env.setdefault("integrity", {})
         env["integrity"].update({
-            "hash_algorithm": "SHA-256", "canonicalisation_version": CANON,
+            "hash_algorithm": "SHA-256", "canonicalization_version": CANON,
             "previous_envelope_hash": self.prev,
             "signing_key_id": "key:caldera/se-emitter-2026q2",
             "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
+            "envelope_signature_basis_status": "stubbed",     # catalogue 1.27; inside the hash
         })
-        h = sha256_hex(canonical(env))
+        assert_no_floats_in_hash_scope(env)
+        h = envelope_digest(env)
         env["integrity"]["envelope_hash"] = h
-        env["integrity"]["signature"] = "SIG-STUB(" + h[:16] + ")"     # stub, see README
+        env["integrity"]["envelope_signature"] = "SIG-STUB(" + h[:16] + ")"     # stub, see README
         self.prev = h
+        self.prev_emitted_at = env["emitted_at"]
         self.envelopes.append(env)
         return env
     def anchor(self, sec):
-        rcpt = {"anchor_receipt_id": f"anch:{len(self.anchors)+1:03d}",
-                "anchoring_method": "write_once_store (SIMULATED)",
-                "anchored_at": ts(sec), "chain_head_hash": self.prev,
-                "anchor_store_ref": "anchorstore:trustline-demo/eu",
-                "anchoring_latency": 740}
+        """Module 14 block over the current chain head (gt-v2.1, docs/19).
 
-        self.anchors.append(rcpt)
-        return rcpt
+        Simulated: the trace is synthetic, so nothing is written to a mechanism and the
+        status is stated in `basis_status`, never in the method value (catalogue 1.27).
+        Timing: requested at the anchoring tick, after the anchored record was emitted;
+        anchored 250 ms later; the lag is derived, never stored (D-017)."""
+        anchor_id = f"anch:{len(self.anchors)+1:03d}"
+        requested, anchored = ts(sec), ts(sec + 0.25)
+        assert self.prev_emitted_at <= requested, "anchor requested before the anchored record was emitted"
+        block = {"anchored_subject_type": "chain_head",
+                 "anchored_subject_hash": self.prev,
+                 "anchored_subject_hash_algorithm": "SHA-256",
+                 "anchors": [{
+                     "anchor_id": anchor_id,
+                     "anchoring_method": "write_once_store",
+                     "basis_status": "simulated",
+                     "anchor_commitment_hash": self.prev,
+                     "anchor_commitment_hash_algorithm": "SHA-256",
+                     "anchor_requested_at": requested,
+                     "anchored_at": anchored,
+                     "anchor_service_id": "anchorstore:trustline-demo/eu",
+                     "anchor_record_ref": "object:trustline-demo/eu/" + anchor_id.split(":")[1],
+                     "anchor_operator_id": "org:trustline-demo"}]}
+        self.anchors.append(block)
+        return block
 
 def base_env(kind, sec, phase, span, parent=None, payment=None):
     e = OrderedDict()
-    e["se_version"], e["profile_id"] = SE_VERSION, PROFILE_ID
+    e["se_version"], e["implementation_profile_ref"] = SE_VERSION, PROFILE_ID
     # envelope_id assigned by Chain.emit (inside the hash)
     e["event_kind"] = kind
     e["occurred_at"], e["emitted_at"], e["recorded_at"] = ts(sec), ts(sec + 0.4), ts(sec + 0.9)
-    e["timestamp_source"] = "ntp:cluster-sync"; e["clock_sync_confidence"] = "high"
+    e["timestamp_source"] = "ntp:cluster-sync"; e["clock_sync_confidence_level"] = "high"
     e["trace_id"], e["span_id"] = TRACE_ID, span
     if parent: e["parent_span_id"] = parent
-    e["org_id"], e["tenant_id"] = ORG, TENANT
+    e["organization_id"], e["tenant_id"] = ORG, TENANT
     e["environment_id"], e["environment_type"] = ENV_ID, ENV_TYPE
     e["execution_phase"] = phase                     # advisory|approval|execution|commit
     e["execution_mode"] = "autonomous"
     e["actor"] = dict(ACTOR)
     e["authority"] = {k: AUTHORITY[k] for k in
-                      ("authority_context_id", "delegation_receipt_id", "delegator_id",
+                      ("authority_context_ref", "delegation_receipt_ref", "delegator_id",
                        "policy_ref", "policy_version", "capability_id")}
     e["emission"] = {"capture_layer": "runtime_sdk", "capture_status": "captured",
                      "emission_fail_posture": "fail_closed",
-                     "declared_heartbeat_interval_s": HEARTBEAT_INTERVAL_S}
+                     "declared_heartbeat_interval": HEARTBEAT_INTERVAL}
     e["evidence_quality"] = {"evidence_origin": "runtime", "assertion_basis": "observed",
                              "corroboration_state": "internally_corroborated"}
-    e["privacy"] = {"personal_data_flag": False, "redaction_applied": False}
+    e["privacy"] = {"personal_data_indicator": False, "redaction_applied_indicator": False}
     if payment is not None: e["payment_index"] = payment
     return e
 
@@ -209,30 +258,30 @@ def build():
 
     def save_artifact(name, content):
         p = os.path.join(OUT, "artifacts", name)
-        with open(p, "w") as f: f.write(content)
-        h = sha256_hex(content.encode()); artifacts[name] = h; return h
+        write_text_utf8_lf(p, content)
+        h = sha256_hex(content.encode("utf-8")); artifacts[name] = h; return h
 
     def later(sec, env): pending.append((sec, len(pending), env))
 
     # --- batch start / context / plan -------------------------------------
     e = base_env("execution_started", 0, "execution", "span-batch")
-    e["operation"] = {"operation": "ap_payment_batch_run", "batch_id": "APRUN-2026-06-09-A",
+    e["operation"] = {"operation_type": "ap_payment_batch_run", "batch_id": "APRUN-2026-06-09-A",
                       "target_system_id": "erp:ledgerworks/prod", "target_resource_type": "approved_invoice_queue"}
     later(0, e)
 
     e = base_env("context_retrieved", 4, "advisory", "span-plan", "span-batch")
-    e["operation"] = {"operation": "load_approved_invoices", "target_system_id": "erp:ledgerworks/prod",
+    e["operation"] = {"operation_type": "load_approved_invoices", "target_system_id": "erp:ledgerworks/prod",
                       "target_resource_type": "invoice", "record_count": 14}
     e["context"] = {"context_artifact_refs": [f"erp:ledgerworks/inv/{x}" for x in INVOICES],
-                    "input_trust_classification": "trusted_internal_system",
+                    "input_trust_class": "trusted_internal_system",
                     "untrusted_content_indicator": False}
     e["model"] = {"sampling_parameters": SAMPLING,
-                  "reasoning_artifact_availability": "provider_withheld"}
+                  "reasoning_artifact_availability_status": "provider_withheld"}
     later(4, e)
 
     e = base_env("plan_created", 9, "advisory", "span-plan", "span-batch")
     e["plan"] = {"planned_payment_count": 14,
-                 "planned_aggregate": {"amount": round(sum(AMOUNTS), 2), "currency": "EUR"},
+                 "planned_aggregate": amount_from_decimal(str(round(sum(AMOUNTS), 2))),
                  "plan_ref": "artifact:plan/APRUN-2026-06-09-A"}
     later(9, e)
 
@@ -242,17 +291,18 @@ def build():
         e2e = f"E2E-CALD-20260609-{i:04d}"
         span = f"span-pay-{i:02d}"
         idem = f"idem:APRUN-2026-06-09-A/{i:04d}"
-        util = round(amount / PER_LIMIT, 4)
+        amt = amount_from_decimal(str(amount))
+        util = ratio_display(int(amt["value"]), int(PER_LIMIT["value"]))
 
         e = base_env("policy_check_performed", p0, "approval", span, "span-batch", payment=i)
         e["controls"] = {"control_evaluation_phase": "pre_commit", "control_set_ref": "ctl:ap-pay/v3.2",
             "checks": [
-                {"control_id": "CTL-BENEF-01", "name": "beneficiary on approved supplier master",
+                {"control_id": "CTL-BENEF-01", "control_name": "beneficiary on approved supplier master",
                  "control_result": "passed", "evidence_ref": f"suppliermaster:v2026-05/{sid}"},
-                {"control_id": "CTL-LIMIT-02", "name": "per-payment limit",
+                {"control_id": "CTL-LIMIT-02", "control_name": "per-payment limit",
                  "control_result": "passed",
-                 "observed": {"amount": amount, "limit": PER_LIMIT, "authority_utilisation_ratio": util}},
-                {"control_id": "CTL-DUPL-03", "name": "duplicate instruction (idempotency key unseen)",
+                 "observed": {"amount": amt, "limit": PER_LIMIT}},
+                {"control_id": "CTL-DUPL-03", "control_name": "duplicate instruction (idempotency key unseen)",
                  "control_result": "passed", "idempotency_key": idem}]}
         e["authority"]["approval_status"] = "not_required"
         e["authority"]["approval_basis"] = AUTHORITY["scope"]["approval_rule"]
@@ -261,17 +311,17 @@ def build():
         pain_name = f"pain001_P{i:02d}.xml"
         pain_hash = save_artifact(pain_name, pain001_xml(i, e2e, amount, (sid, name)))
         e = base_env("commit_attempted", p0 + 6, "commit", span, "span-batch", payment=i)
-        e["operation"] = {"operation": "submit_sepa_inst_credit_transfer",
+        e["operation"] = {"operation_type": "submit_sepa_inst_credit_transfer",
             "target_system_id": "bankapi:first-meridian/sepa-inst", "target_resource_type": "payment_instruction",
             "commit_boundary_status": "commit_attempted",
-            "commit_mechanism": "payment_initiation", "commit_impact_class": "money_movement",
-            "transaction_ref": e2e, "idempotency_key": idem, "idempotency_key_forwarded": True,
-            "monetary": {"amount": amount, "currency": "EUR"},
+            "commit_method": "payment_initiation", "commit_impact_class": "money_movement",
+            "transaction_ref": e2e, "idempotency_key": idem, "idempotency_key_forwarded_indicator": True,
+            "monetary": {"amount": amt},
             "beneficiary_ref": f"suppliermaster:v2026-05/{sid}",
-            "instruction_artifact": {"ref": f"artifacts/{pain_name}", "sha256": pain_hash,
+            "instruction_artifact": {"ref": f"artifacts/{pain_name}", "hash": pain_hash, "hash_algorithm": "SHA-256",
                                      "scheme": "ISO20022-pain.001.001.11"}}
-        e["privacy"] = {"personal_data_flag": True, "redaction_applied": True,
-                        "redaction_profile_id": "redact:beneficiary-pii/v1",
+        e["privacy"] = {"personal_data_indicator": True, "redaction_applied_indicator": True,
+                        "redaction_profile_ref": "redact:beneficiary-pii/v1",
                         "redaction_method": "hash_substitution",
                         "redacted_fields": ["beneficiary_iban", "debtor_iban"]}
         e["correlation_keys"] = [{"key_type": "counterparty", "key_scheme": "suppliermaster:v2026-05",
@@ -279,7 +329,7 @@ def build():
         later(p0 + 6, e)
 
         e = base_env("tool_invoked", p0 + 7, "commit", span, "span-batch", payment=i)
-        e["operation"] = {"operation": "POST /v2/payments", "transaction_ref": e2e,
+        e["operation"] = {"operation_type": "POST /v2/payments", "transaction_ref": e2e,
                           "target_system_id": "bankapi:first-meridian/sepa-inst"}
         e["tool"] = {"tool_manifest_ref": "manifest:bankapi/sepa-inst-submit@2.2",
                      "tool_manifest_hash": sha256_hex(b"manifest:bankapi/sepa-inst-submit@2.2")}
@@ -288,20 +338,20 @@ def build():
         pacs_name = f"pacs002_P{i:02d}.xml"
         pacs_hash = save_artifact(pacs_name, pacs002_xml(i, e2e))
         e = base_env("commit_succeeded", p0 + 9, "commit", span, "span-batch", payment=i)
-        e["operation"] = {"operation": "submit_sepa_inst_credit_transfer", "transaction_ref": e2e,
+        e["operation"] = {"operation_type": "submit_sepa_inst_credit_transfer", "transaction_ref": e2e,
                           "commit_boundary_status": "committed",
-                          "commit_mechanism": "payment_initiation", "commit_impact_class": "money_movement",
-                          "monetary": {"amount": amount, "currency": "EUR"}}
-        e["result"] = {"result_status": "success", "side_effect_confirmation_status": "confirmed"}
+                          "commit_method": "payment_initiation", "commit_impact_class": "money_movement",
+                          "monetary": {"amount": amt}}
+        e["outcome"] = {"result_status": "success", "side_effect_confirmation_status": "confirmed"}
         e["acknowledgments"] = [
-            {"ack_layer": "transport", "ack_scheme": "HTTPS", "ack_code": "200",
-             "ack_timestamp": ts(p0 + 7.3), "ack_authenticity_basis": "channel_secured"},
-            {"ack_layer": "protocol", "ack_scheme": "bankapi:first-meridian/v2", "ack_code": "ACCEPTED",
-             "ack_reason_code": f"instr:{e2e}", "ack_timestamp": ts(p0 + 7.6),
-             "ack_authenticity_basis": "channel_secured"},
-            {"ack_layer": "business", "ack_scheme": "ISO20022-pacs.002.001.10", "ack_code": "ACSC",
-             "ack_timestamp": ts(p0 + 8.8), "ack_artifact_ref": f"artifacts/{pacs_name}",
-             "ack_artifact_hash": pacs_hash, "ack_authenticity_basis": "counterparty_signed (webhook mTLS, STUB)"}]
+            {"acknowledgment_layer": "transport", "acknowledgment_scheme": "HTTPS", "acknowledgment_code": "200",
+             "acknowledged_at": ts(p0 + 7.3), "acknowledgment_authenticity_basis": "channel_secured", "basis_status": "simulated"},
+            {"acknowledgment_layer": "protocol", "acknowledgment_scheme": "bankapi:first-meridian/v2", "acknowledgment_code": "ACCEPTED",
+             "acknowledgment_reason_code": f"instr:{e2e}", "acknowledged_at": ts(p0 + 7.6),
+             "acknowledgment_authenticity_basis": "channel_secured", "basis_status": "simulated"},
+            {"acknowledgment_layer": "business", "acknowledgment_scheme": "ISO20022-pacs.002.001.10", "acknowledgment_code": "ACSC",
+             "acknowledged_at": ts(p0 + 8.8), "acknowledgment_artifact_ref": f"artifacts/{pacs_name}",
+             "acknowledgment_artifact_hash": pacs_hash, "acknowledgment_authenticity_basis": "counterparty_signed", "basis_status": "stubbed"}]
         e["evidence_quality"]["corroboration_state"] = "third_party_confirmed"
         later(p0 + 9, e)
         payment_rows.append({"i": i, "supplier_id": sid, "supplier": name, "invoice": INVOICES[i-1],
@@ -313,16 +363,19 @@ def build():
     # --- heartbeats (liveness stream) --------------------------------------
     for s in range(HEARTBEAT_INTERVAL_S, int(end_sec), HEARTBEAT_INTERVAL_S):
         e = base_env("heartbeat_event", s, "execution", "span-batch")
-        e["liveness"] = {"liveness_status": "alive", "declared_heartbeat_interval_s": HEARTBEAT_INTERVAL_S}
+        e["liveness"] = {"liveness_status": "alive", "declared_heartbeat_interval": HEARTBEAT_INTERVAL}
         later(s, e)
 
     # --- anchor placeholders (receipt filled at chain time) ----------------
+    # The anchor covers the chain head as it stood at the tick, so it sorts before any
+    # other event in the same second. corroboration_state stays internally_corroborated:
+    # a simulated anchor never earns externally_anchored (D-020).
     anchor_secs = list(range(ANCHOR_INTERVAL_S, int(end_sec) + ANCHOR_INTERVAL_S, ANCHOR_INTERVAL_S))
     for s in anchor_secs:
-        e = base_env("attestation_recorded", min(s, end_sec), "execution", "span-anchor", "span-batch")
-        e["anchoring"] = "__FILL_AT_CHAIN_TIME__"
-        e["evidence_quality"]["corroboration_state"] = "externally_anchored"
-        later(min(s, end_sec), e)
+        tick = min(s, end_sec)
+        e = base_env("attestation_recorded", tick, "execution", "span-anchor", "span-batch")
+        e["anchoring"] = ("__FILL_AT_CHAIN_TIME__", tick)
+        later(tick - 0.5, e)
 
     # --- EOD reconciliation, boundary assessment, completion, export -------
     camt_hash = save_artifact("camt053_20260609.xml",
@@ -333,41 +386,42 @@ def build():
         "evidence_population_ref": "population:erp-approved-invoice-queue@2026-06-09T08:55Z (14 due) "
                                    "+ bank-statement FMB-STMT-2026-06-09",
         "population_basis": "independently_reconciled",
-        "expected_count_erp": 14, "statement_count_bank": 14, "envelope_commit_count": 14,
-        "evidence_coverage_ratio": 1.0, "tamper_evident_coverage_ratio": 1.0,
-        "settlement_artifact": {"ref": "artifacts/camt053_20260609.xml", "sha256": camt_hash,
+        "erp_expected_count": 14, "bank_statement_count": 14, "envelope_commit_count": 14,
+        "settlement_artifact": {"ref": "artifacts/camt053_20260609.xml", "hash": camt_hash, "hash_algorithm": "SHA-256",
                                 "scheme": "ISO20022-camt.053.001.08"},
-        "acknowledgment_rung": {"ack_layer": "settlement", "ack_scheme": "ISO20022-camt.053.001.08",
-                                "ack_authenticity_basis": "counterparty_signed (statement channel, STUB)"}}
+        "acknowledgment_rung": {"acknowledgment_layer": "settlement", "acknowledgment_scheme": "ISO20022-camt.053.001.08",
+                                "acknowledgment_authenticity_basis": "counterparty_signed", "basis_status": "stubbed"}}
     e["evidence_quality"]["corroboration_state"] = "source_system_corroborated"
     later(recon_sec, e)
 
     e = base_env("result_observed", recon_sec + 60, "execution", "span-close", "span-batch")
-    e["boundary_assessment"] = {"tenant_boundary_crossed": False, "cross_tenant_exposure_indicator": False,
+    e["boundary_assessment"] = {"tenant_boundary_crossed_indicator": False, "cross_tenant_exposure_indicator": False,
                                 "cross_customer_exposure_indicator": False,
-                                "basis": "single-tenant runtime; egress limited to bank API and ERP; "
+                                "boundary_assessment_basis": "single-tenant runtime; egress limited to bank API and ERP; "
                                          "connector telemetry shows no other destinations"}
     later(recon_sec + 60, e)
 
+    batch_total = amount_from_decimal(str(round(sum(AMOUNTS), 2)))
     e = base_env("execution_completed", recon_sec + 90, "execution", "span-batch")
     e["summary"] = {"committed_count": 14, "exception_count": 0, "human_intervention_count": 0,
-                    "aggregate": {"amount": round(sum(AMOUNTS), 2), "currency": "EUR"},
-                    "batch_limit_utilisation_ratio": round(sum(AMOUNTS) / BATCH_LIMIT, 4),
-                    "peak_per_payment_utilisation_ratio": max(r["utilisation"] for r in payment_rows)}
+                    "aggregate": batch_total}
     later(recon_sec + 90, e)
 
     e = base_env("evidence_exported", recon_sec + 120, "execution", "span-export", "span-batch")
-    e["export"] = {"evidence_bundle_id": "bundle:APRUN-2026-06-09-A",
-                   "final_anchor": "__FILL_AT_CHAIN_TIME__"}
+    e["export"] = {"evidence_bundle_ref": "bundle:APRUN-2026-06-09-A",
+                   "final_anchor": ("__FILL_AT_CHAIN_TIME__", recon_sec + 120)}
     later(recon_sec + 120, e)
 
     # --- phase 2: chain in time order --------------------------------------
     pending.sort(key=lambda t: (t[0], t[1]))
     for sec, _, env in pending:
-        if env.get("anchoring") == "__FILL_AT_CHAIN_TIME__":
-            env["anchoring"] = ch.anchor(sec)            # receipt over current chain head
-        if isinstance(env.get("export"), dict) and env["export"].get("final_anchor") == "__FILL_AT_CHAIN_TIME__":
-            env["export"]["final_anchor"] = ch.anchor(sec)
+        if isinstance(env.get("anchoring"), tuple):
+            env["anchoring"] = ch.anchor(env["anchoring"][1])     # block over current chain head
+        if isinstance(env.get("export"), dict) and isinstance(env["export"].get("final_anchor"), tuple):
+            env["export"]["final_anchor"] = ch.anchor(env["export"]["final_anchor"][1])
+        for blk in (env.get("anchoring"), (env.get("export") or {}).get("final_anchor")):
+            if isinstance(blk, dict):   # anchored before the carrying record is emitted
+                assert blk["anchors"][0]["anchored_at"] <= env["emitted_at"], env["event_kind"]
         ch.emit(env)
 
     return ch, payment_rows, artifacts
@@ -376,6 +430,9 @@ def build():
 # 5. Reports A-D (every material sentence carries [env:NNNN | field.path] citations)
 # ----------------------------------------------------------------------------
 def cite(env, path): return f"[env:{env['sequence_number']:04d} | {path}]"
+
+def fmt_eur(amt: dict) -> float:
+    return int(amt["value"]) / (10 ** amt["decimals"])
 
 def write_reports(ch, rows, artifacts):
     by_kind = {}
@@ -388,9 +445,10 @@ def write_reports(ch, rows, artifacts):
     exported = by_kind["evidence_exported"][0]
     anchors = by_kind["attestation_recorded"]
     hbs = by_kind["heartbeat_event"]
-    total = done["summary"]["aggregate"]["amount"]
-    peak = done["summary"]["peak_per_payment_utilisation_ratio"]
-    batch_util = done["summary"]["batch_limit_utilisation_ratio"]
+    total_amt = done["summary"]["aggregate"]
+    total = fmt_eur(total_amt)
+    peak = max(r["utilisation"] for r in rows)
+    batch_util = ratio_display(int(total_amt["value"]), int(BATCH_LIMIT["value"]))
     n_env = len(ch.envelopes)
 
     # ---------------- Report A: Board assurance summary --------------------
@@ -398,24 +456,24 @@ def write_reports(ch, rows, artifacts):
 **Organisation:** Caldera Robotics Ltd · **Period:** 2026-06-09 09:00–09:11 UTC (settlement reconciled T+0 EOD) · **Assurance basis:** SE v0.1-draft evidence, scoped - see Reliance Boundary.
 
 ## The assurance statement
-> **An authorised autonomous process executed 14 payment instructions under delegated authority AD-7844.** {cite(commit_ok[0],'authority.authority_context_id')} {cite(done,'summary.committed_count')} - all 14 commit events carry `authority_context_id = AD-7844` with delegation receipt `delrec:AD-7844/2026-04-02` granted by the CFO {cite(commit_ok[0],'authority.delegation_receipt_id')} {cite(commit_ok[0],'authority.delegator_id')} under payment policy v3.2 in force throughout {cite(commit_ok[0],'authority.policy_version')}.
+> **An authorised autonomous process executed 14 payment instructions under delegated authority AD-7844.** {cite(commit_ok[0],'authority.authority_context_ref')} {cite(done,'summary.committed_count')} - all 14 commit events carry `authority_context_ref = AD-7844` with delegation receipt `delrec:AD-7844/2026-04-02` granted by the CFO {cite(commit_ok[0],'authority.delegation_receipt_ref')} {cite(commit_ok[0],'authority.delegator_id')} under payment policy v3.2 in force throughout {cite(commit_ok[0],'authority.policy_version')}.
 >
-> **All payments remained within approved policy boundaries.** Each of the 14 instructions passed three pre-commit policy checks - approved-beneficiary, per-payment limit, and duplicate-key - evaluated *before* execution, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. Peak single-payment authority utilisation was {peak:.1%} of the €25,000 limit (payment 3) {cite(policy[2],'controls.checks[1].observed.authority_utilisation_ratio')}; batch aggregate €{total:,.2f} used {batch_util:.1%} of the €150,000 batch limit {cite(done,'summary.batch_limit_utilisation_ratio')}.
+> **All payments remained within approved policy boundaries.** Each of the 14 instructions passed three pre-commit policy checks - approved-beneficiary, per-payment limit, and duplicate-key - evaluated *before* execution, 42 control evaluations in total, all passed {cite(policy[0],'controls.control_evaluation_phase')} {cite(policy[0],'controls.checks[*].control_result')}. Peak single-payment authority utilisation was {peak:.1%} of the EUR 25,000 limit (payment 3, derived from Amount operands) {cite(policy[2],'controls.checks[1].observed.amount')} {cite(policy[2],'controls.checks[1].observed.limit')}; batch aggregate EUR {total:,.2f} used {batch_util:.1%} of the EUR 150,000 batch limit (report-layer derived).
 >
 > **No exceptions requiring human intervention occurred.** Exception count 0, human-intervention count 0 {cite(done,'summary.exception_count')} {cite(done,'summary.human_intervention_count')}; no approval was required under the policy rule for at-limit payments to approved beneficiaries {cite(policy[0],'authority.approval_status')} {cite(policy[0],'authority.approval_basis')}.
 >
-> **Evidence integrity validated.** All {n_env} envelopes form an unbroken SHA-256 hash chain (re-verified at report generation), externally anchored at 5-minute intervals - {len(anchors)} anchor receipts {cite(anchors[0],'anchoring.anchor_receipt_id')}; emission ran fail-closed for commit-boundary actions throughout {cite(commit_ok[0],'emission.emission_fail_posture')}; liveness heartbeats present for every 60-second interval of the run with zero silent windows {cite(hbs[0],'liveness.liveness_status')}.
+> **Evidence integrity validated.** All {n_env} envelopes form an unbroken SHA-256 hash chain (re-verified at report generation), with the chain head recorded every 5 minutes in {len(anchors)} in-trace anchors that are simulated and say so (`basis_status: simulated`, never `externally_anchored`) {cite(anchors[0],'anchoring.anchors[0].basis_status')}; emission ran fail-closed for commit-boundary actions throughout {cite(commit_ok[0],'emission.emission_fail_posture')}; liveness heartbeats present for every 60-second interval of the run with zero silent windows {cite(hbs[0],'liveness.liveness_status')}.
 >
-> **No cross-tenant data exposure detected.** Tenant-boundary and cross-customer exposure indicators are false, on the stated basis that runtime egress was limited to the bank API and ERP {cite(bound,'boundary_assessment.cross_tenant_exposure_indicator')} {cite(bound,'boundary_assessment.basis')}.
+> **No cross-tenant data exposure detected.** Tenant-boundary and cross-customer exposure indicators are false, on the stated basis that runtime egress was limited to the bank API and ERP {cite(bound,'boundary_assessment.cross_tenant_exposure_indicator')} {cite(bound,'boundary_assessment.boundary_assessment_basis')}.
 
 ## What the board should know
-- **External confirmation, not self-assertion:** every payment carries a three-rung acknowledgment ladder - transport (HTTPS 200), protocol (bank API ACCEPTED), business (ISO 20022 pacs.002 status **ACSC** = settlement completed) {cite(commit_ok[0],'acknowledgments[*]')} - and the bank's end-of-day camt.053 statement reconciles **14 of 14** instructions {cite(recon,'reconciliation.statement_count_bank')}.
-- **Completeness is measured, not asserted:** the in-scope population is independently defined (ERP approved-invoice queue: 14 due; bank statement: 14 booked) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% {cite(recon,'reconciliation.evidence_population_ref')} {cite(recon,'reconciliation.evidence_coverage_ratio')}.
+- **External confirmation, not self-assertion:** every payment carries a three-rung acknowledgment ladder - transport (HTTPS 200), protocol (bank API ACCEPTED), business (ISO 20022 pacs.002 status **ACSC** = settlement completed) {cite(commit_ok[0],'acknowledgments[*]')} - and the bank's end-of-day camt.053 statement reconciles **14 of 14** instructions {cite(recon,'reconciliation.bank_statement_count')}.
+- **Completeness is measured, not asserted:** the in-scope population is independently defined (ERP approved-invoice queue: 14 due; bank statement: 14 booked) and evidence coverage is **14/14 = 100%**, tamper-evident coverage 100% (report-layer derived) {cite(recon,'reconciliation.evidence_population_ref')} {cite(recon,'reconciliation.envelope_commit_count')}.
 - **Leading indicator:** one payment ran at {peak:.1%} of its limit; nothing breached, but limit headroom on supplier SUP-003 invoices is worth a policy review.
 - **Recommended position:** continue autonomous operation at current scope; no restriction indicated by this run's evidence.
 
 ## Reliance boundary
-This report evidences this run only; it supports internal assurance and audit reliance for the stated period and population. It is **not** a compliance certification, and statements are bounded by the capture boundary declared in the Regulator Pack (§4). Signatures and anchor receipts in this golden trace are stubs pending the SE v0.1 signing profile.
+This report evidences this run only; it supports internal assurance and audit reliance for the stated period and population. It is **not** a compliance certification, and statements are bounded by the capture boundary declared in the Regulator Pack (§4). In this golden trace envelope signatures are stubs (`envelope_signature_basis_status: stubbed`) and in-trace anchors are simulated (`basis_status: simulated`); neither is an independently verifiable claim.
 """
 
     # ---------------- Report B: Audit & control view -----------------------
@@ -435,14 +493,14 @@ Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-c
 
 ## 2. Population and completeness (IPE basis)
 - Population definition: ERP approved-invoice queue at 08:55Z (14 due) reconciled against bank statement FMB-STMT-2026-06-09 (14 booked) - **independently reconciled**, not self-reported {cite(recon,'reconciliation.population_basis')}.
-- Coverage: envelopes 14/14 (100%); tamper-evident 100% {cite(recon,'reconciliation.evidence_coverage_ratio')}.
-- Sequence continuity: envelope sequence numbers 0001–{n_env:04d} contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) {cite(hbs[0],'liveness.declared_heartbeat_interval_s')}.
+- Coverage: envelopes 14/14 (100%); tamper-evident 100% (report-layer derived from envelope_commit_count).
+- Sequence continuity: envelope sequence numbers 0001–{n_env:04d} contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) {cite(hbs[0],'liveness.declared_heartbeat_interval')}.
 
 ## 3. Evidence quality
 - Origin/basis: runtime-observed; commit confirmations are **third-party confirmed** (pacs.002 ACSC per payment) and **source-system corroborated** (camt.053) {cite(commit_ok[0],'evidence_quality.corroboration_state')} {cite(recon,'evidence_quality.corroboration_state')}.
-- Corroboration coverage decomposition: anchored 100% · receipted 14/14 · provider-only 0.
+- Corroboration coverage decomposition: externally anchored 0 (in-trace anchors are `basis_status: simulated`) · receipted 14/14 · provider-only 0.
 - Point-in-time validity: policy v3.2 effective from 2026-05-01, in force at every event {cite(commit_ok[0],'authority.policy_version')}; delegation valid 2026-04-02 → 2026-12-31.
-- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped - *reproducible in distribution, not in instance* {cite(by_kind['context_retrieved'][0],'model.sampling_parameters')}; reasoning artifacts `provider_withheld` - disclosed, not silent {cite(by_kind['context_retrieved'][0],'model.reasoning_artifact_availability')}.
+- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped - *reproducible in distribution, not in instance* {cite(by_kind['context_retrieved'][0],'model.sampling_parameters')}; reasoning artifacts `provider_withheld` - disclosed, not silent {cite(by_kind['context_retrieved'][0],'model.reasoning_artifact_availability_status')}.
 
 ## 4. Findings register
 No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak per-payment utilisation {peak:.1%} - recommend limit-headroom review for SUP-003. Owner: AP process owner. Due: next policy cycle.
@@ -450,12 +508,12 @@ No exceptions, deficiencies, or open actions arise from this run. One observatio
 
     # ---------------- Report C: Regulator / external pack -------------------
     art_rows = "\n".join(f"| {n} | `{h[:16]}…` |" for n, h in sorted(artifacts.items()))
-    anch_rows = "\n".join(f"| {a['anchoring']['anchor_receipt_id']} | {a['anchoring']['anchored_at']} | `{a['anchoring']['chain_head_hash'][:16]}…` |"
+    anch_rows = "\n".join(f"| {a['anchoring']['anchors'][0]['anchor_id']} | {a['anchoring']['anchors'][0]['anchor_requested_at']} | {a['anchoring']['anchors'][0]['anchored_at']} | `{a['anchoring']['anchored_subject_hash'][:16]}…` | {a['anchoring']['anchors'][0]['basis_status']} |"
                           for a in anchors)
     C = f"""# External Assurance / Regulator Evidence Pack - APRUN-2026-06-09-A
 
 ## 1. Scope of evidence
-Autonomous accounts-payable payment execution by Caldera Robotics Ltd, run APRUN-2026-06-09-A, 2026-06-09 09:00–09:11 UTC, settlement reconciliation T+0 EOD. Evidence bundle `bundle:APRUN-2026-06-09-A` {cite(exported,'export.evidence_bundle_id')} - {n_env} envelopes, {len(artifacts)} referenced artifacts.
+Autonomous accounts-payable payment execution by Caldera Robotics Ltd, run APRUN-2026-06-09-A, 2026-06-09 09:00–09:11 UTC, settlement reconciliation T+0 EOD. Evidence bundle `bundle:APRUN-2026-06-09-A` {cite(exported,'export.evidence_bundle_ref')} - {n_env} envelopes, {len(artifacts)} referenced artifacts.
 
 ## 2. Systems involved (execution topology)
 agent:caldera/ap-pilot 2.4.1 → orchestrator:caldera/flowdeck 1.9 → model:anthropic/claude-sonnet-4-6 → gateway:caldera/toolproxy-3 → connector:openbank-gw 2.2.0 → provider:first-meridian-bank (SEPA Inst) · context source erp:ledgerworks/prod · runtime aws/eu-west-1 {cite(commit_ok[0],'actor')}. One authority chain spans all nodes (AD-7844).
@@ -464,22 +522,22 @@ agent:caldera/ap-pilot 2.4.1 → orchestrator:caldera/flowdeck 1.9 → model:ant
 Delegation AD-7844: CFO → AP agent; per-payment €25,000; batch €150,000; approved-beneficiary constraint (supplier-master v2026-05); validity 2026-04-02→2026-12-31; policy `caldera/ap-payments` v3.2 in force {cite(commit_ok[0],'authority.policy_ref')}. The granting principal (`delegator_id`) is recorded pseudonymously; resolution is available to authorised reviewers via the access model.
 
 ## 4. Evidence completeness and capture boundary
-Coverage 14/14 against an independently reconciled population (ERP queue + bank statement) {cite(recon,'reconciliation.evidence_coverage_ratio')}. **Declared capture boundary:** the interbank leg (pacs.008 between First Meridian and beneficiary banks) is *outside* the emitter's capture boundary and is evidenced indirectly via pacs.002 ACSC and camt.053; this is disclosed, not inferred. Emission posture fail-closed for commit-boundary actions {cite(commit_ok[0],'emission.emission_fail_posture')}.
+Coverage 14/14 against an independently reconciled population (ERP queue + bank statement) {cite(recon,'reconciliation.envelope_commit_count')}. **Declared capture boundary:** the interbank leg (pacs.008 between First Meridian and beneficiary banks) is *outside* the emitter's capture boundary and is evidenced indirectly via pacs.002 ACSC and camt.053; this is disclosed, not inferred. Emission posture fail-closed for commit-boundary actions {cite(commit_ok[0],'emission.emission_fail_posture')}.
 
 ## 5. Exceptions and material events
 None. 14/14 committed; 0 exceptions; 0 human interventions; 0 control failures {cite(done,'summary')}.
 
 ## 6. Cryptographic sealing status
-SHA-256 hash chain over canonical JSON (`canonicalisation_version = GT-JCS-0`), contiguous sequence 0001–{n_env:04d}; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope {cite(commit_ok[0] if False else by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
+SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalization_version = {CANON}`), contiguous sequence 0001-{n_env:04d}; chain re-verified at generation. In-trace anchoring every 300s to `anchorstore:trustline-demo/eu` is **simulated** (`anchoring_method: write_once_store`, `basis_status: simulated`), and no envelope asserts `externally_anchored` (D-020). Envelope signatures are **stubs** (`envelope_signature_basis_status: stubbed`) pending the SE signing profile. Every stub and simulation is stated in a `basis_status` field a verifier reads, not only in this prose (catalogue 1.27). Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope {cite(commit_ok[0] if False else by_kind['commit_attempted'][0],'privacy.redacted_fields')}.
 
 ## 7. Appendix A - artifact register (ISO 20022)
 | Artifact | SHA-256 |
 |---|---|
 {art_rows}
 
-## 8. Appendix B - anchor receipts
-| Receipt | Anchored at | Chain head |
-|---|---|---|
+## 8. Appendix B - in-trace anchors (simulated)
+| Anchor | Requested at | Anchored at | Chain head | basis_status |
+|---|---|---|---|---|
 {anch_rows}
 
 ## 9. Reliance boundary
@@ -496,7 +554,7 @@ Evidence supports: internal audit reliance; external review with re-verification
     D = f"""# Forensic Execution Pack - APRUN-2026-06-09-A
 
 ## 1. Verification procedure (vendor-neutral)
-1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with sorted keys and compact separators; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64×'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Regulator Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1–4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
+1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.envelope_signature`; serialise with RFC 8785 JCS; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64×'0'). 4. Confirm sequence numbers are contiguous. 5. Confirm `anchoring.anchored_subject_hash` at each `attestation_recorded` event equals the chain head before it, and that `anchor_requested_at` is not before that record's `emitted_at`. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1-6 are reproducible from the bundle alone. Step 5 shows internal consistency only: the in-trace anchors are `basis_status: simulated`. The external existence bound is on the release, not the trace: the release statement committing to this corpus is anchored with RFC 3161 and OpenTimestamps (repository `RELEASES.md`, `VERIFY.md`).
 
 ## 2. Envelope sequence (first 24 of {n_env}; full stream in envelopes.jsonl)
 | Seq | event_kind | Pay# | occurred_at | envelope_hash |
@@ -510,17 +568,17 @@ Evidence supports: internal audit reliance; external review with re-verification
 
 ## 4. Topology graph (declared = observed for this run)
 Nodes: agent ap-pilot 2.4.1 · orchestrator flowdeck 1.9 · model claude-sonnet-4-6 · gateway toolproxy-3 · connector openbank-gw 2.2.0 · provider first-meridian-bank · erp ledgerworks · runtime aws/eu-west-1.
-Edges: agent→orchestrator→model (inference); agent→gateway→connector→provider (commit path); agent→erp (context, read-only). No undeclared touchpoints observed (third-party touchpoint set exhaustive for this run; basis: connector egress telemetry) {cite(bound,'boundary_assessment.basis')}.
+Edges: agent→orchestrator→model (inference); agent→gateway→connector→provider (commit path); agent→erp (context, read-only). No undeclared touchpoints observed (third-party touchpoint set exhaustive for this run; basis: connector egress telemetry) {cite(bound,'boundary_assessment.boundary_assessment_basis')}.
 
 ## 5. Chronology and silence semantics
-Run window 09:00:00–09:10:52Z; heartbeats every 60s ({len(hbs)} beats, 0 silent windows); anchors at 300s cadence ({len(anchors)} receipts); EOD reconciliation 18:10Z. Emission fail-closed ⇒ within the declared boundary, absence of an envelope implies absence of a commit-boundary action.
+Run window 09:00:00–09:10:52Z; heartbeats every 60s ({len(hbs)} beats, 0 silent windows); simulated in-trace anchors at 300s cadence ({len(anchors)}); EOD reconciliation 18:10Z. Emission fail-closed ⇒ within the declared boundary, absence of an envelope implies absence of a commit-boundary action.
 
-## 6. Known stubs and limitations (golden trace)
-Signatures are placeholders; anchor store is simulated; pacs.002 webhook authenticity (mTLS) is asserted not demonstrated; the interbank pacs.008 leg is outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and artifact linkage are real and re-verifiable.
+## 6. Known stubs and limitations (golden trace gt-v2.1)
+Signatures are placeholders (`envelope_signature_basis_status: stubbed`). In-trace anchors are simulated (`basis_status: simulated`). The pacs.002 webhook (mTLS) and camt.053 statement-channel authenticity rungs are stubs (`basis_status: stubbed`); the HTTPS and bank-API rungs are `simulated` because the trace is synthetic. Each status is in a field a verifier reads (catalogue 1.27). A real on-chain anchor lane (EB-004, axes#3) remains open; the interbank pacs.008 leg is outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and artifact linkage are real and re-verifiable under RFC 8785 JCS with integer Amount fields (no JSON floats in hash scope).
 """
     for name, content in (("report_A_board.md", A), ("report_B_audit.md", B),
                           ("report_C_regulator.md", C), ("report_D_forensic.md", D)):
-        with open(os.path.join(OUT, "reports", name), "w", encoding="utf-8", newline="\n") as f: f.write(content)
+        write_text_utf8_lf(os.path.join(OUT, "reports", name), content)
 
 # ----------------------------------------------------------------------------
 # 6. Manifest, samples, verify, main
@@ -529,7 +587,7 @@ def verify(envs):
     prev = "0" * 64
     for n, e in enumerate(envs, 1):
         e2 = json.loads(json.dumps(e)); integ = e2["integrity"]
-        stored = integ.pop("envelope_hash"); integ.pop("signature")
+        stored = integ.pop("envelope_hash"); integ.pop("envelope_signature")
         if e["sequence_number"] != n: return False, f"sequence gap at {n}"
         if integ["previous_envelope_hash"] != prev: return False, f"chain break at {n}"
         if sha256_hex(canonical(e2)) != stored: return False, f"hash mismatch at {n}"
@@ -538,8 +596,10 @@ def verify(envs):
 
 def main():
     ch, rows, artifacts = build()
-    with open(os.path.join(OUT, "envelopes.jsonl"), "w", encoding="utf-8", newline="\n") as f:
-        for e in ch.envelopes: f.write(json.dumps(e) + "\n")
+    write_text_utf8_lf(
+        os.path.join(OUT, "envelopes.jsonl"),
+        "".join(json.dumps(e, ensure_ascii=False) + "\n" for e in ch.envelopes),
+    )
     ok, msg = verify(ch.envelopes); assert ok, msg
     write_reports(ch, rows, artifacts)
     # samples
@@ -549,21 +609,28 @@ def main():
              "envelope_anchor.json": lambda e: e["event_kind"]=="attestation_recorded"}
     for name, pred in picks.items():
         env = next(e for e in ch.envelopes if pred(e))
-        with open(os.path.join(OUT, "samples", name), "w", encoding="utf-8", newline="\n") as f: json.dump(env, f, indent=2)
-    # manifest
+        write_json_utf8_lf(os.path.join(OUT, "samples", name), env)
+    # manifest (sorted file list, forward-slash keys, for cross-platform byte stability)
     files = {}
+    rel_paths = []
     for root, _, fnames in os.walk(OUT):
-        for fn in sorted(fnames):
-            if fn == "manifest.json": continue
-            p = os.path.join(root, fn)
-            files[os.path.relpath(p, OUT)] = sha256_hex(open(p, "rb").read())
+        for fn in fnames:
+            if fn == "manifest.json":
+                continue
+            rel_paths.append(os.path.relpath(os.path.join(root, fn), OUT).replace("\\", "/"))
+    for rel in sorted(rel_paths):
+        p = os.path.join(OUT, *rel.split("/"))
+        files[rel] = sha256_hex(open(p, "rb").read())
+    assert_manifest_matches_files(OUT, files)
     bundle_hash = sha256_hex(canonical(files))
-    manifest = {"evidence_bundle_id": "bundle:APRUN-2026-06-09-A",
+    manifest = {"evidence_bundle_ref": "bundle:APRUN-2026-06-09-A",
                 "bundle_manifest_hash": bundle_hash, "generated_at": ts(0),
                 "envelope_count": len(ch.envelopes), "chain_head": ch.prev,
                 "chain_verification": msg, "files": files,
-                "note": "Golden trace: hashes real; signatures and anchor store simulated."}
-    with open(os.path.join(OUT, "manifest.json"), "w", encoding="utf-8", newline="\n") as f: json.dump(manifest, f, indent=2)
+                "corpus_asset_note": CORPUS_ASSET_NOTE,
+                "note": "Golden Trace gt-v2.1: hashes real (RFC 8785 JCS); signatures stubbed and in-trace anchors simulated, each stated in basis_status."}
+    write_json_utf8_lf(os.path.join(OUT, "manifest.json"), manifest)
+    assert_manifest_matches_files(OUT, files)
     print(msg); print(f"envelopes={len(ch.envelopes)} payments={len(rows)} artifacts={len(artifacts)} bundle={bundle_hash[:16]}…")
 
 if __name__ == "__main__":

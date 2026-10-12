@@ -1,0 +1,6 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.002.001.10">
+  <FIToFIPmtStsRpt>
+    <GrpHdr><MsgId>FMB-STS-14</MsgId><CreDtTm>2026-06-09T09:00:00.000Z</CreDtTm></GrpHdr>
+    <TxInfAndSts><OrgnlEndToEndId>E2E-CALD-20260609-0014</OrgnlEndToEndId><TxSts>ACSC</TxSts></TxInfAndSts>
+  </FIToFIPmtStsRpt>
+</Document>

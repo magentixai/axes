@@ -1,0 +1,149 @@
+{
+  "vector_format_ref": "axes:anchoring_vectors@1",
+  "summary_note": "Expected decisive result per vector (four-state vocabulary, D-023) with per-vector provenance (WO18 A4.3). Values are illustrative except anch_legacy_gt_v2_0.json and anch_gt_v2_0_translated.json (from the gt-v2.0 corpus at tag corpus/2026-08-08-gt-v2) and anch_gt_v2_1_corpus.json (from the gt-v2.1 corpus).",
+  "vectors": {
+    "anch_legacy_gt_v2_0.json": {
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "legacy_unstructured_anchor",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "Golden Trace v2.0 envelope 37 (fin), anchoring and evidence_quality members copied byte for byte; D-015 reading rule",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anch_legacy_under_gt_v2_1.json": {
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "anchor_status_in_method",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "Same block presented as gt-v2.1; catalogue 1.27 retires status inside the method value",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anch_simulated_honest.json": {
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "basis_not_demonstrated",
+        "verification_subject_type": "operator"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO18 A2: simulated anchor that claims nothing external",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anch_simulated_claims_external.json": {
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "anchor_simulated_claims_external",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "D-020: externally_anchored is earned, never asserted",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anch_proof_absent.json": {
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "anchor_proof_absent",
+        "verification_subject_type": "operator"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO18 A4.2: absent proof is a producer defect, distinct from unresolvable",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anch_canonical_contract.json": {
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_reason_code": null,
+        "verification_condition_code": null,
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO18 A4.4 pass twin: commitment event from the contract named in anchor_service_ref",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anch_lookalike_contract.json": {
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "anchor_noncanonical_contract",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO18 A4.4 fail twin: identical event from a lookalike contract (address poisoning, babyblueviper1, x402#2887)",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anch_plain_transfer.json": {
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "anchor_not_a_commitment",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO18 A4.4: a token transfer at the canonical contract carries no commitment",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anch_commitment_mismatch.json": {
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "anchor_commitment_mismatch",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "Commitment event at the canonical contract for a different digest",
+        "authored_on": "2026-10-04"
+      }
+    },
+    "anch_gt_v2_0_translated.json": {
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "anchor_simulated_claims_external",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO21 pair, fail side: gt-v2.0 fin envelope 37 translated mechanically to the gt-v2.1 shape (schema/key-aliases.json); it keeps externally_anchored over a simulated anchor, which D-020 reads as contradicted. Untranslated, the same bytes are contradicted as anchor_status_in_method (anch_legacy_under_gt_v2_1.json)",
+        "authored_on": "2026-10-12"
+      }
+    },
+    "anch_gt_v2_1_corpus.json": {
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "basis_not_demonstrated",
+        "verification_subject_type": "operator"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO21 pair, pass side: gt-v2.1 fin envelope 36, anchoring and evidence_quality copied byte for byte. Simulated and saying so: indeterminate, never contradicted",
+        "authored_on": "2026-10-12"
+      }
+    }
+  }
+}

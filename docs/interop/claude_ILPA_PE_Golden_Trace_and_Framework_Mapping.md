@@ -100,7 +100,7 @@ All identifiers below are **provisional placeholders** for the build. Run/delega
 | 2 | **Pre-commit controls** | Commitment-cap check; uncalled-capital / recycling-limit check; beneficiary & bank-detail verification; maker-checker; call-notice-period / value-date | `external_commit.attempted` with control evidence: cap/limit checks; `identity_verification_ref` / `consent_authority_match` (bank details); `dual_control_required_indicator`, `maker_ref` / `checker_ref`; `deadline_ref` + value/settlement date |
 | 3 | **Commit boundary** | CC&D notice issued / cash moved; LP inbound-wire leg declared outside the capture boundary by design | `external_commit.completed`; `corroboration_state` graded per fact; `capture_boundary` declaration (LP wire leg `outside_capture_boundary`, parallel to the interbank `pacs.008` leg in the AP example) |
 | 4 | **Reconciliation** | Called vs committed against the commitment register; cash against the bank statement; authority utilisation | `source_system_reconciliation` event (GT-001); `authority_utilisation_ratio` (called capital vs remaining commitment  -  the leading-indicator move from GT-005) |
-| 5 | **Hash chain** | Append-only envelope chain across all three runs; corrections as new envelopes; external anchor | `envelope_hash` chain; `supersedes_envelope_id` + `amendment_reason` for a corrected notice; `external_anchor_ref` (SIMULATED in v1; real `distributed_ledger` anchor in v2 per EB-004 / axes#3) |
+| 5 | **Hash chain** | Append-only envelope chain across all three runs; corrections as new envelopes; external anchor | `envelope_hash` chain; `supersedes_envelope_id` + `amendment_reason` for a corrected notice; `anchoring.anchors[].anchor_record_ref` (Module 14; in-trace anchors carry `basis_status: simulated` from gt-v2.1, never `externally_anchored`; real on-chain lane per EB-004 / axes#3 open) |
 
 ### 3.6 Event-to-period rollup (the Topology-stressing part)
 
@@ -124,7 +124,7 @@ The LP view is deliberately **not** a fifth report type. It is the ILPA artifact
 
 ### 3.8 Scoped-assurance / honest-limits notes (build these into the bundle)
 
-- **v1 stubs, declared:** signatures are `SIG-STUB`; the external anchor is `SIMULATED`. State the reading rule in the bundle, as the AP corpus does. A SIMULATED anchor is not a closed independent bound.
+- **Stubs, declared in fields:** signatures are `SIG-STUB` with `envelope_signature_basis_status: stubbed`; in-trace anchors are `write_once_store` with `basis_status: simulated` (the gt-v2.1 form; gt-v2.0 used the retired `write_once_store (SIMULATED)`). A simulated anchor is not a closed independent bound and never carries `externally_anchored`; the release statement is where a real anchor belongs, as for the AP corpus.
 - **Autonomy is nascent:** frame as "as fee engines, notice generation and reconciliation bots automate, their ILPA outputs need trustworthy execution evidence"  -  not "autonomous fund ops today".
 - **ILPA is voluntary:** AXES asserts execution-under-authority, **never** guaranteed ILPA conformance or regulatory compliance.
 - **Moving target:** map to the XML definitions; version the mapping against the v2.0 suite.

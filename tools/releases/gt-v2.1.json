@@ -1,0 +1,16 @@
+{
+  "release": "gt-v2.1",
+  "tag": "corpus/2026-10-12-gt-v2.1",
+  "commit": "c72b620",
+  "note": "Published digests of the corpus of record. Changes only in an announced release (D-018), in the same commit as the RELEASES.md row. Earlier releases: tools/releases/.",
+  "corpora": {
+    "golden-trace": {
+      "chain_head": "cbd1a73e910bd51f01cf5dd097c9a68869b733550d96db891d0f288bd4db59f1",
+      "bundle_manifest_hash": "e922486b74689592ddc54c74725c9c5a55d8d793f12cade2e58929ab4801164e"
+    },
+    "golden-trace-ind": {
+      "chain_head": "5ca428eac8ed5dde5b7720218712bdd2ede484a6892ac7894db2e1772a519dd6",
+      "bundle_manifest_hash": "dd01b56c718c6a61f06725318ab99738799128d9cb527d5e468e9be5b78ebb31"
+    }
+  }
+}

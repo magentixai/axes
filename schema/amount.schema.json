@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://magentix.ai/axes/schema/amount.schema.json",
+  "title": "Amount",
+  "description": "Integer atomic units for any asset-denominated quantity (money, limits). No JSON floats in hash scope. Asset is a namespaced reference so fiat and crypto are unambiguous.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["value", "decimals", "asset"],
+  "properties": {
+    "value": {
+      "type": "string",
+      "pattern": "^[0-9]+$",
+      "description": "Base-10 integer atomic units (string clears the 2^53 JSON-number ceiling)."
+    },
+    "decimals": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Asset scale (e.g. 2 for iso4217:EUR minor units, 6 for USDC)."
+    },
+    "asset": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Namespaced asset reference. Fiat: iso4217:<CODE> (e.g. iso4217:EUR). Crypto: caip19:<CAIP-19 asset id> (e.g. caip19:eip155:8453/erc20:0x…)."
+    }
+  }
+}

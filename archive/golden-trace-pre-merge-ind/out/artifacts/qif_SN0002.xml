@@ -1,0 +1,10 @@
+<QIFDocument xmlns="http://qifstandards.org/xsd/qif3">
+  <Product><PartNumber>IMP-4471</PartNumber><SerialNumber>IMP4471-0002</SerialNumber></Product>
+  <ResultsSummary>
+    <Characteristic name="Ø25 H7 bore" nominal="25.000" upper="25.021" lower="25.0">
+      <MeasuredValue unit="mm">25.0108</MeasuredValue>
+      <Disposition>CONFORMING</Disposition>
+    </Characteristic>
+    <InspectionRecord id="SN0002"/>
+  </ResultsSummary>
+</QIFDocument>

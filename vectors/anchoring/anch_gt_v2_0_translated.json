@@ -1,0 +1,25 @@
+{
+  "corpus_release_ref": "gt-v2.1",
+  "record": {
+    "evidence_quality": {
+      "evidence_origin": "runtime",
+      "assertion_basis": "observed",
+      "corroboration_state": "externally_anchored"
+    },
+    "anchoring": {
+      "anchored_subject_type": "chain_head",
+      "anchored_subject_hash": "bb8c3c3402fb5a55b2d59289407aca05cc4e6457c350080744df523b047ccff0",
+      "anchored_subject_hash_algorithm": "SHA-256",
+      "anchors": [
+        {
+          "anchor_id": "anch:001",
+          "anchoring_method": "write_once_store",
+          "basis_status": "simulated",
+          "anchor_commitment_hash": "bb8c3c3402fb5a55b2d59289407aca05cc4e6457c350080744df523b047ccff0",
+          "anchor_commitment_hash_algorithm": "SHA-256",
+          "anchor_service_id": "anchorstore:trustline-demo/eu"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "evaluation_id": "eval:axes:gt_fin_regulator@1:b6fad8120c6e4a9a",
+  "requirement_profile_ref": "axes:gt_fin_regulator@1",
+  "requirement_profile_version": "1",
+  "requirement_profile_hash": "ba17764acfa163f5d6dffeb3d0422a932adef7b23a44a8827856e49f3f0b79d6",
+  "hash_algorithm": "SHA-256",
+  "subject_type": "bundle",
+  "subject_hashes": [
+    "b6fad8120c6e4a9a30dd8c30dc5b7b631e556df320eca094624c299ec3503128"
+  ],
+  "evaluator_id": "axes:reference_evaluator@1",
+  "evaluator_version": "1",
+  "evaluated_at": "2026-10-12T00:00:00.000Z",
+  "pinned_evidence_items": [],
+  "results": [
+    {
+      "requirement_ref": "ia_chain_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "76 envelopes linked",
+      "evidence_refs": []
+    },
+    {
+      "requirement_ref": "ia_sequence_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "sequence 1..76 contiguous",
+      "evidence_refs": []
+    },
+    {
+      "requirement_ref": "ia_authority_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "28 of 28 envelopes in scope: present",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0005",
+        "env:APRUN-2026-06-09-A/0007",
+        "env:APRUN-2026-06-09-A/0010",
+        "env:APRUN-2026-06-09-A/0012",
+        "env:APRUN-2026-06-09-A/0014"
+      ]
+    },
+    {
+      "requirement_ref": "ia_authority_02",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "28 of 28 envelopes in scope: present",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0005",
+        "env:APRUN-2026-06-09-A/0007",
+        "env:APRUN-2026-06-09-A/0010",
+        "env:APRUN-2026-06-09-A/0012",
+        "env:APRUN-2026-06-09-A/0014"
+      ]
+    },
+    {
+      "requirement_ref": "ia_basis_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "28 of 28 envelopes in scope: present",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0005",
+        "env:APRUN-2026-06-09-A/0007",
+        "env:APRUN-2026-06-09-A/0010",
+        "env:APRUN-2026-06-09-A/0012",
+        "env:APRUN-2026-06-09-A/0014"
+      ]
+    },
+    {
+      "requirement_ref": "ia_corroboration_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "14 of 14 envelopes in scope: present",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0007",
+        "env:APRUN-2026-06-09-A/0012",
+        "env:APRUN-2026-06-09-A/0016",
+        "env:APRUN-2026-06-09-A/0021",
+        "env:APRUN-2026-06-09-A/0026"
+      ]
+    },
+    {
+      "requirement_ref": "reg_anchor_01",
+      "verification_state": "indeterminate",
+      "verification_subject_type": "artifact",
+      "observed_note": "3 of 3 envelopes in scope: 0 qualifying anchors, 1 required",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0036",
+        "env:APRUN-2026-06-09-A/0067",
+        "env:APRUN-2026-06-09-A/0072"
+      ],
+      "verification_reason_code": "absence",
+      "verification_condition_code": "anchor_insufficient"
+    },
+    {
+      "requirement_ref": "reg_signature_01",
+      "verification_state": "indeterminate",
+      "verification_subject_type": "operator",
+      "observed_note": "76 of 76 envelopes in scope: /integrity/envelope_signature basis_status stubbed",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0001",
+        "env:APRUN-2026-06-09-A/0002",
+        "env:APRUN-2026-06-09-A/0003",
+        "env:APRUN-2026-06-09-A/0004",
+        "env:APRUN-2026-06-09-A/0005"
+      ],
+      "verification_reason_code": "absence",
+      "verification_condition_code": "basis_not_demonstrated"
+    }
+  ],
+  "overall_verification_state": "indeterminate",
+  "guarantee_type": "conditional",
+  "conditional_requirement_refs": [
+    "reg_anchor_01",
+    "reg_signature_01"
+  ],
+  "subject_release_ref": "gt-v2.1",
+  "key_translation_ref": "schema/key-aliases.json (0 paths translated)",
+  "result_core_hash": "adf36238865c3a9a4949ff31e145787ee12b0bb1590c9e133ca1f1d86d2f78f2"
+}

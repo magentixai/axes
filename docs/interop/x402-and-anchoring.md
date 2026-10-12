@@ -28,25 +28,54 @@ A local hash chain proves order and tamper-evidence **inside** the emitter's cor
 | Ordering | Yes | Not its job |
 | "Existed by time T without trusting the issuer" | No | Yes - only if a third party can verify the receipt offline (or against a public log) without the emitter's runtime |
 
-## Golden Trace v1 - simulated anchor (honest reading)
+## Golden Trace anchors - honest reading
 
-[`envelope_anchor.json`](../../examples/golden-trace/out/samples/envelope_anchor.json) carries:
+### gt-v2.1 (current corpus of record)
+
+[`envelope_anchor.json`](../../examples/golden-trace/out/samples/envelope_anchor.json) carries a Module 14 block:
+
+```json
+"anchoring": {
+  "anchored_subject_type": "chain_head",
+  "anchored_subject_hash": "<real local chain head>",
+  "anchored_subject_hash_algorithm": "SHA-256",
+  "anchors": [{
+    "anchor_id": "anch:001",
+    "anchoring_method": "write_once_store",
+    "basis_status": "simulated",
+    "anchor_commitment_hash": "<same chain head>",
+    "anchor_commitment_hash_algorithm": "SHA-256",
+    "anchor_requested_at": "2026-06-09T09:05:00.000Z",
+    "anchored_at": "2026-06-09T09:05:00.250Z",
+    "anchor_service_id": "anchorstore:trustline-demo/eu",
+    "anchor_record_ref": "object:trustline-demo/eu/001",
+    "anchor_operator_id": "org:trustline-demo"
+  }]
+}
+"evidence_quality": {"corroboration_state": "internally_corroborated", ...}
+```
+
+| Element | Status |
+|---|---|
+| `anchored_subject_hash` | **Real** - SHA-256 of the local chain head at that moment |
+| Envelope hash chain / sequence | **Real** and regenerable |
+| Write to an external store | **Simulated**, and stated in `basis_status`, which a verifier reads |
+| `externally_anchored` | **Not asserted** on any envelope (D-020); the verifier reports these anchors `indeterminate` / `basis_not_demonstrated` |
+| Envelope signatures | **Stubbed**, stated in `envelope_signature_basis_status` |
+| The release that publishes the corpus | **Anchored for real**: the gt-v2.1 release statement (RFC 8785 JCS, committing to both chain heads and both bundle digests) carries RFC 3161 and OpenTimestamps anchors that verify offline with `tools/anchoring/` ([RELEASES.md](../../RELEASES.md), [VERIFY.md](../../VERIFY.md)) |
+
+The trace is synthetic (fictional Caldera Robotics, 2026-06-09 timeline), so its in-trace anchors cannot be anchored at fictional past instants; pretending otherwise would be a new overclaim. The existence bound is on the release: the trace's own anchors are simulated and say so in a field a verifier reads; the release that publishes the trace is anchored for real, and anyone can check it.
+
+### gt-v2.0 and earlier (superseded)
+
+gt-v2.0 envelopes carry:
 
 ```text
 anchoring_method: "write_once_store (SIMULATED)"
 corroboration_state: "externally_anchored"
 ```
 
-| Element | Status |
-|---|---|
-| `chain_head_hash` | **Real** - SHA-256 of the local chain head at that moment |
-| Envelope hash chain / sequence | **Real** and regenerable |
-| Write to an external store | **Simulated** - demo `anchor_store_ref` only |
-| Third-party existence verification | **Not possible** from the bundle alone |
-| Forensic procedure step comparing "anchor store" | Explicitly simulated ([report_D](../../examples/golden-trace/out/reports/report_D_forensic.md)) |
-| Envelope signatures | **Stubbed** (`SIG-STUB`) - separate hole beside anchoring |
-
-**Reading rule:** `corroboration_state: externally_anchored` on a SIMULATED method must **not** be treated as a closed existence bound. Disclosure in the Golden Trace README is mandatory; disclosure is not completion. Golden Trace v2 (D-008) replaces the stub with at least one real `anchoring_method` instance whose receipt verifies without Magentix AI infrastructure.
+**Reading rule (gt-v2.0 and earlier):** `corroboration_state: externally_anchored` on a SIMULATED method must **not** be treated as a closed existence bound (D-015). Under gt-v2.0 rules the verifier reads these blocks as `legacy_unstructured_anchor`; under current rules the same bytes are `contradicted` (`vectors/anchoring/anch_legacy_under_gt_v2_1.json`, `anch_gt_v2_0_translated.json`).
 
 ## EvidenceAnchor SPI (AGT) - interface vs AXES
 

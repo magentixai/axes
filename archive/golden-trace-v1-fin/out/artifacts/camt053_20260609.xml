@@ -1,0 +1,18 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.08">
+  <BkToCstmrStmt><Stmt><Id>FMB-STMT-2026-06-09</Id>
+    <Ntry><Amt Ccy="EUR">4475.00</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0001</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">12880.50</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0002</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">23900.00</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0003</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">9240.10</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0004</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">3318.75</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0005</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">15602.00</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0006</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">7777.77</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0007</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">1949.99</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0008</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">11025.40</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0009</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">6890.00</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0010</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">2475.25</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0011</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">8112.60</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0012</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">5230.95</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0013</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+    <Ntry><Amt Ccy="EUR">4527.87</Amt><Sts>BOOK</Sts><NtryDtls><TxDtls><Refs><EndToEndId>E2E-CALD-20260609-0014</EndToEndId></Refs></TxDtls></NtryDtls></Ntry>
+  </Stmt></BkToCstmrStmt>
+</Document>

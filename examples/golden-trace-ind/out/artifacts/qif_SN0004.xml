@@ -1,7 +1,7 @@
 <QIFDocument xmlns="http://qifstandards.org/xsd/qif3">
   <Product><PartNumber>IMP-4471</PartNumber><SerialNumber>IMP4471-0004</SerialNumber></Product>
   <ResultsSummary>
-    <Characteristic name="Ø25 H7 bore" nominal="25.000" upper="25.021" lower="25.0">
+    <Characteristic name="Ã˜25 H7 bore" nominal="25.000" upper="25.021" lower="25.0">
       <MeasuredValue unit="mm">25.0078</MeasuredValue>
       <Disposition>CONFORMING</Disposition>
     </Characteristic>

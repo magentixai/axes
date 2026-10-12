@@ -1,0 +1,101 @@
+{
+  "requirement_profile_id": "axes:gt_fin_internal_audit@1",
+  "requirement_profile_version": "1",
+  "profile_purpose_type": "sufficiency",
+  "publisher_id": "https://github.com/magentixai/axes",
+  "relying_party_roles": [
+    "auditor"
+  ],
+  "subject_types": [
+    "bundle"
+  ],
+  "effective_from": "2026-10-04T00:00:00.000Z",
+  "unsettled_question_notes": [
+    "Whether a heartbeat gap shorter than the declared interval counts as a sequence gap is not pinned.",
+    "Corroboration is read per envelope; no rule here weighs corroboration across envelopes."
+  ],
+  "vector_set_ref": "vectors/profiles/ on golden-trace-v2",
+  "requirements": [
+    {
+      "requirement_id": "ia_chain_01",
+      "check_type": "chain_integrity",
+      "subject_type": "bundle",
+      "obligation_type": "required",
+      "floor_indicator": false,
+      "rationale_note": "Every envelope must link to its predecessor by hash.",
+      "source_refs": [
+        "docs/09"
+      ]
+    },
+    {
+      "requirement_id": "ia_sequence_01",
+      "check_type": "sequence_continuity",
+      "subject_type": "bundle",
+      "obligation_type": "required",
+      "floor_indicator": false,
+      "rationale_note": "No gap in the emitted sequence.",
+      "source_refs": [
+        "Module 01 1.12"
+      ]
+    },
+    {
+      "requirement_id": "ia_authority_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "field_path": "/authority/delegator_id",
+      "obligation_type": "conditional",
+      "condition_expression": "in(/event_kind, [\"commit_attempted\", \"commit_succeeded\"])",
+      "floor_indicator": false,
+      "rationale_note": "Every commit names the principal who delegated it.",
+      "source_refs": [
+        "CRE-004",
+        "docs/06 2.1"
+      ]
+    },
+    {
+      "requirement_id": "ia_authority_02",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "field_path": "/authority/policy_ref",
+      "obligation_type": "conditional",
+      "condition_expression": "in(/event_kind, [\"commit_attempted\", \"commit_succeeded\"])",
+      "floor_indicator": false,
+      "rationale_note": "Every commit cites the policy in force.",
+      "source_refs": [
+        "CRE-004"
+      ]
+    },
+    {
+      "requirement_id": "ia_basis_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "field_path": "/evidence_quality/assertion_basis",
+      "obligation_type": "conditional",
+      "condition_expression": "in(/event_kind, [\"commit_attempted\", \"commit_succeeded\"])",
+      "accepted_values": [
+        "observed",
+        "measured"
+      ],
+      "floor_indicator": false,
+      "rationale_note": "A commit is evidenced by observation or measurement, not assertion.",
+      "source_refs": [
+        "docs/06 2.11"
+      ]
+    },
+    {
+      "requirement_id": "ia_corroboration_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "field_path": "/evidence_quality/corroboration_state",
+      "obligation_type": "conditional",
+      "condition_expression": "equals(/event_kind, \"commit_succeeded\")",
+      "minimum_value": "third_party_confirmed",
+      "value_ladder_ref": "axes:corroboration_state_ladder@1",
+      "floor_indicator": false,
+      "rationale_note": "A completed money movement is confirmed by a third party.",
+      "source_refs": [
+        "docs/06 harmonisation 2.9"
+      ]
+    }
+  ]
+}

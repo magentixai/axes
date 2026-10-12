@@ -36,6 +36,8 @@ The venue-path trigger - a second independent implementation, defined above as a
 
 This is a condition on independent implementation, not a claim that AXES is finished or adopted; AXES remains a public working draft that evidences and does not certify. Corpus verification is not an SE-Cx conformance badge (decision D-008), and the witnessed-checkpoint lane currently runs a single log operator - the 4-of-7 external witness quorum detects a silently forked log, it does not remove the fact of one operator. On this basis the steward will open incubation conversations with a recognised standards venue. Per-contribution credits are in registers/decision-register.md and PROVENANCE.md; the implementations are listed in the README.
 
+The reproductions above were run against gt-v2.0 (tag `corpus/2026-08-08-gt-v2`) and stand as history: superseded is not wrong. The current corpus of record is gt-v2.1 (tag `corpus/2026-10-12-gt-v2.1`, see RELEASES.md), and everyone who published a result against gt-v2.0 has been invited to re-verify it. gt-v2.1 is not described as independently verified until someone has.
+
 
 ## Conduct
 
