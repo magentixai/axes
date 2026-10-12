@@ -33,7 +33,7 @@ python tools/generate_jcs_property_vectors.py
 
 Regenerating Golden Trace / `generate_conformance_vectors.py` rewrites the original 11 pins and must not be run as a silent corpus edit. `generate_jcs_property_vectors.py` only adds property vectors.
 
-**Never hand-edit** `canonical_utf8` or `sha256` in `vectors/expected.json`. All pinned bytes are emitted by the canonicaliser.
+**Never hand-edit** `canonical_text` or `canonical_hash` in `vectors/expected.json`. All pinned bytes are emitted by the canonicaliser.
 
 ```bash
 python tools/axes_verify.py

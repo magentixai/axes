@@ -1,5 +1,7 @@
 # WO18 Task 0: live anchoring inventory (2026-10-04)
 
+> **Superseded by gt-v2.1** (tag `corpus/2026-10-12-gt-v2.1`). Historical work order, text kept as written; the corpus now carries the Module 14 anchoring block, `basis_status` and every docs/19 rename.
+
 Read from `origin/main` at `1e296f0` and `origin/golden-trace-v2` at `a31cb35` before any WO18 change.
 
 ## The `anchoring` block as published

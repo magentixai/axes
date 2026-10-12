@@ -1,0 +1,10 @@
+<MTConnectStreams xmlns="urn:mtconnect.org:MTConnectStreams:1.4">
+  <DeviceStream name="cnc-cell-4" uuid="ironmark-cell-4">
+    <ComponentStream component="Controller" name="controller">
+      <Events><Availability dataItemId="avail" timestamp="2026-06-11T07:00:00.000Z">AVAILABLE</Availability></Events>
+    </ComponentStream>
+    <ComponentStream component="Path" name="path">
+      <Events><Execution dataItemId="exec" timestamp="2026-06-11T07:10:52.000Z">ACTIVE</Execution></Events>
+    </ComponentStream>
+  </DeviceStream>
+</MTConnectStreams>

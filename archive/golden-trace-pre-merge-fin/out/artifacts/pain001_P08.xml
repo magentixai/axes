@@ -1,0 +1,14 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.11">
+  <CstmrCdtTrfInitn>
+    <GrpHdr><MsgId>CALD-PAIN-08</MsgId><CreDtTm>2026-06-09T09:00:00.000Z</CreDtTm></GrpHdr>
+    <PmtInf>
+      <Dbtr><Nm>Caldera Robotics Ltd</Nm><Acct><Id>[REDACTED:iban-debtor]</Id></Acct></Dbtr>
+      <CdtTrfTxInf>
+        <PmtId><EndToEndId>E2E-CALD-20260609-0008</EndToEndId></PmtId>
+        <Amt><InstdAmt Ccy="EUR">1949.99</InstdAmt></Amt>
+        <Cdtr><Nm>Optikon Sensors GmbH</Nm><Acct><Id>[REDACTED:iban-SUP-008]</Id></Acct></Cdtr>
+        <RmtInf><Ustrd>INV-2026-3361</Ustrd></RmtInf>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>

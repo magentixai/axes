@@ -18,7 +18,7 @@ python examples/golden-trace/generate_golden_trace.py
 python tools/generate_conformance_vectors.py
 ```
 
-All `canonical_utf8` and `sha256` values in `expected.json` are emitted by `tools/axes_canonical.py` (RFC 8785 JCS + SHA-256).
+All `canonical_text` and `canonical_hash` values in `expected.json` (gt-v2.1 key names; `canonical_utf8` and `sha256` before gt-v2.1) are emitted by `tools/axes_canonical.py` (RFC 8785 JCS + SHA-256).
 
 **Custody twins** (axes#6, axes#10): `custody_deployer_captured_reject.json` and `custody_accept_independent_external.json` exercise the three-leg independence predicate (deployer-as-capturer case). Rule-layer verdicts (`reject_code`) are declared here.
 
@@ -36,7 +36,7 @@ python tools/test_locale_comparator_guard.py
 
 | Predicate | Pass (committed) | Fail (committed) |
 |---|---|---|
-| canonical bytes / digest | every pinned `canonical_utf8` | locale-like comparator vs `axes_jcs_collation_ae.json` |
+| canonical bytes / digest | every pinned `canonical_text` | locale-like comparator vs `axes_jcs_collation_ae.json` |
 | duplicate-key canonicalisation reject | any well-formed vector | `axes_reject_duplicate_key.json` |
 | custody independence | `custody_accept_independent_external.json` | `custody_deployer_captured_reject.json` |
 | unparseable identity | `axes_identity_unparseable_hex.json` (`verification_unavailable`, not a reject) | (rejecting this fixture would be the false negative; the fail is a verifier that returns `custody_independence_reject` here) |
@@ -49,12 +49,13 @@ python tools/test_locale_comparator_guard.py
 
 | Predicate | Pass (committed) | Fail (committed) |
 |---|---|---|
-| gt-v2.0 anchors read under gt-v2.0 rules | `anch_legacy_gt_v2_0.json` and the six anchored envelopes in both corpora: `indeterminate` / `absence` / `legacy_unstructured_anchor` | `anch_legacy_under_gt_v2_1.json`: the same block under gt-v2.1 is `contradicted` / `anchor_status_in_method` |
+| gt-v2.0 anchors read under gt-v2.0 rules | `anch_legacy_gt_v2_0.json`: `indeterminate` / `absence` / `legacy_unstructured_anchor` | `anch_legacy_under_gt_v2_1.json`: the same block under gt-v2.1 is `contradicted` / `anchor_status_in_method` |
+| gt-v2.1 corpus anchors are simulated and say so (WO21) | `anch_gt_v2_1_corpus.json` (fin envelope 36) and all eight anchoring blocks in both corpora, export final anchors included: `indeterminate` / `absence` / `basis_not_demonstrated` | `anch_gt_v2_0_translated.json`: gt-v2.0 envelope 37 mapped to the gt-v2.1 shape keeps `externally_anchored` over a simulated anchor, `contradicted` / `anchor_simulated_claims_external` |
 | `externally_anchored` is earned (D-020) | `anch_simulated_honest.json` | `anch_simulated_claims_external.json` |
 | proof absent is a producer defect (A4.2) | `anch_canonical_contract.json` | `anch_proof_absent.json` |
 | canonical contract only (A4.4) | `anch_canonical_contract.json` | `anch_lookalike_contract.json`, `anch_plain_transfer.json`, `anch_commitment_mismatch.json` |
 
-Why the corpus reads as `legacy_unstructured_anchor` and not as a failure: gt-v2.0 declared its anchors simulated (`write_once_store (SIMULATED)`), and the D-015 reading rule already said a simulated anchor proves no existence bound. The verifier reports exactly that (`indeterminate`, nothing to verify) and does not re-judge a published release under rules written later. Superseded is not wrong. The gt-v2.0 release statement itself now carries real external anchors, detached, on the default branch (`anchors/gt-v2.0/`).
+Why gt-v2.0 anchors read as `legacy_unstructured_anchor` and not as a failure: gt-v2.0 declared its anchors simulated (`write_once_store (SIMULATED)`), and the D-015 reading rule already said a simulated anchor proves no existence bound. The verifier reports exactly that (`indeterminate`, nothing to verify) and does not re-judge a published release under rules written later. Superseded is not wrong. gt-v2.1 removes the question: its in-trace anchors state `basis_status: simulated` and claim nothing external, and its release statement carries real external anchors (`anchors/gt-v2.1/`), as gt-v2.0's does (`anchors/gt-v2.0/`).
 
 The ledger vectors carry a pre-fetched `observed_ledger_event` so the check runs offline. Contract addresses and hashes in them are illustrative.
 

@@ -1,4 +1,6 @@
 # AXES Alignment Work Order (for Cursor) - AGT #276 and x402 Identity/Discovery WG
+
+> **Superseded by gt-v2.1** (tag `corpus/2026-10-12-gt-v2.1`). Historical work order, text kept as written; the corpus now carries the Module 14 anchoring block, `basis_status` and every docs/19 rename.
  
 **Repo:** `magentixai/axes` (the AXES open standard, SE v0.1 Public Working Draft).
 **Implements:** every schema, vocabulary, register and documentation change arising from Microsoft's Agent Governance Toolkit discussion #276, the x402 Identity and Domain Discovery working groups, and the live external verification thread in AXES issue #6, as reviewed 15 August 2026.

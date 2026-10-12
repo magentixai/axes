@@ -4,6 +4,17 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-12 - gt-v2.1 released (corpus of record)
+Tag `corpus/2026-10-12-gt-v2.1`. Every change is indexed with its reason in [docs/19](docs/19-key-change-index.md) and machine-readably in `schema/key-aliases.json`.
+- **Anchoring (Module 14):** the `write_once_store (SIMULATED)` form is retired. In-trace anchors are `write_once_store` with `basis_status: simulated`; no envelope asserts `externally_anchored` over a simulated anchor (D-015, D-020, D-021). The export's final anchor uses the same block.
+- **Timing (D-017):** stored `anchoring_latency_ms` removed; `anchor_requested_at` added; the lag is derived. Anchors are requested after the anchored record is emitted and complete before the carrying record is emitted (asserted by the generators). The first anchor is now envelope 36.
+- **`basis_status` (catalogue 1.27):** `integrity.envelope_signature_basis_status: stubbed`; every acknowledgment rung states `stubbed` or `simulated`; parenthetical status removed from values.
+- **Naming (D-024):** every rename in docs/19, `*.sha256` to `hash` plus `hash_algorithm`, `declared_heartbeat_interval: PT60S`. Naming baseline 195 to 14 (frozen gt-v2.0 release statement, legacy fixtures, unused Ratio schema).
+- **Harness:** `vectors/expected.json` and `vectors/predicates.json` use gt-v2.1 key names; `axes_gt_0037_attestation_recorded.json` is now `axes_gt_0036_attestation_recorded.json`. New two-sided vectors: gt-v2.0 envelope 37 mapped to the gt-v2.1 shape is `contradicted` (`anchor_simulated_claims_external`); gt-v2.1 envelope 36 is `indeterminate` (`basis_not_demonstrated`). The verifier checks every anchoring block in both corpora.
+- **Release anchors:** the gt-v2.1 release statement (RFC 8785, both chain heads and bundle digests) is anchored with RFC 3161 (FreeTSA) and OpenTimestamps through the `anchor` workflow; see RELEASES.md.
+- **One tree:** `golden-trace-v2` and `main` merged. The retired pre-merge lineage moved to `archive/golden-trace-pre-merge-*` (bytes unchanged). gt-v2.0 still verifies at its tag in CI (`tools/releases/gt-v2.0.json`). The `anchor` workflow commits back to the branch it ran on.
+- **Notice (D-018):** MarkovianProtocol, wowlegend/Tersign and giskard09 published results against gt-v2.0 and are invited to re-verify gt-v2.1. gt-v2.1 is not described as independently verified until someone has.
+
 ### 2026-10-08 - Completeness wording corrected
 - Two-party anchoring is described as exposing one side's omission, not as evidence that nothing was omitted (wg-identity#25, x402#2853). Crosswalk and anchoring examples README updated; erratum recorded for the two x402 B2B audit profiles, whose `@1` bytes stay unchanged.
 

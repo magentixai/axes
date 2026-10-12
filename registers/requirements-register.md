@@ -284,7 +284,7 @@ Source: `SE_v0_1_Standards_Compression_Gap_Analysis.md` §4
 
 | ID | Item | Layer | Cross-refs |
 |---|---|---|---|
-| TRK-001 | External anchoring + witness chains + WORM proof (5-wave sourced) - elevate maturity; GT v1 SIMULATED store disclosed (D-015 / EB-*); profile EvidenceAnchor-class backends without AXES implementing runtime ABCs | open_se | GAP-EXEC-003 / GAP-TECH-001 / GAP-IA-001; docs/interop/x402-and-anchoring.md |
+| TRK-001 | External anchoring + witness chains + WORM proof (5-wave sourced) - elevate maturity; GT v1 SIMULATED store disclosed (D-015 / EB-*); **delivered in gt-v2.1 for the corpus (2026-10-12):** stub retired, simulation in `basis_status`, release statement anchored (RFC 3161, OpenTimestamps), witnessed log and on-chain lanes still open; profile EvidenceAnchor-class backends without AXES implementing runtime ABCs | open_se | GAP-EXEC-003 / GAP-TECH-001 / GAP-IA-001; docs/interop/x402-and-anchoring.md |
 | TRK-002 | execution_phase + execution_mode - EA two-field semantics adopted | open_se | GAP-EXEC-001 / GAP-TECH-002 |
 | TRK-003 | Acknowledgment ladder + outbound receipts + receipt slot (demand/legal/supply validated) | open_se + derived | GAP-EXEC-002 / GAP-EA-003 / GAP-STD-003 |
 | TRK-004 | Access & Restriction Model - one normative section | package | GAP-IA-002 |
@@ -447,7 +447,7 @@ Source: programme decision D-014. Full task list, doctrine constraints, and acce
 | CRE-011 | Control-re-evaluable conformance surface (≠ SE-C2 alone) | conformance_rule | docs/07 |
 | CRE-012 | Third-party re-evaluation test protocol and published result | programme_action | design rule in docs/01 |
 | CRE-D01 | Faithful-capture / independent witness - orthogonal, not claimed solved by CRE-* | standards_package | docs/11, Module 14/15, EU-007 |
-| EB-001 | Reading rule: SIMULATED anchor + externally_anchored ≠ closed existence bound | standards_package | D-015; docs/interop/x402-and-anchoring.md |
+| EB-001 | Reading rule: SIMULATED anchor + externally_anchored ≠ closed existence bound. **Delivered in gt-v2.1 (2026-10-12):** enforced by the verifier; the corpus no longer carries the pattern | standards_package | D-015; docs/interop/x402-and-anchoring.md |
 | EB-002 | Mechanism-agnostic anchoring_method vocabulary + verify-path requirements (SCITT pluggable, not mandatory) | open_se | TRK-001, Module 14 |
 | EB-003 | Profile EvidenceAnchor / Rekor / SCITT / RFC 3161 / OTS receipts into SE anchoring.* | package | D-015 |
 | EB-004 | Golden Trace v2 real external anchor (+ replace SIG-STUB per signing profile) | programme_action | D-008, P1-1 |

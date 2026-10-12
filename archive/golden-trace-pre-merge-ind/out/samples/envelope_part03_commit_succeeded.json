@@ -1,0 +1,112 @@
+{
+  "se_version": "0.1-draft",
+  "profile_id": "se-profile:manufacturing-emitter/0.1-draft",
+  "event_kind": "commit_succeeded",
+  "occurred_at": "2026-06-11T07:01:51.000Z",
+  "emitted_at": "2026-06-11T07:01:51.400Z",
+  "recorded_at": "2026-06-11T07:01:51.900Z",
+  "timestamp_source": "ntp:cluster-sync",
+  "clock_sync_confidence": "high",
+  "trace_id": "7c1de4a90b6f42e8b3a5c0d9e1f28a44",
+  "span_id": "span-part-03",
+  "parent_span_id": "span-batch",
+  "org_id": "org:ironmark-precision",
+  "tenant_id": "tenant:ironmark-prod",
+  "environment_id": "env:prod-eu",
+  "environment_type": "production",
+  "execution_phase": "commit",
+  "execution_mode": "autonomous",
+  "actor": {
+    "agent_id": "agent:ironmark/mfg-pilot",
+    "agent_version": "3.1.0",
+    "orchestrator_id": "orchestrator:ironmark/shopfloor-orch",
+    "orchestrator_version": "2.2.0",
+    "model_id": "model:anthropic/claude-sonnet-4-6",
+    "model_version": "2025-09-29",
+    "runtime_id": "runtime:ironmark/edge-mes-01",
+    "tool_id": "tool:opcua/part-release",
+    "tool_gateway_id": "gateway:ironmark/toolproxy-2",
+    "connector_id": "connector:opcua-gw/1.8.0",
+    "provider_id": "cell:ironmark/cnc-cell-4"
+  },
+  "authority": {
+    "authority_context_id": "MD-5120",
+    "delegation_receipt_id": "delrec:MD-5120/2026-04-15",
+    "delegator_id": "person:pseu/quality-director-7c20",
+    "policy_ref": "policy:ironmark/part-release",
+    "policy_version": "5.1",
+    "capability_id": "cap:release-conforming-part",
+    "engineering_release_ref": "drawing:IMP-4471/revD + wi:WI-4471/v5.1"
+  },
+  "emission": {
+    "capture_layer": "runtime_sdk",
+    "capture_status": "captured",
+    "emission_fail_posture": "fail_closed",
+    "declared_heartbeat_interval_s": 60
+  },
+  "evidence_quality": {
+    "evidence_origin": "runtime",
+    "assertion_basis": "observed",
+    "corroboration_state": "third_party_confirmed"
+  },
+  "privacy": {
+    "personal_data_flag": false,
+    "redaction_applied": false
+  },
+  "part_index": 3,
+  "operation": {
+    "operation": "release_conforming_part",
+    "transaction_ref": "IMP4471-0003",
+    "commit_boundary_status": "committed",
+    "commit_mechanism": "quality_disposition",
+    "commit_impact_class": "material_state_change",
+    "subject": {
+      "part_number": "IMP-4471",
+      "drawing_revision": "D",
+      "serial_number": "IMP4471-0003",
+      "quantity": 1,
+      "unit": "each"
+    }
+  },
+  "result": {
+    "result_status": "success",
+    "side_effect_confirmation_status": "confirmed"
+  },
+  "acknowledgments": [
+    {
+      "ack_layer": "transport",
+      "ack_scheme": "OPC-UA",
+      "ack_code": "Good",
+      "ack_timestamp": "2026-06-11T07:01:49.300Z",
+      "ack_authenticity_basis": "channel_secured"
+    },
+    {
+      "ack_layer": "machine",
+      "ack_scheme": "mes:ironmark/v3",
+      "ack_code": "ACCEPTED",
+      "ack_reason_code": "release:IMP4471-0003",
+      "ack_timestamp": "2026-06-11T07:01:49.600Z",
+      "ack_authenticity_basis": "channel_secured"
+    },
+    {
+      "ack_layer": "quality",
+      "ack_scheme": "ISO23952-QIF-3.0",
+      "ack_code": "CONFORMING",
+      "ack_timestamp": "2026-06-11T07:01:50.800Z",
+      "ack_artifact_ref": "artifacts/qif_SN0003.xml",
+      "ack_artifact_hash": "e3a1b6d646fa1335d2a53c5e2804b4cc4a0558b893f58cb908874cf1a33e1548",
+      "ack_authenticity_basis": "qms_signed (QMS record, STUB)"
+    }
+  ],
+  "sequence_number": 16,
+  "envelope_id": "env:MRUN-2026-06-11-A/0016",
+  "integrity": {
+    "hash_algorithm": "SHA-256",
+    "canonicalisation_version": "GT-JCS-0",
+    "previous_envelope_hash": "2caeae8ea0a54b7d8c448d01ad5e4c329973cdadab270fbc51208bdbafeb4a07",
+    "signing_key_id": "key:ironmark/se-emitter-2026q2",
+    "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
+    "envelope_hash": "191bbbf919d89a1482fe6673dd11d77c91bb72876d931d3dfa7373640ed3a342",
+    "signature": "SIG-STUB(191bbbf919d89a14)"
+  }
+}

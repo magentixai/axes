@@ -8,16 +8,16 @@
 
 ## Corpus of record
 
-The Golden Trace corpus that external parties have independently verified is tagged **`corpus/2026-08-08-gt-v2`** (commit `776cc0b`).
+The current corpus of record is **gt-v2.1**, tag **`corpus/2026-10-12-gt-v2.1`**, on this branch.
 
 | Bundle | Chain head | Bundle digest |
 |---|---|---|
-| `golden-trace` (fin) | `71c10986320fa148ab89c65c3f92a4ddd12ebfaac2db4f9099fa0443ccb0b564` | `b45f7c47c81e06bceddb5694cd2b0f28cd2afd5082e5c1102b217c713d344352` |
-| `golden-trace-ind` | `93733e6a8b6f6be299f656ddfb951f13c9da4756f9d37470649ac3414056fba4` | `b926af903de3d5088a253a486044a7fc1bf8afd046958da0054ea152fc7c3463` |
+| `golden-trace` (fin) | `cbd1a73e910bd51f01cf5dd097c9a68869b733550d96db891d0f288bd4db59f1` | `e922486b74689592ddc54c74725c9c5a55d8d793f12cade2e58929ab4801164e` |
+| `golden-trace-ind` | `5ca428eac8ed5dde5b7720218712bdd2ede484a6892ac7894db2e1772a519dd6` | `dd01b56c718c6a61f06725318ab99738799128d9cb527d5e468e9be5b78ebb31` |
 
-**The default branch currently carries a different, earlier corpus lineage that has not been externally verified.** If you are reproducing published figures, or following a verification result cited in a public thread, check out the tag above. A reconciliation is in progress and is tracked in [`RELEASES.md`](RELEASES.md). Reproduction commands: [`VERIFY.md`](VERIFY.md).
+gt-v2.1 retires the `write_once_store (SIMULATED)` form: simulation is stated in `basis_status`, no envelope asserts `externally_anchored` over a simulated anchor, and the release is anchored with RFC 3161 and OpenTimestamps. Please re-run your verifier against it. Every key change is listed with its reason in [docs/19](docs/19-key-change-index.md).
 
-**Conformance tooling until the announced merge:** the machine-enforced coverage rule (TLC-008), `vectors/predicates.json`, `tools/axes_verify.py`, and the full JCS property vector set live on branch [`golden-trace-v2`](https://github.com/magentixai/axes/tree/golden-trace-v2). A liftable, stdlib-only subset is on this branch at [`portable/jcs-properties/`](portable/jcs-properties/) (four RFC 8785 properties + independent `rfc8785` cross-check). Do not treat default-branch corpus bytes as the published pins.
+gt-v2.0 (tag `corpus/2026-08-08-gt-v2`, commit `776cc0b`) is superseded, not wrong: it was independently verified, its digests still verify at its tag, and citations to it still resolve. Releases, digests and verifiers: [`RELEASES.md`](RELEASES.md). Reproduction commands: [`VERIFY.md`](VERIFY.md). The reference verifier (`tools/axes_verify.py`), the coverage rule (TLC-008, `vectors/predicates.json`), the anchoring tools and the liftable [`portable/jcs-properties/`](portable/jcs-properties/) pack are all on this branch.
 
 ---
 
@@ -148,8 +148,8 @@ Trimmed excerpt from the policy-check sample (full file linked above):
 | [`CONFORMANCE.md`](CONFORMANCE.md) | Operator guide: corpus verification vs SE-Cx claims ([docs/07](docs/07-conformance-levels.md) is the normative ladder home) |
 | [`RELEASES.md`](RELEASES.md) | Corpus release register: tags, chain heads, bundle digests, verification status |
 | [`VERIFY.md`](VERIFY.md) | Clone, checkout, regenerate and compare against published digests |
-| [`tools/`](tools/) | RFC 8785 canonicaliser (`axes_canonical.py`), vector generator; reference validator (Roadmap P4) |
-| [`vectors/`](vectors/) | Byte-level canonicalisation/hashing conformance vectors (Golden Trace v2) |
+| [`tools/`](tools/) | RFC 8785 canonicaliser (`axes_canonical.py`), vector generators, offline reference verifier (`axes_verify.py`), evaluator, anchoring tools |
+| [`vectors/`](vectors/) | Byte-level canonicalisation/hashing conformance vectors (Golden Trace gt-v2.1) |
 | [`archive/`](archive/) | Design history, preserved with honest commentary - the standard shows its working |
 
 ## Conformance (SE-C0 → SE-C5)
@@ -171,7 +171,9 @@ Independent verification. A second independent implementation was set as the tri
 - **canoncheck** ([MarkovianProtocol](https://github.com/MarkovianProtocol) / Colin H Winter) - an independent cross-language JCS + SHA-256 byte-identity harness; reproduced the corpus 152/152 at tag `corpus/2026-08-08-gt-v2`. See [axes#6](https://github.com/magentixai/axes/issues/6).
 - **proofbundle** (b7n0de) - an independent RFC 6962 inclusion recomputation written from the specification, reproducing a checkpoint root from leaf bytes and verifying it with third-party witness keys; a single flipped payload bit fails inclusion. See b7n0de/proofbundle#7 and [#136](https://github.com/b7n0de/proofbundle/pull/136).
 
-These are independent verification and conformance implementations that reproduce and check the corpus from the specification; an open reference emitter and validator in this repository remain on the roadmap. What they establish is that the evidence a competent third party needs to reconstruct and check an AXES corpus without proprietary tooling is now demonstrated by more than one external party. Whether this satisfies the incubation trigger is a stewardship determination recorded in [GOVERNANCE](GOVERNANCE.md); per-contribution credits are in registers/decision-register.md and [PROVENANCE.md](PROVENANCE.md).
+These verifications were run against gt-v2.0. gt-v2.1 retires the `write_once_store (SIMULATED)` form: simulation is stated in `basis_status`, and the release is anchored with RFC 3161 and OpenTimestamps. Please re-run your verifier against it; until someone has, gt-v2.1 is not described here as independently verified.
+
+These are independent verification and conformance implementations that reproduce and check the corpus from the specification; the reference verifier is `tools/axes_verify.py`, and an open reference emitter remains on the roadmap. What they establish is that the evidence a competent third party needs to reconstruct and check an AXES corpus without proprietary tooling is now demonstrated by more than one external party. Whether this satisfies the incubation trigger is a stewardship determination recorded in [GOVERNANCE](GOVERNANCE.md); per-contribution credits are in registers/decision-register.md and [PROVENANCE.md](PROVENANCE.md).
 
 Honest limits, kept deliberately on the face of it: corpus verification is not an SE-Cx conformance badge (decision D-008), and the witnessed-checkpoint lane currently runs a single log operator - the 4-of-7 external witness quorum detects a silently forked log, it does not remove the fact of one operator.
 

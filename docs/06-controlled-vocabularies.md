@@ -161,7 +161,7 @@ Correction: an earlier draft defined `origin` as "the party that earns the value
 - `distributed_ledger` - the commitment is recorded by a canonical contract or registry on a ledger
 - `write_once_store` - the commitment is held in storage that refuses overwrite, with a third-party verification path
 
-Other mechanisms use a namespaced identifier `<namespace>:<id>` and MUST carry `anchor_verification_procedure_ref`. Registration is additive. Status never appears in the value: `write_once_store (SIMULATED)` is retired (catalogue 1.27); simulation is `basis_status: simulated`. The registry is open because a closed list would make every new mechanism a schema change; the strong claim is protected instead by making `externally_anchored` earned (D-020).
+Other mechanisms use a namespaced identifier `<namespace>:<id>` and MUST carry `anchor_verification_procedure_ref`. Registration is additive. Status never appears in the value: `write_once_store (SIMULATED)` is retired (catalogue 1.27; last carried by gt-v2.0, removed in gt-v2.1); simulation is `basis_status: simulated`. The registry is open because a closed list would make every new mechanism a schema change; the strong claim is protected instead by making `externally_anchored` earned (D-020).
 
 **`anchored_subject_type` (closed):** `chain_head` | `envelope` | `bundle_manifest` | `release_statement`.
 

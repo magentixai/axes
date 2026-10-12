@@ -1,6 +1,6 @@
-> **Status: Golden Trace v2 working exemplar and test corpus - not normative.** Regenerated 2026-08-07 under the P1-1 canonicalisation ruling (RFC 8785 JCS, no JSON floats in hash scope). v1 preserved under [`../../archive/golden-trace-v1-ind/`](../../archive/golden-trace-v1-ind/). Signatures remain stubs; anchor store simulated pending EB-004 confirmation on axes#3.
+> **Status: Golden Trace gt-v2.1 (industrial), corpus of record - not normative.** Tag `corpus/2026-10-12-gt-v2.1`; digests in [`RELEASES.md`](../../RELEASES.md). Regenerated under the Module 14 anchoring block, `basis_status` and the docs/19 key changes. Superseded releases: gt-v2.0 (tag `corpus/2026-08-08-gt-v2`, still verified at its tag) and v1 under [`../../archive/golden-trace-v1-ind/`](../../archive/golden-trace-v1-ind/).
 
-# SE v0.1 Golden Trace v2 (Industrial) - MRUN-2026-06-11-A (Pristine Variant)
+# SE v0.1 Golden Trace gt-v2.1 (Industrial) - MRUN-2026-06-11-A (Pristine Variant)
 
 A fully synthetic, deterministic, end-to-end Agentic Execution Evidence trace for the canonical manufacturing scenario, built report-backwards so that **every sentence of the board-grade promise paragraph resolves to named schema fields in named envelopes**:
 
@@ -19,16 +19,33 @@ out/manifest.json            evidence bundle manifest (sorted file list, forward
 out/reports/                 Board / quality audit / conformity / forensic
 ```
 
-## What is real vs stubbed
-**Real and re-verifiable:** SHA-256 hash chain over **RFC 8785 JCS** (`canonicalisation_version: RFC8785-JCS`); measurements and Cpk as exact decimal strings; derived utilisation ratios in the report layer only; zero JSON floats in hash scope.
+## What is real vs simulated
 
-**Stubbed and disclosed:** envelope signatures (`SIG-STUB`); external anchor store (`write_once_store (SIMULATED)`); QMS/MES authenticity stubs. Real `distributed_ledger` anchor (EB-004) pending giskard09 confirmation on axes#3.
+| Element | In this corpus | Field a verifier reads |
+|---|---|---|
+| Hash chain, sequence, time ordering, artefact hashes, manifest and bundle hash | **Real** and re-verifiable (RFC 8785 JCS, SHA-256) | `integrity.envelope_hash`, `integrity.previous_envelope_hash`, `manifest.json` |
+| Chain head named by each anchor | **Real**: the local chain head at that moment | `anchoring.anchored_subject_hash` |
+| In-trace anchors (every 300 s and the export's final anchor) | **Simulated**: nothing is written to a mechanism; never `externally_anchored` | `anchoring.anchors[].basis_status: simulated` |
+| Envelope signatures (`SIG-STUB(...)`) | **Stubbed** | `integrity.envelope_signature_basis_status: stubbed` |
+| QIF result (QMS mTLS) and MES batch-record authenticity | **Stubbed** | `acknowledgments[].basis_status: stubbed`, `reconciliation.acknowledgment_rung.basis_status: stubbed` |
+| OPC-UA transport and MES acceptance acknowledgment rungs | **Simulated** (the trace is synthetic; no channel existed) | `acknowledgments[].basis_status: simulated` |
+| The gt-v2.1 release statement over this corpus | **Real external anchors**: RFC 3161 (FreeTSA) and OpenTimestamps (Bitcoin), verified offline with `tools/anchoring/` | [`RELEASES.md`](../../RELEASES.md), [`VERIFY.md`](../../VERIFY.md) |
+
+Measurements and Cpk are exact decimal strings with the unit in `measurement_unit`; derived utilisation ratios live in the report layer only; zero JSON floats in hash scope.
+
+**Two layers, stated plainly.** The trace is synthetic, so its in-trace anchors cannot be anchored at fictional past instants, and pretending otherwise would be an overclaim. In gt-v2.1 they are simulated and say so in `basis_status`, which a verifier reads; the reference verifier reports them `indeterminate` / `basis_not_demonstrated`, never `verified` and never `contradicted`. The existence bound is on the release instead: the release statement committing to both chain heads and both bundle digests is anchored for real, and anyone can check it.
+
+**Fixed in gt-v2.1:** the stored `anchoring_latency_ms: 740` (an illustrative value that reconciled with no pair of timestamps, WO16 Task 4b) is gone: each anchor carries `anchor_requested_at`, and the lag `anchored_at - anchor_requested_at` is derived, never stored (D-017). An anchor is requested at its tick, after the record whose chain head it anchors was emitted, and is anchored before the record that carries it is emitted; the generator asserts both.
+
+**Reading rule for gt-v2.0 and earlier (D-015):** gt-v2.0 envelopes carry `anchoring_method: "write_once_store (SIMULATED)"` with `corroboration_state: externally_anchored`; that must **not** be read as an independently verifiable existence bound. Every key that changed between gt-v2.0 and gt-v2.1 is in [docs/19](../../docs/19-key-change-index.md).
 
 ## Verify
 ```bash
 pip install -r requirements-dev.txt
 python3 generate_golden_trace.py
+python3 ../../tools/axes_verify.py
 ```
+Full procedure, including the release anchors: [`VERIFY.md`](../../VERIFY.md).
 
 ## Determinism
 No randomness; fixed timestamps. Regeneration is byte-identical across platforms (manifest keys sorted, paths use `/`).

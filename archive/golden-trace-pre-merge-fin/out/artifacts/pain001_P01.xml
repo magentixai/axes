@@ -1,0 +1,14 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.11">
+  <CstmrCdtTrfInitn>
+    <GrpHdr><MsgId>CALD-PAIN-01</MsgId><CreDtTm>2026-06-09T09:00:00.000Z</CreDtTm></GrpHdr>
+    <PmtInf>
+      <Dbtr><Nm>Caldera Robotics Ltd</Nm><Acct><Id>[REDACTED:iban-debtor]</Id></Acct></Dbtr>
+      <CdtTrfTxInf>
+        <PmtId><EndToEndId>E2E-CALD-20260609-0001</EndToEndId></PmtId>
+        <Amt><InstdAmt Ccy="EUR">4475.00</InstdAmt></Amt>
+        <Cdtr><Nm>Bolt & Brass Supplies GmbH</Nm><Acct><Id>[REDACTED:iban-SUP-001]</Id></Acct></Cdtr>
+        <RmtInf><Ustrd>INV-2026-3318</Ustrd></RmtInf>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>

@@ -1,6 +1,6 @@
-> **Status: Golden Trace v2 working exemplar and test corpus - not normative.** Regenerated 2026-08-03 under the P1-1 canonicalisation ruling (RFC 8785 JCS, integer Amount fields, no JSON floats in hash scope). v1 preserved under [`../../archive/golden-trace-v1-fin/`](../../archive/golden-trace-v1-fin/). Signatures remain stubs; anchor store simulated pending EB-004 confirmation on axes#3.
+> **Status: Golden Trace gt-v2.1, corpus of record - not normative.** Tag `corpus/2026-10-12-gt-v2.1`; digests in [`RELEASES.md`](../../RELEASES.md). Regenerated under the Module 14 anchoring block, `basis_status` and the docs/19 key changes. Superseded releases: gt-v2.0 (tag `corpus/2026-08-08-gt-v2`, still verified at its tag) and v1 under [`../../archive/golden-trace-v1-fin/`](../../archive/golden-trace-v1-fin/).
 
-# SE v0.1 Golden Trace v2 - APRUN-2026-06-09-A (Pristine Variant)
+# SE v0.1 Golden Trace gt-v2.1 - APRUN-2026-06-09-A (Pristine Variant)
 
 A fully synthetic, deterministic, end-to-end Agentic Execution Evidence trace for the canonical ARBITR scenario, built report-backwards so that **every sentence of the board-grade promise paragraph resolves to named schema fields in named envelopes**:
 
@@ -14,7 +14,7 @@ The pristine variant deliberately exercises the hard machinery through *positive
 - **Three-rung acknowledgment ladder** per payment (transport HTTPS / protocol ACCEPTED / business pacs.002 ACSC) + **settlement rung** via camt.053 - external confirmation, not self-assertion
 - **Measured completeness**: independently reconciled population (ERP queue 14 due + bank statement 14 booked) → coverage 14/14, with `population_basis: independently_reconciled`
 - **Silence semantics**: heartbeats every 60s (zero silent windows) + `emission_fail_posture: fail_closed` ⇒ absence of evidence = absence of action within the boundary
-- **External anchoring** every 300s (simulated store, real chain-head hashes) + final export anchor
+- **Anchoring** every 300s plus a final export anchor: real chain-head hashes, simulated store, stated in `basis_status` (the release itself is anchored for real)
 - **Proximity, not just pass/fail**: payment 3 at **95.6%** of its limit (report-layer derived from Amount operands) → surfaces as a leading-indicator observation, not an exception
 - **Privacy by reference**: beneficiary/debtor IBANs redacted by hash substitution under a named redaction profile; delegator recorded as pseudonymous key
 - **Scoped AI context**: sampling parameters recorded as exact decimal strings; replay claim scoped ("reproducible in distribution, not in instance"); reasoning artifacts `provider_withheld` - disclosed, never silent
@@ -32,23 +32,34 @@ out/reports/report_C_regulator.md   Regulator / external assurance pack
 out/reports/report_D_forensic.md    Forensic execution pack (incl. verification procedure)
 ```
 
-## What is real vs stubbed
-**Real and re-verifiable:** SHA-256 hash chain over **RFC 8785 JCS** canonical JSON (`canonicalisation_version: RFC8785-JCS`; `envelope_hash` and `signature` excluded from hash input; signing-key identity *included*), contiguous sequencing, time ordering, artifact hashes, manifest/bundle hash, integer `Amount` monetary fields (EUR ISO4217 minor units, `decimals: 2`), zero JSON floats in hash scope. On anchor envelopes, `anchoring.chain_head_hash` is the real local chain head at that moment.
+## What is real vs simulated
 
-**Stubbed and disclosed as such:** envelope signatures (`SIG-STUB`); the external anchor store (`anchoring_method: "write_once_store (SIMULATED)"`, demo `anchor_store_ref`); webhook mTLS authenticity of pacs.002. Real `distributed_ledger` anchor (EB-004) pending giskard09 confirmation on axes#3. The reports disclose every stub - practising the scoped-assurance language the standard mandates.
+| Element | In this corpus | Field a verifier reads |
+|---|---|---|
+| Hash chain, sequence, time ordering, artefact hashes, manifest and bundle hash | **Real** and re-verifiable (RFC 8785 JCS, SHA-256) | `integrity.envelope_hash`, `integrity.previous_envelope_hash`, `manifest.json` |
+| Chain head named by each anchor | **Real**: the local chain head at that moment | `anchoring.anchored_subject_hash` |
+| In-trace anchors (every 300 s and the export's final anchor) | **Simulated**: nothing is written to a mechanism; never `externally_anchored` | `anchoring.anchors[].basis_status: simulated` |
+| Envelope signatures (`SIG-STUB(...)`) | **Stubbed** | `integrity.envelope_signature_basis_status: stubbed` |
+| pacs.002 webhook (mTLS) and camt.053 statement-channel authenticity | **Stubbed** | `acknowledgments[].basis_status: stubbed`, `reconciliation.acknowledgment_rung.basis_status: stubbed` |
+| HTTPS transport and bank-API protocol acknowledgment rungs | **Simulated** (the trace is synthetic; no channel existed) | `acknowledgments[].basis_status: simulated` |
+| The gt-v2.1 release statement over this corpus | **Real external anchors**: RFC 3161 (FreeTSA) and OpenTimestamps (Bitcoin), verified offline with `tools/anchoring/` | [`RELEASES.md`](../../RELEASES.md), [`VERIFY.md`](../../VERIFY.md) |
 
-**Reading rule for anchors (D-015):** `evidence_quality.corroboration_state: externally_anchored` on a SIMULATED method must **not** be treated as an independently verifiable existence bound.
+**Two layers, stated plainly.** The trace is synthetic, so its in-trace anchors cannot be anchored at fictional past instants, and pretending otherwise would be an overclaim. In gt-v2.1 they are simulated and say so in `basis_status`, which a verifier reads; the reference verifier reports them `indeterminate` / `basis_not_demonstrated`, never `verified` and never `contradicted`. The existence bound is on the release instead: the release statement committing to both chain heads and both bundle digests is anchored for real, and anyone can check it.
+
+**Fixed in gt-v2.1:** the stored `anchoring_latency_ms: 740` (an illustrative value that reconciled with no pair of timestamps, WO16 Task 4b) is gone: each anchor carries `anchor_requested_at`, and the lag `anchored_at - anchor_requested_at` is derived, never stored (D-017). An anchor is requested at its tick, after the record whose chain head it anchors was emitted, and is anchored before the record that carries it is emitted; the generator asserts both.
+
+**Reading rule for gt-v2.0 and earlier (D-015):** gt-v2.0 envelopes carry `anchoring_method: "write_once_store (SIMULATED)"` with `corroboration_state: externally_anchored`; that must **not** be read as an independently verifiable existence bound. Every key that changed between gt-v2.0 and gt-v2.1 is in [docs/19](../../docs/19-key-change-index.md).
 
 ## Verify it yourself
 ```bash
 pip install -r requirements-dev.txt
 python3 generate_golden_trace.py
-python3 ../../tools/generate_conformance_vectors.py
+python3 ../../tools/axes_verify.py
 ```
-Regenerates everything and re-verifies the chain (asserts on failure, including zero-float check). Byte-level vectors land in [`../../vectors/`](../../vectors/). The vendor-neutral manual procedure is in `report_D_forensic.md` section 1.
+Regenerates everything and re-verifies the chain (asserts on failure, including the zero-float and anchor-timing checks), then runs the reference verifier. Full procedure, including the release anchors: [`VERIFY.md`](../../VERIFY.md). Byte-level vectors land in [`../../vectors/`](../../vectors/). The vendor-neutral manual procedure is in `report_D_forensic.md` section 1.
 
-## v1 → v2 hash changes
-All 76 envelope hashes changed from v1 (GT-JCS-0 + JSON floats) to v2 (RFC 8785 JCS + Amount fields). This is expected and is the substance of the P1-1 ruling (axes#6). v1 bytes are preserved under [`../../archive/golden-trace-v1-fin/`](../../archive/golden-trace-v1-fin/).
+## Hash changes between releases
+All 76 envelope hashes changed from v1 (GT-JCS-0 + JSON floats) to v2 (RFC 8785 JCS + Amount fields), the substance of the P1-1 ruling (axes#6), and again from gt-v2.0 to gt-v2.1 (key changes listed in docs/19). The first anchor is envelope 36 in gt-v2.1 (37 in gt-v2.0): an anchor now sorts before any other event in the same second, because it anchors the chain head as it stood at the tick. v1 bytes are preserved under [`../../archive/golden-trace-v1-fin/`](../../archive/golden-trace-v1-fin/).
 
 ## Determinism
 No randomness; fixed timestamps (run window 2026-06-09 09:00 UTC). Regeneration is byte-identical on any platform (manifest file list is sorted lexicographically).

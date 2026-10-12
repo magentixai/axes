@@ -57,7 +57,7 @@ python3 ../../tools/generate_conformance_vectors.py
 
 The generator regenerates envelopes, artefacts, manifest, and reports, then re-verifies the hash chain (asserts on failure). Manual steps that need only the published bundle are in [`examples/golden-trace/out/reports/report_D_forensic.md`](examples/golden-trace/out/reports/report_D_forensic.md).
 
-Known stubs (disclosed): envelope signatures (`SIG-STUB`), external anchor store, some counterparty authenticity bases. See [`examples/golden-trace/README.md`](examples/golden-trace/README.md).
+Known stubs (disclosed, and from gt-v2.1 machine-readable in `basis_status`): envelope signatures (`SIG-STUB`, `envelope_signature_basis_status: stubbed`), in-trace anchors (`basis_status: simulated`), some counterparty authenticity bases (`basis_status: stubbed`). See [`examples/golden-trace/README.md`](examples/golden-trace/README.md).
 
 ## Claiming conformance (today)
 
@@ -72,7 +72,7 @@ An emitter **must not** (yet):
 - Claim "SE-C0 conformant" or any SE-Cx badge without a published schema and public vectors
 - Equate "accepted by ARBITR" (or any product) with AXES conformance
 - Claim independent **control re-evaluation** from `policy_version` alone (see [three-layer coverage note](docs/interop/three-layer-evidence-coverage.md) and CRE-* tasks)
-- Claim an **independently verifiable existence bound** from Golden Trace v1's `write_once_store (SIMULATED)` or from `corroboration_state: externally_anchored` without a third-party-verifiable `anchoring_method` (D-015; [x402 & anchoring](docs/interop/x402-and-anchoring.md))
+- Claim an **independently verifiable existence bound** from Golden Trace's `write_once_store (SIMULATED)` (gt-v2.0 and earlier; gt-v2.1 carries `basis_status: simulated` instead) or from `corroboration_state: externally_anchored` without a third-party-verifiable `anchoring_method` (D-015, D-020; [x402 & anchoring](docs/interop/x402-and-anchoring.md))
 
 ## Related
 
