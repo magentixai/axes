@@ -17,7 +17,7 @@ The Golden Trace v2 generator implements JCS via the vetted [`jcs`](https://pypi
 
 The hash input is the envelope with these fields **removed**:
 - `integrity.envelope_hash`
-- `integrity.signature`
+- `integrity.envelope_signature` (`integrity.signature` in gt-v2.0, renamed in gt-v2.1 under D-024; see [docs/19](19-key-change-index.md))
 
 Everything else in the envelope at emission time is in scope, including `integrity.signing_key_id`, `integrity.signing_key_provenance_ref`, and `envelope_id` (assigned before hashing). This boundary is enforced in `examples/golden-trace/generate_golden_trace.py`.
 

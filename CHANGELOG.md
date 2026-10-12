@@ -4,6 +4,10 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-12 - gt-v2.1 re-verified; three documentation fixes
+- gt-v2.1 re-verified by giskard09 (byte check, regeneration, reference verifier; axes#6) and, from the specification side only, by robertolocatelli81-dev / Noûs (own canonicaliser and parsers, no AXES scripts run; tsc#4). RELEASES.md updated.
+- Documentation fixes found by robertolocatelli81-dev (tsc#4), no corpus bytes changed: docs/09a no longer lists `recorded_at` as a current hash exclusion (it is inside the hash in every published corpus; the exclusion is recorded as proposed); docs/09 and docs/09a use `integrity.envelope_signature` (gt-v2.1 name); VERIFY.md states how the envelope hash, chain head and `bundle_manifest_hash` are built, so they can be checked from the text alone.
+
 ### 2026-10-12 - gt-v2.1 released (corpus of record)
 Tag `corpus/2026-10-12-gt-v2.1`. Every change is indexed with its reason in [docs/19](docs/19-key-change-index.md) and machine-readably in `schema/key-aliases.json`.
 - **Anchoring (Module 14):** the `write_once_store (SIMULATED)` form is retired. In-trace anchors are `write_once_store` with `basis_status: simulated`; no envelope asserts `externally_anchored` over a simulated anchor (D-015, D-020, D-021). The export's final anchor uses the same block.
