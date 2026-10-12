@@ -27,7 +27,7 @@ EXPECTED = os.path.join(ROOT, "vectors", "expected.json")
 
 def main() -> int:
     obj = json.load(open(VECTOR, encoding="utf-8"))
-    pinned = json.load(open(EXPECTED, encoding="utf-8"))["axes_jcs_collation_ae.json"]["canonical_utf8"]
+    pinned = json.load(open(EXPECTED, encoding="utf-8"))["axes_jcs_collation_ae.json"]["canonical_text"]
     jcs = hash_preimage(obj).decode("utf-8")
     locale_like = locale_like_canonical_utf8(obj)
     keys_utf16 = sorted(obj.keys())  # Python 3 str sort is Unicode code point, not UTF-16

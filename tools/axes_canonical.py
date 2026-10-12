@@ -2,7 +2,8 @@
 """
 AXES canonical bytes (RFC 8785 JCS) and SHA-256 digest helpers.
 
-Hash scope: envelope with integrity.envelope_hash and integrity.signature removed.
+Hash scope: envelope with integrity.envelope_hash and the signature removed
+(integrity.signature in gt-v2.0, integrity.envelope_signature from gt-v2.1).
 All canonical bytes and digests for conformance vectors MUST be emitted through
 this module - never hand-authored.
 """
@@ -61,6 +62,7 @@ def assert_no_floats_in_hash_scope(envelope: dict, path: str = "") -> None:
     integ = env.get("integrity", {})
     integ.pop("envelope_hash", None)
     integ.pop("signature", None)
+    integ.pop("envelope_signature", None)
     _walk_no_floats(env, path or "envelope")
 
 

@@ -1,35 +1,35 @@
 # Forensic Execution Pack - MRUN-2026-06-11-A
 
 ## 1. Verification procedure (vendor-neutral)
-1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.signature`; serialise with RFC 8785 JCS; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64x'0'). 4. Confirm sequence numbers are contiguous. 5. Compare chain heads at each `attestation_recorded` event with the anchor receipts in Appendix B of the Conformity Assessment Pack. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1-4 and 6 are fully reproducible from the bundle alone; step 5 is simulated in this golden trace.
+1. Read `envelopes.jsonl` in sequence order. 2. For each envelope, remove `integrity.envelope_hash` and `integrity.envelope_signature`; serialise with RFC 8785 JCS; SHA-256; compare to stored hash. 3. Confirm `previous_envelope_hash` equals the prior envelope's hash (genesis = 64x'0'). 4. Confirm sequence numbers are contiguous. 5. Confirm `anchoring.anchored_subject_hash` at each `attestation_recorded` event equals the chain head before it, and that `anchor_requested_at` is not before that record's `emitted_at`. 6. Re-hash each file in `artifacts/` and compare with `manifest.json`. Steps 1-6 are reproducible from the bundle alone. Step 5 shows internal consistency only: the in-trace anchors are `basis_status: simulated`. The external existence bound is on the release, not the trace: the release statement committing to this corpus is anchored with RFC 3161 and OpenTimestamps (repository `RELEASES.md`, `VERIFY.md`).
 
 ## 2. Envelope sequence (first 24 of 76; full stream in envelopes.jsonl)
 | Seq | event_kind | Part# | occurred_at | envelope_hash |
 |---|---|---|---|---|
-| 0001 | execution_started |  -  | 2026-06-11T07:00:00.000Z | `742bfa994264…` |
-| 0002 | context_retrieved |  -  | 2026-06-11T07:00:04.000Z | `fe760bcf8a71…` |
-| 0003 | plan_created |  -  | 2026-06-11T07:00:09.000Z | `32d31c5b1557…` |
-| 0004 | policy_check_performed | 1 | 2026-06-11T07:00:12.000Z | `d77d8f3e947a…` |
-| 0005 | commit_attempted | 1 | 2026-06-11T07:00:18.000Z | `077baebf7b3b…` |
-| 0006 | tool_invoked | 1 | 2026-06-11T07:00:19.000Z | `99ba8bacc1ad…` |
-| 0007 | commit_succeeded | 1 | 2026-06-11T07:00:21.000Z | `1449ee63a922…` |
-| 0008 | policy_check_performed | 2 | 2026-06-11T07:00:57.000Z | `df4a18ae67d9…` |
-| 0009 | heartbeat_event |  -  | 2026-06-11T07:01:00.000Z | `e19f5daff311…` |
-| 0010 | commit_attempted | 2 | 2026-06-11T07:01:03.000Z | `692db2f63318…` |
-| 0011 | tool_invoked | 2 | 2026-06-11T07:01:04.000Z | `dfb79718b36b…` |
-| 0012 | commit_succeeded | 2 | 2026-06-11T07:01:06.000Z | `a66b7c0906b3…` |
-| 0013 | policy_check_performed | 3 | 2026-06-11T07:01:42.000Z | `c6c8e3d04840…` |
-| 0014 | commit_attempted | 3 | 2026-06-11T07:01:48.000Z | `3f0e856e0349…` |
-| 0015 | tool_invoked | 3 | 2026-06-11T07:01:49.000Z | `13a01b710b63…` |
-| 0016 | commit_succeeded | 3 | 2026-06-11T07:01:51.000Z | `438ef3ce6130…` |
-| 0017 | heartbeat_event |  -  | 2026-06-11T07:02:00.000Z | `a6087b460124…` |
-| 0018 | policy_check_performed | 4 | 2026-06-11T07:02:27.000Z | `70793532805d…` |
-| 0019 | commit_attempted | 4 | 2026-06-11T07:02:33.000Z | `fe0dcd3e4e9c…` |
-| 0020 | tool_invoked | 4 | 2026-06-11T07:02:34.000Z | `aaece7f27b9d…` |
-| 0021 | commit_succeeded | 4 | 2026-06-11T07:02:36.000Z | `95535fbc2f47…` |
-| 0022 | heartbeat_event |  -  | 2026-06-11T07:03:00.000Z | `75a7874bf103…` |
-| 0023 | policy_check_performed | 5 | 2026-06-11T07:03:12.000Z | `1533142125b0…` |
-| 0024 | commit_attempted | 5 | 2026-06-11T07:03:18.000Z | `75c4120c99a7…` |
+| 0001 | execution_started |  -  | 2026-06-11T07:00:00.000Z | `7fa4436888e5…` |
+| 0002 | context_retrieved |  -  | 2026-06-11T07:00:04.000Z | `2e2dd6719bde…` |
+| 0003 | plan_created |  -  | 2026-06-11T07:00:09.000Z | `fa8ee70eea67…` |
+| 0004 | policy_check_performed | 1 | 2026-06-11T07:00:12.000Z | `b588e7dc414b…` |
+| 0005 | commit_attempted | 1 | 2026-06-11T07:00:18.000Z | `c7cc3f0b8a1e…` |
+| 0006 | tool_invoked | 1 | 2026-06-11T07:00:19.000Z | `2bdcd39455cc…` |
+| 0007 | commit_succeeded | 1 | 2026-06-11T07:00:21.000Z | `e3111138a173…` |
+| 0008 | policy_check_performed | 2 | 2026-06-11T07:00:57.000Z | `209bc2cb19e7…` |
+| 0009 | heartbeat_event |  -  | 2026-06-11T07:01:00.000Z | `43d41bea8935…` |
+| 0010 | commit_attempted | 2 | 2026-06-11T07:01:03.000Z | `9b0438f44597…` |
+| 0011 | tool_invoked | 2 | 2026-06-11T07:01:04.000Z | `30d1ea6ce71e…` |
+| 0012 | commit_succeeded | 2 | 2026-06-11T07:01:06.000Z | `eefc02bdc49d…` |
+| 0013 | policy_check_performed | 3 | 2026-06-11T07:01:42.000Z | `999b70a3889d…` |
+| 0014 | commit_attempted | 3 | 2026-06-11T07:01:48.000Z | `e454a38f2858…` |
+| 0015 | tool_invoked | 3 | 2026-06-11T07:01:49.000Z | `c86fe00ec8e6…` |
+| 0016 | commit_succeeded | 3 | 2026-06-11T07:01:51.000Z | `a4d1e20c6bea…` |
+| 0017 | heartbeat_event |  -  | 2026-06-11T07:02:00.000Z | `2197124ea7fc…` |
+| 0018 | policy_check_performed | 4 | 2026-06-11T07:02:27.000Z | `4883a8b95c2c…` |
+| 0019 | commit_attempted | 4 | 2026-06-11T07:02:33.000Z | `854c4e815d47…` |
+| 0020 | tool_invoked | 4 | 2026-06-11T07:02:34.000Z | `e27dc8234904…` |
+| 0021 | commit_succeeded | 4 | 2026-06-11T07:02:36.000Z | `3a2186d79ef7…` |
+| 0022 | heartbeat_event |  -  | 2026-06-11T07:03:00.000Z | `8ba79cdd33dd…` |
+| 0023 | policy_check_performed | 5 | 2026-06-11T07:03:12.000Z | `fda33d91311b…` |
+| 0024 | commit_attempted | 5 | 2026-06-11T07:03:18.000Z | `e0a0dacd5d25…` |
 
 ## 3. Part <-> artifact <-> confirmation linkage
 | # | Serial | Critical char (Ø25 H7 bore) | Material lot | QIF result hash | MES release hash | Released at |
@@ -53,10 +53,10 @@ Released tolerance for the critical characteristic: 25.000 +0.021 / 0 mm (H7). P
 
 ## 4. Topology graph (declared = observed for this run)
 Nodes: agent mfg-pilot 3.1.0 · orchestrator shopfloor-orch 2.2 · model claude-sonnet-4-6 · gateway toolproxy-2 · connector opcua-gw 1.8.0 · cell cnc-cell-4 · mes ironmark/prod · runtime edge-mes-01.
-Edges: agent->orchestrator->model (inference); agent->gateway->connector->cell (release path); agent->mes (context and batch record, read/write). No undeclared touchpoints observed (third-party touchpoint set exhaustive for this run; basis: connector egress telemetry) [env:0074 | boundary_assessment.basis].
+Edges: agent->orchestrator->model (inference); agent->gateway->connector->cell (release path); agent->mes (context and batch record, read/write). No undeclared touchpoints observed (third-party touchpoint set exhaustive for this run; basis: connector egress telemetry) [env:0074 | boundary_assessment.boundary_assessment_basis].
 
 ## 5. Chronology and silence semantics
-Run window 07:00:00-07:10:52Z; heartbeats every 60s (10 beats, 0 silent windows); anchors at 300s cadence (3 receipts); end-of-shift reconciliation 16:10Z. Emission fail-closed => within the declared boundary, absence of an envelope implies absence of a release-boundary action.
+Run window 07:00:00-07:10:52Z; heartbeats every 60s (10 beats, 0 silent windows); simulated in-trace anchors at 300s cadence (3); end-of-shift reconciliation 16:10Z. Emission fail-closed => within the declared boundary, absence of an envelope implies absence of a release-boundary action.
 
-## 6. Known stubs and limitations (golden trace v2)
-Signatures are placeholders; anchor store is simulated (EB-004 real distributed_ledger anchor pending); QIF result webhook authenticity (QMS mTLS) is asserted not demonstrated; the subcontracted heat-treatment and plating legs are outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and part-to-artifact linkage are real and re-verifiable under RFC 8785 JCS with no JSON floats in hash scope.
+## 6. Known stubs and limitations (golden trace gt-v2.1)
+Signatures are placeholders (`envelope_signature_basis_status: stubbed`). In-trace anchors are simulated (`basis_status: simulated`). The QIF result (QMS mTLS) and MES batch-record authenticity rungs are stubs (`basis_status: stubbed`); the OPC-UA and MES-acceptance rungs are `simulated` because the trace is synthetic. Each status is in a field a verifier reads (catalogue 1.27). A real on-chain anchor lane (EB-004, axes#3) remains open; the subcontracted heat-treatment and plating legs are outside the capture boundary by design. Hashes, chain, ordering, coverage arithmetic, and part-to-artifact linkage are real and re-verifiable under RFC 8785 JCS with no JSON floats in hash scope.

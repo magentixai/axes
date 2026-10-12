@@ -4,7 +4,7 @@ Every key, value or structure that changes between corpus releases is listed her
 
 Change types: `renamed` · `restructured` · `removed` · `added` · `value_tightened`.
 
-## gt-v2.0 to gt-v2.1 (planned; lands in the announced gt-v2.1 release, D-018)
+## gt-v2.0 to gt-v2.1 (released in gt-v2.1, tag `corpus/2026-10-12-gt-v2.1`, D-018)
 
 ### Anchoring block (Module 14, WO18 A2)
 
@@ -104,6 +104,10 @@ Corrections found by `tools/check_key_naming.py` against the corpus of record, p
 | `vectors/axes_adv_unicode_beneficiary.json` | `beneficiary` | `beneficiary_name` (the vector also carries every envelope-level rename above) |
 | `vectors/predicates.json` | `schema`, `note`, `id`, `description`, `pass_fixtures`, `fail_fixtures`, `fail_mechanism`, `unexercised`, `unexercised_reason`, `required_observations[].check` / `outcome` / `subject`, `credit` | `predicate_format_ref`, `summary_note`, `predicate_id`, `predicate_note`, `pass_fixture_refs`, `fail_fixture_refs`, `fail_mechanism_note`, `unexercised_indicator`, `unexercised_reason_note`, `required_observations[].check_id` / `observed_result` / `subject_ref`, `credit_note` |
 | `anchors/gt-v2.0/release_statement.json` | `axes_corpus_release`, `canonicalisation`, `commit`, `chain_head`, `digest_alg`, `tag` | Anchored bytes; never changed. The gt-v2.1 release statement uses `corpus_release_id`, `canonicalization_scheme`, `source_commit_ref`, `chain_head_hash`, `hash_algorithm`, `release_tag_ref` |
+| `vectors/axes_gt_0037_attestation_recorded.json` | file name | `vectors/axes_gt_0036_attestation_recorded.json`: in gt-v2.1 the first anchor envelope is number 36, because an anchor now sorts before any other event in the same second (it anchors the chain head as it stood at the tick) |
+| `vectors/axes_identity_unparseable_hex.json` | `note`, `custody.capture_relationship`, `custody.signing_trust_ref` | `summary_note`, `custody.capture_relationship_type`, `custody.signing_trust` |
+| `vectors/predicates.json` (each predicate) | `note` | `summary_note` |
+| `tools/corpus_of_record.json` | gt-v2.0 digests | gt-v2.1 digests; gt-v2.0 digests move to `tools/releases/gt-v2.0.json` and are still checked at their tag |
 
 ### Draft names superseded on 2026-10-04 (never in a published corpus)
 
@@ -121,4 +125,17 @@ Corrections found by `tools/check_key_naming.py` against the corpus of record, p
 | `prompt_injection_signal_flag`, `untrusted_content_present_flag`, `retention_immutable_flag` | docs/06 §2, GAP-IA-001 | `prompt_injection_signal_indicator`, `untrusted_content_indicator`, `retention_immutable_indicator` | N5 |
 | `size_bytes` | Module 01 artifact references | `byte_count` | N4 |
 
-Further gt-v2.1 entries (the heartbeat-interval rename, the `profile_id` taxonomy of WO19) are added here when their final names are fixed, before the release is cut.
+## gt-v2.0 to gt-v2.1: fixed when the release was cut (WO21)
+
+Entries found while generating the release. Same rules as above; the machine-readable twin carries one alias per key.
+
+| Earlier (gt-v2.0) | Now (gt-v2.1) | Change type | Why | Decision | What an implementer does |
+|---|---|---|---|---|---|
+| `liveness.declared_heartbeat_interval_s` | `liveness.declared_heartbeat_interval` | `value_tightened` | The heartbeat block repeats the emission field; same rule | D-024 | Convert seconds to an ISO 8601 duration, for example 60 to PT60S |
+| `export.final_anchor` (single object, gt-v2.0 anchor keys) | `export.final_anchor` as a Module 14 block (`anchored_subject_*`, `anchors[]`) | `restructured` | The export's final anchor is an anchor like any other | D-021 | Read it exactly as `anchoring` |
+| (none) | `integrity.envelope_signature_basis_status` | `added` | Whether the signature is real, in a field a verifier reads; `stubbed` for `SIG-STUB` signatures | WO16 Task 18 | Read signature status here; never parse the signature value |
+| (none) | `acknowledgments[].basis_status`, `reconciliation.acknowledgment_rung.basis_status` | `added` | Each acknowledgment rung states whether its authenticity basis is real | WO16 Task 18 | Read rung status here; `stubbed` and `simulated` are never `demonstrated` |
+| `acknowledgment_authenticity_basis: "counterparty_signed (webhook mTLS, STUB)"` and other parenthetical values | the bare value (`counterparty_signed`, `qms_signed`, `source_system_signed`) plus `basis_status` | `value_tightened` | Status never lives in a parenthetical (catalogue 1.27) | WO16 Task 18 | Read status from `basis_status`; treat the basis as a vocabulary value |
+| `reconciliation.acknowledgment_rung.ack_layer`, `ack_scheme`, `ack_authenticity_basis` | `acknowledgment_layer`, `acknowledgment_scheme`, `acknowledgment_authenticity_basis` | `renamed` | The settlement rung uses the same names as `acknowledgments[]` | D-024 | Map the value unchanged |
+
+The `profile_id` taxonomy of WO19 is applied as `implementation_profile_ref` above.

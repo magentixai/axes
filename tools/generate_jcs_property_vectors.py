@@ -3,7 +3,7 @@
 WO16 Task 6: pin RFC 8785 properties that ASCII-only vectors cannot catch.
 
 Adds four new vector files and four new expected.json keys.
-Does not rewrite existing pinned canonical_utf8 / sha256 values.
+Does not rewrite existing pinned canonical_text / canonical_hash values.
 """
 
 from __future__ import annotations
@@ -69,13 +69,13 @@ def property_vectors() -> dict[str, dict]:
         "axes_identity_unparseable_hex.json": {
             "se_version": "0.1-draft",
             "event_kind": "jcs_property_check",
-            "note": "unparseable identity syntax is verification_unavailable, never a false-negative reject",
+            "summary_note": "unparseable identity syntax is verification_unavailable, never a false-negative reject",
             "custody": {
-                "capture_relationship": "independent_third_party",
+                "capture_relationship_type": "independent_third_party",
                 "executor_id": "agent:caldera/ap-pilot",
                 "deployer_id": "org:caldera-robotics",
                 "capturer_id": "0xEXAMPLECAFE",
-                "signing_trust_ref": {
+                "signing_trust": {
                     "ref": "custody-ref:external/notary-001",
                     "signer_id": "key:trustline/notary-2026q2",
                 },
@@ -95,8 +95,9 @@ def main() -> None:
         write_json_utf8_lf(path, obj)
         cb = hash_preimage(obj)
         expected[name] = {
-            "canonical_utf8": cb.decode("utf-8"),
-            "sha256": sha256_hex(cb),
+            "canonical_text": cb.decode("utf-8"),
+            "canonical_hash": sha256_hex(cb),
+            "canonical_hash_algorithm": "SHA-256",
         }
 
     for k in original_keys:

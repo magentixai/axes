@@ -1,16 +1,16 @@
 {
   "se_version": "0.1-draft",
-  "profile_id": "se-profile:manufacturing-emitter/0.1-draft",
+  "implementation_profile_ref": "se-profile:manufacturing-emitter/0.1-draft",
   "event_kind": "policy_check_performed",
   "occurred_at": "2026-06-11T07:01:42.000Z",
   "emitted_at": "2026-06-11T07:01:42.400Z",
   "recorded_at": "2026-06-11T07:01:42.900Z",
   "timestamp_source": "ntp:cluster-sync",
-  "clock_sync_confidence": "high",
+  "clock_sync_confidence_level": "high",
   "trace_id": "7c1de4a90b6f42e8b3a5c0d9e1f28a44",
   "span_id": "span-part-03",
   "parent_span_id": "span-batch",
-  "org_id": "org:ironmark-precision",
+  "organization_id": "org:ironmark-precision",
   "tenant_id": "tenant:ironmark-prod",
   "environment_id": "env:prod-eu",
   "environment_type": "production",
@@ -30,8 +30,8 @@
     "provider_id": "cell:ironmark/cnc-cell-4"
   },
   "authority": {
-    "authority_context_id": "MD-5120",
-    "delegation_receipt_id": "delrec:MD-5120/2026-04-15",
+    "authority_context_ref": "MD-5120",
+    "delegation_receipt_ref": "delrec:MD-5120/2026-04-15",
     "delegator_id": "person:pseu/quality-director-7c20",
     "policy_ref": "policy:ironmark/part-release",
     "policy_version": "5.1",
@@ -44,7 +44,7 @@
     "capture_layer": "runtime_sdk",
     "capture_status": "captured",
     "emission_fail_posture": "fail_closed",
-    "declared_heartbeat_interval_s": 60
+    "declared_heartbeat_interval": "PT60S"
   },
   "evidence_quality": {
     "evidence_origin": "runtime",
@@ -52,13 +52,13 @@
     "corroboration_state": "internally_corroborated"
   },
   "privacy": {
-    "personal_data_flag": false,
-    "redaction_applied": false
+    "personal_data_indicator": false,
+    "redaction_applied_indicator": false
   },
   "part_index": 3,
   "subject": {
     "part_number": "IMP-4471",
-    "drawing_revision": "D",
+    "drawing_version": "D",
     "serial_number": "IMP4471-0003"
   },
   "controls": {
@@ -67,34 +67,35 @@
     "checks": [
       {
         "control_id": "CTL-DIM-01",
-        "name": "critical dimension within released tolerance",
+        "control_name": "critical dimension within released tolerance",
         "control_result": "passed",
         "observed": {
-          "characteristic": "Ø25 H7 bore",
-          "nominal_mm": "25.000",
-          "tolerance_upper_mm": "25.021",
-          "tolerance_lower_mm": "25.000",
-          "measured_mm": "25.0201",
+          "characteristic_name": "Ø25 H7 bore",
+          "nominal_value": "25.000",
+          "tolerance_upper_value": "25.021",
+          "tolerance_lower_value": "25.000",
+          "measured_value": "25.0201",
+          "measurement_unit": "mm",
           "measurement_artifact_ref": "artifacts/qif_SN0003.xml",
           "measurement_scheme": "ISO23952-QIF-3.0"
         }
       },
       {
         "control_id": "CTL-SPC-02",
-        "name": "process in statistical control",
+        "control_name": "process in statistical control",
         "control_result": "passed",
         "observed": {
-          "cpk": "1.41",
-          "cpk_floor": "1.33",
+          "cpk_value": "1.41",
+          "cpk_floor_value": "1.33",
           "subgroup_ref": "spc:IMP-4471/revD/2026-06-11"
         }
       },
       {
         "control_id": "CTL-MAT-03",
-        "name": "material lot verified to certified heat",
+        "control_name": "material lot verified to certified heat",
         "control_result": "passed",
         "evidence_ref": "matcert:EN10204-3.1/HT-88213",
-        "material_grade": "15-5PH stainless"
+        "material_grade_name": "15-5PH stainless"
       }
     ]
   },
@@ -102,11 +103,12 @@
   "envelope_id": "env:MRUN-2026-06-11-A/0013",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "RFC8785-JCS",
-    "previous_envelope_hash": "a66b7c0906b39da1ad869c2711d27bde93a61f05fe4b6580a72e0be354908760",
+    "canonicalization_version": "RFC8785-JCS",
+    "previous_envelope_hash": "eefc02bdc49d0d0a7923a5a8882bd447abf585cc6cb96e49caebc48ac456ee4c",
     "signing_key_id": "key:ironmark/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
-    "envelope_hash": "c6c8e3d048404bb958a3f5e7d9a3adeee09b4d13db901d8c3e22b2e6aecde975",
-    "signature": "SIG-STUB(c6c8e3d048404bb9)"
+    "envelope_signature_basis_status": "stubbed",
+    "envelope_hash": "999b70a3889de2323a285390d6db44266c2af9d27ae5c249ea772738eec98d4b",
+    "envelope_signature": "SIG-STUB(999b70a3889de232)"
   }
 }

@@ -1,15 +1,15 @@
 {
-  "schema": "axes.predicate-coverage/1",
-  "note": "TLC-008 machine-enforced coverage. Every normative predicate axes_verify.py evaluates must have committed fixtures for each declared outcome, or be marked unexercised with a reason. Counting fixtures is not enough: the verifier must observe each declared outcome during the run.",
+  "predicate_format_ref": "axes.predicate-coverage/2",
+  "summary_note": "TLC-008 machine-enforced coverage. Every normative predicate axes_verify.py evaluates must have committed fixtures for each declared outcome, or be marked unexercised with a reason. Counting fixtures is not enough: the verifier must observe each declared outcome during the run.",
   "predicates": [
     {
-      "id": "canonical_bytes",
-      "description": "Canonical UTF-8 bytes reproduce from the canonicaliser and match the pin",
-      "pass_fixtures": [
+      "predicate_id": "canonical_bytes",
+      "predicate_note": "Canonical UTF-8 bytes reproduce from the canonicaliser and match the pin",
+      "pass_fixture_refs": [
         "axes_gt_0001_genesis.json",
         "axes_gt_0004_policy_check_amount.json",
         "axes_gt_0013_policy_check_peak_util.json",
-        "axes_gt_0037_attestation_recorded.json",
+        "axes_gt_0036_attestation_recorded.json",
         "axes_gt_0073_reconciliation.json",
         "axes_adv_unicode_beneficiary.json",
         "axes_adv_large_amount_string.json",
@@ -22,21 +22,29 @@
         "axes_jcs_digest_encoding.json",
         "axes_identity_unparseable_hex.json"
       ],
-      "fail_fixtures": ["axes_jcs_collation_ae.json"],
-      "fail_mechanism": "locale-like comparator substituted via tools/test_locale_comparator_guard.py and locale_guard() in axes_verify.py",
+      "fail_fixture_refs": [
+        "axes_jcs_collation_ae.json"
+      ],
+      "fail_mechanism_note": "locale-like comparator substituted via tools/test_locale_comparator_guard.py and locale_guard() in axes_verify.py",
       "required_observations": [
-        {"check": "canonical_bytes", "outcome": "ok"},
-        {"check": "locale_comparator_guard", "outcome": "ok"}
+        {
+          "check_id": "canonical_bytes",
+          "observed_result": "ok"
+        },
+        {
+          "check_id": "locale_comparator_guard",
+          "observed_result": "ok"
+        }
       ]
     },
     {
-      "id": "digest",
-      "description": "SHA-256 of canonical bytes matches the pin",
-      "pass_fixtures": [
+      "predicate_id": "digest",
+      "predicate_note": "SHA-256 of canonical bytes matches the pin",
+      "pass_fixture_refs": [
         "axes_gt_0001_genesis.json",
         "axes_gt_0004_policy_check_amount.json",
         "axes_gt_0013_policy_check_peak_util.json",
-        "axes_gt_0037_attestation_recorded.json",
+        "axes_gt_0036_attestation_recorded.json",
         "axes_gt_0073_reconciliation.json",
         "axes_adv_unicode_beneficiary.json",
         "axes_adv_large_amount_string.json",
@@ -49,435 +57,523 @@
         "axes_jcs_digest_encoding.json",
         "axes_identity_unparseable_hex.json"
       ],
-      "fail_mechanism": "Any pin mismatch on sha256 is a digest failure; locale-like comparator also diverges the digest of axes_jcs_collation_ae.json",
+      "fail_mechanism_note": "Any pin mismatch on sha256 is a digest failure; locale-like comparator also diverges the digest of axes_jcs_collation_ae.json",
       "required_observations": [
-        {"check": "digest", "outcome": "ok"}
+        {
+          "check_id": "digest",
+          "observed_result": "ok"
+        }
       ]
     },
     {
-      "id": "canonicalisation_reject",
-      "description": "Duplicate object keys are rejected at the canonicalisation layer",
-      "pass_fixtures": ["axes_gt_0001_genesis.json"],
-      "fail_fixtures": ["axes_reject_duplicate_key.json"],
-      "required_observations": [
-        {"check": "canonicalisation_reject", "outcome": "reject_as_expected"}
-      ]
-    },
-    {
-      "id": "custody_independence",
-      "description": "Three-leg independence: deployer-as-capturer rejects; independent capturer passes",
-      "pass_fixtures": ["custody_accept_independent_external.json"],
-      "fail_fixtures": ["custody_deployer_captured_reject.json"],
-      "required_observations": [
-        {"check": "custody_independence", "outcome": "ok"},
-        {"check": "custody_independence", "outcome": "reject_as_expected"}
-      ]
-    },
-    {
-      "id": "identity_unparseable",
-      "description": "Unparseable identity syntax yields verification_unavailable, never a false-negative reject",
-      "pass_fixtures": ["axes_identity_unparseable_hex.json"],
-      "declared_outcomes": ["verification_unavailable"],
-      "required_observations": [
-        {"check": "custody_independence", "outcome": "verification_unavailable"}
+      "predicate_id": "canonicalisation_reject",
+      "predicate_note": "Duplicate object keys are rejected at the canonicalisation layer",
+      "pass_fixture_refs": [
+        "axes_gt_0001_genesis.json"
       ],
-      "note": "A verifier that returns custody_independence_reject on this fixture manufactures a false negative (wowlegend, axes#6)."
-    },
-    {
-      "id": "locale_comparator_guard",
-      "description": "A locale-like member comparator must not reproduce pinned JCS bytes (property pinned, not merely named)",
-      "pass_fixtures": ["axes_jcs_collation_ae.json"],
-      "fail_fixtures": ["axes_jcs_collation_ae.json"],
-      "fail_mechanism": "locale-like comparator substituted via tools/test_locale_comparator_guard.py and locale_guard() in axes_verify.py",
-      "required_observations": [
-        {"check": "locale_comparator_guard", "outcome": "ok"}
+      "fail_fixture_refs": [
+        "axes_reject_duplicate_key.json"
       ],
-      "credit": "Ryan Cason / orionsys"
-    },
-    {
-      "id": "jcs_surrogate_utf16_sort",
-      "description": "UTF-16 code-unit member sort (RFC 8785 section 3.2.3), not code-point order",
-      "pass_fixtures": ["axes_jcs_surrogate_pair_key.json"],
-      "fail_mechanism": "A code-point sorter (Python sorted / json.dumps sort_keys) yields different member order for U+1D11E vs U+FF21; portable/jcs-properties asserts the divergence",
       "required_observations": [
-        {"check": "canonical_bytes", "outcome": "ok", "subject": "axes_jcs_surrogate_pair_key.json"}
+        {
+          "check_id": "canonicalisation_reject",
+          "observed_result": "reject_as_expected"
+        }
       ]
     },
     {
-      "id": "jcs_nfc_nfd_no_normalisation",
-      "description": "NFC and NFD of the same visual key are distinct members (RFC 8785 section 3.1)",
-      "pass_fixtures": ["axes_jcs_nfc_nfd_pair.json"],
-      "fail_mechanism": "A normalising canonicaliser collapses NFC and NFD into one member; pin requires both to survive",
+      "predicate_id": "custody_independence",
+      "predicate_note": "Three-leg independence: deployer-as-capturer rejects; independent capturer passes",
+      "pass_fixture_refs": [
+        "custody_accept_independent_external.json"
+      ],
+      "fail_fixture_refs": [
+        "custody_deployer_captured_reject.json"
+      ],
       "required_observations": [
-        {"check": "canonical_bytes", "outcome": "ok", "subject": "axes_jcs_nfc_nfd_pair.json"}
+        {
+          "check_id": "custody_independence",
+          "observed_result": "ok"
+        },
+        {
+          "check_id": "custody_independence",
+          "observed_result": "reject_as_expected"
+        }
       ]
     },
     {
-      "id": "jcs_digest_encoding",
-      "description": "Bare lowercase hex and algorithm-prefixed digest forms are distinct pinned strings; digest is over UTF-8 JCS bytes",
-      "pass_fixtures": ["axes_jcs_digest_encoding.json"],
-      "fail_mechanism": "Treating bare hex and sha256:hex as interchangeable, or hashing a decoded string rather than UTF-8 bytes, diverges from the pin",
+      "predicate_id": "identity_unparseable",
+      "predicate_note": "Unparseable identity syntax yields verification_unavailable, never a false-negative reject",
+      "pass_fixture_refs": [
+        "axes_identity_unparseable_hex.json"
+      ],
+      "declared_outcomes": [
+        "verification_unavailable"
+      ],
       "required_observations": [
-        {"check": "canonical_bytes", "outcome": "ok", "subject": "axes_jcs_digest_encoding.json"},
-        {"check": "digest", "outcome": "ok", "subject": "axes_jcs_digest_encoding.json"}
+        {
+          "check_id": "custody_independence",
+          "observed_result": "verification_unavailable"
+        }
+      ],
+      "summary_note": "A verifier that returns custody_independence_reject on this fixture manufactures a false negative (wowlegend, axes#6)."
+    },
+    {
+      "predicate_id": "locale_comparator_guard",
+      "predicate_note": "A locale-like member comparator must not reproduce pinned JCS bytes (property pinned, not merely named)",
+      "pass_fixture_refs": [
+        "axes_jcs_collation_ae.json"
+      ],
+      "fail_fixture_refs": [
+        "axes_jcs_collation_ae.json"
+      ],
+      "fail_mechanism_note": "locale-like comparator substituted via tools/test_locale_comparator_guard.py and locale_guard() in axes_verify.py",
+      "required_observations": [
+        {
+          "check_id": "locale_comparator_guard",
+          "observed_result": "ok"
+        }
+      ],
+      "credit_note": "Ryan Cason / orionsys"
+    },
+    {
+      "predicate_id": "jcs_surrogate_utf16_sort",
+      "predicate_note": "UTF-16 code-unit member sort (RFC 8785 section 3.2.3), not code-point order",
+      "pass_fixture_refs": [
+        "axes_jcs_surrogate_pair_key.json"
+      ],
+      "fail_mechanism_note": "A code-point sorter (Python sorted / json.dumps sort_keys) yields different member order for U+1D11E vs U+FF21; portable/jcs-properties asserts the divergence",
+      "required_observations": [
+        {
+          "check_id": "canonical_bytes",
+          "observed_result": "ok",
+          "subject_ref": "axes_jcs_surrogate_pair_key.json"
+        }
       ]
     },
     {
-      "id": "chain_link_sequence",
-      "description": "Envelope hash chain link, sequence closure and envelope_hash recompute across both Golden Trace corpora",
-      "pass_fixtures": [
+      "predicate_id": "jcs_nfc_nfd_no_normalisation",
+      "predicate_note": "NFC and NFD of the same visual key are distinct members (RFC 8785 section 3.1)",
+      "pass_fixture_refs": [
+        "axes_jcs_nfc_nfd_pair.json"
+      ],
+      "fail_mechanism_note": "A normalising canonicaliser collapses NFC and NFD into one member; pin requires both to survive",
+      "required_observations": [
+        {
+          "check_id": "canonical_bytes",
+          "observed_result": "ok",
+          "subject_ref": "axes_jcs_nfc_nfd_pair.json"
+        }
+      ]
+    },
+    {
+      "predicate_id": "jcs_digest_encoding",
+      "predicate_note": "Bare lowercase hex and algorithm-prefixed digest forms are distinct pinned strings; digest is over UTF-8 JCS bytes",
+      "pass_fixture_refs": [
+        "axes_jcs_digest_encoding.json"
+      ],
+      "fail_mechanism_note": "Treating bare hex and sha256:hex as interchangeable, or hashing a decoded string rather than UTF-8 bytes, diverges from the pin",
+      "required_observations": [
+        {
+          "check_id": "canonical_bytes",
+          "observed_result": "ok",
+          "subject_ref": "axes_jcs_digest_encoding.json"
+        },
+        {
+          "check_id": "digest",
+          "observed_result": "ok",
+          "subject_ref": "axes_jcs_digest_encoding.json"
+        }
+      ]
+    },
+    {
+      "predicate_id": "chain_link_sequence",
+      "predicate_note": "Envelope hash chain link, sequence closure and envelope_hash recompute across both Golden Trace corpora",
+      "pass_fixture_refs": [
         "examples/golden-trace/out/envelopes.jsonl",
         "examples/golden-trace-ind/out/envelopes.jsonl"
       ],
-      "fail_fixtures": [],
-      "unexercised": true,
-      "unexercised_reason": "A committed broken-chain negative would mutate the corpus of record. Deliberately not shipped.",
+      "fail_fixture_refs": [],
+      "unexercised_indicator": true,
+      "unexercised_reason_note": "A committed broken-chain negative would mutate the corpus of record. Deliberately not shipped.",
       "required_observations": [
-        {"check": "chain_link", "outcome": "ok"},
-        {"check": "sequence_closure", "outcome": "ok"},
-        {"check": "envelope_hash", "outcome": "ok"}
+        {
+          "check_id": "chain_link",
+          "observed_result": "ok"
+        },
+        {
+          "check_id": "sequence_closure",
+          "observed_result": "ok"
+        },
+        {
+          "check_id": "envelope_hash",
+          "observed_result": "ok"
+        }
       ]
     },
     {
-      "id": "anchoring_legacy_gt_v2_0",
-      "description": "gt-v2.0 anchoring blocks are read under gt-v2.0 rules: indeterminate / absence / legacy_unstructured_anchor (declared simulated, D-015), never verified and never re-judged under later rules",
-      "pass_fixtures": [
-        "anchoring/anch_legacy_gt_v2_0.json",
-        "examples/golden-trace/out/envelopes.jsonl",
-        "examples/golden-trace-ind/out/envelopes.jsonl"
+      "predicate_id": "anchoring_legacy_gt_v2_0",
+      "predicate_note": "gt-v2.0 anchoring blocks are read under gt-v2.0 rules: indeterminate / absence / legacy_unstructured_anchor (declared simulated, D-015), never verified and never re-judged under later rules. The gt-v2.0 corpus itself is checked at its tag",
+      "pass_fixture_refs": [
+        "anchoring/anch_legacy_gt_v2_0.json"
       ],
-      "fail_fixtures": [
+      "fail_fixture_refs": [
         "anchoring/anch_legacy_under_gt_v2_1.json"
       ],
       "required_observations": [
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_legacy_gt_v2_0.json"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_legacy_gt_v2_0.json"
         },
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_legacy_under_gt_v2_1.json"
-        },
-        {
-          "check": "anchoring_corpus",
-          "outcome": "legacy_unstructured_anchor"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_legacy_under_gt_v2_1.json"
         }
       ]
     },
     {
-      "id": "anchoring_externally_anchored_earned",
-      "description": "externally_anchored over an anchor that is not demonstrated is contradicted (D-020)",
-      "pass_fixtures": [
+      "predicate_id": "anchoring_corpus_simulated_honest",
+      "predicate_note": "WO21: every anchoring block in the gt-v2.1 corpus (in-trace and export final anchor) reads under gt-v2.1 rules as indeterminate / basis_not_demonstrated; none is contradicted. The same anchor as published in gt-v2.0 is contradicted under the same rules",
+      "pass_fixture_refs": [
+        "anchoring/anch_gt_v2_1_corpus.json",
+        "examples/golden-trace/out/envelopes.jsonl",
+        "examples/golden-trace-ind/out/envelopes.jsonl"
+      ],
+      "fail_fixture_refs": [
+        "anchoring/anch_gt_v2_0_translated.json",
+        "anchoring/anch_legacy_under_gt_v2_1.json"
+      ],
+      "required_observations": [
+        {
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_gt_v2_1_corpus.json"
+        },
+        {
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_gt_v2_0_translated.json"
+        },
+        {
+          "check_id": "anchoring_corpus",
+          "observed_result": "simulated_anchor_honest"
+        }
+      ]
+    },
+    {
+      "predicate_id": "anchoring_externally_anchored_earned",
+      "predicate_note": "externally_anchored over an anchor that is not demonstrated is contradicted (D-020)",
+      "pass_fixture_refs": [
         "anchoring/anch_simulated_honest.json"
       ],
-      "fail_fixtures": [
+      "fail_fixture_refs": [
         "anchoring/anch_simulated_claims_external.json"
       ],
       "required_observations": [
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_simulated_honest.json"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_simulated_honest.json"
         },
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_simulated_claims_external.json"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_simulated_claims_external.json"
         }
       ]
     },
     {
-      "id": "anchoring_proof_absent",
-      "description": "A demonstrated anchor with no proof reference is indeterminate / absence, subject operator (WO18 A4.2)",
-      "pass_fixtures": [
+      "predicate_id": "anchoring_proof_absent",
+      "predicate_note": "A demonstrated anchor with no proof reference is indeterminate / absence, subject operator (WO18 A4.2)",
+      "pass_fixture_refs": [
         "anchoring/anch_canonical_contract.json"
       ],
-      "fail_fixtures": [
+      "fail_fixture_refs": [
         "anchoring/anch_proof_absent.json"
       ],
       "required_observations": [
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_canonical_contract.json"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_canonical_contract.json"
         },
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_proof_absent.json"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_proof_absent.json"
         }
       ]
     },
     {
-      "id": "anchoring_canonical_contract",
-      "description": "A ledger commitment counts only from the contract named in anchor_service_ref, only as a commitment event, and only for the anchored digest (WO18 A4.4)",
-      "pass_fixtures": [
+      "predicate_id": "anchoring_canonical_contract",
+      "predicate_note": "A ledger commitment counts only from the contract named in anchor_service_ref, only as a commitment event, and only for the anchored digest (WO18 A4.4)",
+      "pass_fixture_refs": [
         "anchoring/anch_canonical_contract.json"
       ],
-      "fail_fixtures": [
+      "fail_fixture_refs": [
         "anchoring/anch_lookalike_contract.json",
         "anchoring/anch_plain_transfer.json",
         "anchoring/anch_commitment_mismatch.json"
       ],
       "required_observations": [
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_canonical_contract.json"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_canonical_contract.json"
         },
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_lookalike_contract.json"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_lookalike_contract.json"
         },
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_plain_transfer.json"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_plain_transfer.json"
         },
         {
-          "check": "anchoring",
-          "outcome": "ok",
-          "subject": "anch_commitment_mismatch.json"
+          "check_id": "anchoring",
+          "observed_result": "ok",
+          "subject_ref": "anch_commitment_mismatch.json"
         }
       ]
     },
     {
-      "id": "profile_evaluation",
-      "description": "WO19 requirement evaluation: every condition the evaluator returns has a case that returns it and a case that does not (D5, D6, D9, D10, D12)",
-      "pass_fixtures": [
+      "predicate_id": "profile_evaluation",
+      "predicate_note": "WO19 requirement evaluation: every condition the evaluator returns has a case that returns it and a case that does not (D5, D6, D9, D10, D12)",
+      "pass_fixture_refs": [
         "profiles/expected.json"
       ],
-      "fail_fixtures": [
+      "fail_fixture_refs": [
         "profiles/expected.json"
       ],
       "required_observations": [
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "presence_required_present.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "presence_required_present.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "presence_required_absent.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "presence_required_absent.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "absence_declared_not_captured.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "absence_declared_not_captured.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "absence_declared_withheld.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "absence_declared_withheld.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "absence_declared_redacted.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "absence_declared_redacted.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "absence_declared_not_applicable.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "absence_declared_not_applicable.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "prohibited_absent.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "prohibited_absent.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "prohibited_present.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "prohibited_present.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "conditional_false.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "conditional_false.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "conditional_true_absent.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "conditional_true_absent.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "predicate_unparseable.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "predicate_unparseable.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "accepted_value.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "accepted_value.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "value_not_accepted.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "value_not_accepted.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "minimum_met.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "minimum_met.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "minimum_not_met.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "minimum_not_met.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "conflicting_never_satisfies.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "conflicting_never_satisfies.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "basis_demonstrated.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "basis_demonstrated.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "basis_not_demonstrated.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "basis_not_demonstrated.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "chain_intact.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "chain_intact.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "chain_broken.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "chain_broken.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "sequence_contiguous.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "sequence_contiguous.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "sequence_gap.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "sequence_gap.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "anchor_sufficient.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "anchor_sufficient.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "anchor_simulated.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "anchor_simulated.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "anchor_lag_exceeded.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "anchor_lag_exceeded.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "settlement_matches.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "settlement_matches.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "settlement_under_report.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "settlement_under_report.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "settlement_not_observed.jsonl"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "settlement_not_observed.jsonl"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "composition_floor_relaxed.case"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "composition_floor_relaxed.case"
         },
         {
-          "check": "profile_evaluation",
-          "outcome": "ok",
-          "subject": "profile_unsupported.case"
+          "check_id": "profile_evaluation",
+          "observed_result": "ok",
+          "subject_ref": "profile_unsupported.case"
         }
       ]
     },
     {
-      "id": "vocabulary_mapping",
-      "description": "WO19 section 4.5: existing AXES values map to one evaluation result each",
-      "pass_fixtures": [
+      "predicate_id": "vocabulary_mapping",
+      "predicate_note": "WO19 section 4.5: existing AXES values map to one evaluation result each",
+      "pass_fixture_refs": [
         "profiles/mapping.json"
       ],
-      "fail_mechanism": "A changed mapping row returns mismatch",
+      "fail_mechanism_note": "A changed mapping row returns mismatch",
       "required_observations": [
         {
-          "check": "vocabulary_mapping",
-          "outcome": "ok",
-          "subject": "derivation_outcome.underivable_missing_input"
+          "check_id": "vocabulary_mapping",
+          "observed_result": "ok",
+          "subject_ref": "derivation_outcome.underivable_missing_input"
         },
         {
-          "check": "vocabulary_mapping",
-          "outcome": "ok",
-          "subject": "derivation_outcome.undisclosed"
+          "check_id": "vocabulary_mapping",
+          "observed_result": "ok",
+          "subject_ref": "derivation_outcome.undisclosed"
         },
         {
-          "check": "vocabulary_mapping",
-          "outcome": "ok",
-          "subject": "derivation_outcome.underivable_conflicting_inputs"
+          "check_id": "vocabulary_mapping",
+          "observed_result": "ok",
+          "subject_ref": "derivation_outcome.underivable_conflicting_inputs"
         },
         {
-          "check": "vocabulary_mapping",
-          "outcome": "ok",
-          "subject": "derivation_outcome.underivable_unverified_identifier"
+          "check_id": "vocabulary_mapping",
+          "observed_result": "ok",
+          "subject_ref": "derivation_outcome.underivable_unverified_identifier"
         },
         {
-          "check": "vocabulary_mapping",
-          "outcome": "ok",
-          "subject": "derivation_outcome.outside_capture_boundary"
+          "check_id": "vocabulary_mapping",
+          "observed_result": "ok",
+          "subject_ref": "derivation_outcome.outside_capture_boundary"
         },
         {
-          "check": "vocabulary_mapping",
-          "outcome": "ok",
-          "subject": "verification_status.verification_unavailable"
+          "check_id": "vocabulary_mapping",
+          "observed_result": "ok",
+          "subject_ref": "verification_status.verification_unavailable"
         },
         {
-          "check": "vocabulary_mapping",
-          "outcome": "ok",
-          "subject": "anchoring_guard.anchor_simulated_claims_external"
+          "check_id": "vocabulary_mapping",
+          "observed_result": "ok",
+          "subject_ref": "anchoring_guard.anchor_simulated_claims_external"
         },
         {
-          "check": "vocabulary_mapping",
-          "outcome": "ok",
-          "subject": "anchoring_guard.anchor_independence_unproven"
+          "check_id": "vocabulary_mapping",
+          "observed_result": "ok",
+          "subject_ref": "anchoring_guard.anchor_independence_unproven"
         },
         {
-          "check": "vocabulary_mapping",
-          "outcome": "ok",
-          "subject": "anchoring_guard.anchor_method_unverifiable"
+          "check_id": "vocabulary_mapping",
+          "observed_result": "ok",
+          "subject_ref": "anchoring_guard.anchor_method_unverifiable"
         }
       ]
     },
     {
-      "id": "evaluation_reproduced",
-      "description": "WO19 D13: the published gt-v2.0 evaluations reproduce to the same result_core_hash",
-      "pass_fixtures": [
+      "predicate_id": "evaluation_reproduced",
+      "predicate_note": "WO19 D13: the published evaluations of the corpus in this tree (gt-v2.1) reproduce to the same result_core_hash",
+      "pass_fixture_refs": [
         "examples/golden-trace/out/envelopes.jsonl"
       ],
-      "fail_mechanism": "Any change to the evaluator, a profile or the subject changes result_core_hash",
+      "fail_mechanism_note": "Any change to the evaluator, a profile or the subject changes result_core_hash",
       "required_observations": [
         {
-          "check": "evaluation_reproduced",
-          "outcome": "ok",
-          "subject": "gt_fin_internal_audit__golden-trace.json"
+          "check_id": "evaluation_reproduced",
+          "observed_result": "ok",
+          "subject_ref": "gt_fin_internal_audit__golden-trace.json"
         },
         {
-          "check": "evaluation_reproduced",
-          "outcome": "ok",
-          "subject": "gt_fin_regulator__golden-trace.json"
+          "check_id": "evaluation_reproduced",
+          "observed_result": "ok",
+          "subject_ref": "gt_fin_regulator__golden-trace.json"
         }
       ]
     }

@@ -1,16 +1,16 @@
 {
   "se_version": "0.1-draft",
-  "profile_id": "se-profile:manufacturing-emitter/0.1-draft",
+  "implementation_profile_ref": "se-profile:manufacturing-emitter/0.1-draft",
   "event_kind": "attestation_recorded",
   "occurred_at": "2026-06-11T07:05:00.000Z",
   "emitted_at": "2026-06-11T07:05:00.400Z",
   "recorded_at": "2026-06-11T07:05:00.900Z",
   "timestamp_source": "ntp:cluster-sync",
-  "clock_sync_confidence": "high",
+  "clock_sync_confidence_level": "high",
   "trace_id": "7c1de4a90b6f42e8b3a5c0d9e1f28a44",
   "span_id": "span-anchor",
   "parent_span_id": "span-batch",
-  "org_id": "org:ironmark-precision",
+  "organization_id": "org:ironmark-precision",
   "tenant_id": "tenant:ironmark-prod",
   "environment_id": "env:prod-eu",
   "environment_type": "production",
@@ -30,8 +30,8 @@
     "provider_id": "cell:ironmark/cnc-cell-4"
   },
   "authority": {
-    "authority_context_id": "MD-5120",
-    "delegation_receipt_id": "delrec:MD-5120/2026-04-15",
+    "authority_context_ref": "MD-5120",
+    "delegation_receipt_ref": "delrec:MD-5120/2026-04-15",
     "delegator_id": "person:pseu/quality-director-7c20",
     "policy_ref": "policy:ironmark/part-release",
     "policy_version": "5.1",
@@ -42,34 +42,46 @@
     "capture_layer": "runtime_sdk",
     "capture_status": "captured",
     "emission_fail_posture": "fail_closed",
-    "declared_heartbeat_interval_s": 60
+    "declared_heartbeat_interval": "PT60S"
   },
   "evidence_quality": {
     "evidence_origin": "runtime",
     "assertion_basis": "observed",
-    "corroboration_state": "externally_anchored"
+    "corroboration_state": "internally_corroborated"
   },
   "privacy": {
-    "personal_data_flag": false,
-    "redaction_applied": false
+    "personal_data_indicator": false,
+    "redaction_applied_indicator": false
   },
   "anchoring": {
-    "anchor_receipt_id": "anch:001",
-    "anchoring_method": "write_once_store (SIMULATED)",
-    "anchored_at": "2026-06-11T07:05:00.000Z",
-    "chain_head_hash": "7041071a5600749588a2f65f2962efea894f526c25d3075ca4f23b1b463ed0d3",
-    "anchor_store_ref": "anchorstore:trustline-demo/eu",
-    "anchoring_latency_ms": 740
+    "anchored_subject_type": "chain_head",
+    "anchored_subject_hash": "99cbd69c16adb4877aaf050a89dc85f6403d1f677ab69a06b4a95036baa8d7d3",
+    "anchored_subject_hash_algorithm": "SHA-256",
+    "anchors": [
+      {
+        "anchor_id": "anch:001",
+        "anchoring_method": "write_once_store",
+        "basis_status": "simulated",
+        "anchor_commitment_hash": "99cbd69c16adb4877aaf050a89dc85f6403d1f677ab69a06b4a95036baa8d7d3",
+        "anchor_commitment_hash_algorithm": "SHA-256",
+        "anchor_requested_at": "2026-06-11T07:05:00.000Z",
+        "anchored_at": "2026-06-11T07:05:00.250Z",
+        "anchor_service_id": "anchorstore:trustline-demo/eu",
+        "anchor_record_ref": "object:trustline-demo/eu/001",
+        "anchor_operator_id": "org:trustline-demo"
+      }
+    ]
   },
-  "sequence_number": 37,
-  "envelope_id": "env:MRUN-2026-06-11-A/0037",
+  "sequence_number": 36,
+  "envelope_id": "env:MRUN-2026-06-11-A/0036",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "RFC8785-JCS",
-    "previous_envelope_hash": "7041071a5600749588a2f65f2962efea894f526c25d3075ca4f23b1b463ed0d3",
+    "canonicalization_version": "RFC8785-JCS",
+    "previous_envelope_hash": "99cbd69c16adb4877aaf050a89dc85f6403d1f677ab69a06b4a95036baa8d7d3",
     "signing_key_id": "key:ironmark/se-emitter-2026q2",
     "signing_key_provenance_ref": "kms:ironmark/provenance/se-emitter-2026q2",
-    "envelope_hash": "4c0765f0318fd7a965edc276a3f1cfa428db0ba0a73d8a5e281d507fde65d02a",
-    "signature": "SIG-STUB(4c0765f0318fd7a9)"
+    "envelope_signature_basis_status": "stubbed",
+    "envelope_hash": "7a9dc130d314c5227255484ed0cdc4738cda1eba345e8acca5a9ea21eb6a0be5",
+    "envelope_signature": "SIG-STUB(7a9dc130d314c522)"
   }
 }

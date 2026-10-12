@@ -21,17 +21,17 @@ VERIFY = os.path.join(ROOT, "tools", "axes_verify.py")
 
 def main() -> int:
     broken = {
-        "schema": "axes.predicate-coverage/1",
+        "predicate_format_ref": "axes.predicate-coverage/2",
         "predicates": [
             {
-                "id": "deliberately_broken_predicate",
-                "description": "Self-test: missing required observation must yield exit 2",
-                "pass_fixtures": ["axes_gt_0001_genesis.json"],
-                "fail_fixtures": [],
+                "predicate_id": "deliberately_broken_predicate",
+                "predicate_note": "Self-test: missing required observation must yield exit 2",
+                "pass_fixture_refs": ["axes_gt_0001_genesis.json"],
+                "fail_fixture_refs": [],
                 "required_observations": [
                     {
-                        "check": "canonical_bytes",
-                        "outcome": "this_outcome_never_occurs",
+                        "check_id": "canonical_bytes",
+                        "observed_result": "this_outcome_never_occurs",
                     }
                 ],
             }

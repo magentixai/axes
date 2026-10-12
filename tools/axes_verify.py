@@ -69,6 +69,9 @@ class CheckResult:
             "verification_unavailable",
             # gt-v2.0 anchors are declared simulated (D-015): indeterminate, not a failure.
             "legacy_unstructured_anchor",
+            # gt-v2.1 in-trace anchors say they are simulated (basis_status): indeterminate,
+            # basis_not_demonstrated, and never contradicted (D-020).
+            "simulated_anchor_honest",
         }
 
 
@@ -127,7 +130,7 @@ def custody_independence_outcome(env: dict) -> str:
     Unparseable identifier syntax is verification_unavailable, never a reject.
     """
     custody = env.get("custody") or {}
-    rel = custody.get("capture_relationship")
+    rel = custody.get("capture_relationship_type")
     capturer = custody.get("capturer_id")
     deployer = custody.get("deployer_id")
     if not isinstance(capturer, str) or not isinstance(deployer, str):
@@ -143,7 +146,7 @@ def verify_vector(name: str, spec: dict, report: Report) -> None:
     path = os.path.join(VECTORS_DIR, name)
     raw = open(path, encoding="utf-8").read()
 
-    if spec.get("reject") is True:
+    if spec.get("reject_indicator") is True:
         try:
             load_json_reject_duplicates(raw)
         except DuplicateKeyError:
@@ -168,18 +171,20 @@ def verify_vector(name: str, spec: dict, report: Report) -> None:
     canon = cb.decode("utf-8")
     digest = sha256_hex(cb)
 
-    if "canonical_utf8" in spec:
-        if canon == spec["canonical_utf8"]:
+    if "canonical_text" in spec:
+        if canon == spec["canonical_text"]:
             report.add("canonical_bytes", name, "ok")
         else:
             report.add("canonical_bytes", name, "mismatch")
-    if "sha256" in spec:
-        if digest == spec["sha256"]:
+    if "canonical_hash" in spec:
+        if spec.get("canonical_hash_algorithm") != "SHA-256":
+            report.add("digest", name, "unsupported_algorithm", str(spec.get("canonical_hash_algorithm")))
+        elif digest == spec["canonical_hash"]:
             report.add("digest", name, "ok")
         else:
             report.add("digest", name, "mismatch", f"got {digest}")
 
-    expect = spec.get("expect", "pass")
+    expect = spec.get("expected_result", "pass")
     reject_code = spec.get("reject_code")
     if expect == "reject":
         if reject_code == "custody_independence_reject":
@@ -258,23 +263,35 @@ def anchoring_vectors(report: Report) -> None:
 
 
 def anchoring_corpus(label: str, jsonl_path: str, report: Report) -> None:
-    """Every anchored envelope in the gt-v2.0 corpus reads as legacy_unstructured_anchor."""
+    """Every anchoring block in the gt-v2.1 corpus, in-trace and the export's final anchor, is
+    read under gt-v2.1 rules as indeterminate / basis_not_demonstrated: simulated, and saying
+    so. Anything else, above all contradicted (anchor_status_in_method,
+    anchor_simulated_claims_external), fails the run."""
     with open(jsonl_path, encoding="utf-8") as f:
         for line in f:
             env = json.loads(line)
-            got = anchoring_guard.decisive(anchoring_guard.evaluate(env, "gt-v2.0"))
-            if got is None:
-                continue
             seq = env.get("sequence_number")
-            cond = got["verification_condition_code"]
-            outcome = cond if cond == "legacy_unstructured_anchor" else "unexpected_anchor_result"
-            report.add("anchoring_corpus", f"{label}:{seq}", outcome, _fmt(got))
+            final = (env.get("export") or {}).get("final_anchor")
+            records = [env]
+            if isinstance(final, dict):
+                records.append({"evidence_quality": env.get("evidence_quality"), "anchoring": final})
+            for i, rec in enumerate(records):
+                got = anchoring_guard.decisive(anchoring_guard.evaluate(rec, "gt-v2.1"))
+                if got is None:
+                    continue
+                honest = (got["verification_state"] == "indeterminate"
+                          and got["verification_condition_code"] == "basis_not_demonstrated")
+                report.add("anchoring_corpus", f"{label}:{seq}" + (":final_anchor" if i else ""),
+                           "simulated_anchor_honest" if honest else "unexpected_anchor_result", _fmt(got))
 
 
 PROFILE_VECTORS = os.path.join(VECTORS_DIR, "profiles")
+# Published evaluations of the corpus in this tree. gt-v2.0 evaluations stay published under
+# evaluations/gt-v2.0/ and reproduce at tag corpus/2026-08-08-gt-v2.
+CORPUS_RELEASE = "gt-v2.1"
 EVALUATIONS = [
-    ("axes:gt_fin_internal_audit@1", "evaluations/gt-v2.0/gt_fin_internal_audit__golden-trace.json"),
-    ("axes:gt_fin_regulator@1", "evaluations/gt-v2.0/gt_fin_regulator__golden-trace.json"),
+    ("axes:gt_fin_internal_audit@1", "evaluations/gt-v2.1/gt_fin_internal_audit__golden-trace.json"),
+    ("axes:gt_fin_regulator@1", "evaluations/gt-v2.1/gt_fin_regulator__golden-trace.json"),
 ]
 
 
@@ -299,7 +316,7 @@ def profile_vectors(report: Report) -> None:
         published = json.load(open(path, encoding="utf-8"))
         again = evaluator.evaluate(ref, os.path.join(ROOT, "examples", "golden-trace", "out", "envelopes.jsonl"),
                                    os.path.join(ROOT, "vendor", "main", "profiles"),
-                                   os.path.join(ROOT, "vendor", "main", "key-aliases.json"), "gt-v2.0", None,
+                                   os.path.join(ROOT, "vendor", "main", "key-aliases.json"), CORPUS_RELEASE, None,
                                    published["evaluated_at"])
         same = again["result_core_hash"] == published["result_core_hash"]
         report.add("evaluation_reproduced", rel.split("/")[-1], "ok" if same else "mismatch",
@@ -310,7 +327,7 @@ def locale_guard(report: Report) -> None:
     name = "axes_jcs_collation_ae.json"
     spec_path = os.path.join(VECTORS_DIR, name)
     obj = load_json_reject_duplicates(open(spec_path, encoding="utf-8").read())
-    pinned = json.load(open(EXPECTED_PATH, encoding="utf-8"))[name]["canonical_utf8"]
+    pinned = json.load(open(EXPECTED_PATH, encoding="utf-8"))[name]["canonical_text"]
     jcs_bytes = hash_preimage(obj).decode("utf-8")
     locale_bytes = locale_like_canonical_utf8(obj)
     if jcs_bytes != pinned:
@@ -354,37 +371,37 @@ def enforce_predicate_manifest(report: Report, manifest: dict) -> list[str]:
         observed.add((r.check, r.outcome, None))
 
     for pred in predicates:
-        pid = pred.get("id", "<missing-id>")
-        unexercised = bool(pred.get("unexercised"))
-        reason = (pred.get("unexercised_reason") or "").strip()
+        pid = pred.get("predicate_id", "<missing-id>")
+        unexercised = bool(pred.get("unexercised_indicator"))
+        reason = (pred.get("unexercised_reason_note") or "").strip()
 
         if unexercised and not reason:
-            problems.append(f"{pid}: unexercised without unexercised_reason")
+            problems.append(f"{pid}: unexercised without unexercised_reason_note")
 
-        for key in ("pass_fixtures", "fail_fixtures"):
+        for key in ("pass_fixture_refs", "fail_fixture_refs"):
             for name in pred.get(key) or []:
                 path = resolve_fixture_path(name)
                 if not os.path.isfile(path):
                     problems.append(f"{pid}: missing fixture {name}")
 
         if not unexercised:
-            has_pass = bool(pred.get("pass_fixtures"))
-            has_fail = bool(pred.get("fail_fixtures"))
+            has_pass = bool(pred.get("pass_fixture_refs"))
+            has_fail = bool(pred.get("fail_fixture_refs"))
             has_declared = bool(pred.get("declared_outcomes"))
-            has_fail_mech = bool(pred.get("fail_mechanism"))
+            has_fail_mech = bool(pred.get("fail_mechanism_note"))
             has_obs = bool(pred.get("required_observations"))
             if not has_pass:
-                problems.append(f"{pid}: no pass_fixtures and not unexercised")
+                problems.append(f"{pid}: no pass_fixture_refs and not unexercised")
             if not (has_fail or has_declared or has_fail_mech or has_obs):
                 problems.append(
-                    f"{pid}: no fail_fixtures, declared_outcomes, fail_mechanism "
+                    f"{pid}: no fail_fixture_refs, declared_outcomes, fail_mechanism_note "
                     "or required_observations, and not unexercised"
                 )
 
         for req in pred.get("required_observations") or []:
-            check = req.get("check")
-            outcome = req.get("outcome")
-            subject = req.get("subject")
+            check = req.get("check_id")
+            outcome = req.get("observed_result")
+            subject = req.get("subject_ref")
             key = (check, outcome, subject) if subject else (check, outcome, None)
             if key not in observed:
                 problems.append(

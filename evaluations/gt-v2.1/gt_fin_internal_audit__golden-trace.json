@@ -1,0 +1,89 @@
+{
+  "evaluation_id": "eval:axes:gt_fin_internal_audit@1:b6fad8120c6e4a9a",
+  "requirement_profile_ref": "axes:gt_fin_internal_audit@1",
+  "requirement_profile_version": "1",
+  "requirement_profile_hash": "48e8435ece578027e25d771672965e1732705fba366388d59a43a297d2dd19a6",
+  "hash_algorithm": "SHA-256",
+  "subject_type": "bundle",
+  "subject_hashes": [
+    "b6fad8120c6e4a9a30dd8c30dc5b7b631e556df320eca094624c299ec3503128"
+  ],
+  "evaluator_id": "axes:reference_evaluator@1",
+  "evaluator_version": "1",
+  "evaluated_at": "2026-10-12T00:00:00.000Z",
+  "pinned_evidence_items": [],
+  "results": [
+    {
+      "requirement_ref": "ia_chain_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "76 envelopes linked",
+      "evidence_refs": []
+    },
+    {
+      "requirement_ref": "ia_sequence_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "sequence 1..76 contiguous",
+      "evidence_refs": []
+    },
+    {
+      "requirement_ref": "ia_authority_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "28 of 28 envelopes in scope: present",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0005",
+        "env:APRUN-2026-06-09-A/0007",
+        "env:APRUN-2026-06-09-A/0010",
+        "env:APRUN-2026-06-09-A/0012",
+        "env:APRUN-2026-06-09-A/0014"
+      ]
+    },
+    {
+      "requirement_ref": "ia_authority_02",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "28 of 28 envelopes in scope: present",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0005",
+        "env:APRUN-2026-06-09-A/0007",
+        "env:APRUN-2026-06-09-A/0010",
+        "env:APRUN-2026-06-09-A/0012",
+        "env:APRUN-2026-06-09-A/0014"
+      ]
+    },
+    {
+      "requirement_ref": "ia_basis_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "28 of 28 envelopes in scope: present",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0005",
+        "env:APRUN-2026-06-09-A/0007",
+        "env:APRUN-2026-06-09-A/0010",
+        "env:APRUN-2026-06-09-A/0012",
+        "env:APRUN-2026-06-09-A/0014"
+      ]
+    },
+    {
+      "requirement_ref": "ia_corroboration_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "14 of 14 envelopes in scope: present",
+      "evidence_refs": [
+        "env:APRUN-2026-06-09-A/0007",
+        "env:APRUN-2026-06-09-A/0012",
+        "env:APRUN-2026-06-09-A/0016",
+        "env:APRUN-2026-06-09-A/0021",
+        "env:APRUN-2026-06-09-A/0026"
+      ]
+    }
+  ],
+  "overall_verification_state": "verified",
+  "guarantee_type": "unconditional",
+  "conditional_requirement_refs": [],
+  "subject_release_ref": "gt-v2.1",
+  "key_translation_ref": "schema/key-aliases.json (0 paths translated)",
+  "result_core_hash": "04ff7121b9d783e62f50900a2940cc3d27fc801066a3d94e393cfc00f9b5d37f"
+}

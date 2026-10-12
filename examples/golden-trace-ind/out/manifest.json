@@ -1,10 +1,10 @@
 {
-  "evidence_bundle_id": "bundle:MRUN-2026-06-11-A",
-  "bundle_manifest_hash": "b926af903de3d5088a253a486044a7fc1bf8afd046958da0054ea152fc7c3463",
+  "evidence_bundle_ref": "bundle:MRUN-2026-06-11-A",
+  "bundle_manifest_hash": "dd01b56c718c6a61f06725318ab99738799128d9cb527d5e468e9be5b78ebb31",
   "generated_at": "2026-06-11T07:00:00.000Z",
   "envelope_count": 76,
-  "chain_head": "93733e6a8b6f6be299f656ddfb951f13c9da4756f9d37470649ac3414056fba4",
-  "chain_verification": "chain verified: 76 envelopes, head 93733e6a8b6f6be2…",
+  "chain_head": "5ca428eac8ed5dde5b7720218712bdd2ede484a6892ac7894db2e1772a519dd6",
+  "chain_verification": "chain verified: 76 envelopes, head 5ca428eac8ed5dde…",
   "files": {
     "artifacts/b2mml_batchrecord_MRUN-2026-06-11-A.xml": "a9b32ae60e13c22b93e641996a8856bc4145a1337fc48c0d6843b7e1c9ea30ff",
     "artifacts/matcert_HT-88213.xml": "b06cef666a2710157b522ef7ea0929362b046da8a7ab003321eb435cdafb3975",
@@ -37,15 +37,15 @@
     "artifacts/qif_SN0012.xml": "6c51e7703da9fa0a1cddcba5bae7be69a73505b3cf8f8970256b42698311dd51",
     "artifacts/qif_SN0013.xml": "36a4f54556718c835168bd9a8b6856c47294e8a226a7b7d9c9140591337ca83b",
     "artifacts/qif_SN0014.xml": "b807115d40e49bf402b3667f398091453f6304bc0f149842055ff21c93519cca",
-    "envelopes.jsonl": "b1a85ed2d9081aee7ee3e044ead0669e2e440e94d17d1705d074ad08c9168496",
-    "reports/report_A_board.md": "69704c8801093cdb91fe7ff2bfdccad8a8e73a9203bc804fed6bb06f13b6d4ca",
-    "reports/report_B_audit.md": "d9a7ea6f4dea992a6eba6e362e693810869a7d3f1b27189856a5562ddc0305a0",
-    "reports/report_C_regulator.md": "b042f2748442860ac6121be2ac7ec610d7008d4287b21bfa4a713df125a863c5",
-    "reports/report_D_forensic.md": "b8af463fbc2fb7fbb679fe5b434515bb418e0baff338911df9c2d5e8f416a539",
-    "samples/envelope_anchor.json": "0f5b5756c1f7bd03738d826bda6287d6c23c3c371faaa5ef598420a577113168",
-    "samples/envelope_part03_commit_succeeded.json": "b5905f6848ececadb0e6c679936ebac651b56106cc26d2147cab181b477ca8bd",
-    "samples/envelope_part03_quality_gate.json": "ebc127b09216f5db696cc43ed020ec40f5fee98d52fcfd6f2cdcf6b60030b90e",
-    "samples/envelope_reconciliation.json": "970a634938203d930443d3d612a5e855e60e6b0b07b8887465378860ca77eead"
+    "envelopes.jsonl": "23b2af83df3adf21a52b68c5d4c31f2c58440e31714cfe69811c611ff5cdf6d5",
+    "reports/report_A_board.md": "8af6594050a9e590878a60c3ef0697a3be986de049ae32a366a0e467e5bb51d6",
+    "reports/report_B_audit.md": "c37e9d69ed4ed0a9b20203e0ab944339fd76f2758d7226f81ec6dbf52419c478",
+    "reports/report_C_regulator.md": "8386434fe8b3c894fc9a766fe8387fcf3c557f9e22b83f03ce5eca50686f4845",
+    "reports/report_D_forensic.md": "a7d83bf62f3187d82ee046ee564e2c588bdfb7899f34eece7da27629f853f006",
+    "samples/envelope_anchor.json": "43ebde4c90525d0989645c02d22c44b3ad1715e74fb573a26a50806990eafedf",
+    "samples/envelope_part03_commit_succeeded.json": "27f3b526fcbfc531007a18ea8f1e3439aee548bbce47e35e05043615394b07b5",
+    "samples/envelope_part03_quality_gate.json": "f6f49cc6c457ef31424b0798eb85b3f3f0130b16ae081c2a40625d0944944060",
+    "samples/envelope_reconciliation.json": "90fcc461811c9990b7247a96a1be9dcf7f0acb6d33ee6bdab580f29bb53a3c31"
   },
-  "note": "Golden trace v2 (industrial): hashes real (RFC 8785 JCS); signatures and anchor store simulated."
+  "note": "Golden Trace gt-v2.1 (industrial): hashes real (RFC 8785 JCS); signatures stubbed and in-trace anchors simulated, each stated in basis_status."
 }

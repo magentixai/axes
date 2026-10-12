@@ -1,6 +1,6 @@
 {
   "vector_format_ref": "axes:anchoring_vectors@1",
-  "summary_note": "Expected decisive result per vector (four-state vocabulary, D-023) with per-vector provenance (WO18 A4.3). Values are illustrative except anch_legacy_gt_v2_0.json, copied from the corpus of record.",
+  "summary_note": "Expected decisive result per vector (four-state vocabulary, D-023) with per-vector provenance (WO18 A4.3). Values are illustrative except anch_legacy_gt_v2_0.json and anch_gt_v2_0_translated.json (from the gt-v2.0 corpus at tag corpus/2026-08-08-gt-v2) and anch_gt_v2_1_corpus.json (from the gt-v2.1 corpus).",
   "vectors": {
     "anch_legacy_gt_v2_0.json": {
       "expected_verification": {
@@ -117,6 +117,32 @@
         "author_name": "AXES maintainers (Magentix AI)",
         "origin_note": "Commitment event at the canonical contract for a different digest",
         "authored_on": "2026-10-04"
+      }
+    },
+    "anch_gt_v2_0_translated.json": {
+      "expected_verification": {
+        "verification_state": "contradicted",
+        "verification_reason_code": "divergence",
+        "verification_condition_code": "anchor_simulated_claims_external",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO21 pair, fail side: gt-v2.0 fin envelope 37 translated mechanically to the gt-v2.1 shape (schema/key-aliases.json); it keeps externally_anchored over a simulated anchor, which D-020 reads as contradicted. Untranslated, the same bytes are contradicted as anchor_status_in_method (anch_legacy_under_gt_v2_1.json)",
+        "authored_on": "2026-10-12"
+      }
+    },
+    "anch_gt_v2_1_corpus.json": {
+      "expected_verification": {
+        "verification_state": "indeterminate",
+        "verification_reason_code": "absence",
+        "verification_condition_code": "basis_not_demonstrated",
+        "verification_subject_type": "operator"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "origin_note": "WO21 pair, pass side: gt-v2.1 fin envelope 36, anchoring and evidence_quality copied byte for byte. Simulated and saying so: indeterminate, never contradicted",
+        "authored_on": "2026-10-12"
       }
     }
   }

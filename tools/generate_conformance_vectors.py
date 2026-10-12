@@ -2,7 +2,8 @@
 """
 Emit AXES conformance vectors (canoncheck layout) from Golden Trace v2 envelopes.
 
-Every canonical_utf8 and sha256 in expected.json is emitted by the canonicaliser.
+Every canonical_text and canonical_hash in expected.json is emitted by the canonicaliser
+(gt-v2.1 harness key names, docs/19).
 Run from repository root after regenerating the golden trace:
 
   python tools/generate_conformance_vectors.py
@@ -41,8 +42,12 @@ def hash_input(envelope: dict) -> dict:
     env = json.loads(json.dumps(envelope))
     integ = env.setdefault("integrity", {})
     integ.pop("envelope_hash", None)
-    integ.pop("signature", None)
+    integ.pop("envelope_signature", None)
     return env
+
+
+def pin(canon: str, digest: str) -> dict:
+    return {"canonical_text": canon, "canonical_hash": digest, "canonical_hash_algorithm": "SHA-256"}
 
 
 def write_vector(name: str, envelope: dict) -> tuple[str, str]:
@@ -58,16 +63,16 @@ def custody_base(*, capturer_id: str, signer_id: str) -> dict:
     amt = amount_from_decimal("1000.00")
     return {
         "se_version": "0.1-draft",
-        "profile_id": "se-profile:payments-emitter/0.1-draft",
+        "implementation_profile_ref": "se-profile:payments-emitter/0.1-draft",
         "event_kind": "commit_attempted",
         "occurred_at": "2026-06-09T09:02:00.000Z",
         "emitted_at": "2026-06-09T09:02:00.400Z",
         "recorded_at": "2026-06-09T09:02:00.900Z",
         "timestamp_source": "ntp:cluster-sync",
-        "clock_sync_confidence": "high",
+        "clock_sync_confidence_level": "high",
         "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
         "span_id": "span-custody-vector",
-        "org_id": DEPLOYER_ID,
+        "organization_id": DEPLOYER_ID,
         "tenant_id": "tenant:caldera-prod",
         "environment_id": "env:prod-eu",
         "environment_type": "production",
@@ -75,8 +80,8 @@ def custody_base(*, capturer_id: str, signer_id: str) -> dict:
         "execution_mode": "autonomous",
         "actor": {"agent_id": EXECUTOR_ID, "agent_version": "2.4.1"},
         "authority": {
-            "authority_context_id": "AD-7844",
-            "delegation_receipt_id": "delrec:AD-7844/2026-04-02",
+            "authority_context_ref": "AD-7844",
+            "delegation_receipt_ref": "delrec:AD-7844/2026-04-02",
             "policy_ref": "policy:caldera/ap-payments",
             "policy_version": "3.2",
         },
@@ -91,25 +96,25 @@ def custody_base(*, capturer_id: str, signer_id: str) -> dict:
             "corroboration_state": "third_party_confirmed",
         },
         "custody": {
-            "capture_relationship": "independent_third_party",
+            "capture_relationship_type": "independent_third_party",
             "executor_id": EXECUTOR_ID,
             "deployer_id": DEPLOYER_ID,
             "capturer_id": capturer_id,
-            "signing_trust_ref": {
+            "signing_trust": {
                 "ref": "custody-ref:external/notary-001",
                 "signer_id": signer_id,
             },
         },
         "operation": {
-            "operation": "submit_sepa_inst_credit_transfer",
+            "operation_type": "submit_sepa_inst_credit_transfer",
             "commit_boundary_status": "commit_attempted",
-            "commit_mechanism": "payment_initiation",
+            "commit_method": "payment_initiation",
             "commit_impact_class": "money_movement",
             "monetary": {"amount": amt},
         },
         "integrity": {
             "hash_algorithm": "SHA-256",
-            "canonicalisation_version": CANONICALISATION_VERSION,
+            "canonicalization_version": CANONICALISATION_VERSION,
             "previous_envelope_hash": "0" * 64,
             "signing_key_id": "key:caldera/se-emitter-2026q2",
             "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
@@ -123,7 +128,7 @@ def golden_trace_vectors(envelopes: list[dict]) -> dict:
         "axes_gt_0001_genesis.json": 0,
         "axes_gt_0004_policy_check_amount.json": 3,
         "axes_gt_0013_policy_check_peak_util.json": 12,
-        "axes_gt_0037_attestation_recorded.json": 36,
+        "axes_gt_0036_attestation_recorded.json": 35,
         "axes_gt_0073_reconciliation.json": 72,
     }
     out = {}
@@ -135,7 +140,7 @@ def golden_trace_vectors(envelopes: list[dict]) -> dict:
 def adversarial_vectors() -> dict:
     """Edge classes absent from the golden trace data."""
     base = custody_base(capturer_id=EXTERNAL_CAPTURER, signer_id=EXTERNAL_SIGNER)
-    base["operation"]["beneficiary"] = "Bolt & Brass Supplies GmbH"
+    base["operation"]["beneficiary_name"] = "Bolt & Brass Supplies GmbH"
     unicode_vec = hash_input(base)
 
     large_amt = custody_base(capturer_id=EXTERNAL_CAPTURER, signer_id=EXTERNAL_SIGNER)
@@ -144,8 +149,8 @@ def adversarial_vectors() -> dict:
 
     # USDC on Base: exercises decimals=6 / crypto namespaced asset path
     usdc = custody_base(capturer_id=EXTERNAL_CAPTURER, signer_id=EXTERNAL_SIGNER)
-    usdc["operation"]["operation"] = "submit_usdc_transfer"
-    usdc["operation"]["commit_mechanism"] = "token_transfer"
+    usdc["operation"]["operation_type"] = "submit_usdc_transfer"
+    usdc["operation"]["commit_method"] = "token_transfer"
     usdc["operation"]["monetary"]["amount"] = amount_from_decimal(
         "4475.0", decimals=6, asset=USDC_ASSET
     )
@@ -166,7 +171,7 @@ def duplicate_key_vector() -> dict:
     )
     path = os.path.join(VECTORS_DIR, "axes_reject_duplicate_key.json")
     write_text_utf8_lf(path, raw + "\n")
-    return {"axes_reject_duplicate_key.json": {"reject": True}}
+    return {"axes_reject_duplicate_key.json": {"reject_indicator": True}}
 
 
 def main() -> None:
@@ -177,11 +182,11 @@ def main() -> None:
 
     for name, env in golden_trace_vectors(envelopes).items():
         canon, digest = write_vector(name, env)
-        expected[name] = {"canonical_utf8": canon, "sha256": digest}
+        expected[name] = pin(canon, digest)
 
     for name, env in adversarial_vectors().items():
         canon, digest = write_vector(name, env)
-        expected[name] = {"canonical_utf8": canon, "sha256": digest}
+        expected[name] = pin(canon, digest)
 
     expected.update(duplicate_key_vector())
 
@@ -190,20 +195,16 @@ def main() -> None:
     )
     canon, digest = write_vector("custody_deployer_captured_reject.json", reject_env)
     expected["custody_deployer_captured_reject.json"] = {
-        "expect": "reject",
+        "expected_result": "reject",
         "reject_code": "custody_independence_reject",
-        "canonical_utf8": canon,
-        "sha256": digest,
+        **pin(canon, digest),
     }
 
     accept_env = hash_input(
         custody_base(capturer_id=EXTERNAL_CAPTURER, signer_id=EXTERNAL_SIGNER)
     )
     canon, digest = write_vector("custody_accept_independent_external.json", accept_env)
-    expected["custody_accept_independent_external.json"] = {
-        "canonical_utf8": canon,
-        "sha256": digest,
-    }
+    expected["custody_accept_independent_external.json"] = pin(canon, digest)
 
     write_json_utf8_lf(os.path.join(VECTORS_DIR, "expected.json"), expected)
 

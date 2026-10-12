@@ -1,7 +1,7 @@
 # Conformity Assessment / Notified-Body Evidence Pack - MRUN-2026-06-11-A
 
 ## 1. Scope of evidence
-Autonomous production batch release by Ironmark Precision Ltd, run MRUN-2026-06-11-A, 2026-06-11 07:00–07:11 UTC, batch reconciliation T+0 end of shift. Part IMP-4471 hydraulic manifold, drawing rev D, 14 units. Evidence bundle `bundle:MRUN-2026-06-11-A` [env:0076 | export.evidence_bundle_id] - 76 envelopes, 31 referenced artifacts.
+Autonomous production batch release by Ironmark Precision Ltd, run MRUN-2026-06-11-A, 2026-06-11 07:00–07:11 UTC, batch reconciliation T+0 end of shift. Part IMP-4471 hydraulic manifold, drawing rev D, 14 units. Evidence bundle `bundle:MRUN-2026-06-11-A` [env:0076 | export.evidence_bundle_ref] - 76 envelopes, 31 referenced artifacts.
 
 ## 2. Systems involved (execution topology)
 agent:ironmark/mfg-pilot 3.1.0 -> orchestrator:ironmark/shopfloor-orch 2.2 -> model:anthropic/claude-sonnet-4-6 -> gateway:ironmark/toolproxy-2 -> connector:opcua-gw 1.8.0 -> cell:ironmark/cnc-cell-4 (machining + in-line CMM) · context source mes:ironmark/prod (ISA-95) · runtime edge:ironmark/edge-mes-01 (on-premise) [env:0007 | actor]. One authority chain spans all nodes (MD-5120).
@@ -16,7 +16,7 @@ Coverage 14/14 against an independently reconciled population (MES production or
 None. 14/14 released conforming; 0 exceptions; 0 scrap; 0 human interventions; 0 control failures [env:0075 | summary].
 
 ## 6. Cryptographic sealing status
-SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalisation_version = RFC8785-JCS`), contiguous sequence 0001-0076; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Operator identity and any personal data carried by reference with hash-substitution redaction (`redact:operator-pii/v1`); redacted fields enumerated per envelope [env:0005 | privacy.redacted_fields].
+SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalization_version = RFC8785-JCS`), contiguous sequence 0001-0076; chain re-verified at generation. In-trace anchoring every 300s to `anchorstore:trustline-demo/eu` is **simulated** (`anchoring_method: write_once_store`, `basis_status: simulated`), and no envelope asserts `externally_anchored` (D-020). Envelope signatures are **stubs** (`envelope_signature_basis_status: stubbed`) pending the SE signing profile. Every stub and simulation is stated in a `basis_status` field a verifier reads, not only in this prose (catalogue 1.27). Operator identity and any personal data carried by reference with hash-substitution redaction (`redact:operator-pii/v1`); redacted fields enumerated per envelope [env:0005 | privacy.redacted_fields].
 
 ## 7. Appendix A - artifact register (manufacturing interop standards)
 | Artifact | SHA-256 |
@@ -53,12 +53,12 @@ SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalisation_version =
 | qif_SN0013.xml | `36a4f54556718c83…` |
 | qif_SN0014.xml | `b807115d40e49bf4…` |
 
-## 8. Appendix B - anchor receipts
-| Receipt | Anchored at | Chain head |
-|---|---|---|
-| anch:001 | 2026-06-11T07:05:00.000Z | `7041071a56007495…` |
-| anch:002 | 2026-06-11T07:10:00.000Z | `e49a68f87c1587ec…` |
-| anch:003 | 2026-06-11T07:10:52.000Z | `a1e743b511136e11…` |
+## 8. Appendix B - in-trace anchors (simulated)
+| Anchor | Requested at | Anchored at | Chain head | basis_status |
+|---|---|---|---|---|
+| anch:001 | 2026-06-11T07:05:00.000Z | 2026-06-11T07:05:00.250Z | `99cbd69c16adb487…` | simulated |
+| anch:002 | 2026-06-11T07:10:00.000Z | 2026-06-11T07:10:00.250Z | `1205df9a75416100…` | simulated |
+| anch:003 | 2026-06-11T07:10:52.000Z | 2026-06-11T07:10:52.250Z | `21e869f4d71f4f20…` | simulated |
 
 ## 9. Reliance boundary
 Evidence supports: internal quality-management reliance; customer source-surveillance and incoming acceptance with re-verification; notified-body review. It does not constitute: an airworthiness or conformity certification; a fitness-for-purpose determination; coverage of processes outside §4's declared boundary.

@@ -25,13 +25,13 @@ Three preventive controls (control set `ctl:ap-pay/v3.2`) were evaluated **pre-c
 ## 2. Population and completeness (IPE basis)
 - Population definition: ERP approved-invoice queue at 08:55Z (14 due) reconciled against bank statement FMB-STMT-2026-06-09 (14 booked) - **independently reconciled**, not self-reported [env:0073 | reconciliation.population_basis].
 - Coverage: envelopes 14/14 (100%); tamper-evident 100% (report-layer derived from envelope_commit_count).
-- Sequence continuity: envelope sequence numbers 0001–0076 contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) [env:0009 | liveness.declared_heartbeat_interval_s].
+- Sequence continuity: envelope sequence numbers 0001–0076 contiguous, no gaps (stream-internal proof); heartbeats at 60s intervals, zero silent windows (silence semantics) [env:0009 | liveness.declared_heartbeat_interval].
 
 ## 3. Evidence quality
 - Origin/basis: runtime-observed; commit confirmations are **third-party confirmed** (pacs.002 ACSC per payment) and **source-system corroborated** (camt.053) [env:0007 | evidence_quality.corroboration_state] [env:0073 | evidence_quality.corroboration_state].
-- Corroboration coverage decomposition: anchored 100% · receipted 14/14 · provider-only 0.
+- Corroboration coverage decomposition: externally anchored 0 (in-trace anchors are `basis_status: simulated`) · receipted 14/14 · provider-only 0.
 - Point-in-time validity: policy v3.2 effective from 2026-05-01, in force at every event [env:0007 | authority.policy_version]; delegation valid 2026-04-02 → 2026-12-31.
-- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped - *reproducible in distribution, not in instance* [env:0002 | model.sampling_parameters]; reasoning artifacts `provider_withheld` - disclosed, not silent [env:0002 | model.reasoning_artifact_availability].
+- Model context: sampling parameters recorded (temperature 0.2, top_p 0.9); replay claim scoped - *reproducible in distribution, not in instance* [env:0002 | model.sampling_parameters]; reasoning artifacts `provider_withheld` - disclosed, not silent [env:0002 | model.reasoning_artifact_availability_status].
 
 ## 4. Findings register
 No exceptions, deficiencies, or open actions arise from this run. One observation (OBS-001, advisory): peak per-payment utilisation 95.6% - recommend limit-headroom review for SUP-003. Owner: AP process owner. Due: next policy cycle.

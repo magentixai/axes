@@ -1,15 +1,15 @@
 {
   "se_version": "0.1-draft",
-  "profile_id": "se-profile:payments-emitter/0.1-draft",
+  "implementation_profile_ref": "se-profile:payments-emitter/0.1-draft",
   "event_kind": "execution_started",
   "occurred_at": "2026-06-09T09:00:00.000Z",
   "emitted_at": "2026-06-09T09:00:00.400Z",
   "recorded_at": "2026-06-09T09:00:00.900Z",
   "timestamp_source": "ntp:cluster-sync",
-  "clock_sync_confidence": "high",
+  "clock_sync_confidence_level": "high",
   "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
   "span_id": "span-batch",
-  "org_id": "org:caldera-robotics",
+  "organization_id": "org:caldera-robotics",
   "tenant_id": "tenant:caldera-prod",
   "environment_id": "env:prod-eu",
   "environment_type": "production",
@@ -29,8 +29,8 @@
     "provider_id": "provider:first-meridian-bank"
   },
   "authority": {
-    "authority_context_id": "AD-7844",
-    "delegation_receipt_id": "delrec:AD-7844/2026-04-02",
+    "authority_context_ref": "AD-7844",
+    "delegation_receipt_ref": "delrec:AD-7844/2026-04-02",
     "delegator_id": "person:pseu/cfo-9f31",
     "policy_ref": "policy:caldera/ap-payments",
     "policy_version": "3.2",
@@ -40,7 +40,7 @@
     "capture_layer": "runtime_sdk",
     "capture_status": "captured",
     "emission_fail_posture": "fail_closed",
-    "declared_heartbeat_interval_s": 60
+    "declared_heartbeat_interval": "PT60S"
   },
   "evidence_quality": {
     "evidence_origin": "runtime",
@@ -48,11 +48,11 @@
     "corroboration_state": "internally_corroborated"
   },
   "privacy": {
-    "personal_data_flag": false,
-    "redaction_applied": false
+    "personal_data_indicator": false,
+    "redaction_applied_indicator": false
   },
   "operation": {
-    "operation": "ap_payment_batch_run",
+    "operation_type": "ap_payment_batch_run",
     "batch_id": "APRUN-2026-06-09-A",
     "target_system_id": "erp:ledgerworks/prod",
     "target_resource_type": "approved_invoice_queue"
@@ -61,9 +61,10 @@
   "envelope_id": "env:APRUN-2026-06-09-A/0001",
   "integrity": {
     "hash_algorithm": "SHA-256",
-    "canonicalisation_version": "RFC8785-JCS",
+    "canonicalization_version": "RFC8785-JCS",
     "previous_envelope_hash": "0000000000000000000000000000000000000000000000000000000000000000",
     "signing_key_id": "key:caldera/se-emitter-2026q2",
-    "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2"
+    "signing_key_provenance_ref": "kms:caldera/provenance/se-emitter-2026q2",
+    "envelope_signature_basis_status": "stubbed"
   }
 }

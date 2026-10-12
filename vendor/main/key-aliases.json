@@ -552,6 +552,78 @@
    "to_path": "custody.signing_trust",
    "change_type": "renamed",
    "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "liveness.declared_heartbeat_interval_s",
+   "to_path": "liveness.declared_heartbeat_interval",
+   "change_type": "value_tightened",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "export.final_anchor",
+   "to_path": "export.final_anchor",
+   "change_type": "restructured",
+   "decision_ref": "D-021"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "integrity.envelope_signature_basis_status",
+   "change_type": "added",
+   "decision_ref": "WO16-T18"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "acknowledgments[].basis_status",
+   "change_type": "added",
+   "decision_ref": "WO16-T18"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "reconciliation.acknowledgment_rung.basis_status",
+   "change_type": "added",
+   "decision_ref": "WO16-T18"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "acknowledgments[].acknowledgment_authenticity_basis",
+   "to_path": "acknowledgments[].acknowledgment_authenticity_basis",
+   "change_type": "value_tightened",
+   "decision_ref": "WO16-T18"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "reconciliation.acknowledgment_rung.ack_layer",
+   "to_path": "reconciliation.acknowledgment_rung.acknowledgment_layer",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "reconciliation.acknowledgment_rung.ack_scheme",
+   "to_path": "reconciliation.acknowledgment_rung.acknowledgment_scheme",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "reconciliation.acknowledgment_rung.ack_authenticity_basis",
+   "to_path": "reconciliation.acknowledgment_rung.acknowledgment_authenticity_basis",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
   }
  ]
 }

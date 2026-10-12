@@ -1,7 +1,7 @@
 # External Assurance / Regulator Evidence Pack - APRUN-2026-06-09-A
 
 ## 1. Scope of evidence
-Autonomous accounts-payable payment execution by Caldera Robotics Ltd, run APRUN-2026-06-09-A, 2026-06-09 09:00–09:11 UTC, settlement reconciliation T+0 EOD. Evidence bundle `bundle:APRUN-2026-06-09-A` [env:0076 | export.evidence_bundle_id] - 76 envelopes, 29 referenced artifacts.
+Autonomous accounts-payable payment execution by Caldera Robotics Ltd, run APRUN-2026-06-09-A, 2026-06-09 09:00–09:11 UTC, settlement reconciliation T+0 EOD. Evidence bundle `bundle:APRUN-2026-06-09-A` [env:0076 | export.evidence_bundle_ref] - 76 envelopes, 29 referenced artifacts.
 
 ## 2. Systems involved (execution topology)
 agent:caldera/ap-pilot 2.4.1 → orchestrator:caldera/flowdeck 1.9 → model:anthropic/claude-sonnet-4-6 → gateway:caldera/toolproxy-3 → connector:openbank-gw 2.2.0 → provider:first-meridian-bank (SEPA Inst) · context source erp:ledgerworks/prod · runtime aws/eu-west-1 [env:0007 | actor]. One authority chain spans all nodes (AD-7844).
@@ -16,7 +16,7 @@ Coverage 14/14 against an independently reconciled population (ERP queue + bank 
 None. 14/14 committed; 0 exceptions; 0 human interventions; 0 control failures [env:0075 | summary].
 
 ## 6. Cryptographic sealing status
-SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalisation_version = RFC8785-JCS`), contiguous sequence 0001-0076; chain re-verified at generation. External anchoring every 300s to `anchorstore:trustline-demo/eu` (**simulated for golden trace**). Envelope signatures are **stubs** pending the SE signing profile - disclosed per scoped-assurance rules. Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope [env:0005 | privacy.redacted_fields].
+SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalization_version = RFC8785-JCS`), contiguous sequence 0001-0076; chain re-verified at generation. In-trace anchoring every 300s to `anchorstore:trustline-demo/eu` is **simulated** (`anchoring_method: write_once_store`, `basis_status: simulated`), and no envelope asserts `externally_anchored` (D-020). Envelope signatures are **stubs** (`envelope_signature_basis_status: stubbed`) pending the SE signing profile. Every stub and simulation is stated in a `basis_status` field a verifier reads, not only in this prose (catalogue 1.27). Personal data carried by reference with hash-substitution redaction (`redact:beneficiary-pii/v1`); redacted fields enumerated per envelope [env:0005 | privacy.redacted_fields].
 
 ## 7. Appendix A - artifact register (ISO 20022)
 | Artifact | SHA-256 |
@@ -51,12 +51,12 @@ SHA-256 hash chain over RFC 8785 JCS canonical JSON (`canonicalisation_version =
 | pain001_P13.xml | `f01e44097deef17c…` |
 | pain001_P14.xml | `2c53b3a315788a0f…` |
 
-## 8. Appendix B - anchor receipts
-| Receipt | Anchored at | Chain head |
-|---|---|---|
-| anch:001 | 2026-06-09T09:05:00.000Z | `bb8c3c3402fb5a55…` |
-| anch:002 | 2026-06-09T09:10:00.000Z | `b3fedff1591049a0…` |
-| anch:003 | 2026-06-09T09:10:52.000Z | `49f364637b9f60c7…` |
+## 8. Appendix B - in-trace anchors (simulated)
+| Anchor | Requested at | Anchored at | Chain head | basis_status |
+|---|---|---|---|---|
+| anch:001 | 2026-06-09T09:05:00.000Z | 2026-06-09T09:05:00.250Z | `3fe1f7096d3bf1c9…` | simulated |
+| anch:002 | 2026-06-09T09:10:00.000Z | 2026-06-09T09:10:00.250Z | `2eacc5fb8844e9f8…` | simulated |
+| anch:003 | 2026-06-09T09:10:52.000Z | 2026-06-09T09:10:52.250Z | `bd3ffb7b94e71f2c…` | simulated |
 
 ## 9. Reliance boundary
 Evidence supports: internal audit reliance; external review with re-verification; insurer notification support. It does not constitute: a compliance certification; a fairness or legality determination; coverage of systems outside §4's declared boundary.
