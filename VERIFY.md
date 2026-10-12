@@ -47,7 +47,13 @@ python examples/golden-trace-ind/generate_golden_trace.py
 git diff --exit-code --stat -- examples/golden-trace/out examples/golden-trace-ind/out vectors
 ```
 
-The diff must be empty. Then read `chain_head` and `bundle_manifest_hash` from each `out/manifest.json` and compare to the table above, or rerun the byte check. `python tools/axes_verify.py` runs the full reference verifier (pinned vectors, both chains, custody twins, anchoring blocks, published evaluations, coverage rule).
+The diff must be empty. Then read `chain_head` and `bundle_manifest_hash` from each `out/manifest.json` and compare to the table above, or rerun the byte check.
+
+To check both digests from the text alone, without running any script from this repository:
+
+- **Envelope hash:** SHA-256 over the RFC 8785 (JCS) bytes of the envelope with `integrity.envelope_hash` and `integrity.envelope_signature` removed (`integrity.signature` in gt-v2.0). Every other member is in scope, including `recorded_at`.
+- **Chain head:** the `envelope_hash` of the last envelope in `envelopes.jsonl`; each envelope's `integrity.previous_envelope_hash` is the hash of the one before it (64 zeros for the first).
+- **`bundle_manifest_hash`:** SHA-256 over the RFC 8785 bytes of `manifest.files`, the JSON object mapping each file path under `out/` (forward slashes, `manifest.json` itself excluded) to the lowercase hex SHA-256 of that file's bytes. `python tools/axes_verify.py` runs the full reference verifier (pinned vectors, both chains, custody twins, anchoring blocks, published evaluations, coverage rule).
 
 ### Platforms
 
