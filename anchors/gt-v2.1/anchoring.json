@@ -1,0 +1,37 @@
+{
+  "anchored_subject_type": "release_statement",
+  "anchored_subject_hash": "d8b6a69f57ba2209561fb551443c096c47fcb0cb6db37005fd0713690de88299",
+  "anchored_subject_hash_algorithm": "SHA-256",
+  "anchors": [
+    {
+      "anchor_id": "anch:ots",
+      "anchoring_method": "opentimestamps",
+      "anchor_profile_ref": "axes:opentimestamps_sha256_digest@1",
+      "basis_status": "demonstrated",
+      "anchor_commitment_hash": "d8b6a69f57ba2209561fb551443c096c47fcb0cb6db37005fd0713690de88299",
+      "anchor_commitment_hash_algorithm": "SHA-256",
+      "anchor_requested_at": "2026-10-12T10:12:24.000Z",
+      "anchor_service_id": "bip122:000000000019d6689c085ae165831e93",
+      "anchor_operator_id": null,
+      "anchor_proof_ref": "proofs/opentimestamps/proof_manifest.json",
+      "anchor_proof_hash": "0abcedcb38f14f1fa3ad3f00067712a5a5eb3801dcaaf69db370a6410ec61323",
+      "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesopentimestamps_sha256_digest1"
+    },
+    {
+      "anchor_id": "anch:tsa-freetsa",
+      "anchoring_method": "timestamp_authority",
+      "anchor_profile_ref": "axes:rfc3161_sha256_imprint@1",
+      "basis_status": "demonstrated",
+      "anchor_commitment_hash": "d8b6a69f57ba2209561fb551443c096c47fcb0cb6db37005fd0713690de88299",
+      "anchor_commitment_hash_algorithm": "SHA-256",
+      "anchor_requested_at": "2026-10-12T10:12:28.000Z",
+      "anchored_at": "2026-10-12T10:12:28.000Z",
+      "anchor_service_id": "https://freetsa.org/tsr",
+      "anchor_record_ref": "serial:0x09216E25",
+      "anchor_operator_id": "https://freetsa.org",
+      "anchor_proof_ref": "proofs/timestamp_authority/proof_manifest.json",
+      "anchor_proof_hash": "8023de4224bc5396be73a327ec0b2ca571ab351cdca23954f9a948fe57a14169",
+      "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesrfc3161_sha256_imprint1"
+    }
+  ]
+}
