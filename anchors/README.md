@@ -5,6 +5,7 @@ Detached anchors for AXES release statements and other subjects. An anchor here 
 | Directory | Subject | Subject digest |
 |---|---|---|
 | `gt-v2.0/` | `release_statement.json`: RFC 8785 bytes committing to both Golden Trace v2.0 chain heads and bundle digests at tag `corpus/2026-08-08-gt-v2` | `d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216` |
+| `gt-v2.1/` | `release_statement.json`: RFC 8785 bytes committing to both gt-v2.1 chain heads and bundle digests at tag `corpus/2026-10-12-gt-v2.1` (commit `c72b620`), in docs/19 key names | `d8b6a69f57ba2209561fb551443c096c47fcb0cb6db37005fd0713690de88299` |
 
 Each directory holds:
 
