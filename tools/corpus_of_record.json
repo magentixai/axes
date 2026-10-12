@@ -1,8 +1,8 @@
 {
   "release": "gt-v2.1",
   "tag": "corpus/2026-10-12-gt-v2.1",
-  "commit": null,
-  "note": "Published digests of the corpus of record. Changes only in an announced release (D-018), in the same commit as the RELEASES.md row. commit is the commit the tag points to, recorded in RELEASES.md once tagged. Earlier releases: tools/releases/.",
+  "commit": "c72b620",
+  "note": "Published digests of the corpus of record. Changes only in an announced release (D-018), in the same commit as the RELEASES.md row. Earlier releases: tools/releases/.",
   "corpora": {
     "golden-trace": {
       "chain_head": "cbd1a73e910bd51f01cf5dd097c9a68869b733550d96db891d0f288bd4db59f1",
