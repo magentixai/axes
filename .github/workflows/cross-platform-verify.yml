@@ -154,6 +154,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         release:
           - { name: gt-v2.0, tag: corpus/2026-08-08-gt-v2 }
+          - { name: gt-v2.1, tag: corpus/2026-10-12-gt-v2.1 }
     defaults:
       run:
         shell: bash
