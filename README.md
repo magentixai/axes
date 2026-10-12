@@ -1,4 +1,4 @@
-![AXES](assets/axes-social-preview2.png)
+![AXES](assets/axes-social-preview3.png)
 
 # AXES - Autonomous eXecution Evidence Standard
 
@@ -8,14 +8,16 @@
 
 ## Corpus of record
 
-The Golden Trace corpus that external parties have independently verified is tagged **`corpus/2026-08-08-gt-v2`** (commit `776cc0b`). This branch currently holds that corpus.
+The Golden Trace corpus that external parties have independently verified is tagged **`corpus/2026-08-08-gt-v2`** (commit `776cc0b`).
 
 | Bundle | Chain head | Bundle digest |
 |---|---|---|
 | `golden-trace` (fin) | `71c10986320fa148ab89c65c3f92a4ddd12ebfaac2db4f9099fa0443ccb0b564` | `b45f7c47c81e06bceddb5694cd2b0f28cd2afd5082e5c1102b217c713d344352` |
 | `golden-trace-ind` | `93733e6a8b6f6be299f656ddfb951f13c9da4756f9d37470649ac3414056fba4` | `b926af903de3d5088a253a486044a7fc1bf8afd046958da0054ea152fc7c3463` |
 
-**The default branch currently carries a different, earlier corpus lineage that has not been externally verified.** If you are reproducing published figures, or following a verification result cited in a public thread, check out the tag above (or stay on this branch at `776cc0b`). A reconciliation is in progress and is tracked in [`RELEASES.md`](RELEASES.md). Reproduction commands: [`VERIFY.md`](VERIFY.md).
+**The default branch currently carries a different, earlier corpus lineage that has not been externally verified.** If you are reproducing published figures, or following a verification result cited in a public thread, check out the tag above. A reconciliation is in progress and is tracked in [`RELEASES.md`](RELEASES.md). Reproduction commands: [`VERIFY.md`](VERIFY.md).
+
+**Conformance tooling until the announced merge:** the machine-enforced coverage rule (TLC-008), `vectors/predicates.json`, `tools/axes_verify.py`, and the full JCS property vector set live on branch [`golden-trace-v2`](https://github.com/magentixai/axes/tree/golden-trace-v2). A liftable, stdlib-only subset is on this branch at [`portable/jcs-properties/`](portable/jcs-properties/) (four RFC 8785 properties + independent `rfc8785` cross-check). Do not treat default-branch corpus bytes as the published pins.
 
 ---
 
@@ -36,6 +38,19 @@ AXES defines the missing artefact: the **Standards Envelope (SE)** - an atomic, 
 **It is:** an evidence capture and evidence semantics standard. Envelopes, trace bundles, authority context, commit boundaries, execution topology, evidence quality, assurance assertions, attestation, export manifests.
 
 **It is not:** a logging format, an observability protocol, a policy or blocking engine, an identity system, a payment rail, a runtime, or a compliance certificate. AXES evidences; it never certifies. Conformant evidence supports scoped assurance statements - it does not license claims of "compliant", "safe" or "guaranteed".
+
+## Who this is for
+
+AXES was designed report-backwards from 58 roles across six reader audiences. It is written for the people accountable for an autonomous action, not only the engineers who built the system - and these are roles, not industries: the same envelope serves a SEPA Instant payment agent, an industrial production-batch release, or any other action that becomes real.
+
+| You are… | What AXES lets you rely on |
+|---|---|
+| **Executive and board** - the board and its risk and audit committees, CEO, CFO, COO, CRO, CTO/CIO, CISO, Chief Compliance Officer, General Counsel, Chief AI Officer | A board-readable account of what a system did, under whose authority and within what limits, with materiality and residual risk on the face of it - to sign off on or challenge on its own terms, without taking the engineering team's word for it. |
+| **Business process owners** - process, business-unit and operations owners across payment, finance, customer, HR and legal operations | Whether the agent behaved correctly inside the business process, what actually became real, and what the accountable owner needs to do about it now. |
+| **Internal assurance** - internal audit, enterprise risk, compliance, controls testing, operational resilience and continuity, data protection, InfoSec, fraud and financial crime, third-party risk, model risk | Evidence you can test rather than accept - append-only, hash-chained, interpretation separated from fact - with control results, chain of custody, and gaps the record declares rather than hides. |
+| **External assurance** - external auditors, regulators and supervisors, insurers, external counsel, courts and dispute bodies, enterprise clients, partners, investors, incident responders, forensic investigators | A portable, vendor-neutral record that reads the same whichever runtime produced it, re-verifiable by a competent third party from the bundle alone, with no proprietary tooling required. |
+| **Standards and ecosystem** - standards bodies and contributors, framework builders, SaaS vendors, agent-runtime providers, MCP and tool-protocol implementers, open-source contributors | A stable, openly governed evidence contract to build to and map against, with a graded conformance ladder and public test vectors, so an implementation can claim conformance honestly and interoperate. |
+| **Technical and platform** - engineering leadership, platform, DevOps/SRE, security, AI, data and product engineering, connector developers | One evidence contract to emit against, portable across runtimes and vendors - a small mandatory core with condition-triggered modules, not a bespoke logging scheme per consumer. Emit once; every reader above works from the same envelopes. |
 
 ## Why "AXES"
 
@@ -59,11 +74,11 @@ Core disciplines: append-only envelopes (corrections are new envelopes, never ed
 
 ## See it working: the Golden Traces
 
-Two complete bundles share the **same evidence skeleton** (76 envelopes, hash chain, heartbeats, anchors, four role-specific reports). Only domain and artifact standards differ - finance vs manufacturing.
+Two complete bundles share the **same evidence skeleton** (76 envelopes, hash chain, heartbeats, anchors, four role-specific reports). Only domain and artefact standards differ - finance vs manufacturing.
 
 **Financial services** - [`examples/golden-trace/`](examples/golden-trace/) (APRUN-2026-06-09-A): autonomous accounts-payable run, 14 SEPA Instant payments under delegated authority AD-7844, ISO 20022 artefacts (pain.001 / pacs.002 / camt.053).
 
-**Industrial and manufacturing** - [`examples/golden-trace-ind/`](examples/golden-trace-ind/) (MRUN-2026-06-11-A): autonomous production batch release, 14 machined parts under delegated authority MD-5120, QIF / ISA-95 B2MML / MTConnect / EN 10204 stand-ins.
+**Industrial and manufacturing** - [`examples/golden-trace-ind/`](examples/golden-trace-ind/) (MRUN-2026-06-11-A): autonomous production batch release, 14 machined parts under delegated authority MD-5120, QIF / ISA-95 B2MML / MTConnect / EN 10204.
 
 Run `python3 generate_golden_trace.py` from either directory to regenerate the bundle byte-identically and re-verify the chain. The verification procedure in each bundle's `report_D_forensic.md` is executable from the artefacts alone - which is the point. Corpus verification vs emitter conformance claims: [`CONFORMANCE.md`](CONFORMANCE.md).
 
@@ -149,7 +164,16 @@ Conformance is graded, so weak implementations cannot claim full equivalence: **
 
 - **ARBITR** (Magentix AI) - proprietary interpretation, scoring and report-generation layer; the first consumer of AXES envelopes and the reference report generator. ARBITR conforms to AXES, not the other way round. Anyone can emit, validate, exchange and interpret AXES envelopes without it.
 
-An open reference emitter and validator are part of this repository's roadmap - a second independent implementation is an explicit goal and the trigger for venue incubation (see [GOVERNANCE](GOVERNANCE.md)).
+Independent verification. A second independent implementation was set as the trigger for venue incubation. Independent third parties have now verified the Golden Trace corpus against the published specification alone, with no dependency on this repository's tooling:
+
+- **argentum-core** ([giskard09](https://github.com/giskard09) / Pablo Etcheverry) - contributed the `custody-ref` reference implementation and a real on-chain `distributed_ledger` anchor instance, and runs its own content-addressed `-ref` primitives and verifiers against the corpus. See axes#3.
+- **evidence-record-conformance** ([Tersign](https://github.com/wowlegend) / Kevin Zhang) - a two-sided conformance verifier for the independence and completeness disqualifications; matches the pinned custody-twin verdicts 2/2. See [axes#2](https://github.com/magentixai/axes/issues/2) and [axes#6](https://github.com/magentixai/axes/issues/6).
+- **canoncheck** ([MarkovianProtocol](https://github.com/MarkovianProtocol) / Colin H Winter) - an independent cross-language JCS + SHA-256 byte-identity harness; reproduced the corpus 152/152 at tag `corpus/2026-08-08-gt-v2`. See [axes#6](https://github.com/magentixai/axes/issues/6).
+- **proofbundle** (b7n0de) - an independent RFC 6962 inclusion recomputation written from the specification, reproducing a checkpoint root from leaf bytes and verifying it with third-party witness keys; a single flipped payload bit fails inclusion. See b7n0de/proofbundle#7 and [#136](https://github.com/b7n0de/proofbundle/pull/136).
+
+These are independent verification and conformance implementations that reproduce and check the corpus from the specification; an open reference emitter and validator in this repository remain on the roadmap. What they establish is that the evidence a competent third party needs to reconstruct and check an AXES corpus without proprietary tooling is now demonstrated by more than one external party. Whether this satisfies the incubation trigger is a stewardship determination recorded in [GOVERNANCE](GOVERNANCE.md); per-contribution credits are in registers/decision-register.md and [PROVENANCE.md](PROVENANCE.md).
+
+Honest limits, kept deliberately on the face of it: corpus verification is not an SE-Cx conformance badge (decision D-008), and the witnessed-checkpoint lane currently runs a single log operator - the 4-of-7 external witness quorum detects a silently forked log, it does not remove the fact of one operator.
 
 ## Call for review - design partners wanted
 

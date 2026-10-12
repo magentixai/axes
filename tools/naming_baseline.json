@@ -1309,6 +1309,76 @@
       "rule": "N3",
       "detail": "no class word",
       "change_index_ref": "docs/19, harness files table (gt-v2.1)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "axes_corpus_release",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "canonicalisation",
+      "rule": "N2",
+      "detail": "British spelling in key",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "canonicalisation",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "chain_head",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "commit",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "digest_alg",
+      "rule": "N2",
+      "detail": "abbreviation in key",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "digest_alg",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "anchors/gt-v2.0/release_statement.json",
+      "key": "tag",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "docs/19, harness files table (anchored bytes; never changed)"
+    },
+    {
+      "file": "schema/ratio.schema.json",
+      "key": "numerator",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "Ratio type is not used in any published corpus; member names are fixed under docs/20 before first use"
+    },
+    {
+      "file": "schema/ratio.schema.json",
+      "key": "denominator",
+      "rule": "N3",
+      "detail": "no class word",
+      "change_index_ref": "Ratio type is not used in any published corpus; member names are fixed under docs/20 before first use"
     }
   ]
 }

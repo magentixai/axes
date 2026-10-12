@@ -1,17 +1,40 @@
-# Golden Trace and conformance vectors must give the same bytes on every OS.
-# Windows runners check out with core.autocrlf=true and a CP1252 default
-# encoding, which is exactly what an external verifier on Windows gets.
+# Cross-platform checks. Golden Trace and conformance vectors must give the same
+# bytes on every OS. Windows runners check out with core.autocrlf=true and a
+# CP1252 default encoding, which is exactly what an external verifier on Windows gets.
+#   portable-jcs-properties  the liftable RFC 8785 property pack (stdlib only)
+#   verify                   the current corpus of record in this tree, full suite
+#   vendor-sync              vendored profiles/aliases match the canonical copies
+#   anchoring-tools          Module 14 tooling, x402 correlation, committed real anchors
+#   corpus-of-record         every published release tag reproduced as VERIFY.md says
 name: cross-platform-verify
 
 on:
   push:
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "17 5 * * 1"
 
 permissions:
   contents: read
 
 jobs:
+  portable-jcs-properties:
+    name: portable / ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.9", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Portable JCS property suite (no pip install)
+        run: python portable/jcs-properties/verify.py
+
   verify:
     name: ${{ matrix.os }} / Python ${{ matrix.python }}
     runs-on: ${{ matrix.os }}
@@ -58,28 +81,131 @@ jobs:
         run: python tools/check_corpus_bytes.py
 
   vendor-sync:
-    name: vendored files match main
+    name: vendored files match the canonical copies
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-          path: main_branch
-      - name: Profiles and key aliases are byte-identical to main
+      - name: Profiles and key aliases are byte-identical to the canonical copies
         run: |
-          diff -r main_branch/profiles vendor/main/profiles
-          cmp main_branch/schema/key-aliases.json vendor/main/key-aliases.json
+          diff -r profiles vendor/main/profiles
+          cmp schema/key-aliases.json vendor/main/key-aliases.json
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - name: The x402 example evaluations on main reproduce with this evaluator
+      - name: The x402 example evaluations reproduce with this evaluator
         run: |
           python -m pip install -r requirements-dev.txt
-          for f in main_branch/examples/x402-b2b-vat/evaluations/*.json; do
+          for f in examples/x402-b2b-vat/evaluations/*.json; do
             base=$(basename "$f" .json); profile="axes:${base%%__*}@1"; party="${base##*__}"
-            python tools/axes_evaluate.py --profile "$profile" --subject "main_branch/examples/x402-b2b-vat/$party/envelopes.jsonl" \
+            python tools/axes_evaluate.py --profile "$profile" --subject "examples/x402-b2b-vat/$party/envelopes.jsonl" \
               --evaluated-at "$(python -c "import json,sys;print(json.load(open(sys.argv[1]))['evaluated_at'])" "$f")" --out /tmp/again.json
             python -c "import json,sys;a=json.load(open(sys.argv[1]));b=json.load(open(sys.argv[2]));sys.exit(0 if a['result_core_hash']==b['result_core_hash'] else 1)" "$f" /tmp/again.json
             echo "reproduced $base"
           done
+
+  anchoring-tools:
+    name: anchoring tools / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    defaults:
+      run:
+        shell: bash
+    env:
+      AXES_REQUIRE_ANCHOR_DEPS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install anchoring tools
+        run: python -m pip install -r tools/anchoring/requirements.txt
+      - name: Two-sided self-test (synthetic fixtures)
+        run: python tools/anchoring/test_anchoring.py
+      - name: Schema examples and key change index agree
+        run: python tools/anchoring/check_schema_and_aliases.py
+      - name: Naming rules (docs/20)
+        run: python tools/check_key_naming.py schema examples/anchoring examples/x402-b2b-vat anchors profiles tools/x402/vectors --baseline tools/naming_baseline.json
+      - name: x402 correlation recipe self-test (WO20)
+        run: python tools/x402/test_x402_correlation.py
+      - name: x402 correlation agrees with the tsc#4 payment fingerprint vectors
+        run: python tools/x402/crosscheck_payment_fingerprint.py
+      - name: x402 correlation vectors regenerate identically
+        run: |
+          python tools/x402/generate_correlation_vectors.py
+          git diff --exit-code --stat -- tools/x402/vectors
+      - name: Verify committed real anchors
+        run: |
+          for d in anchors/*/; do
+            [ -f "$d/anchoring.json" ] || continue
+            subj=$(ls "$d"/*.json | grep -v -e anchoring.json -e last_run.json | head -1)
+            python tools/anchoring/verify_anchor.py "$d" --subject "$subj"
+          done
+
+  corpus-of-record:
+    # Superseded is not wrong: every published release must still verify at its own tag.
+    name: published release ${{ matrix.release.name }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        release:
+          - { name: gt-v2.0, tag: corpus/2026-08-08-gt-v2 }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout default branch (for the checker and expectations)
+        uses: actions/checkout@v4
+        with:
+          path: default
+      - name: Checkout the release tag, as VERIFY.md instructs
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.release.tag }}
+          path: cor
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install dev dependency (jcs)
+        run: python -m pip install -r cor/requirements-dev.txt
+      - name: Pinned bytes as checked out match published digests
+        run: python default/tools/check_corpus_bytes.py --root cor --expect default/tools/releases/${{ matrix.release.name }}.json
+      - name: Regenerate both corpora at the tag
+        working-directory: cor
+        run: |
+          python examples/golden-trace/generate_golden_trace.py
+          python examples/golden-trace-ind/generate_golden_trace.py
+      - name: Regeneration is byte-identical
+        working-directory: cor
+        run: git diff --exit-code --stat -- examples/golden-trace/out examples/golden-trace-ind/out vectors
+      - name: Published digests after regeneration
+        run: python default/tools/check_corpus_bytes.py --root cor --expect default/tools/releases/${{ matrix.release.name }}.json
+
+  clone-default-then-checkout-tag:
+    # The common real-world path: clone the default branch, then switch to the
+    # tag in the same tree. Fails if the default branch lacks .gitattributes.
+    name: clone default then switch to tag / windows
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: repo
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Switch to the tag inside the default-branch clone
+        working-directory: repo
+        run: |
+          cp tools/check_corpus_bytes.py "$RUNNER_TEMP/" && cp tools/releases/gt-v2.0.json "$RUNNER_TEMP/corpus_of_record.json"
+          git fetch --tags --force
+          git checkout corpus/2026-08-08-gt-v2
+      - name: Pinned bytes as checked out match published digests
+        run: python "$RUNNER_TEMP/check_corpus_bytes.py" --root repo --expect "$RUNNER_TEMP/corpus_of_record.json"

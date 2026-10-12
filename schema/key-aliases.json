@@ -1,0 +1,557 @@
+{
+ "summary_note": "Machine-readable twin of docs/19-key-change-index.md. A validator maps an earlier-release record to the later shape mechanically; translation is an explicit, reported step, never silent.",
+ "entries": [
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "anchoring",
+   "to_path": "anchoring",
+   "change_type": "restructured",
+   "decision_ref": "D-021"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "anchoring.chain_head_hash",
+   "to_path": "anchoring.anchored_subject_hash",
+   "change_type": "renamed",
+   "decision_ref": "D-021"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchored_subject_hash_algorithm",
+   "change_type": "added",
+   "decision_ref": "WO18-A2"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "anchoring.anchor_receipt_id",
+   "to_path": "anchoring.anchors[].anchor_id",
+   "change_type": "renamed",
+   "decision_ref": "D-021"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "anchoring.anchoring_method",
+   "to_path": "anchoring.anchors[].anchoring_method",
+   "change_type": "value_tightened",
+   "decision_ref": "D-015"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "anchoring.anchored_at",
+   "to_path": "anchoring.anchors[].anchored_at",
+   "change_type": "restructured",
+   "decision_ref": "WO18-A2"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "anchoring.anchor_store_ref",
+   "to_path": "anchoring.anchors[].anchor_service_id",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "anchoring.anchoring_latency_ms",
+   "to_path": null,
+   "change_type": "removed",
+   "decision_ref": "D-017"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].anchor_requested_at",
+   "change_type": "added",
+   "decision_ref": "WO18-A2"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].anchor_profile_ref",
+   "change_type": "added",
+   "decision_ref": "WO18-A2"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].anchor_commitment_hash",
+   "change_type": "added",
+   "decision_ref": "WO18-A2"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].anchor_commitment_hash_algorithm",
+   "change_type": "added",
+   "decision_ref": "WO18-A2"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].anchor_record_ref",
+   "change_type": "added",
+   "decision_ref": "WO18-A2"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].anchor_operator_id",
+   "change_type": "added",
+   "decision_ref": "WO18-A2"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].anchor_proof_ref",
+   "change_type": "added",
+   "decision_ref": "WO18-A5"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].anchor_proof_hash",
+   "change_type": "added",
+   "decision_ref": "WO18-A5"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].anchor_verification_procedure_ref",
+   "change_type": "added",
+   "decision_ref": "WO18-A2"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "anchoring.anchors[].basis_status",
+   "change_type": "added",
+   "decision_ref": "WO16-T18"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "evidence_quality.corroboration_state",
+   "to_path": "evidence_quality.corroboration_state",
+   "change_type": "value_tightened",
+   "decision_ref": "D-020"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "integrity.canonicalisation_version",
+   "to_path": "integrity.canonicalization_version",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "integrity.signature",
+   "to_path": "integrity.envelope_signature",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "profile_id",
+   "to_path": "implementation_profile_ref",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "privacy.redaction_profile_id",
+   "to_path": "privacy.redaction_profile_ref",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "authority.delegation_receipt_id",
+   "to_path": "authority.delegation_receipt_ref",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "authority.authority_context_id",
+   "to_path": "authority.authority_context_ref",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "export.evidence_bundle_id",
+   "to_path": "export.evidence_bundle_ref",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "org_id",
+   "to_path": "organization_id",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "clock_sync_confidence",
+   "to_path": "clock_sync_confidence_level",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "privacy.personal_data_flag",
+   "to_path": "privacy.personal_data_indicator",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "privacy.redaction_applied",
+   "to_path": "privacy.redaction_applied_indicator",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "boundary_assessment.tenant_boundary_crossed",
+   "to_path": "boundary_assessment.tenant_boundary_crossed_indicator",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "boundary_assessment.cell_boundary_crossed",
+   "to_path": "boundary_assessment.cell_boundary_crossed_indicator",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "operation.idempotency_key_forwarded",
+   "to_path": "operation.idempotency_key_forwarded_indicator",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "boundary_assessment.cross_programme_exposure_indicator",
+   "to_path": "boundary_assessment.cross_program_exposure_indicator",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "boundary_assessment.basis",
+   "to_path": "boundary_assessment.boundary_assessment_basis",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "operation.operation",
+   "to_path": "operation.operation_type",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "operation.commit_mechanism",
+   "to_path": "operation.commit_method",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "result",
+   "to_path": "outcome",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "emission.declared_heartbeat_interval_s",
+   "to_path": "emission.declared_heartbeat_interval",
+   "change_type": "value_tightened",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "acknowledgments[].ack_layer",
+   "to_path": "acknowledgments[].acknowledgment_layer",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "acknowledgments[].ack_scheme",
+   "to_path": "acknowledgments[].acknowledgment_scheme",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "acknowledgments[].ack_code",
+   "to_path": "acknowledgments[].acknowledgment_code",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "acknowledgments[].ack_timestamp",
+   "to_path": "acknowledgments[].acknowledged_at",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "acknowledgments[].ack_authenticity_basis",
+   "to_path": "acknowledgments[].acknowledgment_authenticity_basis",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "acknowledgments[].ack_reason_code",
+   "to_path": "acknowledgments[].acknowledgment_reason_code",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "acknowledgments[].ack_artifact_ref",
+   "to_path": "acknowledgments[].acknowledgment_artifact_ref",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "acknowledgments[].ack_artifact_hash",
+   "to_path": "acknowledgments[].acknowledgment_artifact_hash",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "reconciliation.expected_count_erp",
+   "to_path": "reconciliation.erp_expected_count",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "reconciliation.expected_count_mes",
+   "to_path": "reconciliation.mes_expected_count",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "reconciliation.statement_count_bank",
+   "to_path": "reconciliation.bank_statement_count",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "*.sha256",
+   "to_path": "*.hash plus *.hash_algorithm",
+   "change_type": "restructured",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "context.input_trust_classification",
+   "to_path": "context.input_trust_class",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "model.reasoning_artifact_availability",
+   "to_path": "model.reasoning_artifact_availability_status",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "checks[].name",
+   "to_path": "checks[].control_name",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "checks[].material_grade",
+   "to_path": "checks[].material_grade_name",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "subject.quantity",
+   "to_path": "subject.quantity_value",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "subject.unit",
+   "to_path": "subject.quantity_unit",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "subject.drawing_revision",
+   "to_path": "subject.drawing_version",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "observed.characteristic",
+   "to_path": "observed.characteristic_name",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "observed.nominal_mm",
+   "to_path": "observed.nominal_value",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "observed.tolerance_upper_mm",
+   "to_path": "observed.tolerance_upper_value",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "observed.tolerance_lower_mm",
+   "to_path": "observed.tolerance_lower_value",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "observed.measured_mm",
+   "to_path": "observed.measured_value",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": null,
+   "to_path": "observed.measurement_unit",
+   "change_type": "added",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "observed.cpk",
+   "to_path": "observed.cpk_value",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "observed.cpk_floor",
+   "to_path": "observed.cpk_floor_value",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "summary.minimum_cpk_observed",
+   "to_path": "summary.observed_minimum_cpk_value",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "custody.capture_relationship",
+   "to_path": "custody.capture_relationship_type",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  },
+  {
+   "from_release_ref": "gt-v2.0",
+   "to_release_ref": "gt-v2.1",
+   "from_path": "custody.signing_trust_ref",
+   "to_path": "custody.signing_trust",
+   "change_type": "renamed",
+   "decision_ref": "D-024"
+  }
+ ]
+}

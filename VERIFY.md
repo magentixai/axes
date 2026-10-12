@@ -49,6 +49,17 @@ The diff must be empty. Then read `chain_head` and `bundle_manifest_hash` from e
 
 The same procedure is run on every push by `.github/workflows/cross-platform-verify.yml` on Linux, macOS and Windows (Windows runners check out with `core.autocrlf=true` and a CP1252 default encoding, which is what an external Windows verifier gets). Results are expected to be byte-identical on all three; a difference on any OS is a defect, please report it.
 
+### Check the external anchors
+
+The release statement `anchors/gt-v2.0/release_statement.json` commits to the four digests above; its SHA-256 is `d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216`. From a default-branch clone:
+
+```bash
+python -m pip install -r tools/anchoring/requirements.txt
+python tools/anchoring/verify_anchor.py anchors/gt-v2.0 --subject anchors/gt-v2.0/release_statement.json
+```
+
+Each anchor reports `verified`, `contradicted`, `indeterminate` (for example a pending OpenTimestamps proof) or `not_evaluated` (for example `openssl` missing), with the reason. No network access is used. For the OpenTimestamps anchor, confirm the reported Bitcoin block hash with any Bitcoin node or explorer to establish main-chain membership.
+
 ## Superseded or retired tags
 
 | Tag | Meaning |

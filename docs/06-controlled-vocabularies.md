@@ -14,10 +14,10 @@
 | Commit boundary marker | `commit_boundary_indicator` + `commit_boundary_status` | `commit_boundary_crossed` | `commit_boundary` (sources) | `commit_boundary_status` (enum) + drop boolean | Status enum subsumes the boolean; "crossed" only captures one state |
 | Hash chain predecessor | `previous_event_hash` | `previous_envelope_hash` | `previous_envelope_hash` | `previous_envelope_hash` | Envelope is the hashed unit; 2:1 usage |
 | Untrusted content | `untrusted_content_present_flag` | `untrusted_content_exposure` | `untrusted_content_indicator` | `untrusted_content_indicator` | Pair with `input_trust_classification` (graded) as primary; boolean as derived rollup |
-| Injection signal | `prompt_injection_signal_flag` | `prompt_injection_signal` | `prompt_injection_signal` | `prompt_injection_signal` | Drop `_flag` suffix convention for signals |
-| Clock provenance | `clock_source` | `timestamp_source` | `timestamp_source` | `timestamp_source` | Add `clock_skew_ms`, `clock_sync_confidence` from TG/IA |
+| Injection signal | `prompt_injection_signal_flag` | `prompt_injection_signal` | `prompt_injection_signal` | `prompt_injection_signal_indicator` (D-024) | Drop `_flag` suffix convention for signals |
+| Clock provenance | `clock_source` | `timestamp_source` | `timestamp_source` | `timestamp_source` | Add `clock_skew` (ISO 8601 duration) and `clock_sync_confidence_level` from TG/IA (D-024) |
 | Approval (human) | `human_approval_required` / `human_approval_present` | `approval_required` / `approval_status` + `human_review_required` / `human_review_obtained` | (reuses TG) | `approval_required` + `approval_status` + `approver_type` | One approval cluster; human-vs-system as `approver_type`, review vs approval as `approval_kind` |
-| Personal data | `personal_data_flag` | `personal_data_flag` | `personal_data_involved` | `personal_data_flag` | Keep IA's `special_category_data_indicator` and `sensitive_data_involved` as separate fields (distinct legal concepts) |
+| Personal data | `personal_data_flag` | `personal_data_flag` | `personal_data_involved` | `personal_data_indicator` (D-024) | Keep IA's `special_category_data_indicator` and `sensitive_data_involved` as separate fields (distinct legal concepts) |
 | Evidence completeness | `evidence_completeness_status` | `evidence_quality` | `evidence_completeness_indicator` | Split two axes: `evidence_completeness_status` + `evidence_provenance_class` | TG's enum mixes completeness with provenance (reconstructed/backfilled/redacted); separate the axes |
 | Delegator identity | - (approver_id only) | - | `delegator_user_id` (sources) | `delegator_id` | New field, all waves lacked it; the principal who granted the delegation |
 | Coverage measure | - (gap 2.6) | `coverage_ratio` | expected/received sequence counts + reconciliation | `evidence_coverage_ratio` + `evidence_population_ref` | Two proof mechanisms: sequence continuity (stream) + source-system reconciliation (estate) |
@@ -99,9 +99,142 @@
 - **`must_understand` + `unknown_field_policy` (SG 11.6): adopt** - they also settle unknown-field treatment during canonical hashing/verification.
 - **Naming conventions (§3 below):** no SG-source opinions exist; these are confirmed as editorial decisions for the Field Catalogue - ratify there.
 
-## 3. Open naming-convention decisions (route to Standards wave / catalogue)
-1. Suffix discipline: `_flag` vs `_indicator` vs `_signal` - propose: `_indicator` for observed booleans, `_signal` for security/behaviour observations carrying confidence, no `_flag`.
-2. `_ref` vs `_id`: propose `_id` for identifiers minted within SE scope; `_ref` for pointers to external artifacts/systems.
-3. Effective-dating pattern: `*_version` + `effective_from`/`effective_until` standardised for every versioned reference (policy, delegation, control, model, terminology profile).
-4. Boolean polarity: always positive-presence (`redaction_applied`, not `unredacted`).
+## 2.11 Alignment vocabs (WO16 / AGT #276 / x402 Identity WG) - closed sets
+
+Closed enumerations. Values are `lower_snake`. Additive-only after freeze.
+
+**`identifier_scope` (closed):**
+- `global` - comparable across all parties; the same value denotes the same subject everywhere
+- `relying_party_pairwise` - stable for one (subject, relying party) pair; uncorrelatable across relying parties by design
+- `issuer_internal` - meaningful only within the issuing system
+- `ephemeral` - valid for a single session or transaction; no cross-record continuity
+
+Where `<identifier>_scope` is absent, a consumer MUST NOT assume `global`. A defaulting reader is the failure this vocabulary prevents.
+
+**`entry_basis` (closed):** `counterparty_asserted` | `observed_live_402` | `credential_backed` | `third_party_attested`
+
+**`verification_status` (closed):** `unverified` | `verified` | `verification_failed` | `verification_unavailable`
+
+**`identifier_role` (closed):** `primary` | `alternative`
+
+**`signer_presence` (closed):**
+- `unsigned` - no signature was attempted; the record makes no authorship claim
+- `stripped` - an author is named but no signature is present; the authorship claim is unsupported. **MUST fail regardless of any strictness flag** (the attacker chooses whether the verifier runs strict)
+- `unverifiable` - a signature is present but the key or its authorisation cannot be resolved
+- `invalid` - a signature is present and resolvable and does not verify
+
+A top-level failure verdict is a fail-closed aggregate, not a claim that every lower property failed. AXES hashes the whole canonical envelope (self-referential signature excluded), which is what makes `stripped` detectable; see [docs/09a](09a-hash-scope-and-exclusions.md).
+
+**`hash_scope_exclusion_reason` (closed):** `self_referential` | `recipient_stamped` | `syntax_mutable`
+
+**`derivation_outcome` (closed):** each value supports a different conclusion for a reader.
+- `ok`
+- `underivable_missing_input` - a required input was never captured; a genuine evidence gap
+- `undisclosed` - committed at emission but not disclosed to this reader. NOT a gap. If redaction reads as missing evidence, an auditor concludes the opposite of the truth.
+- `not_independently_reproducible_keyed` - depends on a secret; a verifier without it can check consistency but not recompute. A designed privacy property working correctly.
+- `indeterminate_clock_skew` - clock provenance unknown on one side, or the margin falls inside the combined uncertainty
+- `underivable_identifier_scope` - the join crosses relying parties on a pairwise identifier; unsound by design, not unavailable by accident
+- `underivable_unverified_identifier` - attribution attempted on an identifier below the threshold
+- `derived_with_gap` - the span contains a recorded evidence gap
+- `superseded` - the source envelope has been superseded by an amendment
+- `underivable_conflicting_inputs` - inputs carry `corroboration_state: conflicting_evidence`; a derivation MUST NOT silently pick a side
+- `precision_insufficient` - input precision cannot support the requested output precision
+- `outside_capture_boundary` - the path was outside the capture boundary
+
+**`basis_status` (closed):** `demonstrated` | `stubbed` | `simulated` - structured companion to free-text authenticity / anchoring method strings. Status MUST NOT be embedded only in parenthetical prose.
+
+**`assertion_basis` field/block scope.** The existing envelope-scope values (`observed` / `measured` / `asserted` / `inferred` / `derived` / `interpreted`) remain. The more specific declaration governs. An envelope-scope declaration MUST NOT be read as covering a field or block that carries its own `assertion_basis`. This one change resolves two defects: a derived quantity sitting inside an envelope labelled observed, and an unverified identifier sitting inside an envelope labelled observed.
+
+**`settlement_role` (closed), direction-neutral:**
+- `origin` - the principal: the party whose value it is, whether earned or spent
+- `facilitator` - a relay settling on another party's behalf
+- `proxy_gateway` - a pass-through intermediary that fronts other services and routes value onward
+
+Correction: an earlier draft defined `origin` as "the party that earns the value", which inverts on the payer side. Checkability runs against the `primary` identifier; a mismatch on an `alternative` is a signal, not a disqualification. See [docs/15](15-AXES_Payee_Settlement_Role_Design_Note.md).
+
+## 2.12 Anchoring (WO18, Module 14)
+
+**`anchoring_method` (open registry).** Seeded values, each a family of mechanisms, not a product:
+- `timestamp_authority` - an RFC 3161 (or equivalent) time-stamp authority signs the commitment and a time
+- `opentimestamps` - the commitment is aggregated by OpenTimestamps calendars into a Bitcoin block
+- `transparency_log` - the commitment is a leaf in an append-only, verifiable log (SCITT, C2SP tlog, Rekor and similar)
+- `distributed_ledger` - the commitment is recorded by a canonical contract or registry on a ledger
+- `write_once_store` - the commitment is held in storage that refuses overwrite, with a third-party verification path
+
+Other mechanisms use a namespaced identifier `<namespace>:<id>` and MUST carry `anchor_verification_procedure_ref`. Registration is additive. Status never appears in the value: `write_once_store (SIMULATED)` is retired (catalogue 1.27); simulation is `basis_status: simulated`. The registry is open because a closed list would make every new mechanism a schema change; the strong claim is protected instead by making `externally_anchored` earned (D-020).
+
+**`anchored_subject_type` (closed):** `chain_head` | `envelope` | `bundle_manifest` | `release_statement`.
+
+**`basis_status`** (§2.11) applies per anchor. It is written by the producing tool from what the anchoring service returned, never by hand.
+
+**Anchoring verification results.** Each check is reported in the four-state vocabulary of draft-krausz-verification-state-03 (D-023), under AXES key names (docs/20 N14): `verification_state` (`verified` | `contradicted` | `indeterminate` | `not_evaluated`), `verification_reason_code` (`divergence` | `absence` | `instrument_failure`), `verification_subject_type` (`artifact` | `operator` | `network` | `verifier`), a closed `verification_condition_code`, and `observed_note`:
+
+| `verification_condition_code` | State | Meaning |
+|---|---|---|
+| `anchor_commitment_mismatch` | `contradicted` | The commitment does not recompute from the subject under the profile, or the proof attests a different digest, time or record than the block states |
+| `anchor_proof_hash_mismatch` | `contradicted` | A proof file or the manifest differs from `anchor_proof_hash` |
+| `anchor_simulated_claims_external` | `contradicted` | `externally_anchored` asserted over an anchor that is simulated or stubbed |
+| `anchor_pending` | `indeterminate` / `absence` | Requested, not yet attested (no `anchored_at`); upgrade and re-verify |
+| `basis_not_demonstrated` | `indeterminate` / `absence` | `basis_status` is `simulated` or `stubbed`; nothing to verify |
+| `anchor_proof_absent` | `indeterminate` / `absence`, subject `operator` | No proof reference: a producer defect |
+| `anchor_independence_unproven` | `indeterminate` / `absence` | The proof verifies but the operator is not shown independent of executor and deployer |
+| `anchor_proof_unresolvable` | `not_evaluated`, subject `network` | A proof reference that cannot be retrieved at audit time: an availability fact, never the same value as absent |
+| `anchor_method_unverifiable` | `not_evaluated` / `instrument_failure`, subject `verifier` | The verifier lacks the library, binary or procedure for the method; never a pass and never a finding about the anchor |
+
+## 2.13 Requirement profiles and evaluation (WO19, D-025 to D-037)
+
+Closed sets, lower_snake, American (docs/20).
+
+- **`profile_purpose_type`:** `sufficiency` | `disclosure`.
+- **`subject_type`** (evaluation subject): `envelope` | `bundle` | `stream_window` | `release`.
+- **`check_type`:** `field_presence` | `chain_integrity` | `sequence_continuity` | `anchoring` | `settlement_commitment`.
+- **`obligation_type`:** `required` | `conditional` | `optional` | `prohibited` (strictness order `prohibited` > `required` > `conditional` > `optional`).
+- **`relying_party_role`:** the `settlement_role` values plus `auditor`, `regulator`, `insurer`, `tax_authority`, `liability_holder`, `forensic_investigator`, `board`.
+- **`absence_reason_code`** (envelope `field_absences[]`): `not_applicable` | `not_captured` | `withheld` | `redacted`. `withheld` and `redacted` are never read as absent.
+- **`verification_subject_type`** adds `access` (the reader's entitlement) to the anchoring set.
+- **`guarantee_type`:** `conditional` | `unconditional`.
+- **`settlement_purpose_type`:** `demand` | `self_test` | `keep_alive` | `conformance` | `scripted_load` | `demo`. Absent means unlabeled, never `demand` (x402#3226).
+- **`nonce_derivation_type`:** `random` | `x402_mandate_binding` | `resource_binding` | `unbindable` (WO20 A1.4). `unbindable` is `indeterminate`, never a failure.
+- **Value ladders** (for `minimum_value`): `axes:corroboration_state_ladder@1` = `uncorroborated` < `internally_corroborated` < `source_system_corroborated` < `third_party_confirmed` < `externally_anchored` (`conflicting_evidence` never satisfies a minimum); `axes:verification_status_ladder@1` = `unverified` < `verification_unavailable` < `verified` (`verification_failed` never satisfies).
+
+**Evaluation conditions (`verification_condition_code`), class not cause; the cause goes in `observed_note`:**
+
+| Condition | State / reason / subject |
+|---|---|
+| `field_absent_undeclared` | `indeterminate` / `absence` / `artifact` |
+| `field_absent_declared` | `indeterminate` / `absence` / `operator` |
+| `field_declared_not_applicable` | `contradicted` / `divergence` / `artifact` (required field declared not applicable) |
+| `field_withheld` | `not_evaluated` / - / `operator` |
+| `field_redacted` | `not_evaluated` / - / `access` |
+| `access_restricted` | `not_evaluated` / - / `access` |
+| `prohibited_field_present` | `contradicted` / `divergence` / `artifact` |
+| `value_not_accepted` | `contradicted` / `divergence` / `artifact` |
+| `value_below_minimum` | `indeterminate` / `absence` / `artifact` |
+| `conflicting_evidence` | `indeterminate` / `divergence` / `artifact` |
+| `basis_not_demonstrated` | `indeterminate` / `absence` / `operator` |
+| `identifier_unverified` | `indeterminate` / `absence` / `artifact` |
+| `chain_break`, `envelope_hash_mismatch` | `contradicted` / `divergence` / `artifact` |
+| `sequence_gap` | `indeterminate` / `absence` / `artifact` |
+| `anchor_insufficient`, `anchor_lag_exceeded` | `indeterminate` / `absence` / `artifact` |
+| anchoring conditions (2.12) | as 2.12 |
+| `settlement_commitment_mismatch`, `cap_exceeded` | `contradicted` / `divergence` / `artifact` |
+| `settlement_not_observed` | `indeterminate` / `absence` / `artifact` |
+| `nonce_unbindable`, `binding_salt_absent` | `indeterminate` / `absence` / `operator` |
+| `correlation_hash_mismatch` | `contradicted` / `divergence` / `artifact` (a receipt binds a different core) |
+| `correlation_divergence` | `indeterminate` / `divergence` / `artifact` (the parties computed different cores; never pick a side) |
+| `profile_conflict` | `indeterminate` / `divergence` / `verifier` |
+| `profile_unsupported`, `predicate_unparseable`, `value_ladder_unsupported`, `check_type_unsupported`, `evaluator_fault`, `requirement_profile_hash_unpinned` | `not_evaluated` / `instrument_failure` / `verifier` |
+| `external_evidence_stale` | `not_evaluated` / - / `network` |
+
+## 3. Naming-convention decisions (route to catalogue)
+
+**All naming rules are now normative in [docs/20](20-naming-rules.md) (D-024) and checked by `tools/check_key_naming.py`. This section keeps the casing rationale and the open-item history.**
+
+**Closed - casing.** Field keys are `lower_snake`; enum values are `lower_snake`. Rationale: ISO 20022 API/JSON best-practices whitepaper §7.1 recommends unabbreviated snake_case for JSON representations of ISO 20022 semantics; lowerCamelCase appears in none of ISO 20022's maintained representations (business model spaced title-case; XML vowel-stripped tags; JSON Schema generation draft retains those). AXES is internally consistent at this spelling. Concept-level interoperability uses declared representation pairs, never derived camel-to-snake transforms (ambiguous at digit boundaries and acronyms). Under JCS two spellings sort to different positions and produce different canonical bytes; see [docs/12](12-standards-alignment.md). Designed exception: a relying-party-scoped identifier (identifier_scope) legitimately produces different digests at different relying parties.
+
+Still open:
+1. ~~Suffix discipline~~ **Closed by D-024:** every boolean ends `_indicator`; no `_flag`; a signal carrying confidence is an object, not a boolean (docs/20 N5).
+2. ~~`_ref` vs `_id`~~ **Closed by D-022 (2026-10-04):** `_id` for identifiers this record mints and owns; `_ref` for locators or identifiers minted elsewhere, dereferenceable by a third party or naming a public network (CAIP-2).
+3. ~~Effective-dating pattern~~ **Closed by D-024:** `<x>_version` plus `effective_from` / `effective_until` instants for every versioned reference (docs/20 N3, N9).
+4. ~~Boolean polarity~~ **Closed by D-024:** positive condition plus `_indicator` (`redaction_applied_indicator`, never `unredacted`) (docs/20 N5).
 5. `delegation_scope` serialisation structure (`scope_json` question) - W6.

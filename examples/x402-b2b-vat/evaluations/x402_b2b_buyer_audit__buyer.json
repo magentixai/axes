@@ -1,0 +1,90 @@
+{
+  "evaluation_id": "eval:axes:x402_b2b_buyer_audit@1:7e512cdc4ce63e85",
+  "requirement_profile_ref": "axes:x402_b2b_buyer_audit@1",
+  "requirement_profile_version": "1",
+  "requirement_profile_hash": "ee5109610217d1e4bf102a233aca62f7fe7cc9fc469536467327f9a83e7822cf",
+  "hash_algorithm": "SHA-256",
+  "subject_type": "bundle",
+  "subject_hashes": [
+    "7e512cdc4ce63e8543765eadd605ac867fbd79ad351df27c79c9a80ca5639ebb"
+  ],
+  "evaluator_id": "axes:reference_evaluator@1",
+  "evaluator_version": "1",
+  "evaluated_at": "2026-10-04T00:00:00.000Z",
+  "pinned_evidence_items": [],
+  "results": [
+    {
+      "requirement_ref": "x402_correlation_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "6 of 6 envelopes in scope: present",
+      "evidence_refs": [
+        "env:x402-b2b-vat/buyer/0001",
+        "env:x402-b2b-vat/buyer/0002",
+        "env:x402-b2b-vat/buyer/0003",
+        "env:x402-b2b-vat/buyer/0004",
+        "env:x402-b2b-vat/buyer/0005"
+      ]
+    },
+    {
+      "requirement_ref": "x402_chain_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "6 envelopes linked",
+      "evidence_refs": []
+    },
+    {
+      "requirement_ref": "x402_settlement_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "1 of 1 envelopes in scope: committed terms equal the decoded settled artifact",
+      "evidence_refs": [
+        "env:x402-b2b-vat/buyer/0004"
+      ]
+    },
+    {
+      "requirement_ref": "x402_settled_basis_01",
+      "verification_state": "indeterminate",
+      "verification_subject_type": "operator",
+      "observed_note": "1 of 1 envelopes in scope: /settlement/settled_artifact basis_status simulated",
+      "evidence_refs": [
+        "env:x402-b2b-vat/buyer/0004"
+      ],
+      "verification_reason_code": "absence",
+      "verification_condition_code": "basis_not_demonstrated"
+    },
+    {
+      "requirement_ref": "x402_anchor_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "1 of 1 envelopes in scope: 2 qualifying anchors",
+      "evidence_refs": [
+        "env:x402-b2b-vat/buyer/0006"
+      ]
+    },
+    {
+      "requirement_ref": "buyer_supplier_01",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "1 of 1 envelopes in scope: present",
+      "evidence_refs": [
+        "env:x402-b2b-vat/buyer/0004"
+      ]
+    },
+    {
+      "requirement_ref": "buyer_supplier_02",
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "observed_note": "1 of 1 envelopes in scope: present",
+      "evidence_refs": [
+        "env:x402-b2b-vat/buyer/0004"
+      ]
+    }
+  ],
+  "overall_verification_state": "indeterminate",
+  "guarantee_type": "conditional",
+  "conditional_requirement_refs": [
+    "x402_settled_basis_01"
+  ],
+  "result_core_hash": "d4745176652103767559123d6001740c46421c347f7c03dcf35106b12a205a74"
+}

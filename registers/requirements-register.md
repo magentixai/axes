@@ -171,7 +171,7 @@ Source: the six second-eyes gap analyses. Tier-1 sourced gaps with schema/standa
 | ID | Gap/requirement | Severity | Layer | Implication | Dup |
 |---|---|---|---|---|---|
 | GAP-EXEC-001 | Live vs simulated execution not expressible | HIGH | open_se | execution_mode: live/shadow/simulation/dry_run/test/replay | - |
-| GAP-EXEC-002 | Two-sided non-repudiation: our record vs counterparty acknowledgment | HIGH | open_se + derived | Acknowledgment ladder rungs 0–5: acknowledgment_refs[], ack_authenticity_basis, counterparty_evidence_strength; companion discovery/confirmation specs; scheme mapping registry | - |
+| GAP-EXEC-002 | Two-sided non-repudiation: our record vs counterparty acknowledgment | HIGH | open_se + derived | Acknowledgment ladder rungs 0–5: acknowledgment_refs[], ack_authenticity_basis, counterparty_evidence_strength; companion discovery/confirmation specs; scheme mapping registry | External corroboration (wowlegend, axes#6, 11 Aug 2026): across the fin bundle 0 of 43 acknowledgment rungs name a confirming party - the ladder names the scheme, hash-binds the artifact, and identifies no counterparty, which is why an independence question could not be put to those records at all |
 | GAP-EXEC-003 | Timestamp anchoring and multi-party custody | HIGH | open_se | time_anchor_ref + anchoring_method, witness_signature_refs, runtime_attestation_ref (experimental) | - |
 | GAP-EXEC-004 | Orchestrator missing as first-class actor | HIGH | open_se | orchestrator_id/version; divergence vocab additions (unexpected model/runtime/provider/orchestration change) | - |
 | GAP-EXEC-005 | Point-in-time policy/permission versioning; period-vs-point assurance marker | HIGH | open_se | policy_ref + policy_version_in_effect, effective_permissions_ref, assurance_period_type | - |
@@ -196,7 +196,7 @@ Source: the six second-eyes gap analyses. Tier-1 sourced gaps with schema/standa
 
 | ID | Gap/requirement | Severity | Layer | Implication | Dup |
 |---|---|---|---|---|---|
-| GAP-TECH-001 | External evidence anchoring: chain must terminate outside the system under investigation | HIGH | open_se + derived | external_anchor_ref, anchoring_method, anchored_at, anchoring_latency_ms; anchoring_verification_summary, unanchored_envelope_register | GAP-EXEC-003 |
+| GAP-TECH-001 | External evidence anchoring: chain must terminate outside the system under investigation | HIGH | open_se + derived | external_anchor_ref, anchoring_method, anchored_at, anchoring_latency; anchoring_verification_summary, unanchored_envelope_register | GAP-EXEC-003 |
 | GAP-TECH-002 | execution_mode - second-wave confirmation, core status | HIGH | open_se | execution_mode (core) | GAP-EXEC-001 |
 | GAP-TECH-003 | Emission fail-posture unrecorded; defines evidentiary meaning of silence | HIGH | open_se + derived | emission_fail_posture (fail_closed/fail_open/mixed/unknown); fail_posture_window_summary | - |
 | GAP-TECH-004 | Sampling/determinism parameters need defined structure | MED-HIGH | open_se | sampling_parameters block, random_seed_ref; "reproducible in distribution, not in instance" language | GAP-EXEC-011 |
@@ -326,7 +326,7 @@ Source: `SE_v0_1_Programme_Blind_Spots_and_Pre_Catalogue_Actions.md`
 | BLD-008 | Positioning language re monitoring people, before a works council asks | programme_action | - |
 | BLD-009 | Heartbeat/liveness: detect silence when nothing arrives | open_se + derived | - |
 | BLD-010 | Document heartbeats + sequence continuity + fail-posture as one "silence semantics" cluster | standards_package | GAP-TECH-003 |
-| BLD-011 | approval_requested_at / approval_granted_at → approval_response_latency_ms | open_se | - |
+| BLD-011 | approval_requested_at / approval_granted_at recorded as timestamps; named derivation `approval_granted_at − approval_requested_at` = approval lag. Do **not** store `approval_response_latency_ms` (same observation-versus-derivation rule as anchoring lag; WO16 Task 4a/4d) | open_se | D-017; DPR-012 |
 | BLD-012 | Rubber-stamp pattern detection (implementation layer, scoped language only) | implementation_layer | BLD-011 |
 | BLD-013 | Report rule: approval-reliant assurance statements disclose approval-volume and latency context | conformance_rule | - |
 | BLD-014 | Evidence cost model per implementation profile | standards_package | GAP-TECH-015 |
@@ -341,12 +341,51 @@ Source: `SE_v0_1_Programme_Blind_Spots_and_Pre_Catalogue_Actions.md`
 | BLD-023 | Backfill REQ-EXEC and REQ-BPO registers before master merge - **REQ-EXEC done in this register (A.6); REQ-BPO existed** | programme_action | - |
 | BLD-024 | Single master tracker: merge TRK + BLD into one backlog; five pre-schema decisions at its head | programme_action | TRK-023 |
 | BLD-025 | Heartbeat cluster fields (heartbeat_event, declared_heartbeat_interval, liveness_status, silent-window register) | open_se + derived | BLD-009 |
-| BLD-026 | approval_response_latency_ms + rubber-stamp detection | open_se + implementation_layer | BLD-011/012 |
+| BLD-026 | Approval timestamps plus named lag derivation (not a stored `_ms` field) + rubber-stamp detection | open_se + implementation_layer | BLD-011/012; WO16 Task 4d |
 | BLD-027 | agent_identity_assertion_ref | open_se | BLD-017 |
 | BLD-028 | Human-reference pseudonymisation rule | conformance_rule | BLD-006 |
 | BLD-029 | Threat model, evidence cost model, ARBITR self-evidence pack | standards_package + implementation | BLD-005/014/015 |
 | BLD-030 | Run the Executive-wave 10-point requirements-governance re-pass (layer placement, claim traceability, reliance wording, conformance-before-reliance, dangerous-to-encode-as-fact, missing vocabulary): the addendum instruction was introduced mid-programme, so the Executive wave ran without it; waves 2–6 absorbed it. Backfilled REQ-EXEC rows partially compensate; the dedicated re-pass is outstanding and should complete before Executive-sourced catalogue modules freeze | programme_action | REQ-EXEC (backfill), GAP-EXEC-* |
 | BLD-031 | **ARBITR backlog: Agent 365 / Purview import pack** - ingest Agent 365 OTel (`CloudAppEvents` / observability exporter) and Purview unified audit (CopilotInteraction and related AI record types) into SE envelopes per [`docs/interop/agent365-purview-se-mapping.md`](../docs/interop/agent365-purview-se-mapping.md); join to non-M365 emitters; surface independence caveat in packs (Microsoft log ≠ independent evidence); deliver connector + fixture corpus + report delta vs Golden Trace. Magentix AI commercial battlecard is proprietary (not in this repo) | implementation_layer | REQ-STD-019; adjacent-standards watch |
+
+---
+
+### D.x Identifier scope and identifier sets (IDS-*)
+Source: x402 Identity WG; WO16 Tasks 1-3, 17-18; doctrine lane rule.
+
+| ID | Item | Layer | Cross-refs |
+|---|---|---|---|
+| IDS-001 | Identifier scope axis: every identifier may declare the scope within which it is comparable | open_se | x402 wg-identity #10 |
+| IDS-002 | Resolution-authority reference: who can resolve a scoped identifier, never the resolution | open_se | IDS-001; doctrine lane rule |
+| IDS-003 | Absent scope MUST NOT default to global in any consumer or derivation | conformance_rule | IDS-001 |
+| IDS-004 | assertion_basis applicable at field/block scope; the more specific declaration governs | open_se | REQ-EXT-001, REQ-EXT-009 |
+| IDS-005 | Temporal dependency pinning for derivation profiles (calendar and IANA tzdata versions) | open_se | DPR-008; Module 01 |
+| DEF-ANCHOR-001 | Published gt-v2.0 anchor envelope: stored `anchoring_latency_ms: 740` reconciles with no pair of envelope timestamps; `anchored_at` precedes `emitted_at`/`recorded_at`. Disclosed; corpus unedited until announced gt-v2.1 | open_se | WO16 Task 4b; D-017; D-018 |
+
+---
+
+### D.x Derivation Profile Registry (DPR-*)
+Source: observation-versus-derivation design principle, 15 Aug 2026; docs/01 §4 derived layer; docs/07 SE-C4.
+
+| ID | Item | Layer | Cross-refs |
+|---|---|---|---|
+| DPR-001 | Derivation Profile Registry: derived values reproducible from sealed envelopes under an identified, versioned, digest-pinned rule set | standards_package | docs/01 §4; REQ-STD-002, REQ-EXT-001 |
+| DPR-002 | Profile document structure: id, version, digest, canonicalisation context, numeric profile, temporal dependencies, normative reference | open_se + package | DPR-001; docs/09 |
+| DPR-003 | Per-rule structure: derivation_id, inputs (with cross-envelope join rule), computation, output type/unit, preconditions, failure semantics, two-sided vectors | open_se + package | DPR-002; TRK-019 |
+| DPR-004 | Two profile classes: `axes.*` normative and published; proprietary namespaces publish identifier, version and digest but not rules | standards_package | TRK-017 (IPR); docs/01 §4 |
+| DPR-005 | Report binding: every derived value carries its derivation_id; every report carries profile id, version and digest | derived + conformance_rule | DPR-001; REQ-EXT-009 |
+| DPR-006 | Reports as AXES artefacts: a report envelope references source envelope digests + profile digest + derived values | open_se + derived | DPR-005; REQ-BPO-014 |
+| DPR-007 | Numeric determinism in the derived layer: decimal with declared scale and rounding mode; no binary floating point. The envelope layer already achieves this via integer Amount (golden-trace-v2) | open_se + conformance_rule | docs/09; golden-trace-v2 Amount migration |
+| DPR-008 | Temporal dependency pinning: profiles declare calendar and IANA tzdata versions | open_se | Module 01; IDS-005 |
+| DPR-009 | Failure semantics: a derivation returns a typed outcome, never a bare number, when a precondition fails | conformance_rule | capture_status, evidence_gap_recorded |
+| DPR-010 | Profile immutability and supersession: behavioural change is a new version declaring what changed and which prior outputs it invalidates | standards_package | TRK-006 |
+| DPR-011 | SE-C4 becomes testable: claimed against a named profile, verified by independent re-derivation | conformance_rule | docs/07 SE-C4; DPR-001 |
+| DPR-012 | `axes.*` seed set: capture lag, pipeline lag, anchoring lag, sequence integrity, authority-validity-at-action | open_se | Module 01 three-point time model |
+| DPR-013 | No gatekeeper: any party may mint a profile in its own namespace; only `axes.*` is normative | standards_package | docs/01 §5 |
+| DPR-014 | Boundary rule: a derivation computes a value from observations; it does not decide what the value means | conformance_rule | docs/01 §5 |
+| DPR-015 | Golden Trace v2 carries a worked profile instance and re-derivation procedure | programme_action | EB-004, CRE-009, D-008 |
+
+`axes.authority_valid_at_action` (DPR-012) compares an emitter's action time against an external issuer's validity window (two clocks) and MUST return `valid_at_action` \| `invalid_at_action` \| `indeterminate_clock_skew`, never a boolean.
 
 ---
 
@@ -394,6 +433,7 @@ Source: programme decision D-014. Full task list, doctrine constraints, and acce
 | TLC-005 | Quarantine/label legacy example dialects | standards_package | D-007 |
 | TLC-006 | Wire README/CHANGELOG/standards watch | programme_action | BLD-019 |
 | TLC-007 | Claim-language review against doctrine §3.10 / §5 | conformance_rule | docs/01 |
+| TLC-008 | Every conformance predicate must have a demonstrated non-empty pass-set and fail-set, or be marked unexercised. **Machine-enforced** on `golden-trace-v2` via `vectors/predicates.json` and `tools/axes_verify.py` (declared outcomes must be observed at run time; exit 2 = suite broken). Portable JCS subset: `portable/jcs-properties/` on `main` | conformance_rule | AXES #6, 11 Aug 2026; WO16 Task 16; WO17; D-019 |
 | CRE-001 | Control-context snapshot composition (what must be hashed) | open_se | GAP-EXEC-021 |
 | CRE-002 | Catalogue: snapshot ref+digest, effective dating on control refs | open_se | GAP-EXEC-005, Modules 03/04/12 |
 | CRE-003 | Evaluated-input digest (normalized inputs, hash-scoped) | open_se | P1-1, Module 14 |
@@ -413,6 +453,11 @@ Source: programme decision D-014. Full task list, doctrine constraints, and acce
 | EB-004 | Golden Trace v2 real external anchor (+ replace SIG-STUB per signing profile) | programme_action | D-008, P1-1 |
 | EB-005 | Conformance rejects silent overclaim of external anchoring | conformance_rule | EB-001, EB-004 |
 | EB-006 | Ack-ladder vs existence-bound discipline (SCITT/TSA ≠ business ack; optional dual registration) | open_se + package | P1-4, GT-003 |
+
+**EB status, 2026-10-04 (WO18):**
+- **EB-002 drafted.** Open `anchoring_method` registry with seeded families and namespaced extension ([docs/06 §2.12](../docs/06-controlled-vocabularies.md)); per-anchor verify path (`anchor_profile_id`, `anchor_proof_ref`, `anchor_proof_hash`, `anchor_verification_procedure_ref`) in [Module 14](../docs/05-field-catalogue/module-14-external-anchoring.md) and [`schema/anchoring.schema.json`](../schema/anchoring.schema.json). SCITT is one `transparency_log` profile, not mandatory. D-020.
+- **EB-003 partly met.** RFC 3161 and OpenTimestamps are published profiles with offline procedures ([docs/anchoring-profiles.md](../docs/anchoring-profiles.md)); EvidenceAnchor, Rekor, SCITT, EAS, tlog and the on-chain registry are mapped concept by concept in [docs/interop/anchoring-crosswalk.md](../docs/interop/anchoring-crosswalk.md), with profiles still to be authored by their owners.
+- **EB-004 anchor half met for the release statement.** The gt-v2.0 release statement carries a verified RFC 3161 anchor and an OpenTimestamps anchor (`anchors/gt-v2.0/`), detached, with no corpus byte changed. Anchors inside corpus envelopes and the `SIG-STUB` replacement land in gt-v2.1 (D-018; WO18 A4.5).
 
 ---
 

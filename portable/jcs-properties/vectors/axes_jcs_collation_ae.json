@@ -1,0 +1,7 @@
+{
+  "se_version": "0.1-draft",
+  "event_kind": "jcs_property_check",
+  "note": "ä sorts after z under UTF-16 code units; a locale comparator typically does not",
+  "z": "ascii_z",
+  "ä": "a_umlaut"
+}

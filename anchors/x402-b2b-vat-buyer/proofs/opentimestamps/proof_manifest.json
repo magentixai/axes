@@ -1,0 +1,9 @@
+{
+  "manifest_note": "OpenTimestamps proof with archived Bitcoin block headers",
+  "file_hash_algorithm": "SHA-256",
+  "file_hashes": {
+    "bitcoin-header-969876.hex": "a47487976a46ccbe97eba1763a6d718f62829637c8da55953240c0102bf0484d",
+    "bitcoin-header-969969.hex": "d4552d890dcff667c0d02944dd284d300b93d859a7709a147a4a8b74ce663df4",
+    "subject.ots": "43c094d5fbc505ade35fc32aadd9248fda7c427f51aba66bbc0471f2bfdc37eb"
+  }
+}

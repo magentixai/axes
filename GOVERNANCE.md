@@ -25,6 +25,18 @@ The steward's declared intent is to bring AXES to a recognised standards venue (
 
 Recognition matters beyond adoption: portable execution evidence has evidentiary value in audit, regulatory and legal settings partly through recognition of the standard it conforms to. Publishing openly, with a public verification procedure, is a deliberate step on that path.
 
+### Trigger status (2026-10-10)
+
+The venue-path trigger - a second independent implementation, defined above as an emitter or consumer not built by Magentix AI that passes the public test vectors - is met. Independent third parties have reproduced and checked the published Golden Trace corpus from the specification alone, with no dependency on this repository's tooling:
+
+- argentum-core (giskard09 / Pablo Etcheverry) - `custody-ref` reference implementation and a real on-chain `distributed_ledger` anchor instance; its own content-addressed `-ref` primitives and verifiers run against the corpus. See axes#3.
+- evidence-record-conformance (Tersign / Kevin Zhang) - a two-sided conformance verifier for the independence and completeness disqualifications; matches the pinned custody-twin verdicts 2/2. See axes#2 and axes#6.
+- canoncheck (MarkovianProtocol / Colin H Winter) - an independent cross-language JCS + SHA-256 byte-identity harness; reproduced the corpus 152/152 at tag `corpus/2026-08-08-gt-v2`. See axes#6.
+- proofbundle (b7n0de) - an independent RFC 6962 inclusion recomputation written from the specification; reproduced a checkpoint root from leaf bytes and verified it with third-party witness keys, a flipped payload bit failing inclusion. See b7n0de/proofbundle#7 and [#136](https://github.com/b7n0de/proofbundle/pull/136).
+
+This is a condition on independent implementation, not a claim that AXES is finished or adopted; AXES remains a public working draft that evidences and does not certify. Corpus verification is not an SE-Cx conformance badge (decision D-008), and the witnessed-checkpoint lane currently runs a single log operator - the 4-of-7 external witness quorum detects a silently forked log, it does not remove the fact of one operator. On this basis the steward will open incubation conversations with a recognised standards venue. Per-contribution credits are in registers/decision-register.md and PROVENANCE.md; the implementations are listed in the README.
+
+
 ## Conduct
 
 Be professional, specific and generous. Critique designs, not people. Maintainers may moderate contributions that are off-topic, promotional, or repetitive.

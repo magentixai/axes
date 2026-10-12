@@ -1,0 +1,43 @@
+{
+  "correlation_recipe_ref": "axes:x402_correlation@1",
+  "correlation_hash": "094e4a2f863f08718f7d07f17419f4d4fd3d3ce3a7c7803752d4413fae1651dc",
+  "correlation_hash_algorithm": "SHA-256",
+  "correlation_core": {
+    "x402_version": 2,
+    "payment_scheme": "exact",
+    "payment_flow_type": "authorization",
+    "network_id": "eip155:84532",
+    "asset_id": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+    "total_amount_value": "10000",
+    "payment_legs": [
+      {
+        "pay_to_id": "0x1bd45964ed3c85f0693f9f6822d37e5b7c778f11",
+        "leg_amount_value": "10000"
+      }
+    ],
+    "payer_id": "0x1351523b6469744cfa03da15a0d7a8199f04c9f2",
+    "resource_ref": "https://x402.magentix.ai/api/agent/reports",
+    "authorization_nonce_id": "0x5cc570ffbba0a3602173b929ee6b668efed3029027f6ecf1adb200dedd9bbdd4",
+    "authorization_expires_at": "2026-10-05T00:10:00.000Z",
+    "server_salt_text": "1fc598b464ad79ca9fb09de66c29206e31a083f2136f48747f5b3a92616d1369",
+    "client_salt_text": "d43629fbc9fbcf0beec6ff3d18b8ce33e6d195695c636151eb798ad64144ebc7",
+    "lanes": [
+      {
+        "lane_type": "identity",
+        "chosen_profile_ref": "axes:x402_disclosure_business_buyer@1",
+        "lane_information_hash": "5e0ee2fc947842a76ba335d7d8228c1e9af30cadd03b6b4f6a077300ef14cf66"
+      },
+      {
+        "lane_type": "tax",
+        "chosen_profile_ref": "x402-tax:eu-vat@rev6",
+        "lane_information_hash": "2f5a7f391da0d9984750fd7300e8d13eae7aa296e617d0a4f801155fc6757d8a"
+      },
+      {
+        "lane_type": "evidence",
+        "chosen_profile_ref": "axes:x402_correlation@1",
+        "lane_information_hash": "e2ad964ef13449016ff9a68b403a5b59ae7a983b050e09ff687c1a96197583bc"
+      }
+    ],
+    "hash_algorithm": "SHA-256"
+  }
+}

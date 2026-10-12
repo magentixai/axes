@@ -11,8 +11,11 @@
 | [`axes_anchoring_guard.py`](axes_anchoring_guard.py) | Anchoring block evaluation in the four-state vocabulary (WO18 A4, D-020, D-023); release-scoped, so gt-v2.0 blocks read as `legacy_unstructured_anchor` |
 | [`check_key_naming.py`](check_key_naming.py) | Naming rules lint (docs/20 on `main`, D-024); known gt-v2.0 violations in [`naming_baseline.json`](naming_baseline.json), each mapped to its gt-v2.1 key change index entry |
 | [`test_anchoring_guard.py`](test_anchoring_guard.py) | Negative check: a guard that reads every anchor as verified must fail the suite (exit 1) |
+| [`anchoring/`](anchoring/) | Module 14 anchor producers (`produce.py`: RFC 3161, OpenTimestamps), offline verifier (`verify_anchor.py`), two-sided self-test, schema and key-alias consistency check |
+| [`x402/`](x402/) | `axes:x402_correlation@1` recipe, vectors, and the cross-check with the tsc#4 payment fingerprint (WO20) |
+| [`releases/`](releases/) | Published digests of every earlier corpus release; `corpus_of_record.json` holds the current one |
 
-Liftable JCS property subset (no AXES corpus dependency): [`portable/jcs-properties/`](../portable/jcs-properties/) on the default branch (`main`). Full predicate suite stays on this branch.
+Liftable JCS property subset (no AXES corpus dependency): [`portable/jcs-properties/`](../portable/jcs-properties/) on this branch.
 
 Install development dependencies from the repository root:
 

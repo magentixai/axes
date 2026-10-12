@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/magentixai/axes/schema/x402-wire/evidence-1.json",
+  "title": "x402 evidence lane info (WO20, x402 wire spelling)",
+  "description": "Server info in PaymentRequired.extensions.evidence.info; the client echoes it unchanged and appends chosen (one offered profile, or declined when not required) and presentation. Lane names, keys and namespaces are proposals for the owning working group. Keys keep x402 spelling (docs/20 N14).",
+  "type": "object",
+  "required": [
+    "offered",
+    "required",
+    "correlationSalt"
+  ],
+  "properties": {
+    "offered": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3
+      },
+      "minItems": 1
+    },
+    "required": {
+      "type": "boolean"
+    },
+    "floor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "profileRegistry": {
+      "type": "string"
+    },
+    "chosen": {
+      "type": "string"
+    },
+    "presentation": {
+      "type": "object"
+    },
+    "anchorServices": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "correlationSalt": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "clientSalt": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "correlationDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "if": {
+    "properties": {
+      "chosen": {
+        "const": "declined"
+      }
+    },
+    "required": [
+      "chosen"
+    ]
+  },
+  "then": {
+    "properties": {
+      "required": {
+        "const": false
+      }
+    }
+  }
+}

@@ -4,13 +4,124 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-08 - Completeness wording corrected
+- Two-party anchoring is described as exposing one side's omission, not as evidence that nothing was omitted (wg-identity#25, x402#2853). Crosswalk and anchoring examples README updated; erratum recorded for the two x402 B2B audit profiles, whose `@1` bytes stay unchanged.
+
+### 2026-10-06 - x402 correlation: input checks tightened, cross-check with the tsc#4 payment fingerprint
+- Fix: `axes:x402_correlation@1` accepted non-hex addresses and nonces and non-ASCII digits in amounts and `validBefore`. All now refused with `value_not_accepted`. No valid input changes hash; three refusal vectors added (18 in total).
+- Fix: amounts above uint256 and malformed CAIP-2 eip155 references (for example `eip155:0`) are refused. Two refusal vectors added (20 in total). Trailing newlines were already refused (full-match patterns).
+- `tools/x402/crosscheck_payment_fingerprint.py`: the 11 CC0 vectors of `x402-payment-fingerprint/0` (tsc#4) run through the correlation core. Both recipes partition them identically; version 1 copies are refused, never split. Run in CI.
+
+### 2026-10-04 - WO20 x402 trust lanes and the B2B VAT worked example
+- `tools/x402/x402_correlation.py`: `axes:x402_correlation@1` (multi-recipient core, off-chain salts, opaque nonce, #3220 binding recomputation, receipt and party checks); 15 two-sided vectors plus nonce-derivation vectors, regenerated identically in CI.
+- `schema/x402-wire/`: identity, tax and evidence lane info schemas in x402 spelling.
+- `examples/x402-b2b-vat/`: real EIP-3009 and envelope signatures (test keys), both party records, real RFC 3161 and OpenTimestamps anchors per party, evaluations under three new profiles. Settlement is simulated and labelled; every evaluation is `indeterminate` on that one requirement only.
+- `docs/x402-trust-lanes-solution.md` for the working-group chairs. Decisions D-038 to D-041.
+- Fix: the anchor verifier checks the OpenTimestamps attestation the record names. The gt-v2.0 release statement is now verified in Bitcoin block 969860.
+
+### 2026-10-04 - WO19 requirement profiles and evaluation
+- docs/07: the profile mechanism is normative (trust computed, never stored; both sides named in any conformance statement; composition; deterministic evaluation; reproducible `result_core_hash`).
+- `schema/requirement-profile.schema.json`, `schema/evaluation-record.schema.json`; three reference profiles in `profiles/`.
+- docs/06 2.13: profile, evaluation, absence, settlement-purpose and nonce-derivation vocabularies; the closed condition registry.
+- Decisions D-025 to D-037 (WO19 D1 to D13).
+- On `golden-trace-v2`: `tools/axes_evaluate.py`, 30 two-sided evaluation vectors, the vocabulary mapping vectors, and published gt-v2.0 evaluations. Under the regulator profile gt-v2.0 is `indeterminate` with `basis_not_demonstrated` and `anchor_insufficient`.
+
+### 2026-10-04 - Naming rules made normative (D-024)
+- `docs/20-naming-rules.md`: one method for every key, enum value and AXES identifier (N1 to N15). Booleans end `_indicator`; American spelling in code; `_id` for who or what acts, `_ref` for what is fetched and read (D-022 restated); class word last fixes the value type; no unit or algorithm in a key.
+- `tools/check_key_naming.py` (standard library) in CI on both branches; frozen bytes listed in `tools/naming_baseline.json` with the docs/19 entry that corrects them.
+- docs/19: every gt-v2.0 key the rules correct, with change type and implementer action, mirrored in `schema/key-aliases.json`; same-day draft names superseded (anchoring `anchor_service_id`, `anchor_operator_id`, `anchor_profile_ref`; profile identifiers `axes:<lower_snake>@<version>`; verifier result keys `verification_*`; proof manifest and run record keys).
+- Real anchors re-checked after the manifest key change: RFC 3161 still verifies; OpenTimestamps still pending its Bitcoin block. No corpus bytes changed.
+
+### 2026-10-04 - WO18 anchoring model: catalogue, schema, change index, crosswalk
+- Module 14 (External anchoring) catalogue draft: one subject block plus `anchors[]`; verifier-derived lag, pending, custody relationship and earned `externally_anchored`.
+- `schema/anchoring.schema.json` (JSON Schema 2020-12). Rejects status inside the method value, `anchored_at` without `anchor_record_ref`, and `demonstrated` without proof material.
+- `docs/19-key-change-index.md` and `schema/key-aliases.json`: every gt-v2.0 to gt-v2.1 key change, with reason, decision and implementer action. CI checks the two agree (`tools/anchoring/check_schema_and_aliases.py`).
+- `docs/interop/anchoring-crosswalk.md`: eight schemes mapped key by key, gaps stated, two worked examples.
+- `examples/anchoring/`: illustrative blocks (all `basis_status: simulated`) and five must-reject examples, validated in CI on three operating systems.
+- docs/06 §2.12 anchoring vocabularies and verification conditions; `_ref` versus `_id` closed.
+- Decisions D-020 (open registry, earned `externally_anchored`), D-021 (rule 8 before v1), D-022 (`_ref` versus `_id`), D-023 (four-state verification vocabulary). EB-002/003/004 status recorded.
+- No corpus bytes changed. Corpus values move to this shape only in the announced gt-v2.1 release (D-018).
+
+### 2026-10-04 - WO18 A5: real external anchors for the gt-v2.0 release statement
+- RFC 3161 (FreeTSA, verified offline) and OpenTimestamps (Bitcoin; upgraded automatically by the scheduled `anchor` workflow) anchors over the RFC 8785 release statement committing to both gt-v2.0 chain heads and bundle digests. `tools/anchoring/` producers, offline verifier and two-sided self-test.
+
 ### 2026-10-03 - Cross-platform verification (Linux, macOS, Windows)
 - `tools/check_corpus_bytes.py` (standard library only) checks pinned bytes as checked out: no CR, valid UTF-8, forward-slash sorted manifest keys, every file matching its manifest entry, and chain heads and bundle digests equal to `tools/corpus_of_record.json` (gt-v2.0). Expectations change only in an announced release (D-018).
 - `.github/workflows/cross-platform-verify.yml` runs the verifier, guards, regeneration and byte check on Linux, macOS and Windows, Python 3.9 and 3.13.
 - `VERIFY.md`: clone directly at the tag, install `requirements-dev.txt`, byte check without regenerating, Windows notes.
 - `RELEASES.md`: the retired pre-merge lineage is recorded as not reproducible off Windows (CP1252 bytes, backslash manifest keys).
+- Default branch gains `.gitattributes` (`-text` on pinned corpora, vectors and the portable pack). Without it a Windows clone of the default branch converted 46 pinned files to CRLF, and switching to the tag in the same tree left them converted, so on-disk files no longer matched `manifest.json`.
 - No corpus bytes changed; published digests unchanged.
 
+### 2026-08-26 - WO17 portable JCS properties + coverage enforcement pointers
+- Added liftable [`portable/jcs-properties/`](portable/jcs-properties/) on `main` (stdlib verifier, four RFC 8785 property vectors, `CROSSCHECK.md` vs `rfc8785` 0.1.4). Credit: Ryan Cason / orionsys.
+- TLC-008 machine enforcement and `vectors/predicates.json` live on `golden-trace-v2`; D-019 records run-time coverage. Root README and `tools/README` point both places. Corpus digests unchanged.
+
+### 2026-08-17 - Corpus of record (docs/17 Phase 0, D-018)
+- Tagged `corpus/2026-08-08-gt-v2` at `776cc0b` (externally verified Golden Trace v2) and `corpus/2026-08-15-pre-merge` at `b5b6d30` (retired default-branch lineage).
+- README corpus-of-record note; [`RELEASES.md`](RELEASES.md) and [`VERIFY.md`](VERIFY.md). Default-branch HEAD is not the corpus third parties verified.
+
+### 2026-08-17 - WO16 Task 12 - GATED
+- Corpus regeneration (remove stored anchoring-latency field, add `anchor_requested_at`, heartbeat rename, timestamp reconcile) is **not started**. It ships only as the announced gt-v2.1 supersession after the verified corpus is merged onto default. See [`docs/17-AXES_Corpus_of_Record_Remediation_Plan.md`](docs/17-AXES_Corpus_of_Record_Remediation_Plan.md) Phase 1.
+
+### 2026-08-17 - WO16 Task 1 - identifier_scope
+- Closed `identifier_scope` vocabulary; companion `_scope` / `_resolution_authority`; IDS-001..003. Absent scope MUST NOT default to global.
+
+### 2026-08-17 - WO16 Task 2 - identifier sets
+- Content-keyed identifier objects (JCS set-versus-sequence); `entry_basis`, `verification_status`, `identifier_role`; unverified identifiers recorded but not attributable.
+
+### 2026-08-17 - WO16 Task 3 - assertion_basis field scope
+- `assertion_basis` at field or block scope; more specific declaration governs (IDS-004). Resolves derived-in-observed and unverified-in-observed.
+
+### 2026-08-17 - WO16 Task 4 - derived values (catalogue only)
+- Specify removal of stored anchoring-latency in favour of `anchor_requested_at` and named lag; disclose gt-v2.0 timestamp inconsistency; heartbeat rename specified for Task 12; `size_bytes` exempted; BLD-011/026 amended. Corpus bytes unchanged.
+
+### 2026-08-17 - WO16 Task 5 - signer_presence
+- Closed four-value vocabulary; `stripped` MUST fail regardless of strictness flag.
+
+### 2026-08-17 - WO16 Task 7 - hash-scope note
+- New [`docs/09a-hash-scope-and-exclusions.md`](docs/09a-hash-scope-and-exclusions.md); `hash_scope_exclusion_reason`.
+
+### 2026-08-17 - WO16 Task 8 - CrossMsg citation
+- docs/09 no longer attributes an exclusion set to `ConversionRules`; declared-field-set / KVP inclusion; link to 09a §3.
+
+### 2026-08-17 - WO16 Task 9 - Derivation Profile Registry
+- DPR-001..015; `derivation_outcome`; `axes.authority_valid_at_action` three-state return; decision entries.
+
+### 2026-08-17 - WO16 Task 10 - casing
+- `lower_snake` ratified; casing closed in docs/06 §3; cross-layer spelling rule in docs/12 (JCS consequence; pairwise exception).
+
+### 2026-08-17 - WO16 Task 11 - custody, correlation, settlement_role
+- Not-self-declared custody rule; third identity coordinate; `correlation_finding` / `triage_disposition`; direction-neutral `settlement_role`.
+
+### 2026-08-17 - WO16 Task 13 - why this field exists
+- Four-part house style in the field-catalogue README; notes in [`docs/05-field-catalogue/field-origin-notes.md`](docs/05-field-catalogue/field-origin-notes.md).
+
+### 2026-08-17 - WO16 Task 14 - RFC8785-JCS
+- Normative dereferenceable `canonicalisation_version`; informal `RFC8785` retired.
+
+### 2026-08-17 - WO16 Task 17 - identity syntax portability
+- Prefix table; predicates MUST NOT bind to one syntax; credit wowlegend / axes#6.
+
+### 2026-08-17 - WO16 Task 6 - non-ASCII JCS vectors
+- Four new property vectors on `golden-trace-v2` (surrogate-pair key, NFC/NFD pair, ä/z collation, digest encoding) plus a locale-comparator negative check. Existing pinned values unchanged. A property that is only named is not pinned.
+
+### 2026-08-17 - WO16 Task 15 - reference verifier
+- `tools/axes_verify.py` on `golden-trace-v2`: offline JCS/digest, chain, `expected.json` including reject reason codes, custody twins. Typed outcomes. Vectors README: verifier shipped, not Planned P4.
+
+### 2026-08-17 - WO16 Task 16 - pass-and-fail predicates
+- Standing rule in `vectors/README.md`; TLC-008. Chain-break fail-set marked unexercised as a committed negative (would mutate the corpus of record).
+
+### 2026-08-17 - WO16 Task 18 - basis_status
+- Structured `demonstrated` \| `stubbed` \| `simulated`; GAP-EXEC-002 annotated with 0/43 confirming-party measurement. Corpus values gated.
+
+### 2026-08-17 - Field naming: no unit in the key (D-017)
+- Renamed `anchoring_latency_ms` → `anchoring_latency` (unit = milliseconds, declared outside the identifier). Applies bar Rule 3 to our own corpus before raising it externally.
+- Golden Trace fin/ind generators and sample anchor envelopes regenerated so hash chains stay consistent.
+- Decision D-017 recorded; further `_ms` / `_s` key scrub tracked, not bulk-renamed in this change.
+
+### 2026-08-14 - x402 / AEP coherence tracker and outstanding landings
+- Coherence tracker, outstanding AXES landings (role enum, signing profile, identity provenance), payee settlement-role design note; ROADMAP and adjacent-standards watch pointers.
 ### 2026-08-07 - Golden Trace v2 manifest portability fix
 - Generators write all corpus files as UTF-8 with explicit LF (`newline="\n"`); never platform text mode (fixes CRLF and CP1252 Ø in Ind QIF).
 - `.gitattributes` marks `examples/**/out/**`, `vectors/**`, and archived v1 corpora as `-text` so git cannot re-normalise pinned bytes.

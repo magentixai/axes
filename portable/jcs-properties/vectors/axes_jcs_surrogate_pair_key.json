@@ -1,0 +1,8 @@
+{
+  "se_version": "0.1-draft",
+  "event_kind": "jcs_property_check",
+  "note": "UTF-16 code-unit member sort (RFC 8785 §3.2.3), not code-point order",
+  "Ａ": "fullwidth_a",
+  "𝄞": "g_clef_supplementary",
+  "z": "ascii_z"
+}

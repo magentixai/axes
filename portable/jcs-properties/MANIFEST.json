@@ -1,0 +1,69 @@
+{
+  "profile": "axes.portable-jcs-properties/1",
+  "description": "Four RFC 8785 properties that an ASCII-only corpus cannot pin.",
+  "credit": "Locale-collation property pinned because Ryan Cason / orionsys found a locale-aware comparator that left 148 tests passing while the bytes diverged.",
+  "required_verdicts": [
+    "pass",
+    "reject"
+  ],
+  "required_reason_codes": [
+    "jcs_utf16_member_sort",
+    "jcs_no_unicode_normalisation",
+    "jcs_codeunit_not_locale",
+    "jcs_digest_over_utf8_bytes",
+    "locale_comparator_diverges"
+  ],
+  "surrogate_order_divergence": {
+    "code_point_order": [
+      "event_kind",
+      "note",
+      "se_version",
+      "z",
+      "\\uff21",
+      "\\U0001d11e"
+    ],
+    "utf16_order": [
+      "event_kind",
+      "note",
+      "se_version",
+      "z",
+      "\\U0001d11e",
+      "\\uff21"
+    ],
+    "assert": "code_point_order != utf16_order for the chosen keys; otherwise the vector pins nothing"
+  },
+  "vectors": [
+    {
+      "id": "axes_jcs_surrogate_pair_key.json",
+      "property": "utf16_member_sort",
+      "expect": "pass",
+      "reason_code": "jcs_utf16_member_sort",
+      "canonical_utf8": "{\"event_kind\":\"jcs_property_check\",\"note\":\"UTF-16 code-unit member sort (RFC 8785 §3.2.3), not code-point order\",\"se_version\":\"0.1-draft\",\"z\":\"ascii_z\",\"𝄞\":\"g_clef_supplementary\",\"Ａ\":\"fullwidth_a\"}",
+      "sha256": "39242da865244d1cacb2fc7996b14dc34d49b53654dcf4e93de542141431978b"
+    },
+    {
+      "id": "axes_jcs_nfc_nfd_pair.json",
+      "property": "no_normalisation",
+      "expect": "pass",
+      "reason_code": "jcs_no_unicode_normalisation",
+      "canonical_utf8": "{\"event_kind\":\"jcs_property_check\",\"é\":\"decomposed\",\"note\":\"NFC and NFD of the same visual key are distinct members (RFC 8785 §3.1)\",\"se_version\":\"0.1-draft\",\"é\":\"composed\"}",
+      "sha256": "dbdaaf1d6a18db91af67d2a5bdd65e54088cfb1966856d31bdef6255c2df284b"
+    },
+    {
+      "id": "axes_jcs_collation_ae.json",
+      "property": "locale_vs_codeunit",
+      "expect": "pass",
+      "reason_code": "jcs_codeunit_not_locale",
+      "canonical_utf8": "{\"event_kind\":\"jcs_property_check\",\"note\":\"ä sorts after z under UTF-16 code units; a locale comparator typically does not\",\"se_version\":\"0.1-draft\",\"z\":\"ascii_z\",\"ä\":\"a_umlaut\"}",
+      "sha256": "03ffae0c9b25e21ed4f2354729d94372475deae20fded748ad3e5d1a25d68535"
+    },
+    {
+      "id": "axes_jcs_digest_encoding.json",
+      "property": "digest_utf8_input",
+      "expect": "pass",
+      "reason_code": "jcs_digest_over_utf8_bytes",
+      "canonical_utf8": "{\"digest_bare\":\"d68e2599796b1d327c753640b501014fe4af491f62c7285c4eec0a4c41aad580\",\"digest_prefixed\":\"sha256:d68e2599796b1d327c753640b501014fe4af491f62c7285c4eec0a4c41aad580\",\"event_kind\":\"jcs_property_check\",\"note\":\"bare lowercase hex and an algorithm-prefixed form are different strings\",\"se_version\":\"0.1-draft\"}",
+      "sha256": "0b38b7240eb6c4b3b1a812935615daac2e5143a7028755112f6ea4a306b9e4a9"
+    }
+  ]
+}

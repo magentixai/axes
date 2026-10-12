@@ -1,0 +1,64 @@
+{
+  "requirement_profile_id": "axes:x402_eu_vat_b2b_tax_authority@1",
+  "requirement_profile_version": "1",
+  "profile_purpose_type": "sufficiency",
+  "publisher_id": "https://github.com/magentixai/axes",
+  "relying_party_roles": [
+    "tax_authority"
+  ],
+  "subject_types": [
+    "bundle"
+  ],
+  "effective_from": "2026-10-04T00:00:00.000Z",
+  "unsettled_question_notes": [
+    "Which wg-tax revision a tax authority accepts is set by the authority, not this profile."
+  ],
+  "vector_set_ref": "examples/x402-b2b-vat/evaluations",
+  "requirements": [
+    {
+      "requirement_id": "tax_result_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "obligation_type": "conditional",
+      "floor_indicator": false,
+      "field_path": "/tax/tax_result_ref",
+      "condition_expression": "equals(/event_kind, \"commit_succeeded\")",
+      "rationale_note": "The tax result is bound to the supply.",
+      "source_refs": [
+        "wg-tax PR#5"
+      ]
+    },
+    {
+      "requirement_id": "tax_principal_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "obligation_type": "conditional",
+      "floor_indicator": true,
+      "field_path": "/tax/principal_attribution_status",
+      "condition_expression": "all(equals(/event_kind, \"commit_succeeded\"), equals(/tax/tax_treatment_type, \"reverse_charge\"))",
+      "accepted_values": [
+        "verified"
+      ],
+      "rationale_note": "Reverse charge requires principal attribution verified (PR #5 6.6.6 invariant).",
+      "source_refs": [
+        "wg-tax PR#5 6.6.6"
+      ]
+    },
+    {
+      "requirement_id": "tax_supplier_vat_01",
+      "check_type": "field_presence",
+      "subject_type": "bundle",
+      "obligation_type": "conditional",
+      "floor_indicator": true,
+      "field_path": "/supplier/supplier_vat_id",
+      "condition_expression": "equals(/event_kind, \"commit_succeeded\")",
+      "rationale_note": "Supplier VAT identifier present.",
+      "source_refs": [
+        "wg-tax PR#5"
+      ]
+    }
+  ],
+  "extended_profile_refs": [
+    "axes:x402_b2b_buyer_audit@1"
+  ]
+}

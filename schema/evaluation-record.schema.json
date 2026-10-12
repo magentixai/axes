@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/magentixai/axes/schema/evaluation-record.schema.json",
+  "title": "AXES evaluation record (WO19 section 4, A1)",
+  "description": "The result of applying a requirement profile to a subject. Witnessed, not authored; never modifies the subject. result_core_hash covers the record minus evaluation_id, evaluator_id, evaluator_version, evaluated_at and itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evaluation_id",
+    "requirement_profile_ref",
+    "requirement_profile_version",
+    "requirement_profile_hash",
+    "hash_algorithm",
+    "subject_type",
+    "subject_hashes",
+    "evaluator_id",
+    "evaluator_version",
+    "evaluated_at",
+    "pinned_evidence_items",
+    "results",
+    "overall_verification_state",
+    "guarantee_type",
+    "conditional_requirement_refs",
+    "result_core_hash"
+  ],
+  "properties": {
+    "evaluation_id": {
+      "type": "string"
+    },
+    "requirement_profile_ref": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.-]+:[a-z0-9_]+@[0-9A-Za-z.]+$"
+    },
+    "requirement_profile_version": {
+      "type": "string"
+    },
+    "requirement_profile_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,128}$"
+    },
+    "hash_algorithm": {
+      "type": "string"
+    },
+    "subject_type": {
+      "enum": [
+        "envelope",
+        "bundle",
+        "stream_window",
+        "release"
+      ]
+    },
+    "subject_hashes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{40,128}$"
+      },
+      "minItems": 1
+    },
+    "subject_release_ref": {
+      "type": "string"
+    },
+    "key_translation_ref": {
+      "type": "string"
+    },
+    "evaluator_id": {
+      "type": "string"
+    },
+    "evaluator_version": {
+      "type": "string"
+    },
+    "evaluated_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3,}Z$"
+    },
+    "pinned_evidence_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidence_ref",
+          "evidence_hash",
+          "authority_answered_at"
+        ],
+        "properties": {
+          "evidence_ref": {
+            "type": "string"
+          },
+          "evidence_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40,128}$"
+          },
+          "authority_answered_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3,}Z$"
+          }
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirement_ref",
+          "verification_state",
+          "verification_subject_type",
+          "observed_note",
+          "evidence_refs"
+        ],
+        "properties": {
+          "requirement_ref": {
+            "type": "string"
+          },
+          "verification_state": {
+            "enum": [
+              "verified",
+              "contradicted",
+              "indeterminate",
+              "not_evaluated"
+            ]
+          },
+          "verification_reason_code": {
+            "enum": [
+              "divergence",
+              "absence",
+              "instrument_failure"
+            ]
+          },
+          "verification_condition_code": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(_[a-z0-9]+)*$"
+          },
+          "verification_subject_type": {
+            "enum": [
+              "artifact",
+              "operator",
+              "network",
+              "verifier",
+              "access"
+            ]
+          },
+          "observed_note": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "overall_verification_state": {
+      "enum": [
+        "verified",
+        "contradicted",
+        "indeterminate",
+        "not_evaluated"
+      ]
+    },
+    "guarantee_type": {
+      "enum": [
+        "conditional",
+        "unconditional"
+      ]
+    },
+    "conditional_requirement_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "result_core_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40,128}$"
+    }
+  }
+}

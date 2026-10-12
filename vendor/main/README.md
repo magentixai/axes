@@ -1,3 +1,3 @@
-# Vendored from `main`
+# Vendored copies
 
-`profiles/` and `key-aliases.json` are copied byte for byte from the default branch so the evaluator on this branch runs offline. CI checks out `main` and fails if these files differ. Edit them on `main`, then copy.
+`profiles/` and `key-aliases.json` are byte-for-byte copies of the canonical `profiles/` and `schema/key-aliases.json` in this tree. The evaluator reads them here so published evaluation records keep their recorded paths. CI fails if the copies differ. Edit the canonical files, then copy.

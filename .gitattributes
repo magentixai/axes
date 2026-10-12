@@ -1,7 +1,16 @@
-# Pinned Golden Trace corpora and conformance vectors are byte-identity fixtures.
-# Never let git normalise line endings; hashes must match on-disk UTF-8/LF bytes.
+# Pinned corpora, conformance vectors and the portable property pack are
+# byte-identity fixtures. Never let git convert line endings on checkout:
+# digests must match the committed UTF-8 / LF bytes on every OS.
 examples/**/out/** -text
 vectors/** -text
 archive/golden-trace-v1-*/** -text
+archive/**/out/** -text
 vendor/** -text
 evaluations/** -text
+portable/**/vectors/** -text
+portable/**/MANIFEST.json -text
+anchors/** -text
+examples/x402-b2b-vat/** -text
+tools/x402/vectors/** -text
+tools/x402/external/** -text
+profiles/** -text

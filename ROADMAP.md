@@ -65,6 +65,7 @@ Full task list and acceptance test: [`registers/three-layer-evidence-and-control
 | Agent 365 / Purview → SE field map | ✅ Informative draft [`docs/interop/agent365-purview-se-mapping.md`](docs/interop/agent365-purview-se-mapping.md) |
 | Magentix AI ARBITR battlecard (independence argument) | Proprietary - not published in this open repo (gitignored) |
 | **BLD-031** ARBITR import pack (Agent 365 OTel + Purview audit → SE) | Raised - implementation layer |
+| x402 discovery ↔ AXES coherence (role enum, signing profile, identity provenance) | Open - tracker [`docs/x402/AXES_AEP_x402_Coherence_Tracker.md`](docs/x402/AXES_AEP_x402_Coherence_Tracker.md); outstanding landings [`docs/x402/OUTSTANDING_AXES_CHANGES.md`](docs/x402/OUTSTANDING_AXES_CHANGES.md); kit [x402-signed-manifest-ref](https://github.com/magentixai/x402-signed-manifest-ref) at mechanism 1.1.1 |
 
 ## Known limitations of this draft (disclosed, not hidden)
 
