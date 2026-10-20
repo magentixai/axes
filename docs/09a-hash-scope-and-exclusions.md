@@ -33,15 +33,16 @@ Two separate ideas, often conflated. [docs/09](09-canonicalisation-and-hashing.m
 
 ## 4. The current AXES position
 
-Three exclusions today:
+Two exclusions are in force in the published corpus (gt-v2.1, and gt-v2.0 under its own key name):
 
 | Field | Reason (`hash_scope_exclusion_reason`) |
 |---|---|
-| `integrity.signature` | `self_referential` |
+| `integrity.envelope_signature` (`integrity.signature` in gt-v2.0) | `self_referential` |
 | `integrity.envelope_hash` | `self_referential` |
-| `recorded_at` | `recipient_stamped` |
 
-Everything else in the canonical envelope is inside the hash, including signing-key identity.
+Everything else in the canonical envelope is inside the hash, including signing-key identity and `recorded_at`.
+
+**Proposed, not current:** excluding `recorded_at` as `recipient_stamped`. In every published corpus `recorded_at` is inside the hash (verified independently from the corpus bytes by robertolocatelli81-dev on tsc#4, 2026-10-12). A change would land only in an announced release (D-018) and in docs/19.
 
 ## 5. Options with trade-offs
 
