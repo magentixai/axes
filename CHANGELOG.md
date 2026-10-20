@@ -5,7 +5,7 @@ All notable changes to the AXES specification and repository.
 ## [Unreleased - SE v0.1 Public Working Draft]
 
 ### 2026-10-12 - gt-v2.1 re-verified; three documentation fixes
-- gt-v2.1 re-verified by giskard09 (byte check, regeneration, reference verifier; axes#6) and, from the specification side only, by robertolocatelli81-dev / Noûs (own canonicaliser and parsers, no AXES scripts run; tsc#4). RELEASES.md updated.
+- gt-v2.1 re-verified by giskard09 (byte check, regeneration, reference verifier; axes#6), by MarkovianProtocol (13 Oct: canoncheck in Python and JS plus the reference verifier; axes#6) and, from the specification side only, by robertolocatelli81-dev / Noûs (own canonicaliser and parsers, no AXES scripts run; tsc#4). RELEASES.md updated.
 - Documentation fixes found by robertolocatelli81-dev (tsc#4), no corpus bytes changed: docs/09a no longer lists `recorded_at` as a current hash exclusion (it is inside the hash in every published corpus; the exclusion is recorded as proposed); docs/09 and docs/09a use `integrity.envelope_signature` (gt-v2.1 name); VERIFY.md states how the envelope hash, chain head and `bundle_manifest_hash` are built, so they can be checked from the text alone.
 
 ### 2026-10-12 - gt-v2.1 released (corpus of record)
