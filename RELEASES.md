@@ -21,9 +21,10 @@ Each release statement is anchored outside AXES so a third party can confirm the
 | gt-v2.0 | `d53f3eb5720d1676088609d4ea6f340121be9a7fc6e97efdf158fa3b96e84216` | FreeTSA, serial `0x08DE791D`, 2026-10-04T13:53:53Z | RFC 3161 time-stamp authority | verified offline |
 | gt-v2.0 | same | Bitcoin `block:969860:000000000000000000021172cf9dff46a5b9c878d233d44a26cc1151614f20d1`, 2026-10-04T14:28:53Z | OpenTimestamps | verified offline (header proof of work; main-chain membership checkable against any Bitcoin node) |
 | gt-v2.1 | `d8b6a69f57ba2209561fb551443c096c47fcb0cb6db37005fd0713690de88299` | FreeTSA, serial `0x09216E25`, 2026-10-12T10:12:28Z | RFC 3161 time-stamp authority | verified offline |
-| gt-v2.1 | same | Bitcoin, via OpenTimestamps calendars (requested 2026-10-12T10:12:24Z) | OpenTimestamps | pending: the scheduled `anchor` workflow upgrades the proof once it is in a block, then it verifies offline |
+| gt-v2.1 | same | Bitcoin `block:971082:00000000000000000001866099083f25fb5d30324416fb11eaa504895f86d24e`, 2026-10-12T10:35:51Z (requested 10:12:24Z) | OpenTimestamps | verified offline (header proof of work; main-chain membership checkable against any Bitcoin node) |
+| gt-v2.1 | same | Base `tx:0x4d4b45f7ddb970bf37a640d651f24bc0e26a4acdb2e14285c19a9f3f95c720f7`, block 52987624, 2026-10-23T14:09:55Z; AnchorRegistry, submitted by giskard09 from their own wallet (`0xdcc8...dbf4`) | Distributed ledger (`axes:anchor_registry_bytes32@1`) | verified offline (receipt proven under the block's `receiptsRoot`, header hashes to the block hash; block finalised on Base, checkable by block hash against any Base node) |
 
-Further independent lanes (a witnessed transparency log, an on-chain registry) are added as their operators run them.
+Further independent lanes (a witnessed transparency log) are added as their operators run them.
 
 ## Governance
 

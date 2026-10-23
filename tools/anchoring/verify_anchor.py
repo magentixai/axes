@@ -148,15 +148,15 @@ def verify_anchor_registry(entry, files, commitment):
     if entry.get("anchor_profile_ref") != ac.PROFILE_ANCHOR_REGISTRY:
         return result(aid, "not_evaluated", "anchor_method_unverifiable", "instrument_failure", "verifier",
                       "no verifier for distributed_ledger profile %s in this version" % entry.get("anchor_profile_ref"))
-    for need in ("header.json", "receipt.json", "receipt_proof.json"):
+    for need in ("evm-rpc/header.json", "evm-rpc/receipt.json", "receipt_proof.json"):
         if need not in files:
             return result(aid, "indeterminate", "anchor_proof_absent", "absence", "operator", "proof bundle lacks " + need)
-    header, receipt, proof = (ac.read_json(files[n]) for n in ("header.json", "receipt.json", "receipt_proof.json"))
+    header, receipt, proof = (ac.read_json(files[n]) for n in ("evm-rpc/header.json", "evm-rpc/receipt.json", "receipt_proof.json"))
     mismatch = lambda note: result(aid, "contradicted", "anchor_commitment_mismatch", None, "artifact", note)  # noqa: E731
     if evm.header_hash(header) != header.get("hash", "").lower() or header["hash"].lower() != receipt.get("blockHash", "").lower():
         return mismatch("header does not hash to the receipt's block hash")
     index = int(receipt["transactionIndex"], 16)
-    leaf = evm.verify_trie_proof(header["receiptsRoot"], index, proof.get("proof", []))
+    leaf = evm.verify_trie_proof(header["receiptsRoot"], index, proof.get("proof_nodes", []))
     if leaf is None or leaf != evm.receipt_encoding(receipt):
         return mismatch("receipt is not under the header's receiptsRoot at transactionIndex %d" % index)
     parts = (entry.get("anchor_service_id") or "").split(":")

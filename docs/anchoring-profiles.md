@@ -62,15 +62,15 @@ The submitting address (`anchoredBy`, the transaction's `from`) is recorded in t
 
 | File | What it is |
 |---|---|
-| `header.json` | The block header as a JSON-RPC node returned it |
-| `receipt.json` | The transaction receipt |
-| `receipt_proof.json` | The Merkle-Patricia proof of that receipt under the header's `receiptsRoot`, keyed by RLP(transaction index) |
+| `evm-rpc/header.json` | The block header as a JSON-RPC node returned it (the node's own key spelling) |
+| `evm-rpc/receipt.json` | The transaction receipt, likewise |
+| `receipt_proof.json` | `receipts_root_hash`, `transaction_index` and `proof_nodes`: the Merkle-Patricia proof of that receipt under the header's `receiptsRoot`, keyed by RLP(transaction index) |
 
 `tools/anchoring/produce.py registry-collect` builds the bundle from any node, after checking that it can recompute the block's `receiptsRoot` from every receipt in the block and the block hash from the header.
 
 **Offline verification.**
 1. The header hashes, as keccak-256 of the RLP of its fields in consensus order, to the receipt's `blockHash`.
-2. The proof walks from the header's `receiptsRoot` to the receipt's `transactionIndex`, and the value it reaches is exactly the consensus encoding of `receipt.json` (EIP-2718 typed receipts, including OP Stack deposit receipts).
+2. The proof walks from the header's `receiptsRoot` to the receipt's `transactionIndex`, and the value it reaches is exactly the consensus encoding of `evm-rpc/receipt.json` (EIP-2718 typed receipts, including OP Stack deposit receipts).
 3. `anchor_service_id` names the AnchorRegistry contract. Otherwise the result is `contradicted` / `anchor_noncanonical_contract`.
 4. The receipt succeeded and carries an `Anchored` event emitted by that contract. Otherwise the result is `contradicted` / `anchor_not_a_commitment`; a plain transfer is never an anchor.
 5. The event's `ref` equals `anchor_commitment_hash`, which equals `anchored_subject_hash`; `anchored_at` equals the block time; `anchor_record_ref` equals the transaction hash. Any difference is `contradicted` / `anchor_commitment_mismatch`.

@@ -1,0 +1,9 @@
+{
+  "manifest_note": "AnchorRegistry transaction receipt, its Merkle-Patricia proof under the block's receiptsRoot, and the block header",
+  "file_hash_algorithm": "SHA-256",
+  "file_hashes": {
+    "evm-rpc/header.json": "b28f47b82376584cd6aa9f09a35462238e516dda9de8dc2d52124839adc4e38e",
+    "evm-rpc/receipt.json": "9c71ad833b15dfa123fa8d7a3bd958fb878f94ec11d9bcf3946bc2ae0be30566",
+    "receipt_proof.json": "4d9d4b518b81ed3511c1411205a8c75faaa3b49216df72589c3c070b6f08092b"
+  }
+}

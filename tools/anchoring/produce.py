@@ -287,11 +287,12 @@ def cmd_registry_collect(args):
     pdir = os.path.join(args.out, "proofs", "distributed_ledger")
     os.makedirs(pdir, exist_ok=True)
     header = {k: v for k, v in header.items() if k not in ("transactions", "withdrawals", "uncles", "size", "totalDifficulty")}
-    ac.write_json(os.path.join(pdir, "header.json"), header)
-    ac.write_json(os.path.join(pdir, "receipt.json"), receipt)
+    os.makedirs(os.path.join(pdir, "evm-rpc"), exist_ok=True)
+    ac.write_json(os.path.join(pdir, "evm-rpc", "header.json"), header)
+    ac.write_json(os.path.join(pdir, "evm-rpc", "receipt.json"), receipt)
     ac.write_json(os.path.join(pdir, "receipt_proof.json"),
-                  {"receipts_root": root, "transaction_index": index, "proof": evm.trie_proof(store, root, index)})
-    proof_hash = ac.write_proof_manifest(pdir, ["header.json", "receipt.json", "receipt_proof.json"],
+                  {"receipts_root_hash": root[2:], "transaction_index": index, "proof_nodes": evm.trie_proof(store, root, index)})
+    proof_hash = ac.write_proof_manifest(pdir, ["evm-rpc/header.json", "evm-rpc/receipt.json", "receipt_proof.json"],
                                          "AnchorRegistry transaction receipt, its Merkle-Patricia proof under the block's receiptsRoot, and the block header")
     ac.upsert_anchor(block, {
         "anchor_id": "anch:anchor-registry-" + args.chain.split(":")[1],
