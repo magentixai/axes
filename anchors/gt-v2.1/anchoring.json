@@ -4,6 +4,22 @@
   "anchored_subject_hash_algorithm": "SHA-256",
   "anchors": [
     {
+      "anchor_id": "anch:anchor-registry-8453",
+      "anchoring_method": "distributed_ledger",
+      "anchor_profile_ref": "axes:anchor_registry_bytes32@1",
+      "basis_status": "demonstrated",
+      "anchor_commitment_hash": "d8b6a69f57ba2209561fb551443c096c47fcb0cb6db37005fd0713690de88299",
+      "anchor_commitment_hash_algorithm": "SHA-256",
+      "anchor_requested_at": "2026-10-23T14:09:55.000Z",
+      "anchored_at": "2026-10-23T14:09:55.000Z",
+      "anchor_service_id": "eip155:8453:0x49feca52bc634a9ab773226d16619dec547794aa",
+      "anchor_record_ref": "tx:0x4d4b45f7ddb970bf37a640d651f24bc0e26a4acdb2e14285c19a9f3f95c720f7",
+      "anchor_operator_id": null,
+      "anchor_proof_ref": "proofs/distributed_ledger/proof_manifest.json",
+      "anchor_proof_hash": "3b149bf120980b0f409ef99c27ba8c3852cb8965f9f983f43ba1bd0c9c2cf17b",
+      "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesanchor_registry_bytes321"
+    },
+    {
       "anchor_id": "anch:ots",
       "anchoring_method": "opentimestamps",
       "anchor_profile_ref": "axes:opentimestamps_sha256_digest@1",

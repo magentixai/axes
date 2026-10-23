@@ -42,6 +42,45 @@ Reference tooling: `tools/anchoring/produce.py` (makes anchors), `tools/anchorin
 
 **What this does and does not establish.** It proves the named TSA signed the digest at the stated time, under the certificate chain in the bundle. Trust in that chain is the relying party's decision: the bundle records which chain was used, it does not make it trusted. Custody: the TSA is a single operator, independent of the subject's producer.
 
+## `axes:anchor_registry_bytes32@1`
+
+**What is anchored.** The subject's SHA-256 is passed as the `bytes32` argument of `anchor(bytes32 ref)` on AnchorRegistry, a permissionless contract by giskard09 (argentum-core), deployed with CREATE2 at `0x49fEcA52bC634a9Ab773226D16619deC547794aa`. Its author states that the same address is used on Base, Arbitrum and Ink. This profile has been exercised on Base mainnet (`eip155:8453`). The call emits `Anchored(bytes32 indexed ref, address indexed anchoredBy, uint256 timestamp)`; selector `0xeecdf927`, event topic `0xfe2289542f7a0110ac112c3a4d712afdcaaf2900a1326f4e6f340b563a0e8734` (keccak-256 of the two signatures).
+
+**Fields.**
+
+| Field | Value |
+|---|---|
+| `anchoring_method` | `distributed_ledger` |
+| `anchor_service_id` | `<CAIP-2 chain>:<contract, lowercase>`, for example `eip155:8453:0x49feca52bc634a9ab773226d16619dec547794aa` |
+| `anchor_record_ref` | `tx:<transaction hash>` |
+| `anchored_at` | the block's timestamp, which the event's `timestamp` also carries |
+| `anchor_operator_id` | `null`: the chain is permissionless and the contract has no operator party to the call |
+
+The submitting address (`anchoredBy`, the transaction's `from`) is recorded in the proof bundle. It is the party who chose to anchor, not an operator of the mechanism, and it is a fact for the custody reading (docs/05 Module 14 §14.3), not an independence claim.
+
+**Proof bundle.**
+
+| File | What it is |
+|---|---|
+| `evm-rpc/header.json` | The block header as a JSON-RPC node returned it (the node's own key spelling) |
+| `evm-rpc/receipt.json` | The transaction receipt, likewise |
+| `receipt_proof.json` | `receipts_root_hash`, `transaction_index` and `proof_nodes`: the Merkle-Patricia proof of that receipt under the header's `receiptsRoot`, keyed by RLP(transaction index) |
+
+`tools/anchoring/produce.py registry-collect` builds the bundle from any node, after checking that it can recompute the block's `receiptsRoot` from every receipt in the block and the block hash from the header.
+
+**Offline verification.**
+1. The header hashes, as keccak-256 of the RLP of its fields in consensus order, to the receipt's `blockHash`.
+2. The proof walks from the header's `receiptsRoot` to the receipt's `transactionIndex`, and the value it reaches is exactly the consensus encoding of `evm-rpc/receipt.json` (EIP-2718 typed receipts, including OP Stack deposit receipts).
+3. `anchor_service_id` names the AnchorRegistry contract. Otherwise the result is `contradicted` / `anchor_noncanonical_contract`.
+4. The receipt succeeded and carries an `Anchored` event emitted by that contract. Otherwise the result is `contradicted` / `anchor_not_a_commitment`; a plain transfer is never an anchor.
+5. The event's `ref` equals `anchor_commitment_hash`, which equals `anchored_subject_hash`; `anchored_at` equals the block time; `anchor_record_ref` equals the transaction hash. Any difference is `contradicted` / `anchor_commitment_mismatch`.
+
+**What this does and does not establish.** It proves the subject digest was committed by a successful call to AnchorRegistry, in a block with that hash and that time. That the block is on the named chain's canonical, finalised history is a separate check against any node of that chain, by block hash; the verifier reports the hash so the check takes one lookup. The header does not name its chain, so `anchor_service_id` is what binds the anchor to a chain. Like the other profiles, it says nothing about the subject's content beyond its digest.
+
+**Producing one.** `produce.py registry-calldata --subject FILE` prints the transaction (target, zero value, calldata). The submitter signs and sends it from their own wallet; no key is held by AXES tooling. After it is mined, `produce.py registry-collect --out DIR --tx HASH` records it.
+
+Self-test: `tools/anchoring/test_anchor_registry.py`, two-sided, over a real Base mainnet block (48936665: giskard09's anchor of an action_ref, and a plain transfer from the same block).
+
 ## Adding a profile
 
 A new profile is a new section here with a new identifier, plus a producer and a verifier function, plus two-sided vectors (verified, and each failure the procedure can detect), recorded in the change index. Operator lanes (a witnessed transparency log, an on-chain registry) are added when their operators confirm the interface.

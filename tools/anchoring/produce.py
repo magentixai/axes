@@ -3,9 +3,13 @@
 
   python tools/anchoring/produce.py stamp   --subject FILE --out DIR [--methods opentimestamps,timestamp_authority]
   python tools/anchoring/produce.py upgrade --out DIR
+  python tools/anchoring/produce.py registry-calldata --subject FILE [--chain eip155:8453]
+  python tools/anchoring/produce.py registry-collect  --out DIR --tx HASH [--chain eip155:8453] [--rpc URL]
 
 `stamp` submits the subject's SHA-256 to each method and records what the mechanism returned.
 `upgrade` completes OpenTimestamps proofs once a Bitcoin attestation exists.
+`registry-calldata` prints the AnchorRegistry transaction for a submitter to send from their own
+wallet; `registry-collect` records the mined transaction as a proof bundle (docs/anchoring-profiles.md).
 
 basis_status is written by this tool from the run and never by hand: an entry exists only if the
 mechanism returned a proof. A pending OpenTimestamps proof has anchor_requested_at and no
@@ -16,6 +20,7 @@ Needs network access and, for OpenTimestamps, the `opentimestamps` package
 """
 import argparse
 import io
+import json
 import os
 import re
 import subprocess
@@ -245,6 +250,70 @@ def cmd_upgrade(args):
     print("upgraded: Bitcoin block", height, bhash)
 
 
+def _rpc(url, method, params):
+    body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params}).encode()
+    out = json.loads(http(url, data=body, headers={"Content-Type": "application/json"}))
+    if out.get("error") or out.get("result") is None:
+        raise SystemExit("%s failed: %s" % (method, out.get("error")))
+    return out["result"]
+
+
+def cmd_registry_calldata(args):
+    """Print the transaction that anchors the subject digest in AnchorRegistry. This tool never signs
+    or sends it: the submitter does, with their own wallet, which keeps the key out of this repo."""
+    import hashlib
+    with open(args.subject, "rb") as f:
+        digest_hex = hashlib.sha256(f.read()).hexdigest()
+    print("chain     %s" % args.chain)
+    print("to        %s" % ac.ANCHOR_REGISTRY_CONTRACT)
+    print("value     0")
+    print("calldata  0x%s%s   (anchor(bytes32 0x%s))" % (ac.ANCHOR_REGISTRY_SELECTOR, digest_hex, digest_hex))
+
+
+def cmd_registry_collect(args):
+    """After the transaction is mined: fetch the header, the receipt and every receipt in the block,
+    build the receipt's inclusion proof, write the proof bundle and the anchor entry."""
+    import evm
+    block = ac.load_block(args.out)
+    if not block:
+        raise SystemExit("no anchoring.json in %s; create it with `stamp` first" % args.out)
+    receipt = _rpc(args.rpc, "eth_getTransactionReceipt", [args.tx])
+    header = _rpc(args.rpc, "eth_getBlockByHash", [receipt["blockHash"], False])
+    receipts = _rpc(args.rpc, "eth_getBlockReceipts", [receipt["blockHash"]])
+    root, store = evm.receipts_trie(receipts)
+    if root != header["receiptsRoot"] or evm.header_hash(header) != header["hash"]:
+        raise SystemExit("cannot reproduce this block's receiptsRoot or hash; the RPC answer is not usable as proof")
+    index = int(receipt["transactionIndex"], 16)
+    pdir = os.path.join(args.out, "proofs", "distributed_ledger")
+    os.makedirs(pdir, exist_ok=True)
+    header = {k: v for k, v in header.items() if k not in ("transactions", "withdrawals", "uncles", "size", "totalDifficulty")}
+    os.makedirs(os.path.join(pdir, "evm-rpc"), exist_ok=True)
+    ac.write_json(os.path.join(pdir, "evm-rpc", "header.json"), header)
+    ac.write_json(os.path.join(pdir, "evm-rpc", "receipt.json"), receipt)
+    ac.write_json(os.path.join(pdir, "receipt_proof.json"),
+                  {"receipts_root_hash": root[2:], "transaction_index": index, "proof_nodes": evm.trie_proof(store, root, index)})
+    proof_hash = ac.write_proof_manifest(pdir, ["evm-rpc/header.json", "evm-rpc/receipt.json", "receipt_proof.json"],
+                                         "AnchorRegistry transaction receipt, its Merkle-Patricia proof under the block's receiptsRoot, and the block header")
+    ac.upsert_anchor(block, {
+        "anchor_id": "anch:anchor-registry-" + args.chain.split(":")[1],
+        "anchoring_method": "distributed_ledger",
+        "anchor_profile_ref": ac.PROFILE_ANCHOR_REGISTRY,
+        "basis_status": "demonstrated",
+        "anchor_commitment_hash": block["anchored_subject_hash"],
+        "anchor_commitment_hash_algorithm": "SHA-256",
+        "anchor_requested_at": args.requested_at or ac.iso_from_unix(int(header["timestamp"], 16)),
+        "anchored_at": ac.iso_from_unix(int(header["timestamp"], 16)),
+        "anchor_service_id": "%s:%s" % (args.chain, ac.ANCHOR_REGISTRY_CONTRACT),
+        "anchor_record_ref": "tx:" + receipt["transactionHash"].lower(),
+        "anchor_operator_id": None,
+        "anchor_proof_ref": "proofs/distributed_ledger/" + ac.PROOF_MANIFEST,
+        "anchor_proof_hash": proof_hash,
+        "anchor_verification_procedure_ref": "docs/anchoring-profiles.md#axesanchor_registry_bytes321",
+    })
+    ac.write_json(os.path.join(args.out, ac.ANCHORING_FILE), block)
+    print("collected: block %d, receipt %d of %d, submitted by %s" % (int(header["number"], 16), index, len(receipts), receipt["from"]))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -258,6 +327,17 @@ def main():
     u = sub.add_parser("upgrade")
     u.add_argument("--out", required=True)
     u.set_defaults(fn=cmd_upgrade)
+    c = sub.add_parser("registry-calldata")
+    c.add_argument("--subject", required=True)
+    c.add_argument("--chain", default="eip155:8453")
+    c.set_defaults(fn=cmd_registry_calldata)
+    g = sub.add_parser("registry-collect")
+    g.add_argument("--out", required=True)
+    g.add_argument("--tx", required=True)
+    g.add_argument("--chain", default="eip155:8453")
+    g.add_argument("--rpc", default="https://mainnet.base.org")
+    g.add_argument("--requested-at")
+    g.set_defaults(fn=cmd_registry_collect)
     args = ap.parse_args()
     args.fn(args)
 
