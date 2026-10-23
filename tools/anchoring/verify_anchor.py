@@ -140,8 +140,51 @@ def verify_rfc3161(entry, files, commitment):
                   "RFC 3161 token verifies for the digest against the supplied TSA chain; token time %s" % entry["anchored_at"])
 
 
-METHODS = {"opentimestamps": verify_ots, "timestamp_authority": verify_rfc3161}
-IDENTITY_PROFILES = {ac.PROFILE_OTS, ac.PROFILE_RFC3161}
+def verify_anchor_registry(entry, files, commitment):
+    """axes:anchor_registry_bytes32@1: the receipt is under the header's receiptsRoot, the header
+    hashes to the receipt's block hash, and the receipt carries the Anchored event for the commitment."""
+    import evm
+    aid = entry["anchor_id"]
+    if entry.get("anchor_profile_ref") != ac.PROFILE_ANCHOR_REGISTRY:
+        return result(aid, "not_evaluated", "anchor_method_unverifiable", "instrument_failure", "verifier",
+                      "no verifier for distributed_ledger profile %s in this version" % entry.get("anchor_profile_ref"))
+    for need in ("header.json", "receipt.json", "receipt_proof.json"):
+        if need not in files:
+            return result(aid, "indeterminate", "anchor_proof_absent", "absence", "operator", "proof bundle lacks " + need)
+    header, receipt, proof = (ac.read_json(files[n]) for n in ("header.json", "receipt.json", "receipt_proof.json"))
+    mismatch = lambda note: result(aid, "contradicted", "anchor_commitment_mismatch", None, "artifact", note)  # noqa: E731
+    if evm.header_hash(header) != header.get("hash", "").lower() or header["hash"].lower() != receipt.get("blockHash", "").lower():
+        return mismatch("header does not hash to the receipt's block hash")
+    index = int(receipt["transactionIndex"], 16)
+    leaf = evm.verify_trie_proof(header["receiptsRoot"], index, proof.get("proof", []))
+    if leaf is None or leaf != evm.receipt_encoding(receipt):
+        return mismatch("receipt is not under the header's receiptsRoot at transactionIndex %d" % index)
+    parts = (entry.get("anchor_service_id") or "").split(":")
+    chain, contract = ":".join(parts[:2]), (parts[2].lower() if len(parts) == 3 else "")
+    if contract != ac.ANCHOR_REGISTRY_CONTRACT:
+        return result(aid, "contradicted", "anchor_noncanonical_contract", None, "artifact",
+                      "anchor_service_id does not name the AnchorRegistry contract")
+    events = [lg for lg in receipt["logs"] if lg["address"].lower() == contract and lg["topics"]
+              and lg["topics"][0].lower() == ac.ANCHOR_REGISTRY_TOPIC]
+    if int(receipt["status"], 16) != 1 or not events:
+        return result(aid, "contradicted", "anchor_not_a_commitment", None, "artifact",
+                      "the transaction did not succeed with an Anchored event from the registry")
+    if not any(len(lg["topics"]) > 1 and lg["topics"][1].lower() == "0x" + commitment for lg in events):
+        return mismatch("no Anchored event commits to anchor_commitment_hash")
+    block_time = int(header["timestamp"], 16)
+    if entry.get("anchored_at") != ac.iso_from_unix(block_time):
+        return mismatch("anchored_at does not match the block time")
+    if entry.get("anchor_record_ref") != "tx:" + receipt["transactionHash"].lower():
+        return mismatch("anchor_record_ref does not match the transaction hash")
+    return result(aid, "verified", None, None, "artifact",
+                  "committed by AnchorRegistry on %s in block %d (%s), receipt proven under its receiptsRoot; "
+                  "that the block is on the canonical chain is checked separately against any %s node by block hash"
+                  % (chain, int(header["number"], 16), header["hash"], chain))
+
+
+METHODS = {"opentimestamps": verify_ots, "timestamp_authority": verify_rfc3161,
+           "distributed_ledger": verify_anchor_registry}
+IDENTITY_PROFILES = {ac.PROFILE_OTS, ac.PROFILE_RFC3161, ac.PROFILE_ANCHOR_REGISTRY}
 
 
 def verify_block(base, subject=None):

@@ -4,6 +4,11 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-23 - first `distributed_ledger` anchor profile (axes#3)
+- New profile `axes:anchor_registry_bytes32@1` for giskard09's AnchorRegistry (docs/anchoring-profiles.md, D-042). The verifier proves offline that the anchoring receipt sits under the block's `receiptsRoot` and that the header hashes to the block hash; canonical-chain membership is one lookup by block hash.
+- `tools/anchoring/evm.py` (standard library: keccak-256, RLP, header hash, receipts trie and proofs); `produce.py registry-calldata` and `registry-collect`; `verify_anchor.py` handles `distributed_ledger`.
+- `tools/anchoring/test_anchor_registry.py`: 13 two-sided cases over a real Base mainnet block (48936665), run in CI on all three platforms. No corpus bytes or existing anchors changed.
+
 ### 2026-10-12 - gt-v2.1 re-verified; three documentation fixes
 - gt-v2.1 re-verified by giskard09 (byte check, regeneration, reference verifier; axes#6), by MarkovianProtocol (13 Oct: canoncheck in Python and JS plus the reference verifier; axes#6) and, from the specification side only, by robertolocatelli81-dev / Noûs (own canonicaliser and parsers, no AXES scripts run; tsc#4). RELEASES.md updated.
 - Documentation fixes found by robertolocatelli81-dev (tsc#4), no corpus bytes changed: docs/09a no longer lists `recorded_at` as a current hash exclusion (it is inside the hash in every published corpus; the exclusion is recorded as proposed); docs/09 and docs/09a use `integrity.envelope_signature` (gt-v2.1 name); VERIFY.md states how the envelope hash, chain head and `bundle_manifest_hash` are built, so they can be checked from the text alone.

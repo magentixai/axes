@@ -15,8 +15,17 @@ PROOF_MANIFEST = "proof_manifest.json"
 PROFILE_OTS = "axes:opentimestamps_sha256_digest@1"
 PROFILE_RFC3161 = "axes:rfc3161_sha256_imprint@1"
 
+PROFILE_ANCHOR_REGISTRY = "axes:anchor_registry_bytes32@1"
+
 # CAIP-2 identifier of Bitcoin mainnet (genesis block hash prefix).
 BITCOIN_MAINNET = "bip122:000000000019d6689c085ae165831e93"
+
+# AnchorRegistry (giskard09, argentum-core), deployed with CREATE2 at one address on several EVM
+# chains: anchor(bytes32 ref) emits Anchored(bytes32 indexed ref, address indexed anchoredBy,
+# uint256 timestamp). Selector and topic are keccak-256 of the signatures below.
+ANCHOR_REGISTRY_CONTRACT = "0x49feca52bc634a9ab773226d16619dec547794aa"
+ANCHOR_REGISTRY_SELECTOR = "eecdf927"   # anchor(bytes32)
+ANCHOR_REGISTRY_TOPIC = "0xfe2289542f7a0110ac112c3a4d712afdcaaf2900a1326f4e6f340b563a0e8734"  # Anchored(bytes32,address,uint256)
 
 
 def sha256_hex(data):
