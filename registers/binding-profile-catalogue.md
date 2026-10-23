@@ -1,6 +1,6 @@
 # Binding profile catalogue (seed)
 
-> **Status: proposed (D-051).** Rules and status definitions: [docs/21](../docs/21-binding-profile-catalogue.md). An entry is immutable at its identifier; a changed procedure is a new version. Add an entry by pull request, with the elements docs/21 section 2 lists.
+> **Status: proposed (D-051).** Rules and status definitions: [docs/21](../docs/21-binding-profile-catalogue.md). How to write and publish your own profile: [docs/22, profile authoring guide](../docs/22-profile-authoring-guide.md). An entry is immutable at its identifier; a changed procedure is a new version. Add an entry by pull request, with the elements docs/21 section 2 lists.
 
 ## Entries
 

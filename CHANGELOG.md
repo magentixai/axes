@@ -7,6 +7,7 @@ All notable changes to the AXES specification and repository.
 ### 2026-10-24 - proposed decisions on data handling (D-043 to D-050) and a binding profile catalogue (D-051)
 - Eight proposed decisions recorded in `registers/decision-register.md` for review: two planes for sensitive data, a named raw-plane custodian, keyed pseudonyms for linkage with salted per-field commitments for disclosable values, a sealed disclosure log, erasure by key destruction, rotation without breakage, never-redactable fields with no class uplift, and domain separation. They set the direction of P1-1 (#5); no schema, corpus or verifier change.
 - D-051 proposes a binding profile catalogue for payment and authorisation protocols: design in docs/21, seed catalogue in `registers/binding-profile-catalogue.md` (one candidate profile, `axes:x402_correlation@1`, and four reserved identifiers).
+- docs/22: a living profile authoring guide for protocol owners, version 0.1, with each section marked Settled, Proposed or Open.
 
 ### 2026-10-23 - first `distributed_ledger` anchor profile (axes#3)
 - New profile `axes:anchor_registry_bytes32@1` for giskard09's AnchorRegistry (docs/anchoring-profiles.md, D-042). The verifier proves offline that the anchoring receipt sits under the block's `receiptsRoot` and that the header hashes to the block hash; canonical-chain membership is one lookup by block hash.

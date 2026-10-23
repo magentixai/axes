@@ -1,6 +1,6 @@
 # Binding profile catalogue
 
-> **Status: proposed (D-051), open for challenge.** Nothing here is normative until D-051 is decided. The catalogue itself is [`registers/binding-profile-catalogue.md`](../registers/binding-profile-catalogue.md).
+> **Status: proposed (D-051), open for challenge.** Nothing here is normative until D-051 is decided. The catalogue itself is [`registers/binding-profile-catalogue.md`](../registers/binding-profile-catalogue.md). Protocol owners building their own profiles: start with the [profile authoring guide](22-profile-authoring-guide.md).
 
 ## 1. Why a catalogue
 
