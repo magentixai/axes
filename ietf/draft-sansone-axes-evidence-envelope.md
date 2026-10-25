@@ -91,6 +91,8 @@ AXES (Autonomous eXecution Evidence Standard) {{AXES-REPO}} is a public working 
 
 AXES is deliberately not a logging format, a policy or blocking engine, an identity system, a payment rail, or a compliance certificate. It evidences; it does not enforce and it does not certify.
 
+AXES is written from the position of the party who must later rely on a record, not the party that produces it. It is not specific to payments. It is meant for machine-to-machine actions of every kind, including payments, data exchange, compute, identity assertions, supply-chain actions and industrial control; the published corpus contains an industrial trace alongside a financial one. An AXES record sits beside the protocol that carries an action, as a separate evidence record, not inside it: the protocol's own messages are referenced by digest, exactly as that protocol defines them. AXES records the facts a relying party needs to verify later, such as which authority an action relied on and that authority's state at the time of the action. It references the processes that produced those facts (billing schedules, organisational workflows) rather than modelling them.
+
 ## Scope of this document
 
 This -00 is scoped to the parts of AXES that have a published reference implementation, pinned two-sided test vectors, and independent reproduction from the specification text (see {{impl-status}}):
@@ -338,7 +340,7 @@ The following rules apply to every anchor profile:
 * An anchor that has been requested but not yet attested (it has `anchor_requested_at` and no `anchored_at`) is indeterminate (`anchor_pending`).
 * A verifier that lacks the library, binary or procedure for a method MUST report not evaluated, reason `instrument_failure`, condition `anchor_method_unverifiable`, subject `verifier`. This is never a pass and never a finding about the anchor.
 
-## Two published profiles
+## Published profiles
 
 `axes:rfc3161_sha256_imprint@1`:
 : The subject's SHA-256 is the message imprint of an RFC 3161 time-stamp request. Verification checks the token against the TSA certificate chain supplied in the proof bundle and checks that the token's time and serial equal `anchored_at` and `anchor_record_ref`. This establishes that the named TSA signed the digest at the stated time under that chain. Whether that chain is trusted is the relying party's decision.
@@ -346,7 +348,7 @@ The following rules apply to every anchor profile:
 `axes:opentimestamps_sha256_digest@1`:
 : The subject's SHA-256 is submitted to OpenTimestamps calendars and, once mined, attested by a Bitcoin block header. Verification replays the proof from the digest to the header's Merkle root, checks the header's proof of work against its own target, and checks that `anchor_record_ref` and `anchored_at` equal the header's height, hash and time. Membership of that block in Bitcoin's main chain is a separate check against any Bitcoin node, by block hash. `anchor_service_id` names the chain as a CAIP-2 identifier {{CAIP-2}}.
 
-Profiles for transparency logs that issue COSE Receipts {{RFC9942}} under the SCITT architecture {{RFC9943}}, and for on-chain registries, are planned ({{open-issues}}). AXES does not depend on SCITT: `transparency_log` is an anchoring method class, and a SCITT receipt is one way to fill it.
+A third profile, `axes:anchor_registry_bytes32@1`, covers a permissionless on-chain registry. It checks offline that the anchoring transaction's receipt sits under the block's receipts root and that the block header hashes to the block hash. Whether the block is on the chain's canonical history is a single lookup by block hash. A profile for transparency logs that issue COSE Receipts {{RFC9942}} under the SCITT architecture {{RFC9943}} is planned ({{open-issues}}). AXES does not depend on SCITT: `transparency_log` is an anchoring method class, and a SCITT receipt is one way to fill it.
 
 ## Earned strength {#earned}
 
@@ -418,14 +420,18 @@ Corpus of record:
 : Release gt-v2.1, tag `corpus/2026-10-12-gt-v2.1` {{AXES-GT21}}, two bundles (a financial and an industrial trace, 76 envelopes each). Financial chain head `cbd1a73e910bd51f01cf5dd097c9a68869b733550d96db891d0f288bd4db59f1`, bundle digest `e922486b74689592ddc54c74725c9c5a55d8d793f12cade2e58929ab4801164e`. Industrial chain head `5ca428eac8ed5dde5b7720218712bdd2ede484a6892ac7894db2e1772a519dd6`, bundle digest `dd01b56c718c6a61f06725318ab99738799128d9cb527d5e468e9be5b78ebb31`.
 
 External anchors on the release statement:
-: SHA-256 `d8b6a69f57ba2209561fb551443c096c47fcb0cb6db37005fd0713690de88299`, anchored by RFC 3161 (FreeTSA, serial 0x09216E25, 2026-10-12T10:12:28Z) and by OpenTimestamps (Bitcoin block 971082). Both verify offline.
+: SHA-256 `d8b6a69f57ba2209561fb551443c096c47fcb0cb6db37005fd0713690de88299`, anchored three ways, each independently of the others:
+: * RFC 3161, FreeTSA, serial 0x09216E25, 2026-10-12T10:12:28Z.
+: * OpenTimestamps, Bitcoin block 971082.
+: * A permissionless on-chain registry (AnchorRegistry, contributed by giskard09) on Base, block 52987624, 2026-10-23T14:09:55Z, submitted by giskard09 from their own wallet. This verifies under the profile `axes:anchor_registry_bytes32@1`: the transaction receipt is proven under the block's receipts root, and the block header hashes to the block hash.
+: All three verify offline.
 
 Independent reproduction:
-: The gt-v2.1 digests have been reproduced by four parties other than the authors. The first three are recorded in the repository's release register, and the fourth in its issue tracker.
+: The gt-v2.1 digests have been reproduced by four parties other than the authors, all recorded in the repository's release register.
 : * giskard09: byte check, regeneration and reference verifier.
 : * robertolocatelli81-dev: from the specification text only, with an independent canonicaliser and no AXES code.
 : * MarkovianProtocol: an independent canonicaliser in two languages; all 76 envelope hashes in each bundle match.
-: * babyblueviper1: from the specification text only, using the standard library and no AXES code; every chain link, both chain heads, every file and both bundle digests. This check also found that the hash-scope text published with the tag disagreed with the corpus about `recorded_at`. The text was corrected after the tag; the corpus was the reference and did not change.
+: * babyblueviper1: from the specification text only, with an independent canonicaliser, the standard library and no AXES code. It covered every envelope hash, chain link and file, both chain heads and both bundle digests, but not the release anchors. This check also found that the hash-scope text published with the tag disagreed with the corpus about `recorded_at`. The text was corrected after the tag; the corpus was the reference and did not change.
 
 Cross-format checks:
 : The repository's RFC 8785 property vectors agree with an independent RFC 8785 implementation. Its x402 correlation recipe partitions a third-party payment-fingerprint vector set identically to that set's own recipe.
@@ -460,9 +466,13 @@ The following are known gaps. Reviews and counter-proposals are welcome.
 4. The envelope signature profile over the canonical bytes (JWS or COSE). The corpus signatures are stubs.
 5. The amendment model for superseding envelopes.
 6. Whether `recorded_at`, which is written by the recipient, should be authenticated by a countersignature from the recipient rather than sit in the emitter's hash scope. It is in scope today; any change would land only in an announced release.
-7. Anchor profiles for transparency logs (COSE Receipts with `RFC9162_SHA256`) and for on-chain registries.
-8. The binding of evidence to x402 payment anchors.
+7. An anchor profile for transparency logs (COSE Receipts with `RFC9162_SHA256`). A profile for a permissionless on-chain registry exists in the reference tooling.
+8. The binding of evidence to payment and authorisation protocols, x402 first, through named, versioned binding profiles.
 9. Registration procedures for the AXES vocabularies (see {{iana}}).
+10. Retention and obtainability: who holds a record, for how long relative to limitation periods, how it is produced on demand years later, and what happens when the holder ceases to exist.
+11. An evidence bundle for disputes: a registered media type and a manifest of included artefacts with digests. It would also carry the set of verification results, including what was not checked, and an explicit statement of what the bundle does not contain.
+12. Binding accountability to a legal person, rather than only to a key: the identifier scheme, the basis of the binding and how it was verified.
+13. Binding the terms of an offer (price, asset, payee) into the record of the action that settles against it, and recording where what settled differs from what was offered.
 
 # Security Considerations
 
@@ -486,6 +496,13 @@ Registration is not completeness:
 
 Absence:
 : An attacker who can suppress envelopes can make evidence absent. Sequence continuity, heartbeats, fail-closed emission within a declared boundary and the distinction between withheld, redacted and never captured exist so that suppression is visible as `indeterminate` rather than invisible.
+
+What this specification cannot detect:
+: This section states the limits, so that readers infer no more than a record supports.
+: * An emitter that controls capture can omit actions outside its declared capture boundary, and nothing in the record shows them.
+: * Until envelope signatures are specified ({{open-issues}}), an emitter can rewrite its own stream wholesale before the stream is first anchored externally. Anchoring bounds that window to the interval between anchors.
+: * A completeness or count field computed by the party that holds the record is a claim by that party, not evidence of completeness.
+: * Registration in a log or on a ledger shows non-equivocation of what was registered, not that every relevant record was registered.
 
 # Privacy Considerations
 
