@@ -174,6 +174,10 @@ Other mechanisms use a namespaced identifier `<namespace>:<id>` and MUST carry `
 | `anchor_commitment_mismatch` | `contradicted` | The commitment does not recompute from the subject under the profile, or the proof attests a different digest, time or record than the block states |
 | `anchor_proof_hash_mismatch` | `contradicted` | A proof file or the manifest differs from `anchor_proof_hash` |
 | `anchor_simulated_claims_external` | `contradicted` | `externally_anchored` asserted over an anchor that is simulated or stubbed |
+| `anchor_noncanonical_contract` | `contradicted` | A `distributed_ledger` anchor names a contract other than the one its profile pins (D-042) |
+| `anchor_not_a_commitment` | `contradicted` | The named transaction carries no commitment event from that contract, for example a plain transfer (D-042) |
+| `anchor_status_in_method` | `contradicted` | A status is written into `anchoring_method` (retired form, for example `write_once_store (SIMULATED)`) |
+| `legacy_unstructured_anchor` | `indeterminate` / `absence` | A gt-v2.0 record carries the pre-gt-v2.1 unstructured block; read under its own release, never re-judged |
 | `anchor_pending` | `indeterminate` / `absence` | Requested, not yet attested (no `anchored_at`); upgrade and re-verify |
 | `basis_not_demonstrated` | `indeterminate` / `absence` | `basis_status` is `simulated` or `stubbed`; nothing to verify |
 | `anchor_proof_absent` | `indeterminate` / `absence`, subject `operator` | No proof reference: a producer defect |

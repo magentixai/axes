@@ -41,6 +41,9 @@ informative:
   RFC9162:
   RFC9942:
   RFC9943:
+  RFC9901:
+  RFC8610:
+  I-D.mih-scitt-agent-action-capsule-sel-disc:
   I-D.krausz-verification-state:
   I-D.etcheverry-action-ref:
   I-D.gilda-audit-agent-audit-record:
@@ -70,6 +73,12 @@ informative:
     author:
       org: "Chain Agnostic Standards Alliance"
     date: false
+  PGC-17:
+    title: "x402 receipt authorization commitment: receipt-level vectors and a checker from the text alone (preaction-governance-conformance pull request 17)"
+    target: https://github.com/babyblueviper1/preaction-governance-conformance/pull/17
+    author:
+      org: "Magentix AI"
+    date: 2026-10-23
   X402-TSC4:
     title: "x402 Foundation TSC issue 4: evidence record working group"
     target: https://github.com/x402-foundation/tsc/issues/4
@@ -79,7 +88,7 @@ informative:
 
 --- abstract
 
-This document describes AXES, a public working draft for recording evidence of autonomous execution, that is, actions taken by software agents under delegated authority. It specifies the parts of AXES that are settled and independently reproduced: a canonical byte form and hash scope for the evidence record (the Standards Envelope), a hash chain over a declared stream, a block for external anchoring of digests with earned rather than asserted strength, a four-state result vocabulary for verification, and requirement profiles that a relying party applies to evidence to produce a deterministic evaluation record. The design keeps evidence, interpretation and enforcement apart, and requires that the absence of evidence be reported as absence rather than read as a pass. AXES is offered as one input format to format-neutral audit readers, not as a replacement for other record formats. Parts of AXES that are not yet settled, including the full envelope schema and redaction-tolerant hashing, are named as open issues.
+This document describes AXES, a public working draft for recording evidence of autonomous execution, that is, actions taken by software agents under delegated authority. It specifies the parts of AXES that are settled and independently reproduced: a canonical byte form and hash scope for the evidence record (the Standards Envelope), a hash chain over a declared stream, a block for external anchoring of digests with earned rather than asserted strength, a four-state result vocabulary for verification, and requirement profiles that a relying party applies to evidence to produce a deterministic evaluation record. The design keeps evidence, interpretation and enforcement apart, and requires that the absence of evidence be reported as absence rather than read as a pass. AXES is offered as one input format to format-neutral audit readers, not as a replacement for other record formats. Parts of AXES that are not yet settled, including the full envelope schema and the exact construction for redaction-tolerant hashing, are named as open issues. The chosen direction for redaction, salted per-field hash commitments in the form used by SD-JWT, is recorded.
 
 --- middle
 
@@ -104,7 +113,7 @@ This -00 is scoped to the parts of AXES that have a published reference implemen
 * requirement profiles and evaluation records ({{evaluation}});
 * the conformance-vector method ({{vectors}}).
 
-The full field catalogue of the envelope (sixteen planned modules, of which two are published for challenge), the envelope JSON Schema, the extension model, the envelope signature profile and redaction-tolerant hashing are not specified here. They are listed in {{open-issues}}. Field names used in examples follow the published corpus of record {{AXES-GT21}}; they are not frozen by this document.
+The full field catalogue of the envelope (sixteen planned modules, of which two are published for challenge), the envelope JSON Schema, the extension model, the envelope signature profile and the construction for redaction-tolerant hashing are not specified here. They are listed in {{open-issues}}; the chosen direction for redaction is recorded in {{redaction}}. Field names used in examples follow the published corpus of record {{AXES-GT21}}; they are not frozen by this document.
 
 ## Relationship to other work
 
@@ -141,7 +150,7 @@ Commit boundary:
 : The point at which an action stops being advisory and has external consequence (for example, a payment instruction is released).
 
 Anchor:
-: A commitment of a subject digest to a mechanism outside the emitter's control (a time-stamp authority, a public chain, a transparency log) that a third party can check offline.
+: A commitment of a subject digest to a mechanism outside the emitter's control (a timestamp authority, a public chain, a transparency log) that a third party can check offline.
 
 Relying party:
 : A party that uses evidence to reach a conclusion, for example an auditor, a regulator, an insurer or a counterparty.
@@ -259,7 +268,26 @@ Three states that are easily confused MUST remain distinguishable to a reader:
 | Absent | Never captured | The value was not recorded |
 {: title="Excluded, redacted and absent"}
 
-The mechanism for redaction after signing (salted per-field commitments or a Merkle-structured envelope) is not yet decided ({{open-issues}}).
+## Redaction direction {#redaction}
+
+AXES has chosen the direction for redaction after signing: salted per-field hash commitments, the construction of SD-JWT {{RFC9901}}. This section records the direction and the constraints that led to it. The exact construction is an open issue ({{open-issues}}) and nothing here is yet normative.
+
+Any mechanism for AXES must meet the following constraints:
+
+* every reader can recompute the envelope hash, whatever they were shown, so the chain verifies for a redacted export;
+* there is one digest per envelope, so chain heads and anchored release statements never change;
+* preimages are byte-defined under RFC 8785, with no second canonicalisation;
+* the cryptography is hash-only where possible, with a small verifier;
+* a withheld field leaves a visible tombstone, distinguishable from a value never captured;
+* an exporter, an auditor or an escrow can redact without the emitter's key;
+* low-entropy values (amounts, booleans, short identifiers) cannot be guessed from their digest;
+* nested objects and arrays can be redacted;
+* unlinkability across presentations is not required, because evidence records are meant to link;
+* an envelope with nothing redactable hashes exactly as it does today.
+
+Salted per-field commitments meet all of them. Each value marked redactable at emission is represented inside the hashed envelope by a digest over a salt, the field name and the value; the salt and value travel separately as a disclosure. Withholding the disclosure leaves the digest in place. The envelope hash, the chain and every anchor therefore verify whether or not a disclosure is shown, and any holder of the envelope can redact by dropping a disclosure. Fields not marked redactable are hashed exactly as they are now, so every digest published for the corpus of record stays valid. The same construction is used by SD-JWT, by ISO mdoc and by digital identity wallets, and has been applied to RFC 8785 JSON for agent action records {{I-D.mih-scitt-agent-action-capsule-sel-disc}}. A Merkle-structured envelope was considered and not chosen, because it changes how every envelope hash is computed and brings no property AXES needs that salted commitments lack.
+
+Disclosable values are committed with salts that travel in the disclosure, not with a key held by the record holder, so that any authorised reader can check a disclosed value without trusting whoever holds the data. Stable keyed pseudonyms remain the mechanism for linking records about the same person ({{privacy}}).
 
 # Capture Boundary and Honest Absence {#absence}
 
@@ -343,7 +371,7 @@ The following rules apply to every anchor profile:
 ## Published profiles
 
 `axes:rfc3161_sha256_imprint@1`:
-: The subject's SHA-256 is the message imprint of an RFC 3161 time-stamp request. Verification checks the token against the TSA certificate chain supplied in the proof bundle and checks that the token's time and serial equal `anchored_at` and `anchor_record_ref`. This establishes that the named TSA signed the digest at the stated time under that chain. Whether that chain is trusted is the relying party's decision.
+: The subject's SHA-256 is the message imprint of an RFC 3161 timestamp request. Verification checks the token against the TSA certificate chain supplied in the proof bundle and checks that the token's time and serial equal `anchored_at` and `anchor_record_ref`. This establishes that the named TSA signed the digest at the stated time under that chain. Whether that chain is trusted is the relying party's decision.
 
 `axes:opentimestamps_sha256_digest@1`:
 : The subject's SHA-256 is submitted to OpenTimestamps calendars and, once mined, attested by a Bitcoin block header. Verification replays the proof from the digest to the header's Merkle root, checks the header's proof of work against its own target, and checks that `anchor_record_ref` and `anchored_at` equal the header's height, hash and time. Membership of that block in Bitcoin's main chain is a separate check against any Bitcoin node, by block hash. `anchor_service_id` names the chain as a CAIP-2 identifier {{CAIP-2}}.
@@ -435,6 +463,11 @@ Independent reproduction:
 
 Cross-format checks:
 : The repository's RFC 8785 property vectors agree with an independent RFC 8785 implementation. Its x402 correlation recipe partitions a third-party payment-fingerprint vector set identically to that set's own recipe.
+: The AXES tooling independently recomputes the 13 v1 and 6 v2 conformance vectors of {{I-D.etcheverry-action-ref}} (every verdict, and every reject reason for v1), and verifies offline the AnchorRegistry anchor used by that draft's reference implementation. draft-etcheverry-action-ref-04 lists the AXES reference tooling in its own Implementation Status section on this basis.
+: For the salted authorisation commitment proposed for x402 receipts, the authors contributed 29 receipt-level vectors and a checker written from the specification text alone to a third-party conformance repository, merged on 2026-10-23 {{PGC-17}}.
+
+Checks on this document:
+: The worked example ({{worked-example}}), the CDDL ({{cddl}}) and the condition-code table ({{vocabularies}}) are checked against the corpus and the reference tools by `ietf/check_appendices.py` in {{AXES-REPO}}.
 
 Disclosed limitations of the corpus:
 : Envelope signatures in the corpus are stubs and are marked `envelope_signature_basis_status: stubbed`. In-trace anchors are simulated and marked `basis_status: simulated`. The reference verifier reports them as `indeterminate` (`basis_not_demonstrated`), and no envelope reports `contradicted`.
@@ -456,11 +489,46 @@ Disclosed limitations of the corpus:
 x402 payments {{X402-TSC4}}:
 : AXES defines a correlation record that binds evidence to an x402 payment by digest, checked against public test vectors from the x402 community. A profile that binds an evidence packet to an x402 payment anchor, including the salted authorisation commitment proposed for x402 receipts, is in preparation.
 
+# Binding to Carrying Protocols {#bindings}
+
+This section is informative. It describes the direction for binding an AXES record to the protocol that carried the action (item 8 in {{open-issues}}).
+
+An AXES record sits beside the carrying protocol and binds to that protocol's artefacts through a named, versioned and immutable binding profile, identified as `<namespace>:<lower_snake_name>@<version>` in the same way as anchor and requirement profiles. A binding profile declares:
+
+* the protocol and the version of it that it binds;
+* the protocol artefacts it references, each hashed exactly as received and never re-serialised;
+* for each field it uses, whether the field is never redactable, disclosable by role (committed with a salted commitment, {{redaction}}), or kept out of the record and referenced by digest;
+* a verification procedure with two-sided vectors ({{vectors}}).
+
+Binding profiles add or tighten requirements. They never relax a core rule and never make a never-redactable field redactable. A record may carry several bindings, for example a payment binding and an authorisation binding for the same action. A reader that does not implement a profile reports the binding as not evaluated (`profile_unsupported`), never as verified. Protocol owners may publish binding profiles under their own namespace.
+
+The first binding is to x402 {{X402-TSC4}}. The published correlation record (`axes:x402_correlation@1`) binds evidence to an x402 payment by digest and is checked against public vectors from the x402 community. A profile for the x402 payment anchor, including the salted authorisation commitment proposed for x402 receipts {{PGC-17}}, is in preparation. Several agent payment-mandate and intent protocols carry SD-JWT credentials. Because AXES commitments follow the same construction ({{redaction}}), a binding can reference such a disclosure by its digest, as received, without translating it. Identifiers for further bindings are reserved in the binding profile catalogue of {{AXES-REPO}}.
+
+# Operational Considerations {#operations}
+
+Key custody and rotation:
+: Envelope signatures are not yet specified ({{open-issues}}), but every envelope already carries `integrity.signing_key_id` inside its hash scope. Signing keys SHOULD be held outside the emitter's application process, for example in a hardware or managed key service, and each key's provenance SHOULD be referenced (`integrity.signing_key_provenance_ref`). Rotation creates a new key identifier and never invalidates records made under an earlier key. The same rule applies to salt sources and pseudonym keys.
+
+Anchoring cadence:
+: Until a stream is first anchored externally, its emitter can rewrite it wholesale. After that, it can rewrite only the envelopes emitted since the latest anchor, because anchoring a chain head commits every earlier envelope. The interval between anchors is therefore the window in which rewriting cannot be detected. Deployers SHOULD declare the interval, choose it from what their relying parties need, and anchor at every commit boundary of high consequence.
+
+Omission:
+: Once envelope signatures are specified, `sequence_number` and `integrity.previous_envelope_hash` sit inside a signed payload. An omitted envelope then shows as a sequence gap or a chain break, and repairing it means re-signing the stream, which contradicts any chain head already anchored. Omission becomes detectable in practice only together with heartbeats at a declared interval, an explicit close of each stream that states its final sequence number, regular anchoring and, where possible, a counterparty that records its own side of the exchange. None of these detects an action that the emitter never captured ({{absence}}).
+
+Redaction:
+: When the construction is specified ({{redaction}}), each salt is expected to carry at least 128 bits from a cryptographically secure random source and to be used for one commitment only. Fields must be marked redactable when the envelope is emitted. The number of commitments in an envelope is visible unless decoy digests are added. Disclosures, with their salts, must be kept for as long as the envelope may be relied on; destroying them is how a value is erased ({{privacy}}).
+
+Retention:
+: Envelopes are kept for at least as long as any record in the stream may be relied on, which for financial records can be longer than the limitation period of the obligation they evidence. Clear values are never kept longer than the envelopes that commit to them. Retention classes, production on demand and successor custodians are open issues.
+
+Offline verification:
+: The reference verifier and anchor verifier run offline from a bundle. A check that needs the network, such as whether a block is on a chain's canonical history or whether a proof can be retrieved, is reported as not evaluated when the network is unavailable, never as verified.
+
 # Open Issues {#open-issues}
 
 The following are known gaps. Reviews and counter-proposals are welcome.
 
-1. Redaction-tolerant hashing: salted per-field commitments or a Merkle-structured envelope. This gates the envelope schema.
+1. Redaction-tolerant hashing. The intended direction is salted per-field hash commitments, the construction of SD-JWT {{RFC9901}} ({{redaction}}). Each value marked redactable at emission is represented inside the hashed envelope by a digest over a salt, the field name and the value; the salt and value travel separately as a disclosure. The envelope hash, the chain and every anchor then verify whether or not a disclosure is shown, an envelope with no redactable field hashes exactly as it does today, and any holder can redact without the emitter's key. Open: the byte form of the disclosure under RFC 8785, salt length and encoding, nested objects and array elements, decoy digests, and which fields each module marks redactable. This gates the envelope schema.
 2. The full envelope JSON Schema and field catalogue (two of sixteen planned modules are published for challenge). Key names in the published corpus and in the catalogue have not yet been reconciled in every case.
 3. The extension model: `must_understand`, `unknown_field_policy`, and the hashing of unknown content.
 4. The envelope signature profile over the canonical bytes (JWS or COSE). The corpus signatures are stubs.
@@ -489,7 +557,7 @@ Digest labels:
 : Because the digest algorithm is agile, a digest is meaningful only together with its algorithm label. A verifier MUST NOT compare digests whose algorithm labels differ.
 
 Simulated or self-held anchors:
-: A simulated anchor, or one held by the emitter's own organisation, gives no independent existence bound. {{earned}} makes the strong claim depend on verification. Relying parties decide whether to trust a time-stamp authority's certificate chain. A Bitcoin header's proof of work does not by itself show main-chain membership.
+: A simulated anchor, or one held by the emitter's own organisation, gives no independent existence bound. {{earned}} makes the strong claim depend on verification. Relying parties decide whether to trust a timestamp authority's certificate chain. A Bitcoin header's proof of work does not by itself show main-chain membership.
 
 Registration is not completeness:
 : An inclusion proof, a time stamp or a ledger record shows that a digest was committed. It does not show that every relevant record was committed, or that the recorded event occurred as described. Readers MUST NOT report completeness from anchoring alone.
@@ -504,7 +572,7 @@ What this specification cannot detect:
 : * A completeness or count field computed by the party that holds the record is a claim by that party, not evidence of completeness.
 : * Registration in a log or on a ledger shows non-equivocation of what was registered, not that every relevant record was registered.
 
-# Privacy Considerations
+# Privacy Considerations {#privacy}
 
 Envelopes carry references and digests, not payloads. People (approvers, operators, customers, employees) are referenced by pseudonymous keys and are never embedded. Erasure is supported by destroying referenced content, so the envelope keeps its digest while the content is gone, and the result is reported as erased rather than missing.
 
@@ -512,7 +580,9 @@ A digest of a low-entropy value can be reversed by guessing. Anchoring a digest 
 
 Identifiers scoped to one relying party deliberately produce different digests at different relying parties, which limits correlation of the same person across relying parties.
 
-Redaction after signing is not yet specified ({{open-issues}}). Until it is, sensitive values should be kept out of envelopes by reference rather than excluded from the hash.
+Redaction after signing will use salted per-field commitments ({{redaction}}); the construction is not yet specified ({{open-issues}}). Until it is, sensitive values should be kept out of envelopes by reference rather than excluded from the hash.
+
+The intended direction for sensitive data separates two planes. The chain plane holds envelopes: hashed, chained, anchored and never erased, and it never holds personal data in clear. A raw plane holds clear values, salts and referenced artefacts under a named custodian whose relationship to the emitter and deployer is recorded. Erasing a data subject's values destroys their raw-plane disclosures and keys: the commitments remain in the chain plane, cannot be reversed by guessing because they are salted, and the value is reported as erased rather than missing. Each re-disclosure of raw-plane values is itself recorded as evidence. These are proposed decisions in the AXES decision register {{AXES-REPO}} and are not specified by this document.
 
 # IANA Considerations {#iana}
 
@@ -527,6 +597,149 @@ AXES maintains the following registries in its public repository {{AXES-REPO}}. 
 * requirement profile identifiers in the `axes:` namespace.
 
 --- back
+
+# Worked Example {#worked-example}
+
+This appendix lets a reader recompute one real envelope hash and one chain link from this document alone. The envelope is the ninth of the financial trace in the corpus of record {{AXES-GT21}} (line 9 of `examples/golden-trace/out/envelopes.jsonl`), a heartbeat event.
+
+## The envelope
+
+~~~
+{::include appendix/envelope-0009.json}
+~~~
+{: title="Envelope 9 of the gt-v2.1 financial trace (line breaks inside strings are for presentation)"}
+
+## Canonical bytes
+
+Removing `integrity.envelope_hash` and `integrity.envelope_signature` ({{canonical}}) and applying RFC 8785 gives the following 2130 bytes. They are all ASCII and contain no space characters, so they are shown wrapped at 64 characters: join the lines with nothing between them.
+
+~~~
+{::include appendix/envelope-0009.jcs.txt}
+~~~
+{: title="RFC 8785 bytes of envelope 9 inside the hash scope"}
+
+## Digest and chain link
+
+The SHA-256 of these bytes, as bare lowercase hexadecimal, is
+
+~~~
+741e26e97a1e375f4eb1f007ab98ead5fd5bfb4e5c28092649c90acde6f38ab8
+~~~
+
+which equals the stored `integrity.envelope_hash`. The stored `integrity.previous_envelope_hash`,
+
+~~~
+52c2bfef03ba11c71b906b17e9105f3623c9918687f5eb7c6e218a670495a9f9
+~~~
+
+is the recomputed envelope hash of envelope 8, and envelope 10 carries the digest above as its own `integrity.previous_envelope_hash`. Sequence numbers 8, 9 and 10 are contiguous. Continuing the same computation to envelope 76 gives the financial chain head stated in {{impl-status}}.
+
+The `integrity.envelope_signature` value is a stub (`envelope_signature_basis_status: stubbed`) and lies outside the hash scope, so it does not affect the digest. Once redaction is specified ({{redaction}}), this envelope, which has no redactable field, keeps exactly this digest.
+
+# Data Definitions in CDDL {#cddl}
+
+This appendix gives the settled structures of this document in CDDL {{RFC8610}}, applied to JSON. It is informative: the normative rules are in the sections named in each comment, and conditions that CDDL cannot express (for example, that an anchor without `anchored_at` is pending) are stated there. The envelope as a whole is not defined here, because its schema is an open issue ({{open-issues}}). The closed list of condition codes is in {{vocab-conditions}}.
+
+These definitions accept every integrity block (152) and every anchoring block in the corpus of record, every release anchoring block and anchor verification result in {{AXES-REPO}}, and every published evaluation record. Each rule also rejects a copy of a real instance with one value broken. `ietf/check_appendices.py` in {{AXES-REPO}} runs these checks.
+
+~~~ cddl
+{::include appendix/axes.cddl}
+~~~
+{: title="AXES settled structures"}
+
+# Vocabularies {#vocabularies}
+
+The following vocabularies are used by this document. Values are `lower_snake`. Every list except `anchoring_method` is closed: a new value is added only in an announced release, and a value is never redefined or removed. Each list is maintained in {{AXES-REPO}} ({{iana}}).
+
+`verification_state`:
+: `verified`, `contradicted`, `indeterminate`, `not_evaluated` ({{results}}).
+
+`verification_reason_code`:
+: `divergence`, `absence`, `instrument_failure`.
+
+`verification_subject_type`:
+: `artifact`, `operator`, `network`, `verifier`, `access`.
+
+`absence_reason_code`:
+: `not_applicable`, `not_captured`, `withheld`, `redacted` ({{absence}}).
+
+`hash_scope_exclusion_reason`:
+: `self_referential` (the only reason in force, for `integrity.envelope_hash` and `integrity.envelope_signature`); `recipient_stamped` and `syntax_mutable` are reserved and no exclusion uses them ({{scope}}).
+
+`anchored_subject_type`:
+: `chain_head`, `envelope`, `bundle_manifest`, `release_statement`.
+
+`anchoring_method` (open):
+: Seeded with `timestamp_authority`, `opentimestamps`, `transparency_log`, `distributed_ledger`, `write_once_store`. Other methods use `<namespace>:<id>` ({{anchoring}}).
+
+`basis_status`:
+: `demonstrated`, `stubbed`, `simulated`.
+
+Requirement profiles and evaluation ({{evaluation}}):
+: `check_type`: `field_presence`, `chain_integrity`, `sequence_continuity`, `anchoring`, `settlement_commitment`.
+: `obligation_type`: `required`, `conditional`, `optional`, `prohibited`, in the strictness order `prohibited`, `required`, `conditional`, `optional`.
+: Evaluation `subject_type`: `envelope`, `bundle`, `stream_window`, `release`.
+: `guarantee_type`: `conditional`, `unconditional`.
+
+## Verification condition codes {#vocab-conditions}
+
+Each condition code names a class of condition and always appears with the same state, reason and subject. The specific cause is recorded in `observed_note`. "(none)" means that the reason member is absent or null. `legacy_unstructured_anchor` applies only to records of a release published before the structured anchoring block, and `anchor_status_in_method` to a block that writes a status into `anchoring_method`.
+
+| Condition | Reason | Subject |
+|---|---|---|
+| `anchor_commitment_mismatch` | `divergence` | `artifact` |
+| `anchor_proof_hash_mismatch` | `divergence` | `artifact` |
+| `anchor_simulated_claims_external` | `divergence` | `artifact` |
+| `anchor_noncanonical_contract` | `divergence` | `artifact` |
+| `anchor_not_a_commitment` | `divergence` | `artifact` |
+| `anchor_status_in_method` | `divergence` | `artifact` |
+| `envelope_hash_mismatch` | `divergence` | `artifact` |
+| `chain_break` | `divergence` | `artifact` |
+| `field_declared_not_applicable` | `divergence` | `artifact` |
+| `prohibited_field_present` | `divergence` | `artifact` |
+| `value_not_accepted` | `divergence` | `artifact` |
+| `settlement_commitment_mismatch` | `divergence` | `artifact` |
+| `cap_exceeded` | `divergence` | `artifact` |
+| `correlation_hash_mismatch` | `divergence` | `artifact` |
+{: title="Condition codes with state `contradicted`"}
+
+| Condition | Reason | Subject |
+|---|---|---|
+| `anchor_pending` | `absence` | `operator` |
+| `anchor_proof_absent` | `absence` | `operator` |
+| `basis_not_demonstrated` | `absence` | `operator` |
+| `anchor_independence_unproven` | `absence` | `artifact` |
+| `legacy_unstructured_anchor` | `absence` | `artifact` |
+| `sequence_gap` | `absence` | `artifact` |
+| `field_absent_undeclared` | `absence` | `artifact` |
+| `field_absent_declared` | `absence` | `operator` |
+| `value_below_minimum` | `absence` | `artifact` |
+| `conflicting_evidence` | `divergence` | `artifact` |
+| `identifier_unverified` | `absence` | `artifact` |
+| `anchor_insufficient` | `absence` | `artifact` |
+| `anchor_lag_exceeded` | `absence` | `artifact` |
+| `profile_conflict` | `divergence` | `verifier` |
+| `settlement_not_observed` | `absence` | `artifact` |
+| `correlation_divergence` | `divergence` | `artifact` |
+| `nonce_unbindable` | `absence` | `operator` |
+| `binding_salt_absent` | `absence` | `operator` |
+{: title="Condition codes with state `indeterminate`"}
+
+| Condition | Reason | Subject |
+|---|---|---|
+| `anchor_proof_unresolvable` | (none) | `network` |
+| `anchor_method_unverifiable` | `instrument_failure` | `verifier` |
+| `field_withheld` | (none) | `operator` |
+| `field_redacted` | (none) | `access` |
+| `access_restricted` | (none) | `access` |
+| `profile_unsupported` | `instrument_failure` | `verifier` |
+| `predicate_unparseable` | `instrument_failure` | `verifier` |
+| `value_ladder_unsupported` | `instrument_failure` | `verifier` |
+| `check_type_unsupported` | `instrument_failure` | `verifier` |
+| `evaluator_fault` | `instrument_failure` | `verifier` |
+| `requirement_profile_hash_unpinned` | `instrument_failure` | `verifier` |
+| `external_evidence_stale` | (none) | `network` |
+{: title="Condition codes with state `not_evaluated`"}
 
 # Acknowledgements
 {:numbered="false"}

@@ -1,0 +1,111 @@
+; AXES -00, Appendix B. JSON instances; CDDL per RFC 8610.
+; Maps are closed unless they say otherwise.
+
+; ---- Shared types ------------------------------------------------
+
+hex-digest = tstr .regexp "([0-9a-f]{2})+"
+  ; bare lowercase hexadecimal; 64 characters for SHA-256
+hash-algorithm = tstr                 ; "SHA-256" in the corpus
+timestamp = tstr .regexp "[0-9-]{10}T[0-9:]{8}[.][0-9]{3}Z"
+  ; RFC 3339, UTC, millisecond precision
+namespaced-id = tstr .regexp "[a-z0-9_.-]+:.+"
+profile-id = tstr .regexp "[a-z0-9_.-]+:[a-z0-9_]+@[0-9]+"
+  ; <namespace>:<lower_snake_name>@<version>
+basis-status = "demonstrated" / "stubbed" / "simulated"
+
+; ---- Integrity block (Canonical Form and Hashing) ----------------
+
+integrity = {
+  hash_algorithm: hash-algorithm,
+  canonicalization_version: "RFC8785-JCS" / tstr,
+  previous_envelope_hash: hex-digest,   ; 64 zeros at genesis
+  signing_key_id: tstr,
+  ? signing_key_provenance_ref: tstr,
+  ? envelope_signature_basis_status: basis-status,
+  envelope_hash: hex-digest,            ; outside the hash scope
+  envelope_signature: tstr,             ; outside the hash scope
+}
+
+; ---- Anchoring block (External Anchoring) ------------------------
+
+anchoring-block = {
+  anchored_subject_type: anchored-subject-type,
+  anchored_subject_hash: hex-digest,
+  anchored_subject_hash_algorithm: hash-algorithm,
+  anchors: [+ anchor],
+}
+
+anchored-subject-type = "chain_head" / "envelope" /
+                        "bundle_manifest" / "release_statement"
+
+anchor = {
+  anchor_id: tstr,
+  anchoring_method: anchoring-method,
+  ? anchor_profile_ref: profile-id,
+  basis_status: basis-status,
+  anchor_commitment_hash: hex-digest,
+  anchor_commitment_hash_algorithm: hash-algorithm,
+  ? anchor_requested_at: timestamp,
+  ? anchored_at: timestamp,             ; absent while pending
+  anchor_service_id: tstr,
+  ? anchor_record_ref: tstr,
+  anchor_operator_id: tstr / null,
+  ? anchor_proof_ref: tstr,
+  ? anchor_proof_hash: hex-digest,
+  ? anchor_verification_procedure_ref: tstr,
+}
+
+anchoring-method = "timestamp_authority" / "opentimestamps" /
+                   "transparency_log" / "distributed_ledger" /
+                   "write_once_store" / namespaced-id
+
+; ---- Verification results (Verification Results) -----------------
+
+result-core = (
+  verification_state: verification-state,
+  ? verification_reason_code: reason-code / null,
+  verification_subject_type: result-subject-type,
+  ? verification_condition_code: condition-code / null,
+  ? observed_note: tstr,
+)
+
+verification-state = "verified" / "contradicted" /
+                     "indeterminate" / "not_evaluated"
+reason-code = "divergence" / "absence" / "instrument_failure"
+result-subject-type = "artifact" / "operator" / "network" /
+                      "verifier" / "access"
+condition-code = tstr .regexp "[a-z][a-z0-9_]*"
+  ; closed list in Appendix C
+
+anchor-result = { anchor_id: tstr, result-core }
+
+; ---- Evaluation record core (Requirement Profiles) ---------------
+
+evaluation-record = {
+  evaluation_id: tstr,
+  requirement_profile_ref: profile-id,
+  requirement_profile_version: tstr,
+  requirement_profile_hash: hex-digest,
+  hash_algorithm: hash-algorithm,
+  subject_type: evaluation-subject-type,
+  subject_hashes: [+ hex-digest],
+  evaluator_id: tstr,
+  evaluator_version: tstr,
+  evaluated_at: timestamp,
+  pinned_evidence_items: [* any],
+  results: [+ requirement-result],
+  overall_verification_state: verification-state,
+  guarantee_type: "conditional" / "unconditional",
+  conditional_requirement_refs: [* tstr],
+  result_core_hash: hex-digest,
+  * tstr => any                         ; context members
+}
+
+evaluation-subject-type = "envelope" / "bundle" /
+                          "stream_window" / "release"
+
+requirement-result = {
+  requirement_ref: tstr,
+  result-core,
+  evidence_refs: [* tstr],
+}
