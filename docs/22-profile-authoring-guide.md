@@ -77,7 +77,7 @@ Decide, field by field, what a verifier of your binding must always see, and wha
 - **`disclosable_by_role`.** Values committed in the record with salted per-field commitments and disclosed to named roles, for example amount or payee disclosed to the payment verifier (D-045).
 - **`out_of_record`.** Values referenced only by digest, held elsewhere.
 
-**[Open]** The exact commitment construction (AXES issue #5, P1-1) is not yet fixed. The direction is SD-JWT-style salted commitments (RFC 9901), the same construction used by AP2 mandates and Mastercard Verifiable Intent. If your protocol already uses SD-JWT, your disclosures may be reusable as they are.
+**[Settled direction, construction Open]** The mechanism is decided: salted per-field hash commitments, the SD-JWT construction (RFC 9901), the same one used by AP2 mandates and Mastercard Verifiable Intent (D-045, decided as a direction on 30 October 2026). The exact construction (disclosure byte form, salt length, nested objects and arrays, decoys; AXES issue #5, P1-1) is not yet fixed. If your protocol already uses SD-JWT, your disclosures may be reusable as they are.
 
 ## 7. Mapping your outcomes to AXES states **[Settled vocabulary, D-023 and D-029]**
 
@@ -105,7 +105,7 @@ Map each result your protocol defines to exactly one state, and say why. Typical
 - Hash your artefacts as received; never re-serialise them before hashing.
 - Carry your identifiers verbatim; do not translate key names (docs/20 N13).
 - No secrets, tokens or keys in any record or vector.
-- Low-entropy values (amounts, booleans, short identifiers) are never exposed as bare digests. **[Proposed]** Use salted commitments (D-045).
+- Low-entropy values (amounts, booleans, short identifiers) are never exposed as bare digests. **[Settled direction]** Use salted commitments (D-045).
 - **[Proposed]** Domain separation: any value hashed or signed on the AXES side carries the AXES domain tag, so artefacts from your protocol cannot be replayed as AXES values or the reverse (D-050).
 - Timestamps in AXES records are RFC 3339 UTC with millisecond precision (docs/20). Your protocol's own timestamps are carried as you define them.
 - State plainly what a verified binding does not prove, for example that delivery happened or that a set of records is complete.

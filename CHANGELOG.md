@@ -4,6 +4,9 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-30 - P1-1 direction decided: salted per-field hash commitments (D-045)
+- D-045 moves from proposed to decided as a direction: disclosable values are committed with salted per-field hash commitments (the SD-JWT, RFC 9901, construction), the salt travelling in the disclosure. It meets every constraint listed for the mechanism, including that an envelope with nothing redactable hashes exactly as today, so every published digest stays valid. The construction parameters (disclosure byte form under RFC 8785, salt length, nested objects and arrays, decoys, per-module redactable fields) stay open and still gate the envelope schema. The other data-handling decisions remain proposed. The IETF -00 (draft-sansone-axes-evidence-envelope) records the same direction.
+
 ### 2026-10-24 - proposed decisions on data handling (D-043 to D-050) and a binding profile catalogue (D-051)
 - Eight proposed decisions recorded in `registers/decision-register.md` for review: two planes for sensitive data, a named raw-plane custodian, keyed pseudonyms for linkage with salted per-field commitments for disclosable values, a sealed disclosure log, erasure by key destruction, rotation without breakage, never-redactable fields with no class uplift, and domain separation. They set the direction of P1-1 (#5); no schema, corpus or verifier change.
 - D-051 proposes a binding profile catalogue for payment and authorisation protocols: design in docs/21, seed catalogue in `registers/binding-profile-catalogue.md` (one candidate profile, `axes:x402_correlation@1`, and four reserved identifiers).
