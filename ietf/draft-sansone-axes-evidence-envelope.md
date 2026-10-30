@@ -605,7 +605,7 @@ This appendix lets a reader recompute one real envelope hash and one chain link 
 ## The envelope
 
 ~~~
-{::include appendix/envelope-0009.json}
+{::include appendix/envelope-0009-presented.txt}
 ~~~
 {: title="Envelope 9 of the gt-v2.1 financial trace (line breaks inside strings are for presentation)"}
 

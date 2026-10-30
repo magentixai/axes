@@ -94,7 +94,7 @@ def worked_example(write):
     raw = jcs(scoped)
     digest = hashlib.sha256(raw).hexdigest()
     path = os.path.join(APPX, "envelope-0009.jcs.txt")
-    shown_path = os.path.join(APPX, "envelope-0009.json")
+    shown_path = os.path.join(APPX, "envelope-0009-presented.txt")
     if write:
         with open(path, "w", encoding="ascii", newline="\n") as f:
             f.write("\n".join(raw[i:i + WIDTH].decode("ascii") for i in range(0, len(raw), WIDTH)) + "\n")
