@@ -1,0 +1,78 @@
+name: SDK and IETF draft
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  sdk:
+    name: Python SDK / ${{ matrix.os }} / ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.9", "3.13"]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: The SDK's copies of the reference modules and profiles are current
+        run: python sdk/python/sync_reference.py --check
+      - name: Build the wheel and sdist
+        run: |
+          python -m pip install build pytest
+          python -m build sdk/python --outdir dist
+      - name: Install the wheel outside the repository and run the tests against it
+        run: |
+          cd "$RUNNER_TEMP"
+          python -m pip install "$GITHUB_WORKSPACE"/dist/*.whl
+          python -c "import axes_sdk, os; assert 'site-packages' in axes_sdk.__file__, axes_sdk.__file__; print(axes_sdk.__version__)"
+          AXES_REPO="$GITHUB_WORKSPACE" python -m pytest -q -p no:cacheprovider "$GITHUB_WORKSPACE/sdk/python/tests"
+      - name: The CLI verifies both published bundles
+        run: |
+          cd "$RUNNER_TEMP"
+          axes-sdk verify-bundle "$GITHUB_WORKSPACE/examples/golden-trace/out" \
+            --expected-manifest-hash e922486b74689592ddc54c74725c9c5a55d8d793f12cade2e58929ab4801164e
+          axes-sdk verify-bundle "$GITHUB_WORKSPACE/examples/golden-trace-ind/out" \
+            --expected-manifest-hash dd01b56c718c6a61f06725318ab99738799128d9cb527d5e468e9be5b78ebb31
+
+  ietf:
+    name: IETF draft appendices and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Tools at the versions used for the submission
+        run: |
+          gem install kramdown-rfc -v 1.7.43
+          gem install cddl -v 0.12.14
+          python -m pip install -r requirements-dev.txt xml2rfc==3.35.0
+      - name: Appendices A, B and C agree with the corpus and the tools
+        run: python ietf/check_appendices.py
+      - name: The draft builds without warnings, and its v3 conversion renders the same text
+        working-directory: ietf
+        run: |
+          kramdown-rfc draft-sansone-axes-evidence-envelope.md > build-v2.xml
+          xml2rfc --v2v3 build-v2.xml -o build-v3.xml 2>&1 | tee v2v3.log
+          xml2rfc --text build-v2.xml -o from-v2.txt 2>&1 | tee -a build.log
+          xml2rfc --text --html build-v3.xml 2>&1 | tee -a build.log
+          xml2rfc --text build-v3.xml -o from-v3.txt
+          ! grep -i "warning\|error" v2v3.log build.log
+          grep -q 'version="3"' build-v3.xml
+          cmp from-v2.txt from-v3.txt
+      - name: idnits
+        working-directory: ietf
+        run: npx --yes @ietf-tools/idnits build-v3.txt

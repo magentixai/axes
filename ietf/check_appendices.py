@@ -213,13 +213,16 @@ def vocab_checks(results, evals):
             used.update(pat.findall(fh.read()))
     src = ""
     for f in ["tools/anchoring/verify_anchor.py", "tools/axes_evaluate.py", "tools/axes_verify.py",
-              "tools/axes_anchoring_guard.py"]:
+              "tools/axes_anchoring_guard.py", "sdk/python/src/axes_sdk/integrity.py",
+              "sdk/python/src/axes_sdk/bundle.py"]:
         with open(f, encoding="utf-8") as fh:
             src += fh.read()
     emitted = set(re.findall(r'"((?:anchor|field|value|chain|sequence|profile|basis|correlation|settlement|nonce|'
                              r'binding|identifier|external|access|prohibited|cap|conflicting|envelope|predicate|'
-                             r'check|evaluator|requirement|legacy)_[a-z_]+)"', src))
-    emitted &= {c for c in emitted if re.search(r'(result|_r)\([^)]*"%s"' % c, src) or c in used}
+                             r'check|evaluator|requirement|legacy|hash|condition|bundle)_[a-z_]+)"', src))
+    emitted &= {c for c in emitted if re.search(r'(result|_r|Finding)\([^)]*"%s"' % c, src) or c in used}
+    # The first argument of an SDK Finding names the check, not a condition.
+    emitted -= set(re.findall(r'Finding\(\s*"([a-z_]+)"', src)) - used
     # Field names passed alongside a code are not codes.
     for pair in re.findall(r'"([a-z_]+)"\s*[:\]]|get\("([a-z_]+)"', src):
         emitted -= set(pair)
