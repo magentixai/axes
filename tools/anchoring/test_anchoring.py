@@ -244,6 +244,10 @@ def main():
         expect("ots pending", only(base, "anch:ots"), "indeterminate", "anchor_pending")
         undo()
 
+        undo = mutate(base, lambda b: b["anchors"][0].update(anchor_proof_ref="../../outside/proof_manifest.json"))
+        expect("proof ref escapes the anchor dir (V7)", only(base, "anch:ots"), "not_evaluated", "anchor_proof_unresolvable")
+        undo()
+
         old = os.environ.get("PATH", "")
         os.environ["PATH"] = ""
         try:

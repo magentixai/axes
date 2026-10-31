@@ -219,6 +219,12 @@ Closed sets, lower_snake, American (docs/20).
 | `identifier_unverified` | `indeterminate` / `absence` / `artifact` |
 | `chain_break`, `envelope_hash_mismatch` | `contradicted` / `divergence` / `artifact` |
 | `sequence_gap` | `indeterminate` / `absence` / `artifact` |
+| `value_outside_domain` | `contradicted` / `divergence` / `artifact` (a fractional or non-finite number, or an integer outside +/-(2^53 - 1), in the hash scope, or input that is not I-JSON; added 2026-10-31) |
+| `bundle_file_hash_mismatch`, `bundle_manifest_hash_mismatch` | `contradicted` / `divergence` / `artifact` (a bundle file, or the manifest digest, differs from what the manifest or a pin states; added 2026-10-31) |
+| `bundle_path_unsafe` | `contradicted` / `divergence` / `artifact` (a manifest path is absolute, contains `..` or a backslash, or leads outside the bundle; not read; added 2026-10-31) |
+| `bundle_file_absent` | `indeterminate` / `absence` / `operator` (a file the manifest lists is not in the bundle; added 2026-10-31) |
+| `hash_algorithm_unsupported` | `not_evaluated` / `instrument_failure` / `verifier` (the declared digest algorithm or canonicalisation identifier is not implemented by the verifier; never verified or contradicted; added 2026-10-31) |
+| `condition_not_exercised` | `verified` / - / `artifact` (a conditional requirement whose condition held for no subject: vacuously satisfied, so the guarantee is conditional; added 2026-10-31) |
 | `anchor_insufficient`, `anchor_lag_exceeded` | `indeterminate` / `absence` / `artifact` |
 | anchoring conditions (2.12) | as 2.12 |
 | `settlement_commitment_mismatch`, `cap_exceeded` | `contradicted` / `divergence` / `artifact` |

@@ -30,7 +30,8 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from tools.axes_canonical import canonical_bytes, envelope_digest, sha256_hex  # noqa: E402
+from tools.axes_canonical import (DomainError, UnsupportedAlgorithm, canonical_bytes,  # noqa: E402
+                                  envelope_digest, sha256_hex, strict_loads)
 from tools import axes_anchoring_guard as anchoring_guard  # noqa: E402
 
 EVALUATOR_ID = "axes:reference_evaluator@1"
@@ -46,6 +47,8 @@ NEVER_SATISFIES = {"conflicting_evidence", "verification_failed"}
 SEVERITY = {"verified": 0, "not_evaluated": 1, "indeterminate": 2, "contradicted": 3}
 OBLIGATION_ORDER = {"optional": 0, "conditional": 1, "required": 2, "prohibited": 3}
 MISSING = object()
+# Members outside result_core_hash: the run's identity and provenance, not its findings.
+CORE_EXCLUDED = ("evaluation_id", "evaluator_id", "evaluator_version", "evaluated_at", "requirement_profile_closure")
 
 
 # ---------- results ----------
@@ -81,12 +84,14 @@ def pointer_get(obj, pointer):
 class Translator:
     """Maps a current-name pointer to the subject release's pointer via key-aliases.json."""
 
-    def __init__(self, aliases_path, release):
+    def __init__(self, aliases_path, release, entries=None):
         self.release = release
         self.map = {}
         self.used = []
-        if release and aliases_path and os.path.isfile(aliases_path):
-            for e in json.load(open(aliases_path, encoding="utf-8"))["entries"]:
+        if entries is None and release and aliases_path and os.path.isfile(aliases_path):
+            entries = strict_loads(open(aliases_path, encoding="utf-8").read())["entries"]
+        if release and entries:
+            for e in entries:
                 if e["from_release_ref"] == release and e["from_path"] and e["change_type"] == "renamed" \
                         and "[]" not in e["to_path"] and "*" not in e["to_path"]:
                     self.map[e["to_path"]] = e["from_path"]
@@ -349,13 +354,25 @@ def check_settlement(req, env, tr):
 
 def check_chain(req, envs):
     ref = req["requirement_id"]
+    if not envs:
+        return result(ref, "indeterminate", "absence", "field_absent_undeclared", "artifact", "no envelope in scope")
     prev = "0" * 64
     for env in envs:
         integ = env.get("integrity") or {}
+        eid = env.get("envelope_id", "?")
+        try:
+            digest = envelope_digest(env)
+        except UnsupportedAlgorithm as exc:
+            # Never verified or contradicted: this evaluator cannot compute the declared digest.
+            return result(ref, "not_evaluated", "instrument_failure", "hash_algorithm_unsupported", "verifier",
+                          "%s at sequence %s" % (exc, env.get("sequence_number")), [eid])
+        except DomainError as exc:
+            return result(ref, "contradicted", "divergence", "value_outside_domain", "artifact",
+                          "%s at sequence %s" % (exc, env.get("sequence_number")), [eid])
         if integ.get("previous_envelope_hash") != prev:
             return result(ref, "contradicted", "divergence", "chain_break", "artifact",
-                          "link broken at sequence %s" % env.get("sequence_number"), [env.get("envelope_id", "?")])
-        if integ.get("envelope_hash") != envelope_digest(env):
+                          "link broken at sequence %s" % env.get("sequence_number"), [eid])
+        if integ.get("envelope_hash") != digest:
             return result(ref, "contradicted", "divergence", "envelope_hash_mismatch", "artifact",
                           "hash differs at sequence %s" % env.get("sequence_number"), [env.get("envelope_id", "?")])
         prev = integ["envelope_hash"]
@@ -397,7 +414,9 @@ def evaluate_requirement(req, envs, tr, release):
             return result(req["requirement_id"], "not_evaluated", "instrument_failure", "check_type_unsupported", "verifier", ct)
     if not per:
         if req["obligation_type"] == "conditional":
-            return result(req["requirement_id"], "verified", note="condition false for every envelope in scope")
+            # Vacuously satisfied: recorded as a condition, so the guarantee is never unconditional.
+            return result(req["requirement_id"], "verified", None, "condition_not_exercised", "artifact",
+                          "condition false for every envelope in scope")
         return result(req["requirement_id"], "indeterminate", "absence", "field_absent_undeclared", "artifact", "no envelope in scope")
     w = dict(worst(per))
     bad = [r for r in per if r["verification_state"] == w["verification_state"] and r.get("verification_condition_code") == w.get("verification_condition_code")]
@@ -428,15 +447,44 @@ def map_existing_value(vocabulary, value):
 
 # ---------- profiles ----------
 
+class ProfileSetError(ValueError):
+    pass
+
+
 def load_profiles(directory):
+    """id@version -> profile. Two files claiming the same id@version with different content are refused."""
     out = {}
     for name in sorted(os.listdir(directory)):
         if name.endswith(".json"):
             raw = open(os.path.join(directory, name), encoding="utf-8").read()
-            p = json.loads(raw)
-            out["%s@%s" % (p["requirement_profile_id"].split("@")[0], p["requirement_profile_version"])] = p
-            out[p["requirement_profile_id"]] = p
+            p = strict_loads(raw)
+            for key in ("%s@%s" % (p["requirement_profile_id"].split("@")[0], p["requirement_profile_version"]),
+                        p["requirement_profile_id"]):
+                if key in out and canonical_bytes(out[key]) != canonical_bytes(p):
+                    raise ProfileSetError("%s is defined twice with different content" % key)
+                out[key] = p
     return out
+
+
+def closure(profile_ref, profiles):
+    """Every profile reachable from profile_ref (parents first), plus missing refs and refs that close a cycle."""
+    order, missing, cycles = [], [], []
+
+    def walk(ref, path):
+        if ref in path:
+            cycles.append(ref)
+            return
+        p = profiles.get(ref)
+        if p is None:
+            missing.append(ref)
+            return
+        for parent in p.get("extended_profile_refs") or []:
+            walk(parent, path + (ref,))
+        if ref not in order:
+            order.append(ref)
+
+    walk(profile_ref, ())
+    return order, missing, cycles
 
 
 def resolve(profile_ref, profiles, seen=()):
@@ -471,21 +519,27 @@ def resolve(profile_ref, profiles, seen=()):
 
 def read_subject(path):
     if path.endswith(".jsonl"):
-        return [json.loads(l) for l in open(path, encoding="utf-8") if l.strip()]
-    obj = json.load(open(path, encoding="utf-8"))
+        return [strict_loads(l) for l in open(path, encoding="utf-8") if l.strip()]
+    obj = strict_loads(open(path, encoding="utf-8").read())
     return obj if isinstance(obj, list) else [obj]
 
 
 def evaluate(profile_ref, subject_path, profiles_dir, aliases_path, release=None, sequence_range=None,
              evaluated_at="1970-01-01T00:00:00.000Z", subject_type=None):
-    profiles = load_profiles(profiles_dir)
+    """File-based entry point: reads the subject and the profile directory, then evaluates in memory."""
+    return evaluate_envelopes(profile_ref, read_subject(subject_path), sha256_hex(open(subject_path, "rb").read()),
+                              load_profiles(profiles_dir), Translator(aliases_path, release), release,
+                              sequence_range, evaluated_at, subject_type)
+
+
+def evaluate_envelopes(profile_ref, envs, subject_hash, profiles, tr, release=None, sequence_range=None,
+                       evaluated_at="1970-01-01T00:00:00.000Z", subject_type=None):
+    """Pure evaluation: no file, network or clock access. subject_hash is the SHA-256 of the subject's bytes."""
     profile = profiles.get(profile_ref)
-    envs = read_subject(subject_path)
     if sequence_range:
         lo, hi = sequence_range
         envs = [e for e in envs if lo <= e.get("sequence_number", -1) <= hi]
-    tr = Translator(aliases_path, release)
-    subject_hashes = [sha256_hex(open(subject_path, "rb").read())]
+    subject_hashes = [subject_hash]
     if profile is None:
         results = [result("profile", "not_evaluated", "instrument_failure", "profile_unsupported", "verifier", profile_ref)]
         profile_hash, version = "0" * 64, "unknown"
@@ -493,8 +547,19 @@ def evaluate(profile_ref, subject_path, profiles_dir, aliases_path, release=None
         profile_hash = sha256_hex(canonical_bytes(profile))
         version = profile["requirement_profile_version"]
         reqs, conflicts = resolve(profile_ref, profiles)
+        order, missing, cycles = closure(profile_ref, profiles)
         conflicted = {c[0] for c in conflicts}
         results = []
+        # A profile graph that cannot be resolved never yields a pass (validation finding V2).
+        if missing:
+            results.append(result("profile", "not_evaluated", "instrument_failure", "profile_unsupported", "verifier",
+                                  "extended profile not available: " + ", ".join(sorted(set(missing)))))
+        if cycles:
+            results.append(result("profile", "indeterminate", "divergence", "profile_conflict", "verifier",
+                                  "extension cycle through " + ", ".join(sorted(set(cycles)))))
+        if not reqs and not results:
+            results.append(result("profile", "not_evaluated", "instrument_failure", "profile_unsupported", "verifier",
+                                  "the resolved profile has no requirements"))
         for req in reqs:
             if req["requirement_id"] in conflicted:
                 results.append(result(req["requirement_id"], "indeterminate", "divergence", "profile_conflict", "verifier",
@@ -528,10 +593,16 @@ def evaluate(profile_ref, subject_path, profiles_dir, aliases_path, release=None
         "guarantee_type": "conditional" if conditional_refs else "unconditional",
         "conditional_requirement_refs": conditional_refs,
     }
+    if profile is not None and len(order) > 1:
+        # Which parent content ran (validation finding V3). Outside the result core, so records made before
+        # this member keep their digests; a reader compares it with its own pins.
+        record["requirement_profile_closure"] = [
+            {"requirement_profile_ref": ref, "requirement_profile_hash": sha256_hex(canonical_bytes(profiles[ref]))}
+            for ref in order]
     if release:
         record["subject_release_ref"] = release
         record["key_translation_ref"] = "schema/key-aliases.json (%d paths translated)" % len(set(tr.used))
-    core = {k: v for k, v in record.items() if k not in ("evaluation_id", "evaluator_id", "evaluator_version", "evaluated_at")}
+    core = {k: v for k, v in record.items() if k not in CORE_EXCLUDED}
     record["result_core_hash"] = sha256_hex(canonical_bytes(core))
     return record
 

@@ -24,6 +24,72 @@ def check(cond, msg):
         FAILS.append(msg)
 
 
+def validation_regressions() -> None:
+    """Findings V1 to V4 of the independent validation of PR #21 (31 Oct 2026): each failed before its fix."""
+    import copy
+    import tempfile
+    from tools.axes_canonical import DomainError, canonical_bytes, envelope_digest, hash_preimage, strict_loads
+
+    envs = ev.read_subject(os.path.join(ROOT, "examples/golden-trace/out/envelopes.jsonl"))
+    chain = {"requirement_id": "r"}
+    # V1: an undeclared-capability algorithm is not evaluated, never verified.
+    one = copy.deepcopy(envs[:1])
+    one[0]["integrity"]["hash_algorithm"] = "UNSUPPORTED"
+    r = ev.check_chain(chain, one)
+    check((r["verification_state"], r.get("verification_condition_code")) == ("not_evaluated", "hash_algorithm_unsupported"),
+          "V1: an unsupported hash algorithm is not_evaluated, not verified")
+    one[0]["integrity"]["hash_algorithm"] = "SHA-256"
+    one[0]["integrity"]["canonicalization_version"] = "not-jcs"
+    r = ev.check_chain(chain, one)
+    check(r["verification_state"] == "not_evaluated", "V1: an unsupported canonicalisation identifier is not_evaluated")
+    r = ev.check_chain(chain, [])
+    check(r["verification_state"] == "indeterminate", "V5: an empty chain subject is indeterminate, not verified")
+    # V2 and V3: profile graphs.
+    leaf = {"requirement_profile_id": "t:leaf@1", "requirement_profile_version": "1", "subject_types": ["bundle"],
+            "requirements": [], "extended_profile_refs": ["t:missing@1"]}
+    subject = os.path.join(ROOT, "examples/golden-trace/out/envelopes.jsonl")
+    with tempfile.TemporaryDirectory() as d:
+        json.dump(leaf, open(os.path.join(d, "leaf.json"), "w"))
+        rec = ev.evaluate("t:leaf@1", subject, d, None)
+        check(rec["overall_verification_state"] == "not_evaluated" or rec["overall_verification_state"] == "indeterminate",
+              "V2: a missing parent profile never yields verified (got %s)" % rec["overall_verification_state"])
+        check(rec["results"] and rec["guarantee_type"] == "conditional", "V2: results are never empty")
+        leaf["extended_profile_refs"] = ["t:leaf@1"]
+        json.dump(leaf, open(os.path.join(d, "leaf.json"), "w"))
+        rec = ev.evaluate("t:leaf@1", subject, d, None)
+        check(rec["overall_verification_state"] != "verified", "V2: a self-cycle never yields verified")
+        dup = dict(leaf, requirements=[{"requirement_id": "x", "check_type": "field_presence",
+                                        "field_path": "/x", "obligation_type": "optional"}])
+        json.dump(dup, open(os.path.join(d, "leaf2.json"), "w"))
+        try:
+            ev.load_profiles(d)
+            check(False, "V3: two different files for one id@version are refused")
+        except ev.ProfileSetError:
+            check(True, "V3: two different files for one id@version are refused")
+    rec = ev.evaluate("axes:gt_fin_regulator@1", subject, os.path.join(ROOT, "vendor/main/profiles"),
+                      os.path.join(ROOT, "vendor/main/key-aliases.json"), "gt-v2.1")
+    refs = [c["requirement_profile_ref"] for c in rec.get("requirement_profile_closure", [])]
+    check(refs == ["axes:gt_fin_internal_audit@1", "axes:gt_fin_regulator@1"],
+          "V3: the record lists the digest of every profile in the resolved closure")
+    # V4: strict JSON and the numeric domain.
+    for text in ('{"kind":"good","kind":"bad"}', '{"n":NaN}'):
+        try:
+            strict_loads(text)
+            check(False, "V4: strict loader refuses %s" % text)
+        except ValueError:
+            check(True, "V4: strict loader refuses %s" % text)
+    for bad in (2 ** 53, 1.5):
+        e = copy.deepcopy(envs[0])
+        e["sequence_number"] = bad
+        try:
+            hash_preimage(e)
+            check(False, "V4: %r in the hash scope is refused" % bad)
+        except DomainError:
+            check(True, "V4: %r in the hash scope is refused" % bad)
+    check(envelope_digest(envs[0]) == envs[0]["integrity"]["envelope_hash"] and canonical_bytes({"a": 1}) == b'{"a":1}',
+          "in-domain hashing is unchanged")
+
+
 def main() -> int:
     for mod in ("axes_evaluate.py", "axes_anchoring_guard.py"):
         src = open(os.path.join(ROOT, "tools", mod), encoding="utf-8").read()
@@ -45,6 +111,7 @@ def main() -> int:
     finally:
         ev.evaluate_requirement = real
     check(code == 1, "a permissive evaluator fails the suite (exit %s)" % code)
+    validation_regressions()
     print("FAILED: %s" % FAILS if FAILS else "OK evaluator guards")
     return 1 if FAILS else 0
 

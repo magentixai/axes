@@ -112,12 +112,13 @@
       "requirement_profile_ref": "example:conditional_false@1",
       "expected_verification": {
         "verification_state": "verified",
-        "verification_subject_type": "artifact"
+        "verification_subject_type": "artifact",
+        "verification_condition_code": "condition_not_exercised"
       },
       "provenance": {
         "author_name": "AXES maintainers (Magentix AI)",
         "authored_on": "2026-10-04",
-        "origin_note": "condition false"
+        "origin_note": "condition false: vacuous, recorded as a condition"
       }
     },
     "conditional_true_absent.jsonl": {
