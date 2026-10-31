@@ -4,10 +4,12 @@
 ; ---- Shared types ------------------------------------------------
 
 hex-digest = tstr .regexp "([0-9a-f]{2})+"
-  ; bare lowercase hexadecimal; 64 characters for SHA-256
+  ; bare lowercase hexadecimal; shape only: the length for the
+  ; named algorithm (64 for SHA-256) is checked by the procedure
 hash-algorithm = tstr                 ; "SHA-256" in the corpus
-timestamp = tstr .regexp "[0-9-]{10}T[0-9:]{8}[.][0-9]{3}Z"
-  ; RFC 3339, UTC, millisecond precision
+timestamp = tstr .regexp
+  "[0-9]{4}(-[0-9]{2}){2}T([0-9]{2}:){2}[0-9]{2}[.][0-9]{3}Z"
+  ; RFC 3339, UTC, exactly three fractional digits
 namespaced-id = tstr .regexp "[a-z0-9_.-]+:.+"
 profile-id = tstr .regexp "[a-z0-9_.-]+:[a-z0-9_]+@[0-9]+"
   ; <namespace>:<lower_snake_name>@<version>
