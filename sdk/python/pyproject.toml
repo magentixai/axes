@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "axes-sdk"
+version = "0.1.0"
+description = "Offline verification and deterministic evaluation of AXES evidence (draft-sansone-axes-evidence-envelope)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Magentix AI", email = "developer@magentix.ai" }]
+keywords = ["axes", "evidence", "audit", "rfc8785", "verification", "autonomous agents"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security :: Cryptography",
+    "Typing :: Typed",
+]
+dependencies = ["jcs>=0.2.1"]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/magentixai/axes"
+Specification = "https://datatracker.ietf.org/doc/draft-sansone-axes-evidence-envelope/"
+
+[project.scripts]
+axes-sdk = "axes_sdk.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+axes_sdk = ["py.typed", "data/*.json", "data/profiles/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

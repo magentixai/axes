@@ -32,6 +32,16 @@ def result(anchor_id, state, condition=None, reason=None, subject="artifact", ob
             "observed_note": observed}
 
 
+OPENSSL_TIMEOUT = 60  # seconds; a hung verifier is an instrument failure, never a finding about the anchor
+
+
+def inside(root, path):
+    """True when path, after resolving links, lies inside root. Proof references come from the evidence and
+    are never followed outside the anchor directory (validation finding V7)."""
+    root = os.path.realpath(root)
+    return os.path.commonpath([root, os.path.realpath(path)]) == root
+
+
 def check_manifest(base, entry):
     """Returns (files dict, failure result or None)."""
     aid = entry["anchor_id"]
@@ -39,6 +49,9 @@ def check_manifest(base, entry):
     if not ref:
         return None, result(aid, "indeterminate", "anchor_proof_absent", "absence", "operator", "no anchor_proof_ref")
     path = os.path.join(base, ref)
+    if os.path.isabs(ref) or not inside(base, path):
+        return None, result(aid, "not_evaluated", "anchor_proof_unresolvable", None, "network",
+                            "proof reference outside the anchor directory, not read: " + ref)
     if not os.path.isfile(path):
         return None, result(aid, "not_evaluated", "anchor_proof_unresolvable", None, "network", "proof manifest not found at " + ref)
     if ac.sha256_file(path) != entry.get("anchor_proof_hash"):
@@ -47,6 +60,9 @@ def check_manifest(base, entry):
     pdir = os.path.dirname(path)
     for name, digest in manifest.get("file_hashes", {}).items():
         fp = os.path.join(pdir, name)
+        if os.path.isabs(name) or not inside(base, fp):
+            return None, result(aid, "not_evaluated", "anchor_proof_unresolvable", None, "network",
+                                "listed proof file outside the anchor directory, not read: " + name)
         if not os.path.isfile(fp):
             return None, result(aid, "not_evaluated", "anchor_proof_unresolvable", None, "network", "listed proof file missing: " + name)
         if ac.sha256_file(fp) != digest:
@@ -121,12 +137,18 @@ def verify_rfc3161(entry, files, commitment):
     for need in ("token.tsr", "tsa-ca.pem", "tsa.crt"):
         if need not in files:
             return result(aid, "indeterminate", "anchor_proof_absent", "absence", "operator", "proof bundle lacks " + need)
-    p = subprocess.run(["openssl", "ts", "-verify", "-digest", commitment, "-in", files["token.tsr"],
-                        "-CAfile", files["tsa-ca.pem"], "-untrusted", files["tsa.crt"]], capture_output=True, text=True)
+    try:
+        p = subprocess.run(["openssl", "ts", "-verify", "-digest", commitment, "-in", files["token.tsr"],
+                            "-CAfile", files["tsa-ca.pem"], "-untrusted", files["tsa.crt"]],
+                           capture_output=True, text=True, timeout=OPENSSL_TIMEOUT)
+        q = subprocess.run(["openssl", "ts", "-reply", "-in", files["token.tsr"], "-text"],
+                           capture_output=True, text=True, timeout=OPENSSL_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        return result(aid, "not_evaluated", "anchor_method_unverifiable", "instrument_failure", "verifier",
+                      "openssl did not finish within %d s" % OPENSSL_TIMEOUT)
     if "Verification: OK" not in (p.stdout + p.stderr):
         return result(aid, "contradicted", "anchor_commitment_mismatch", None, "artifact",
                       "token does not verify for this digest against the supplied chain: " + (p.stdout + p.stderr).strip()[-200:])
-    q = subprocess.run(["openssl", "ts", "-reply", "-in", files["token.tsr"], "-text"], capture_output=True, text=True)
     import re
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from produce import openssl_time_to_iso  # noqa: E402

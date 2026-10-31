@@ -1,0 +1,12 @@
+{
+  "sha256": {
+    "key-aliases.json": "ba352c60ac9f2e2504c126011a7f430d2974821893020a1c2763ab7ea21c01de",
+    "profiles/gt_fin_internal_audit_v1.json": "5cadf3383054e2642a2d488156c60df6941b4a1004a48cec61c253540c8fdc65",
+    "profiles/gt_fin_regulator_v1.json": "47620e16ba2ce6f2b5c827fb5ef1e2360b91bc5f6efcaa2c257a9c9df00e6e36",
+    "profiles/x402_b2b_buyer_audit_v1.json": "7812532967c89fbf7584c2414ca731ce35157692002490923b4e35a55cfafeba",
+    "profiles/x402_b2b_seller_audit_v1.json": "0f491ccdb73d6d0b49093e9f8a060e17a53dc54f677f3f15cdf6449855d7c7c1",
+    "profiles/x402_eu_vat_b2b_tax_authority_v1.json": "c676f249d9381ab60b7bff8072ea331c52bbab2797932f600eda99075fa6a5f1",
+    "profiles/x402_payee_attribution_v1.json": "d262eda685a01bd8589c24699b9b5330efad6c3127a53dcb3b8b474b92726d28"
+  },
+  "source": "profiles/ and schema/key-aliases.json of the AXES repository"
+}
