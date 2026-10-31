@@ -2,7 +2,7 @@
 
 Offline verification and deterministic evaluation of AXES evidence, for developers who want to check AXES records without cloning the AXES repository or learning its layout.
 
-Version 0.1.0 (alpha) implements the mechanisms specified in [draft-sansone-axes-evidence-envelope-00](../../ietf/draft-sansone-axes-evidence-envelope.md):
+Version 0.1.1 (alpha) implements the mechanisms specified in [draft-sansone-axes-evidence-envelope-00](../../ietf/draft-sansone-axes-evidence-envelope.md):
 
 | Capability | API | CLI |
 |---|---|---|
@@ -71,7 +71,7 @@ Because the SDK packages the authors' reference code, agreement between the two 
 
 ## Security
 
-Evidence is untrusted input. The SDK refuses duplicate JSON members, non-finite numbers, lone surrogates and numbers RFC 8785 would round; bounds input size, nesting depth, record and file counts (`Limits`); resolves every manifest path inside the bundle root and refuses absolute paths, `..`, backslashes and links that lead outside; and keeps exceptions free of evidence content. Report vulnerabilities as described in the repository's SECURITY.md.
+Evidence is untrusted input. The SDK refuses duplicate JSON members, non-finite numbers, lone surrogates and numbers RFC 8785 would round; bounds input size, nesting depth, record and file counts (`Limits`); resolves the manifest and every path it lists inside the bundle root and refuses absolute paths, `..`, backslashes and links that lead outside; checks the envelope stream from the same bytes whose digest it compared with the manifest; verifies and evaluates a fresh parse of a subject's recorded bytes, so changing `Subject.envelopes` cannot change a result; and keeps evidence values out of exception messages, which may name a member path or line. Report vulnerabilities as described in the repository's SECURITY.md.
 
 ## Develop
 

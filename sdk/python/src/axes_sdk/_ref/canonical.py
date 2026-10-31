@@ -5,7 +5,8 @@
 AXES canonical bytes (RFC 8785 JCS) and SHA-256 digest helpers.
 
 Hash scope: envelope with integrity.envelope_hash and the signature removed
-(integrity.signature in gt-v2.0, integrity.envelope_signature from gt-v2.1).
+(integrity.signature in gt-v2.0, integrity.envelope_signature from gt-v2.1). Each name is removed only
+under the release that defines it; under the other it is an ordinary member and is hashed.
 All canonical bytes and digests for conformance vectors MUST be emitted through
 this module - never hand-authored.
 """
@@ -94,28 +95,45 @@ def sha256_hex(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def hash_preimage(envelope: dict) -> bytes:
-    """Canonical bytes for envelope hashing (hash fields excluded). Raises DomainError outside the domain."""
+# Members removed before hashing, per release (docs/19, D-024).
+SELF_REFERENTIAL = {
+    "gt-v2.0": ("envelope_hash", "signature"),
+    "gt-v2.1": ("envelope_hash", "envelope_signature"),
+}
+
+
+def envelope_release(envelope: dict) -> str:
+    """The release whose hash scope applies. gt-v2.1 integrity blocks declare canonicalization_version and
+    gt-v2.0 blocks do not; removing the member to change the scope also changes the digest."""
+    integ = envelope.get("integrity") if isinstance(envelope.get("integrity"), dict) else {}
+    return "gt-v2.1" if "canonicalization_version" in integ else "gt-v2.0"
+
+
+def hash_preimage(envelope: dict, release: str = None) -> bytes:
+    """Canonical bytes for envelope hashing (self-referential members of the release excluded).
+    Raises DomainError outside the domain."""
     env = json.loads(json.dumps(envelope))
-    integ = env.get("integrity", {})
-    integ.pop("envelope_hash", None)
-    integ.pop("signature", None)           # gt-v2.0 name
-    integ.pop("envelope_signature", None)  # gt-v2.1 name (docs/19, D-024); absent from gt-v2.0, so its digests are unchanged
+    integ = env.get("integrity")
+    if isinstance(integ, dict):
+        for name in SELF_REFERENTIAL[release or envelope_release(envelope)]:
+            integ.pop(name, None)
     check_hash_domain(env)
     return canonical_bytes(env)
 
 
-def envelope_digest(envelope: dict) -> str:
-    """Digest under the envelope's declared algorithm and canonicalisation (SHA-256 and RFC8785-JCS when
-    undeclared). Raises UnsupportedAlgorithm for any other declaration."""
-    integ = envelope.get("integrity") or {}
-    algorithm = integ.get("hash_algorithm", HASH_ALGORITHM)
+def envelope_digest(envelope: dict, release: str = None) -> str:
+    """Digest under the envelope's declared algorithm and canonicalisation. hash_algorithm is required;
+    canonicalization_version is required from gt-v2.1 and is RFC8785-JCS for gt-v2.0, which predates it.
+    Raises UnsupportedAlgorithm for a missing or unimplemented declaration."""
+    integ = envelope.get("integrity") if isinstance(envelope.get("integrity"), dict) else {}
+    release = release or envelope_release(envelope)
+    algorithm = integ.get("hash_algorithm")
     if algorithm not in HASH_FUNCTIONS:
         raise UnsupportedAlgorithm("hash_algorithm %r" % (algorithm,))
-    canon = integ.get("canonicalization_version", CANONICALISATION_VERSION)
+    canon = integ.get("canonicalization_version", CANONICALISATION_VERSION if release == "gt-v2.0" else None)
     if canon != CANONICALISATION_VERSION:
         raise UnsupportedAlgorithm("canonicalization_version %r" % (canon,))
-    return HASH_FUNCTIONS[algorithm](hash_preimage(envelope)).hexdigest()
+    return HASH_FUNCTIONS[algorithm](hash_preimage(envelope, release)).hexdigest()
 
 
 def assert_no_floats_in_hash_scope(envelope: dict, path: str = "") -> None:

@@ -33,13 +33,27 @@ def result(anchor_id, state, condition=None, reason=None, subject="artifact", ob
 
 
 OPENSSL_TIMEOUT = 60  # seconds; a hung verifier is an instrument failure, never a finding about the anchor
+# Proof budgets (second review, V7): a proof larger than this is not read, which is an instrument failure.
+MAX_PROOF_FILES = 64
+MAX_PROOF_BYTES = 16 * 1024 * 1024
 
 
 def inside(root, path):
     """True when path, after resolving links, lies inside root. Proof references come from the evidence and
     are never followed outside the anchor directory (validation finding V7)."""
     root = os.path.realpath(root)
-    return os.path.commonpath([root, os.path.realpath(path)]) == root
+    try:
+        return os.path.commonpath([root, os.path.realpath(path)]) == root
+    except ValueError:  # different drives on Windows
+        return False
+
+
+def over_budget(aid, path, label):
+    """A failure result when path is larger than the proof budget, else None."""
+    if os.path.getsize(path) > MAX_PROOF_BYTES:
+        return result(aid, "not_evaluated", "anchor_method_unverifiable", "instrument_failure", "verifier",
+                      "%s is larger than %d bytes, not read" % (label, MAX_PROOF_BYTES))
+    return None
 
 
 def check_manifest(base, entry):
@@ -54,10 +68,16 @@ def check_manifest(base, entry):
                             "proof reference outside the anchor directory, not read: " + ref)
     if not os.path.isfile(path):
         return None, result(aid, "not_evaluated", "anchor_proof_unresolvable", None, "network", "proof manifest not found at " + ref)
+    failure = over_budget(aid, path, "proof manifest")
+    if failure:
+        return None, failure
     if ac.sha256_file(path) != entry.get("anchor_proof_hash"):
         return None, result(aid, "contradicted", "anchor_proof_hash_mismatch", None, "artifact", "manifest bytes differ from anchor_proof_hash")
     manifest = ac.read_json(path)
     pdir = os.path.dirname(path)
+    if len(manifest.get("file_hashes", {})) > MAX_PROOF_FILES:
+        return None, result(aid, "not_evaluated", "anchor_method_unverifiable", "instrument_failure", "verifier",
+                            "proof manifest lists more than %d files, not read" % MAX_PROOF_FILES)
     for name, digest in manifest.get("file_hashes", {}).items():
         fp = os.path.join(pdir, name)
         if os.path.isabs(name) or not inside(base, fp):
@@ -65,6 +85,9 @@ def check_manifest(base, entry):
                                 "listed proof file outside the anchor directory, not read: " + name)
         if not os.path.isfile(fp):
             return None, result(aid, "not_evaluated", "anchor_proof_unresolvable", None, "network", "listed proof file missing: " + name)
+        failure = over_budget(aid, fp, "proof file " + name)
+        if failure:
+            return None, failure
         if ac.sha256_file(fp) != digest:
             return None, result(aid, "contradicted", "anchor_proof_hash_mismatch", None, "artifact", "proof file altered: " + name)
     return {n: os.path.join(pdir, n) for n in manifest.get("file_hashes", {})}, None

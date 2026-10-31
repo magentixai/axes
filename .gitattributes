@@ -18,3 +18,5 @@ ietf/appendix/** -text
 schema/key-aliases.json -text
 sdk/python/src/axes_sdk/data/** -text
 sdk/python/src/axes_sdk/_ref/** -text
+sdk/python/LICENSE -text
+sdk/python/NOTICE -text

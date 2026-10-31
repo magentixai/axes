@@ -1,20 +1,20 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "axes-sdk"
-version = "0.1.0"
+version = "0.1.1"
 description = "Offline verification and deterministic evaluation of AXES evidence (draft-sansone-axes-evidence-envelope)"
 readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
 authors = [{ name = "Magentix AI", email = "developer@magentix.ai" }]
 keywords = ["axes", "evidence", "audit", "rfc8785", "verification", "autonomous agents"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Topic :: Security :: Cryptography",

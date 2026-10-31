@@ -29,7 +29,19 @@ jobs:
       - name: Build the wheel and sdist
         run: |
           python -m pip install build pytest
-          python -m build sdk/python --outdir dist
+          python -m build sdk/python --outdir dist 2>&1 | tee build.log
+          ! grep -i "deprecat" build.log
+      - name: The wheel and sdist carry the licence and notice
+        run: |
+          python - <<'PY'
+          import glob, tarfile, zipfile
+          wheel = zipfile.ZipFile(glob.glob("dist/*.whl")[0]).namelist()
+          sdist = tarfile.open(glob.glob("dist/*.tar.gz")[0]).getnames()
+          for name in ("LICENSE", "NOTICE"):
+              assert any(n.endswith(".dist-info/licenses/" + name) for n in wheel), name
+              assert any(n.endswith("/" + name) for n in sdist), name
+          print("OK licence files in both artifacts")
+          PY
       - name: Install the wheel outside the repository and run the tests against it
         run: |
           cd "$RUNNER_TEMP"
@@ -75,4 +87,4 @@ jobs:
           cmp from-v2.txt from-v3.txt
       - name: idnits
         working-directory: ietf
-        run: npx --yes @ietf-tools/idnits build-v3.txt
+        run: npx --yes @ietf-tools/idnits@3.3.0 build-v3.txt

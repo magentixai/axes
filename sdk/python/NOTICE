@@ -1,0 +1,17 @@
+AXES - Autonomous eXecution Evidence Standard
+Copyright 2026 Magentix AI (magentix.ai) and the AXES contributors.
+
+Licensed under the terms in LICENSE (documentation and code as stated there).
+
+AXES builds on open published standards, including RFC 8785 (JSON Canonicalization
+Scheme), FIPS 180-4 (SHA-256), RFC 7515 (JWS), RFC 9052 and RFC 9053 (COSE),
+RFC 3161 (Time-Stamp Protocol), RFC 6962 (Certificate Transparency), RFC 6920
+(Naming Things with Hashes), and ISO 20022. See PROVENANCE.md for the full mapping.
+
+AXES adopts JCS canonicalisation as defined in RFC 8785 and cites that RFC as its
+source. AXES signatures profile over JWS and COSE and do not incorporate
+post-quantum or zero-knowledge signature constructions. AXES content-addresses
+over the field sets defined in this repository.
+
+Contributions are credited to their authors, per component, in
+registers/decision-register.md. See PROVENANCE.md for contributor credits.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Copies the reference implementation and the published profiles into the SDK package.
+"""Copies the reference implementation, the published profiles and the code licence into the SDK package.
 
 The SDK does not reimplement the AXES rules. It packages the repository's reference modules,
 rewritten only so that they import from inside the package, and adds a typed, in-memory API on top.
@@ -16,7 +16,11 @@ import os
 import sys
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-PKG = os.path.join(REPO, "sdk", "python", "src", "axes_sdk")
+PROJECT = os.path.join(REPO, "sdk", "python")
+PKG = os.path.join(PROJECT, "src", "axes_sdk")
+# Shipped in the wheel and sdist (pyproject license-files). The code is Apache-2.0 (LICENSE-CODE in the
+# repository; LICENSE there is the CC-BY-4.0 specification licence).
+PROJECT_FILES = [("LICENSE-CODE", "LICENSE"), ("NOTICE", "NOTICE")]
 HEADER = ("# GENERATED from %s by sdk/python/sync_reference.py. Do not edit here:\n"
           "# change the reference module and run the sync script.\n")
 
@@ -63,8 +67,11 @@ def rendered():
 def main(argv):
     check = "--check" in argv
     stale = []
-    for rel, data in rendered().items():
-        path = os.path.join(PKG, *rel.split("/"))
+    files = {os.path.join(PKG, *rel.split("/")): (rel, data) for rel, data in rendered().items()}
+    for src, dst in PROJECT_FILES:
+        # LF whatever the checkout's line endings, so --check agrees on every platform.
+        files[os.path.join(PROJECT, dst)] = (dst, open(os.path.join(REPO, src), "rb").read().replace(b"\r\n", b"\n"))
+    for path, (rel, data) in files.items():
         current = open(path, "rb").read() if os.path.isfile(path) else None
         if current != data:
             stale.append(rel)

@@ -31,7 +31,7 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from tools.axes_canonical import (DomainError, UnsupportedAlgorithm, canonical_bytes,  # noqa: E402
-                                  envelope_digest, sha256_hex, strict_loads)
+                                  SELF_REFERENTIAL, envelope_digest, sha256_hex, strict_loads)
 from tools import axes_anchoring_guard as anchoring_guard  # noqa: E402
 
 EVALUATOR_ID = "axes:reference_evaluator@1"
@@ -352,7 +352,7 @@ def check_settlement(req, env, tr):
     return result(ref, "verified", note="committed terms equal the decoded settled artifact", refs=[eid])
 
 
-def check_chain(req, envs):
+def check_chain(req, envs, release=None):
     ref = req["requirement_id"]
     if not envs:
         return result(ref, "indeterminate", "absence", "field_absent_undeclared", "artifact", "no envelope in scope")
@@ -361,7 +361,7 @@ def check_chain(req, envs):
         integ = env.get("integrity") or {}
         eid = env.get("envelope_id", "?")
         try:
-            digest = envelope_digest(env)
+            digest = envelope_digest(env, release if release in SELF_REFERENTIAL else None)
         except UnsupportedAlgorithm as exc:
             # Never verified or contradicted: this evaluator cannot compute the declared digest.
             return result(ref, "not_evaluated", "instrument_failure", "hash_algorithm_unsupported", "verifier",
@@ -390,7 +390,7 @@ def check_sequence(req, envs):
 def evaluate_requirement(req, envs, tr, release):
     ct = req["check_type"]
     if ct == "chain_integrity":
-        return check_chain(req, envs)
+        return check_chain(req, envs, release)
     if ct == "sequence_continuity":
         return check_sequence(req, envs)
     tree = None
@@ -487,8 +487,32 @@ def closure(profile_ref, profiles):
     return order, missing, cycles
 
 
+def _compose(merged, conflicts, r, extending):
+    """Adds requirement r to merged under strictest-wins (D10). extending is True when r is written in the
+    profile that extends the one merged came from, False when r comes from another extended profile. The
+    outcome does not depend on the order in which extended profiles are listed (review finding S1)."""
+    rid = r["requirement_id"]
+    old = merged.get(rid)
+    if old is None or old == r:
+        merged[rid] = old or r
+        return
+    new_rank, old_rank = OBLIGATION_ORDER[r["obligation_type"]], OBLIGATION_ORDER[old["obligation_type"]]
+    if {old["obligation_type"], r["obligation_type"]} == {"required", "prohibited"}:
+        conflicts.append((rid, "required versus prohibited"))
+    if extending:
+        if new_rank >= old_rank:
+            merged[rid] = r
+        elif old.get("floor_indicator"):
+            conflicts.append((rid, "relaxes a floor"))
+    elif new_rank > old_rank:
+        merged[rid] = r
+    elif new_rank == old_rank:
+        conflicts.append((rid, "two extended profiles define it differently"))
+
+
 def resolve(profile_ref, profiles, seen=()):
-    """Returns (requirements in order, list of conflicts) after strictest-wins composition (D10)."""
+    """Returns (requirements in order, list of conflicts) after strictest-wins composition (D10), applied
+    alike between a profile and what it extends and between two profiles it extends."""
     p = profiles.get(profile_ref)
     if p is None:
         return None, []
@@ -500,18 +524,9 @@ def resolve(profile_ref, profiles, seen=()):
         reqs, c = resolve(parent, profiles, seen + (profile_ref,))
         conflicts += c
         for r in reqs or []:
-            merged[r["requirement_id"]] = r
+            _compose(merged, conflicts, r, extending=False)
     for r in p["requirements"]:
-        old = merged.get(r["requirement_id"])
-        if old is None:
-            merged[r["requirement_id"]] = r
-            continue
-        if OBLIGATION_ORDER[r["obligation_type"]] >= OBLIGATION_ORDER[old["obligation_type"]]:
-            merged[r["requirement_id"]] = r
-        elif old.get("floor_indicator"):
-            conflicts.append((r["requirement_id"], "relaxes a floor"))
-        if {old["obligation_type"], r["obligation_type"]} == {"required", "prohibited"}:
-            conflicts.append((r["requirement_id"], "required versus prohibited"))
+        _compose(merged, conflicts, r, extending=True)
     return list(merged.values()), conflicts
 
 
