@@ -1,5 +1,6 @@
 """Exceptions. Bad evidence becomes a finding; these are raised only for bad calls, unreadable input,
-limits and missing capabilities. Messages never include the evidence content itself."""
+limits and missing capabilities. Messages never include evidence values; they may name the member path
+or line number where a problem was found."""
 from __future__ import annotations
 
 

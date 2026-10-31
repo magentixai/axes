@@ -248,6 +248,18 @@ def main():
         expect("proof ref escapes the anchor dir (V7)", only(base, "anch:ots"), "not_evaluated", "anchor_proof_unresolvable")
         undo()
 
+        budget = va.MAX_PROOF_BYTES
+        va.MAX_PROOF_BYTES = 8
+        try:
+            expect("proof over the size budget is not read (V7, second review)", only(base, "anch:ots"),
+                   "not_evaluated", "anchor_method_unverifiable")
+        finally:
+            va.MAX_PROOF_BYTES = budget
+        elsewhere = va.inside(base, "Z:/elsewhere" if os.name == "nt" else "/elsewhere")
+        print("%s %-44s -> %s" % ("FAIL" if elsewhere else "ok  ", "path on another drive is outside", elsewhere))
+        if elsewhere:
+            FAILS.append("path on another drive is outside")
+
         old = os.environ.get("PATH", "")
         os.environ["PATH"] = ""
         try:

@@ -73,10 +73,11 @@ def declared_algorithm(envelope: dict, policy: HashPolicy = DEFAULT_POLICY) -> s
     """The envelope's declared digest algorithm, after checking that it and the canonicalisation
     identifier are supported. Raises UnsupportedCapabilityError otherwise."""
     integrity = envelope.get("integrity") if isinstance(envelope.get("integrity"), dict) else {}
-    algorithm = integrity.get("hash_algorithm", "SHA-256")
+    algorithm = integrity.get("hash_algorithm")
     if algorithm not in policy.supported_hash_algorithms:
         raise UnsupportedCapabilityError("hash_algorithm %r is not supported" % (algorithm,))
-    canon = integrity.get("canonicalization_version", CANONICALIZATION)
+    # gt-v2.0 predates canonicalization_version and is RFC 8785 throughout; from gt-v2.1 it is required.
+    canon = integrity.get("canonicalization_version", CANONICALIZATION if policy.release == "gt-v2.0" else None)
     if canon != CANONICALIZATION:
         raise UnsupportedCapabilityError("canonicalization_version %r is not supported" % (canon,))
     return algorithm

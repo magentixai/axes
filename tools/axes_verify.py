@@ -28,7 +28,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from tools.axes_canonical import envelope_digest, hash_preimage, sha256_hex
+from tools.axes_canonical import envelope_digest, hash_preimage, sha256_hex, strict_loads
 from tools import axes_anchoring_guard as anchoring_guard
 from tools import axes_evaluate as evaluator
 
@@ -212,7 +212,11 @@ def verify_chain(label: str, jsonl_path: str, report: Report) -> None:
     last_hash = None
     with open(jsonl_path, encoding="utf-8") as f:
         for line in f:
-            env = json.loads(line)
+            try:  # duplicate members or a non-finite number fail the row; json.loads would keep the last value
+                env = strict_loads(line)
+            except ValueError as exc:
+                report.add("envelope_hash", f"{label}:line {expected_seq}", "malformed", str(exc))
+                return
             seq = env.get("sequence_number")
             if seq != expected_seq:
                 report.add("sequence_closure", label, "gap", f"expected {expected_seq} got {seq}")
@@ -223,7 +227,11 @@ def verify_chain(label: str, jsonl_path: str, report: Report) -> None:
                 report.add("chain_link", f"{label}:{seq}", "break", f"prev {stored_prev} != {prev}")
                 return
             stored = integ.get("envelope_hash")
-            recomputed = envelope_digest(env)
+            try:
+                recomputed = envelope_digest(env)
+            except ValueError as exc:  # DomainError or UnsupportedAlgorithm
+                report.add("envelope_hash", f"{label}:{seq}", "not_evaluated", str(exc))
+                return
             if stored != recomputed:
                 report.add("envelope_hash", f"{label}:{seq}", "mismatch")
                 return
@@ -269,7 +277,7 @@ def anchoring_corpus(label: str, jsonl_path: str, report: Report) -> None:
     anchor_simulated_claims_external), fails the run."""
     with open(jsonl_path, encoding="utf-8") as f:
         for line in f:
-            env = json.loads(line)
+            env = strict_loads(line)
             seq = env.get("sequence_number")
             final = (env.get("export") or {}).get("final_anchor")
             records = [env]

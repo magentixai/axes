@@ -3,6 +3,7 @@ every input is passed in, and the evaluation time is an argument."""
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from dataclasses import dataclass
 from typing import Mapping, Optional, Tuple
 
@@ -30,8 +31,13 @@ class EvaluationContext:
     pins: Optional[Mapping[str, str]] = None
 
     def __post_init__(self):
-        if not INSTANT.match(self.evaluated_at):
-            raise ValueError("evaluated_at must be UTC with three fractional digits, e.g. 2026-10-31T00:00:00.000Z")
+        message = "evaluated_at must be a UTC instant with three fractional digits, e.g. 2026-10-31T00:00:00.000Z"
+        if not isinstance(self.evaluated_at, str) or not INSTANT.match(self.evaluated_at):
+            raise ValueError(message)
+        try:
+            datetime.strptime(self.evaluated_at, "%Y-%m-%dT%H:%M:%S.%fZ")
+        except ValueError:
+            raise ValueError(message) from None
 
 
 def evaluate(subject: Subject, profile_ref: str, profiles: ProfileSet,
@@ -46,7 +52,8 @@ def evaluate(subject: Subject, profile_ref: str, profiles: ProfileSet,
     if context.pins is not None:
         profiles.check_pins(profile_ref, context.pins)
     translator = _ev.Translator(None, context.release, entries=list(profiles.alias_entries))
-    record = _ev.evaluate_envelopes(profile_ref, list(subject.envelopes), subject.sha256, dict(profiles.profiles),
+    # A fresh parse of the bytes whose digest is recorded, not the caller-mutable view (review finding S2).
+    record = _ev.evaluate_envelopes(profile_ref, list(subject.snapshot()), subject.sha256, dict(profiles.profiles),
                                     translator, context.release, context.sequence_range, context.evaluated_at,
                                     context.subject_type)
     return EvaluationResult(record)

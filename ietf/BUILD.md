@@ -10,7 +10,7 @@ The source is `draft-sansone-axes-evidence-envelope.md` (kramdown-rfc). Appendix
 | kramdown-rfc | 1.7.43 |
 | cddl (Ruby gem) | 0.12.14 |
 | xml2rfc | 3.35.0 |
-| idnits | `@ietf-tools/idnits` via npx |
+| idnits | `@ietf-tools/idnits` 3.3.0 via npx |
 | Python | 3.9 or later, with `requirements-dev.txt` |
 
 ## Steps
@@ -27,7 +27,7 @@ From `ietf/`:
 kramdown-rfc draft-sansone-axes-evidence-envelope.md > draft-sansone-axes-evidence-envelope.xml
 xml2rfc --v2v3 draft-sansone-axes-evidence-envelope.xml -o draft-sansone-axes-evidence-envelope-00.xml
 xml2rfc --text --html draft-sansone-axes-evidence-envelope-00.xml
-npx --yes @ietf-tools/idnits draft-sansone-axes-evidence-envelope-00.txt
+npx --yes @ietf-tools/idnits@3.3.0 draft-sansone-axes-evidence-envelope-00.txt
 ```
 
 kramdown-rfc writes the older v2 vocabulary even when asked for v3, so the upload copy is converted with xml2rfc's own `--v2v3`. Rendering the v2 output and the converted v3 file to text must give identical bytes; CI checks this.

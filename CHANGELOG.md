@@ -4,6 +4,19 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-10-31 - second independent review of PR #21: fixes, SDK 0.1.1
+A second automated review tested `9fb66a6` and the SDK wheel installed outside the repository on Windows and Linux. It confirmed the published suites and the draft build, and found the following, each now fixed with a regression test. No published digest, vector or evaluation record changes.
+- **S1** strictest-wins (D10) now applies between two extended profiles as well as between a profile and what it extends, so the result no longer depends on the order of `extended_profile_refs`; required against prohibited between siblings is `profile_conflict`, and two siblings defining one requirement differently at the same obligation is a conflict, never a silent choice (`tools/axes_evaluate.py`).
+- **S3** the reference hash scope follows the release: `integrity.signature` is excluded only under gt-v2.0 and `integrity.envelope_signature` only under gt-v2.1, so an added `signature` member in a gt-v2.1 envelope now changes its digest. `hash_algorithm` must be declared; `canonicalization_version` is required from gt-v2.1. `tools/axes_verify.py` reads streams with the strict loader, so a duplicate `sequence_number` fails the row.
+- **V7 (completed)** anchor proofs have a size and file-count budget (`anchor_method_unverifiable` beyond it), and a path on another drive counts as outside the anchor directory.
+- **S2** the SDK verifies and evaluates a fresh parse of a subject's recorded bytes (`Subject.snapshot()`), so changing `Subject.envelopes` cannot change a result or detach it from `subject_hashes`.
+- **S4** `verify_bundle` checks the envelope stream from the same bytes it hashed against the manifest.
+- **S5** limits apply to every input form (total bytes of in-memory JSONL, records in a JSON array, UTF-8 bytes of a string); a number that overflows to infinity is refused; `evaluated_at` must be a real calendar instant; error messages may name a member path but never a value.
+- **S6** `manifest.json` is held to the bundle's containment and regular-file rule.
+- **S7** the wheel and sdist ship `LICENSE` (Apache-2.0, from `LICENSE-CODE`) and `NOTICE`, copied by `sync_reference.py`, with SPDX `license` metadata and no setuptools deprecation warnings; CI asserts both artifacts carry them.
+- **CI** idnits pinned to `@ietf-tools/idnits@3.3.0`.
+- **Draft** Implementation Status reports both validation runs and the two open design points (pinning the key-alias table, bounding profile-graph work); a missing `hash_algorithm` or `canonicalization_version` is not evaluated; the strictest-wins rule names two extended profiles explicitly.
+
 ### 2026-10-31 - pre-submission validation fixes, Python SDK 0.1.0, -00 review round 2
 An automated validation of PR #21 at `21f0293` (fresh checkout, every check rerun, a second standard-library recomputation of all 152 envelope hashes) passed, and its adversarial probes found seven defects in the reference tooling. All are fixed, each with a regression test in `tools/test_evaluate_guards.py` or `tools/anchoring/test_anchoring.py`. No corpus byte, published digest or published `result_core_hash` changes.
 - **V1** `envelope_digest` dispatches on the declared `hash_algorithm` and `canonicalization_version` and refuses anything it does not implement; the evaluator reports `not_evaluated` (`hash_algorithm_unsupported`), never `verified`.

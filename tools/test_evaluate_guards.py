@@ -90,6 +90,78 @@ def validation_regressions() -> None:
           "in-domain hashing is unchanged")
 
 
+def review2_regressions() -> None:
+    """Findings S1 and S3 of the second independent review of PR #21 (31 Oct 2026): each failed before its fix."""
+    import copy
+    import tempfile
+    from tools.axes_canonical import UnsupportedAlgorithm, envelope_digest
+
+    envs = ev.read_subject(os.path.join(ROOT, "examples/golden-trace/out/envelopes.jsonl"))
+    # S3: under gt-v2.1 only envelope_hash and envelope_signature are outside the hash scope.
+    e = copy.deepcopy(envs[:2])
+    e[0]["integrity"]["signature"] = "SYNTHETIC_ADDED_VALUE"
+    check(envelope_digest(e[0]) != envs[0]["integrity"]["envelope_hash"],
+          "S3: a member named signature added to a gt-v2.1 envelope changes its digest")
+    r = ev.check_chain({"requirement_id": "r"}, e, "gt-v2.1")
+    check((r["verification_state"], r.get("verification_condition_code")) == ("contradicted", "envelope_hash_mismatch"),
+          "S3: the chain check reports envelope_hash_mismatch for it")
+    archived = ev.read_subject(os.path.join(ROOT, "archive/golden-trace-v1-fin/out/envelopes.jsonl")) \
+        if os.path.exists(os.path.join(ROOT, "archive/golden-trace-v1-fin/out/envelopes.jsonl")) else []
+    if archived:
+        from tools.axes_canonical import DomainError
+        in_domain = []
+        for a in archived:
+            try:
+                in_domain.append(envelope_digest(a) == a["integrity"]["envelope_hash"])
+            except DomainError:  # this archive predates the integer-only rule
+                pass
+        check(in_domain and all(in_domain) and "signature" in archived[0]["integrity"],
+              "S3: gt-v2.0 digests are unchanged, integrity.signature excluded (%d envelopes)" % len(in_domain))
+    e = copy.deepcopy(envs[0])
+    del e["integrity"]["hash_algorithm"]
+    try:
+        envelope_digest(e)
+        check(False, "a missing hash_algorithm is refused, not defaulted")
+    except UnsupportedAlgorithm:
+        check(True, "a missing hash_algorithm is refused, not defaulted")
+    # S3: the stream loader in axes_verify refuses duplicate members.
+    import tools.axes_verify as av
+    with tempfile.TemporaryDirectory() as d:
+        path = os.path.join(d, "s.jsonl")
+        lines = open(os.path.join(ROOT, "examples/golden-trace/out/envelopes.jsonl"), encoding="utf-8").read().splitlines()
+        lines[0] = lines[0].replace('{"', '{"sequence_number":999,"', 1)
+        open(path, "w", encoding="utf-8", newline="\n").write("\n".join(lines) + "\n")
+        rep = av.Report()
+        av.verify_chain("dup", path, rep)
+        check([r.outcome for r in rep.results] == ["malformed"], "S3: a duplicate sequence_number fails the stream row")
+
+    # S1: strictest-wins between two extended profiles, whatever their order.
+    def prof(pid, reqs, parents=()):
+        return {"requirement_profile_id": pid, "requirement_profile_version": "1", "subject_types": ["bundle"],
+                "requirements": reqs, "extended_profile_refs": list(parents)}
+
+    def req(obligation):
+        return {"requirement_id": "kind", "check_type": "field_presence", "field_path": "/kind",
+                "obligation_type": obligation}
+
+    subject = [{"sequence_number": 1}]
+    for other, want, label in (("optional", "contradicted", "required beats optional"),
+                               ("prohibited", "indeterminate", "required versus prohibited is a conflict")):
+        states = set()
+        for parents in (["t:a@1", "t:b@1"], ["t:b@1", "t:a@1"]):
+            profiles = {"t:a@1": prof("t:a@1", [req("required")]), "t:b@1": prof("t:b@1", [req(other)]),
+                        "t:c@1": prof("t:c@1", [], parents)}
+            rec = ev.evaluate_envelopes("t:c@1", subject, "0" * 64, profiles, ev.Translator(None, None, entries=[]))
+            states.add(rec["overall_verification_state"])
+        check(states == {want} or (want == "contradicted" and states <= {"contradicted", "indeterminate"} and "verified" not in states),
+              "S1: sibling parents, %s, in either order (got %s)" % (label, sorted(states)))
+    # A diamond: the shared ancestor's requirement reaches the child twice, identically, with no conflict.
+    profiles = {"t:p@1": prof("t:p@1", [req("required")]), "t:a@1": prof("t:a@1", [], ["t:p@1"]),
+                "t:b@1": prof("t:b@1", [], ["t:p@1"]), "t:c@1": prof("t:c@1", [], ["t:a@1", "t:b@1"])}
+    reqs, conflicts = ev.resolve("t:c@1", profiles)
+    check(len(reqs) == 1 and not conflicts, "S1: a diamond resolves to one requirement with no conflict")
+
+
 def main() -> int:
     for mod in ("axes_evaluate.py", "axes_anchoring_guard.py"):
         src = open(os.path.join(ROOT, "tools", mod), encoding="utf-8").read()
@@ -112,6 +184,7 @@ def main() -> int:
         ev.evaluate_requirement = real
     check(code == 1, "a permissive evaluator fails the suite (exit %s)" % code)
     validation_regressions()
+    review2_regressions()
     print("FAILED: %s" % FAILS if FAILS else "OK evaluator guards")
     return 1 if FAILS else 0
 

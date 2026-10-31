@@ -10,7 +10,7 @@ from .results import Finding, State, VerificationReport
 
 
 def _envelopes(subject):
-    return subject.envelopes if isinstance(subject, Subject) else tuple(subject)
+    return subject.snapshot() if isinstance(subject, Subject) else tuple(subject)
 
 
 def verify_stream(subject: Union[Subject, list], *, policy: HashPolicy = DEFAULT_POLICY,
