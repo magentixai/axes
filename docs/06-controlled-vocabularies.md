@@ -174,6 +174,10 @@ Other mechanisms use a namespaced identifier `<namespace>:<id>` and MUST carry `
 | `anchor_commitment_mismatch` | `contradicted` | The commitment does not recompute from the subject under the profile, or the proof attests a different digest, time or record than the block states |
 | `anchor_proof_hash_mismatch` | `contradicted` | A proof file or the manifest differs from `anchor_proof_hash` |
 | `anchor_simulated_claims_external` | `contradicted` | `externally_anchored` asserted over an anchor that is simulated or stubbed |
+| `anchor_noncanonical_contract` | `contradicted` | A `distributed_ledger` anchor names a contract other than the one its profile pins (D-042) |
+| `anchor_not_a_commitment` | `contradicted` | The named transaction carries no commitment event from that contract, for example a plain transfer (D-042) |
+| `anchor_status_in_method` | `contradicted` | A status is written into `anchoring_method` (retired form, for example `write_once_store (SIMULATED)`) |
+| `legacy_unstructured_anchor` | `indeterminate` / `absence` | A gt-v2.0 record carries the pre-gt-v2.1 unstructured block; read under its own release, never re-judged |
 | `anchor_pending` | `indeterminate` / `absence` | Requested, not yet attested (no `anchored_at`); upgrade and re-verify |
 | `basis_not_demonstrated` | `indeterminate` / `absence` | `basis_status` is `simulated` or `stubbed`; nothing to verify |
 | `anchor_proof_absent` | `indeterminate` / `absence`, subject `operator` | No proof reference: a producer defect |
@@ -215,6 +219,12 @@ Closed sets, lower_snake, American (docs/20).
 | `identifier_unverified` | `indeterminate` / `absence` / `artifact` |
 | `chain_break`, `envelope_hash_mismatch` | `contradicted` / `divergence` / `artifact` |
 | `sequence_gap` | `indeterminate` / `absence` / `artifact` |
+| `value_outside_domain` | `contradicted` / `divergence` / `artifact` (a fractional or non-finite number, or an integer outside +/-(2^53 - 1), in the hash scope, or input that is not I-JSON; added 2026-10-31) |
+| `bundle_file_hash_mismatch`, `bundle_manifest_hash_mismatch` | `contradicted` / `divergence` / `artifact` (a bundle file, or the manifest digest, differs from what the manifest or a pin states; added 2026-10-31) |
+| `bundle_path_unsafe` | `contradicted` / `divergence` / `artifact` (a manifest path is absolute, contains `..` or a backslash, or leads outside the bundle; not read; added 2026-10-31) |
+| `bundle_file_absent` | `indeterminate` / `absence` / `operator` (a file the manifest lists is not in the bundle; added 2026-10-31) |
+| `hash_algorithm_unsupported` | `not_evaluated` / `instrument_failure` / `verifier` (the declared digest algorithm or canonicalisation identifier is not implemented by the verifier; never verified or contradicted; added 2026-10-31) |
+| `condition_not_exercised` | `verified` / - / `artifact` (a conditional requirement whose condition held for no subject: vacuously satisfied, so the guarantee is conditional; added 2026-10-31) |
 | `anchor_insufficient`, `anchor_lag_exceeded` | `indeterminate` / `absence` / `artifact` |
 | anchoring conditions (2.12) | as 2.12 |
 | `settlement_commitment_mismatch`, `cap_exceeded` | `contradicted` / `divergence` / `artifact` |

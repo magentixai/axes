@@ -1,0 +1,7 @@
+# Build outputs (regenerate with kramdown-rfc and xml2rfc)
+*.xml
+*.txt
+*.html
+.refcache/
+tracker.log
+!appendix/*.txt

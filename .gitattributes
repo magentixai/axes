@@ -14,3 +14,7 @@ examples/x402-b2b-vat/** -text
 tools/x402/vectors/** -text
 tools/x402/external/** -text
 profiles/** -text
+ietf/appendix/** -text
+schema/key-aliases.json -text
+sdk/python/src/axes_sdk/data/** -text
+sdk/python/src/axes_sdk/_ref/** -text
