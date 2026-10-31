@@ -4,7 +4,9 @@
 A (worked example): the canonical bytes in ietf/appendix/envelope-0009.jcs.txt, joined, equal the
 RFC 8785 bytes of envelope 9 of the gt-v2.1 financial trace with the two self-referential members
 removed; their SHA-256 equals the stored envelope hash, the stored previous hash and the next
-envelope's previous hash.
+envelope's previous hash. The changed copy in the appendix has the digest the draft states, and the
+reference evaluator reports envelope_hash_mismatch for it, then chain_break once its stored hash is
+overwritten.
 
 B (CDDL): ietf/appendix/axes.cddl accepts every integrity block in both gt-v2.1 bundles, every
 anchoring block (in-trace and release), the anchor verifier's results on the release anchors and
@@ -118,6 +120,22 @@ def worked_example(write):
         text = f.read()
     for value in (digest, prev["integrity"]["envelope_hash"], str(len(raw))):
         check(value in text.replace("\n", "").replace(" ", ""), "A: draft states " + value[:16])
+    # The negative example: one changed value gives a different digest and a mismatch.
+    changed = raw.replace(b'"authority_context_ref":"AD-7844"', b'"authority_context_ref":"AD-7845"')
+    bad = hashlib.sha256(changed).hexdigest()
+    check(changed != raw and len(changed) == len(raw) and bad != digest and bad in text,
+          "A: draft states the digest of the changed copy " + bad[:16])
+    sys.path.insert(0, ROOT)
+    from tools.axes_evaluate import check_chain  # noqa: E402
+    stream = copy.deepcopy(rows)
+    stream[8]["authority"]["authority_context_ref"] = "AD-7845"
+    r = check_chain({"requirement_id": "r"}, stream)
+    check((r["verification_state"], r.get("verification_condition_code")) == ("contradicted", "envelope_hash_mismatch"),
+          "A: the reference evaluator reports envelope_hash_mismatch for the changed copy")
+    stream[8]["integrity"]["envelope_hash"] = bad
+    r = check_chain({"requirement_id": "r"}, stream)
+    check((r["verification_state"], r.get("verification_condition_code")) == ("contradicted", "chain_break"),
+          "A: with the stored hash overwritten, the next link reports chain_break")
 
 
 def cddl_validate(rule, instances, label):

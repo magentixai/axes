@@ -88,7 +88,7 @@ informative:
 
 --- abstract
 
-This document describes AXES, a public working draft for recording evidence of autonomous execution, that is, actions taken by software agents under delegated authority. It specifies the parts of AXES that are settled and independently reproduced: a canonical byte form and hash scope for the evidence record (the Standards Envelope), a hash chain over a declared stream, a block for external anchoring of digests with earned rather than asserted strength, a four-state result vocabulary for verification, and requirement profiles that a relying party applies to evidence to produce a deterministic evaluation record. The design keeps evidence, interpretation and enforcement apart, and requires that the absence of evidence be reported as absence rather than read as a pass. AXES is offered as one input format to format-neutral audit readers, not as a replacement for other record formats. Parts of AXES that are not yet settled, including the full envelope schema and the exact construction for redaction-tolerant hashing, are named as open issues. The chosen direction for redaction, salted per-field hash commitments in the form used by SD-JWT, is recorded.
+This document describes AXES, a public working draft for recording evidence of autonomous execution, that is, actions taken by software agents under delegated authority. It specifies the parts of AXES that are settled and independently reproduced: a canonical byte form and hash scope for the evidence record (the Standards Envelope), a hash chain over a declared stream, a block for external anchoring of digests with earned rather than asserted strength, a four-state result vocabulary for verification, and requirement profiles that a relying party applies to evidence to produce a deterministic evaluation record. The design keeps evidence, interpretation and enforcement apart, and requires that the absence of evidence be reported as absence rather than read as a pass. AXES is offered as one input format to format-neutral audit readers, not as a replacement for other record formats. Parts of AXES that are not yet settled, including the full envelope schema and the exact construction for redaction-tolerant hashing, are named as open issues. The chosen direction for redaction, salted per-field hash commitments following the approach of SD-JWT with an encoding specific to AXES, is recorded.
 
 --- middle
 
@@ -164,6 +164,19 @@ Evaluation record:
 Reader:
 : Software that verifies and evaluates records and returns a bounded finding. A reader is neither an emitter nor an enforcement point.
 
+## Conformance targets {#targets}
+
+Each requirement in this document applies to one of the roles below. The table also states how far each role's rules have been shown to work. Parts of AXES not listed (the envelope field catalogue and schema, the extension model, envelope signatures and the redaction construction) are not specified here, and no claim of conformance to them can be made under this document.
+
+| Role | Rules | Maturity |
+|---|---|---|
+| Emitter | {{canonical}}, {{scope}}, {{absence}} | Specified; schema and signatures open |
+| Stream verifier | {{canonical}}, {{results}} | Specified; reproduced by four parties |
+| Anchor verifier | {{anchoring}}, {{results}} | Three profiles specified and demonstrated |
+| Profile evaluator | {{results}}, {{evaluation}} | Specified; authors' tooling only |
+| Relying party | {{absence}}, {{evaluation}} | Guidance; chooses its own profile |
+{: title="Conformance targets"}
+
 # Design Principles {#principles}
 
 The following principles constrain every part of AXES. They are stated here because the mechanisms in later sections follow from them.
@@ -208,7 +221,7 @@ An envelope is a JSON object. In the published corpus of record {{AXES-GT21}} ev
 
 Envelopes MAY carry a namespaced `extensions` object. Extensions MUST NOT override any field defined by AXES. The processing rules for unknown extensions (`must_understand`, `unknown_field_policy`) are an open issue ({{open-issues}}).
 
-Every numeric quantity inside the hash scope is exact. JSON numbers with a fractional part MUST NOT appear in the hash scope. Asset-denominated quantities use an Amount object: `value` is a string of base-10 integer atomic units, `decimals` is the declared scale, and `asset` is a namespaced string (`iso4217:<code>` for fiat, `caip19:<asset id>` for crypto-assets). Ratios that must be recorded use exact rationals (`numerator`, `denominator`, both integer strings). Derived ratios, such as how much of a delegated limit was used, are not stored; they are computed from their operands when a report is produced.
+Every numeric quantity inside the hash scope is exact. JSON numbers with a fractional part MUST NOT appear in the hash scope. Asset-denominated quantities use an Amount object: `value` is a string of base-10 integer atomic units, `decimals` is the declared scale, and `asset` is a namespaced string (`iso4217:<code>` for fiat, `caip19:<asset id>` for crypto-assets). Ratios that must be recorded use exact rationals (`numerator`, `denominator`, both integer strings). Derived ratios, such as how much of a delegated limit was used, are not stored; they are computed from their operands when a report is produced. A JSON integer in the hash scope, such as `sequence_number`, MUST lie within the range -(2^53 - 1) to 2^53 - 1, which every RFC 8785 implementation represents exactly; a larger integer is carried as a base-10 string.
 
 # Canonical Form and Hashing {#canonical}
 
@@ -242,7 +255,7 @@ The digest algorithm is agile. The published corpus uses SHA-256 {{FIPS180-4}}. 
 
 ## Hash chain {#chain}
 
-Each envelope in a stream carries `integrity.previous_envelope_hash`, the envelope hash of the envelope immediately before it in the stream. The first envelope in a stream carries sixty-four zeros. The chain head is the envelope hash of the last envelope in the stream.
+Each envelope in a stream carries `integrity.previous_envelope_hash`, the envelope hash of the envelope immediately before it in the stream. The first envelope in a stream carries a string of the character "0" as long as a hexadecimal digest of the stream's algorithm: sixty-four zeros for SHA-256. Every envelope in a stream MUST use the same `integrity.hash_algorithm`. Moving a stream to another algorithm is not specified ({{open-issues}}). The chain head is the envelope hash of the last envelope in the stream.
 
 A verifier recomputes every envelope hash, checks that each `previous_envelope_hash` equals the recomputed hash of its predecessor, and checks that sequence numbers within the stream are contiguous. A recomputed hash that differs from the stored `integrity.envelope_hash` is a contradiction (`envelope_hash_mismatch`). A broken link is a contradiction (`chain_break`). A gap in the sequence numbers is indeterminate (`sequence_gap`): something is missing, but the chain alone cannot say why.
 
@@ -270,7 +283,7 @@ Three states that are easily confused MUST remain distinguishable to a reader:
 
 ## Redaction direction {#redaction}
 
-AXES has chosen the direction for redaction after signing: salted per-field hash commitments, the construction of SD-JWT {{RFC9901}}. This section records the direction and the constraints that led to it. The exact construction is an open issue ({{open-issues}}) and nothing here is yet normative.
+AXES has chosen the direction for redaction after signing: salted per-field hash commitments, the approach established by SD-JWT {{RFC9901}}. This section records the direction and the constraints that led to it. The exact construction is an open issue ({{open-issues}}) and nothing here is yet normative.
 
 Any mechanism for AXES must meet the following constraints:
 
@@ -285,13 +298,15 @@ Any mechanism for AXES must meet the following constraints:
 * unlinkability across presentations is not required, because evidence records are meant to link;
 * an envelope with nothing redactable hashes exactly as it does today.
 
-Salted per-field commitments meet all of them. Each value marked redactable at emission is represented inside the hashed envelope by a digest over a salt, the field name and the value; the salt and value travel separately as a disclosure. Withholding the disclosure leaves the digest in place. The envelope hash, the chain and every anchor therefore verify whether or not a disclosure is shown, and any holder of the envelope can redact by dropping a disclosure. Fields not marked redactable are hashed exactly as they are now, so every digest published for the corpus of record stays valid. The same construction is used by SD-JWT, by ISO mdoc and by digital identity wallets, and has been applied to RFC 8785 JSON for agent action records {{I-D.mih-scitt-agent-action-capsule-sel-disc}}. A Merkle-structured envelope was considered and not chosen, because it changes how every envelope hash is computed and brings no property AXES needs that salted commitments lack.
+Salted per-field commitments meet all of them. Each value marked redactable at emission is represented inside the hashed envelope by a digest over a salt, the field name and the value; the salt and value travel separately as a disclosure. Withholding the disclosure leaves the digest in place. The envelope hash, the chain and every anchor therefore verify whether or not a disclosure is shown, and any holder of the envelope can redact by dropping a disclosure. Fields not marked redactable are hashed exactly as they are now, so every digest published for the corpus of record stays valid. The same approach is used by SD-JWT, by ISO mdoc and by digital identity wallets, and has been applied to RFC 8785 JSON for agent action records {{I-D.mih-scitt-agent-action-capsule-sel-disc}}. AXES adopts the approach, not the SD-JWT wire format: RFC 9901 hashes the base64url encoding of a disclosure array, whereas an AXES disclosure will be defined by its RFC 8785 bytes, so that no second encoding enters the hash scope. Byte compatibility with SD-JWT disclosures is not a goal. A Merkle-structured envelope was considered and not chosen, because it changes how every envelope hash is computed and brings no property AXES needs that salted commitments lack.
 
 Disclosable values are committed with salts that travel in the disclosure, not with a key held by the record holder, so that any authorised reader can check a disclosed value without trusting whoever holds the data. Stable keyed pseudonyms remain the mechanism for linking records about the same person ({{privacy}}).
 
 # Capture Boundary and Honest Absence {#absence}
 
-An emitter declares a capture boundary: the kinds of action, and the scope, for which it commits to producing an envelope every time. Within a declared boundary the emitter fails closed: if it cannot emit, the action does not proceed past the commit boundary, or the failure itself is recorded. Within the boundary, therefore, the absence of an envelope is evidence that no such action crossed the commit boundary. Outside the boundary, absence means only that nothing was captured.
+An emitter declares a capture boundary: the kinds of action, and the scope, for which it commits to producing an envelope every time. Within a declared boundary the emitter fails closed: if it cannot emit, the action does not proceed past the commit boundary, or the failure itself is recorded.
+
+The declaration is a claim by the emitter. It does not show that the emitter enforced it: an emitter can bypass its own hook or act through a path the hook does not see. The absence of an envelope within the boundary therefore supports the finding that no such action crossed the commit boundary only to the extent that enforcement of the boundary, over the period in question, is established by evidence from outside the emitter's records, for example counterparty acknowledgements or an independent gateway. A relying party MUST NOT conclude from absence alone that no action occurred; without that evidence, absence is `indeterminate`. Outside the boundary, absence means only that nothing was captured.
 
 When a value that a reader might expect is not present, the envelope SHOULD say why, by listing it in `field_absences` with an `absence_reason_code`. This list is defined in the AXES vocabularies and is not yet exercised in the published corpus. The reason codes are:
 
@@ -382,6 +397,8 @@ A third profile, `axes:anchor_registry_bytes32@1`, covers a permissionless on-ch
 
 `evidence_quality.corroboration_state` has an ordered set of values ending in `externally_anchored`. That value MUST NOT be asserted unless at least one anchor over the subject verifies under the rules above. A record that asserts `externally_anchored` over an anchor that is simulated or stubbed is contradicted (`anchor_simulated_claims_external`). An anchor that verifies but whose operator is not shown to be independent of the executor and deployer is indeterminate (`anchor_independence_unproven`). An anchor run by the emitter's own organisation does not show independence.
 
+Three questions are kept apart. Whether the proof binds the digest is answered by the profile's verification procedure. Whether the operator is independent of the executor and deployer is a separate result. Whether the relying party accepts the mechanism and its trust chain is the relying party's decision, recorded in its requirement profile, and is never asserted by the record.
+
 # Verification Results {#results}
 
 Every check a verifier or evaluator performs yields exactly one result, using the four-state vocabulary of {{I-D.krausz-verification-state}} under AXES key names:
@@ -422,7 +439,9 @@ Evaluation applies one profile to one subject and yields an evaluation record. E
 2. otherwise `indeterminate`, if any requirement is indeterminate or not evaluated;
 3. otherwise `verified`.
 
-The result is described as unconditional only when every requirement is verified with no condition recorded.
+The overall state summarises; it does not replace. The evaluation record MUST keep the result of every requirement, so that a reader can tell a requirement that was checked and found wanting (`indeterminate`) from one that was not checked (`not_evaluated`). The result is described as unconditional only when every requirement is verified with no condition recorded.
+
+Obligations are applied as follows. A field required by the profile and absent gives the result its declared absence reason implies, or `indeterminate` (`field_absent_undeclared`) when no reason is declared. An `optional` field, present or absent, never lowers the overall state. A `prohibited` field that is absent is verified, and one that is present is `contradicted` (`prohibited_field_present`). A `conditional` requirement applies only to the envelopes for which its condition holds; if it holds for none, the requirement is verified, with a note saying so.
 
 Evaluation MUST be deterministic. It uses no model, no network access and no clock reading. External facts enter only as pinned evidence that records when the external authority answered. Two evaluators given the same subject, profile and pinned evidence MUST produce the same result digest (`result_core_hash`).
 
@@ -460,6 +479,7 @@ Independent reproduction:
 : * robertolocatelli81-dev: from the specification text only, with an independent canonicaliser and no AXES code.
 : * MarkovianProtocol: an independent canonicaliser in two languages; all 76 envelope hashes in each bundle match.
 : * babyblueviper1: from the specification text only, with an independent canonicaliser, the standard library and no AXES code. It covered every envelope hash, chain link and file, both chain heads and both bundle digests, but not the release anchors. This check also found that the hash-scope text published with the tag disagreed with the corpus about `recorded_at`. The text was corrected after the tag; the corpus was the reference and did not change.
+: These are independent reproductions of the canonical form, hash scope and chain over published data. They show that the byte rules of {{canonical}} are implementable from the text. They are not independent implementations of the whole of AXES: one of them also checked the release statement's RFC 3161 token, and profile evaluation has so far been implemented only by the authors.
 
 Cross-format checks:
 : The repository's RFC 8785 property vectors agree with an independent RFC 8785 implementation. Its x402 correlation recipe partitions a third-party payment-fingerprint vector set identically to that set's own recipe.
@@ -528,7 +548,7 @@ Offline verification:
 
 The following are known gaps. Reviews and counter-proposals are welcome.
 
-1. Redaction-tolerant hashing. The intended direction is salted per-field hash commitments, the construction of SD-JWT {{RFC9901}} ({{redaction}}). Each value marked redactable at emission is represented inside the hashed envelope by a digest over a salt, the field name and the value; the salt and value travel separately as a disclosure. The envelope hash, the chain and every anchor then verify whether or not a disclosure is shown, an envelope with no redactable field hashes exactly as it does today, and any holder can redact without the emitter's key. Open: the byte form of the disclosure under RFC 8785, salt length and encoding, nested objects and array elements, decoy digests, and which fields each module marks redactable. This gates the envelope schema.
+1. Redaction-tolerant hashing. The intended direction is salted per-field hash commitments, the approach of SD-JWT {{RFC9901}} with an RFC 8785 disclosure encoding ({{redaction}}). Each value marked redactable at emission is represented inside the hashed envelope by a digest over a salt, the field name and the value; the salt and value travel separately as a disclosure. The envelope hash, the chain and every anchor then verify whether or not a disclosure is shown, an envelope with no redactable field hashes exactly as it does today, and any holder can redact without the emitter's key. Open: the byte form of the disclosure under RFC 8785, salt length and encoding, nested objects and array elements, decoy digests, and which fields each module marks redactable. Before the construction is normative it needs two-sided vectors for nested objects, arrays, duplicate disclosures, missing and altered salts, a disclosure substituted from another envelope, and low-entropy values. This gates the envelope schema.
 2. The full envelope JSON Schema and field catalogue (two of sixteen planned modules are published for challenge). Key names in the published corpus and in the catalogue have not yet been reconciled in every case.
 3. The extension model: `must_understand`, `unknown_field_policy`, and the hashing of unknown content.
 4. The envelope signature profile over the canonical bytes (JWS or COSE). The corpus signatures are stubs.
@@ -541,11 +561,19 @@ The following are known gaps. Reviews and counter-proposals are welcome.
 11. An evidence bundle for disputes: a registered media type and a manifest of included artefacts with digests. It would also carry the set of verification results, including what was not checked, and an explicit statement of what the bundle does not contain.
 12. Binding accountability to a legal person, rather than only to a key: the identifier scheme, the basis of the binding and how it was verified.
 13. Binding the terms of an offer (price, asset, payee) into the record of the action that settles against it, and recording where what settled differs from what was offered.
+14. Digest algorithm migration: how a long-lived stream, its anchors and its evaluation records move to a new digest algorithm while earlier digests stay verifiable.
 
 # Security Considerations
 
+Three properties are distinct, and none implies another:
+: * Integrity: the bytes a reader holds agree with the committed digest. This document specifies it.
+: * Authenticity: a named identity or key produced or endorsed those bytes. It needs the envelope signature profile, which is open ({{open-issues}}); the corpus signatures are stubs. Anchoring the digest of a fabricated record does not authenticate its claims.
+: * Completeness: the relevant population of actions is represented. It is bounded by {{absence}} and is never shown by integrity or anchoring alone.
+: No statement made under this document implies all three.
+
 The emitter may be the adversary:
 : An envelope records what was claimed, by whom, under which authority and with what corroboration. It does not prove that the agent or the emitter behaved honestly. Self-declared values are not authenticated by being in the hash scope. Fields that record independence or custody MUST NOT be read as established by the record itself.
+: In particular, the `authority` fields are claims that an authority existed and was relied on. Verifying that authority needs a grant, credential or policy version that can be checked outside the record, with its scope and validity at the commit boundary. Binding authority to a legal person is open issue 12.
 
 Scope narrower than consumption:
 : If a reader consumes a field that the digest does not cover, that field can be altered while the record verifies. {{scope}} makes inclusion the default, requires a reason for every exclusion, and puts the scope declaration inside its own scope. Implementers MUST NOT read fields from outside the declared hash scope as authenticated.
@@ -635,6 +663,16 @@ which equals the stored `integrity.envelope_hash`. The stored `integrity.previou
 is the recomputed envelope hash of envelope 8, and envelope 10 carries the digest above as its own `integrity.previous_envelope_hash`. Sequence numbers 8, 9 and 10 are contiguous. Continuing the same computation to envelope 76 gives the financial chain head stated in {{impl-status}}.
 
 The `integrity.envelope_signature` value is a stub (`envelope_signature_basis_status: stubbed`) and lies outside the hash scope, so it does not affect the digest. Once redaction is specified ({{redaction}}), this envelope, which has no redactable field, keeps exactly this digest.
+
+## A changed value
+
+Suppose a holder changes the authority this envelope relied on, replacing `"authority_context_ref":"AD-7844"` with `"authority_context_ref":"AD-7845"` (line 8 of the canonical bytes above). The byte count stays 2130, and the SHA-256 becomes
+
+~~~
+56baaf278e977fc76e3b52242bc4fe0c8d24c18bf467a5d472af3b1c93d36d17
+~~~
+
+which differs from the stored `integrity.envelope_hash`. A verifier reports `contradicted`, reason `divergence`, condition `envelope_hash_mismatch`, subject `artifact` ({{chain}}). If the holder also overwrites the stored hash with the new digest, envelope 10's `integrity.previous_envelope_hash` no longer matches it and the verifier reports `chain_break`. Hiding the change would mean rewriting every later envelope, which changes the chain head, and the chain head and release statement digests are anchored outside the emitter ({{anchoring}}).
 
 # Data Definitions in CDDL {#cddl}
 
