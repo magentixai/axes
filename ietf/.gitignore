@@ -5,3 +5,7 @@
 .refcache/
 tracker.log
 !appendix/*.txt
+# The -00 submission files are committed: they are the exact bytes uploaded
+!draft-sansone-axes-evidence-envelope-00.xml
+!draft-sansone-axes-evidence-envelope-00.txt
+!draft-sansone-axes-evidence-envelope-00.html

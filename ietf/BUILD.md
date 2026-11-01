@@ -32,7 +32,7 @@ npx --yes @ietf-tools/idnits@3.3.0 draft-sansone-axes-evidence-envelope-00.txt
 
 kramdown-rfc writes the older v2 vocabulary even when asked for v3, so the upload copy is converted with xml2rfc's own `--v2v3`. Rendering the v2 output and the converted v3 file to text must give identical bytes; CI checks this.
 
-The build fills the date from the day it runs and fetches I-D references from the datatracker, so two builds on different days differ in those places. Record the SHA-256 of the three upload files, with the source commit, in the PR or release note when the draft is submitted.
+The build fills the date from the day it runs and fetches I-D references from the datatracker, so two builds on different days differ in those places. The submitted -00 files are committed in this folder and kept byte for byte by `.gitattributes`; [README.md](README.md) records their SHA-256 and source commit. Rebuild into those names only to replace the submission, and update the hashes in README.md when you do.
 
 ## Expected idnits result
 

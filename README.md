@@ -19,6 +19,14 @@ gt-v2.1 retires the `write_once_store (SIMULATED)` form: simulation is stated in
 
 gt-v2.0 (tag `corpus/2026-08-08-gt-v2`, commit `776cc0b`) is superseded, not wrong: it was independently verified, its digests still verify at its tag, and citations to it still resolve. Releases, digests and verifiers: [`RELEASES.md`](RELEASES.md). Reproduction commands: [`VERIFY.md`](VERIFY.md). The reference verifier (`tools/axes_verify.py`), the coverage rule (TLC-008, `vectors/predicates.json`), the anchoring tools and the liftable [`portable/jcs-properties/`](portable/jcs-properties/) pack are all on this branch.
 
+## IETF Internet-Draft
+
+AXES is being submitted to the IETF as an Informational Internet-Draft for IETF 127: **draft-sansone-axes-evidence-envelope-00**, *AXES: A Recomputable Evidence Envelope for Autonomous Execution*.
+
+**[Read the draft (HTML)](https://htmlpreview.github.io/?https://github.com/magentixai/axes/blob/main/ietf/draft-sansone-axes-evidence-envelope-00.html)** · [Plain text](ietf/draft-sansone-axes-evidence-envelope-00.txt) · [XML upload file](ietf/draft-sansone-axes-evidence-envelope-00.xml) · [About the draft and its files](ietf/README.md)
+
+The draft covers the parts of AXES that are settled: the canonical byte form and hash scope of the Standards Envelope, the hash chain, anchoring whose strength is earned from a proof, the four-state result vocabulary (`verified`, `contradicted`, `indeterminate`, `not_evaluated`), and requirement profiles that a relying party applies to evidence to get a deterministic evaluation record. It names what is still open, including the full envelope schema and redaction-tolerant hashing. The committed files are the exact bytes submitted, built on 1 November 2026; [ietf/README.md](ietf/README.md) lists their SHA-256 hashes and explains how they were built and checked.
+
 ---
 
 ## The problem
@@ -150,6 +158,8 @@ Trimmed excerpt from the policy-check sample (full file linked above):
 | [`VERIFY.md`](VERIFY.md) | Clone, checkout, regenerate and compare against published digests |
 | [`tools/`](tools/) | RFC 8785 canonicaliser (`axes_canonical.py`), vector generators, offline reference verifier (`axes_verify.py`), evaluator, anchoring tools |
 | [`vectors/`](vectors/) | Byte-level canonicalisation/hashing conformance vectors (Golden Trace gt-v2.1) |
+| [`ietf/`](ietf/) | The IETF Internet-Draft: Markdown source, the submitted XML, text and HTML, appendix fixtures and build notes ([ietf/README.md](ietf/README.md)) |
+| [`sdk/python/`](sdk/python/) | `axes-sdk`, the Python SDK packaging the reference verifier and evaluator |
 | [`archive/`](archive/) | Design history, preserved with honest commentary - the standard shows its working |
 
 ## Conformance (SE-C0 → SE-C5)

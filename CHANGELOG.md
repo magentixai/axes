@@ -4,6 +4,10 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-11-01 - draft-sansone-axes-evidence-envelope-00 built for submission
+- The -00 was rebuilt from `main` at `156b7a8` (after PR #22), dated 1 November 2026. The XML upload file and its text and HTML renderings are now committed in `ietf/` as the exact bytes submitted, kept byte for byte by `.gitattributes`. The v2 and v3 renderings are identical and idnits 3.3.0 gives the expected one warning and three comments.
+- New `ietf/README.md` explains the draft, each file, how it was built and the SHA-256 of each submitted file, with a link that opens the HTML rendering in a browser. The root README has a new IETF Internet-Draft section, and the repository map lists `ietf/` and `sdk/python/`.
+
 ### 2026-10-31 - second independent review of PR #21: fixes, SDK 0.1.1
 A second automated review tested `9fb66a6` and the SDK wheel installed outside the repository on Windows and Linux. It confirmed the published suites and the draft build, and found the following, each now fixed with a regression test. No published digest, vector or evaluation record changes.
 - **S1** strictest-wins (D10) now applies between two extended profiles as well as between a profile and what it extends, so the result no longer depends on the order of `extended_profile_refs`; required against prohibited between siblings is `profile_conflict`, and two siblings defining one requirement differently at the same obligation is a conflict, never a silent choice (`tools/axes_evaluate.py`).
