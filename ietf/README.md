@@ -32,13 +32,13 @@ It also names what is not yet settled, including the full envelope schema and th
 
 ## The submitted build
 
-The three -00 files were built on 1 November 2026 from the source at commit `156b7a8` on `main` (the merge of PR #22), with the tools listed in [BUILD.md](BUILD.md). The draft is dated 1 November 2026 and expires on 5 May 2027. Its rendered text is 2,800 lines, the v2 and v3 renderings are identical, and idnits 3.3.0 reports the expected one warning and three comments.
+The three -00 files were built on 1 November 2026 from the source on `main` after the merge of PR #22, with the author's country (Mauritius) added so the Datatracker needs no metadata edits, with the tools listed in [BUILD.md](BUILD.md). The draft is dated 1 November 2026 and expires on 5 May 2027. Its rendered text is 2,800 lines, the v2 and v3 renderings are identical, and idnits 3.3.0 reports the expected one warning and three comments.
 
 | File | SHA-256 |
 |---|---|
-| `draft-sansone-axes-evidence-envelope-00.xml` | `5397b6af2a3e233f25cde1dc3fcdad5b55e69e96b3559db51b0a5f3e519bd4d4` |
-| `draft-sansone-axes-evidence-envelope-00.txt` | `e1f638b2ea4d8bb2097e92a5849edc0bb3953e3d88043c2ea1aa2ffba7d441ad` |
-| `draft-sansone-axes-evidence-envelope-00.html` | `0e525bf89b8cec1cb2c23ab7733c68c8729aeab4a3d2a74aca3cfda669c61103` |
+| `draft-sansone-axes-evidence-envelope-00.xml` | `78ab0600f257da721c5470652e796a694ded13f62526ee13be150af25238f45f` |
+| `draft-sansone-axes-evidence-envelope-00.txt` | `7b83ef460e646cad2e31f66e99ce90f2ac73550e40f9f0aa69b104eb66b5bc39` |
+| `draft-sansone-axes-evidence-envelope-00.html` | `db026f5e740eb4eaeef3726ea3767567f392ec7c223bb7358820f4161bb8bbd2` |
 
 Git keeps these files byte for byte on every platform (`.gitattributes`), so the hashes hold on any checkout. A rebuild on another day gives a different date and may pick up newer reference metadata from the Datatracker, so it will not match these hashes; that is expected, and the committed files are the ones submitted.
 

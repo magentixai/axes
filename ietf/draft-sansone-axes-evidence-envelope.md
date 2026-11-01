@@ -20,6 +20,7 @@ author:
     fullname: "Martin Sansone"
     organization: "Magentix AI"
     email: "developer@magentix.ai"
+    country: "Mauritius"
 
 normative:
   RFC8785:

@@ -6,6 +6,7 @@ All notable changes to the AXES specification and repository.
 
 ### 2026-11-01 - draft-sansone-axes-evidence-envelope-00 built for submission
 - The -00 was rebuilt from `main` at `156b7a8` (after PR #22), dated 1 November 2026. The XML upload file and its text and HTML renderings are now committed in `ietf/` as the exact bytes submitted, kept byte for byte by `.gitattributes`. The v2 and v3 renderings are identical and idnits 3.3.0 gives the expected one warning and three comments.
+- Author address now states the country (Mauritius), so the Datatracker takes the metadata from the XML without manual edits; the -00 files and their hashes in `ietf/README.md` are rebuilt accordingly.
 - New `ietf/README.md` explains the draft, each file, how it was built and the SHA-256 of each submitted file, with a link that opens the HTML rendering in a browser. The root README has a new IETF Internet-Draft section, and the repository map lists `ietf/` and `sdk/python/`.
 
 ### 2026-10-31 - second independent review of PR #21: fixes, SDK 0.1.1
