@@ -20,3 +20,4 @@ sdk/python/src/axes_sdk/data/** -text
 sdk/python/src/axes_sdk/_ref/** -text
 sdk/python/LICENSE -text
 sdk/python/NOTICE -text
+ietf/draft-sansone-axes-evidence-envelope-00.* -text
