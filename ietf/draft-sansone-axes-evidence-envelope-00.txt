@@ -2736,8 +2736,8 @@ Acknowledgements
 
 Author's Address
 
-   Martin Sansone
-   Magentix AI
+
+
 
 
 
@@ -2746,10 +2746,10 @@ Sansone                    Expires 5 May 2027                  [Page 49]
 Internet-Draft           AXES Evidence Envelope            November 2026
 
 
+   Martin Sansone
+   Magentix AI
+   Mauritius
    Email: developer@magentix.ai
-
-
-
 
 
 
