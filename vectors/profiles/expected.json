@@ -373,6 +373,44 @@
         "origin_note": "x402#3226: a verify is not a settlement"
       }
     },
+    "extension_ignorable.jsonl": {
+      "requirement_profile_ref": "example:extension_ignorable@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "docs/08 3.2: an extension without must_understand is ignored for evaluation"
+      }
+    },
+    "extension_not_understood.jsonl": {
+      "requirement_profile_ref": "example:extension_not_understood@1",
+      "expected_verification": {
+        "verification_state": "not_evaluated",
+        "verification_subject_type": "verifier",
+        "verification_reason_code": "instrument_failure",
+        "verification_condition_code": "extension_not_understood"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "docs/08 3.2: a must-understand extension the reader does not implement blocks evaluation, never a finding"
+      }
+    },
+    "extension_chain_intact.jsonl": {
+      "requirement_profile_ref": "example:extension_chain_intact@1",
+      "expected_verification": {
+        "verification_state": "verified",
+        "verification_subject_type": "artifact"
+      },
+      "provenance": {
+        "author_name": "AXES maintainers (Magentix AI)",
+        "authored_on": "2026-10-04",
+        "origin_note": "docs/08 3.1: integrity checks run over extensions regardless"
+      }
+    },
     "composition_floor_relaxed.case": {
       "requirement_profile_ref": "example:composition_child@1",
       "subject_file_ref": "composition.jsonl",

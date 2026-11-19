@@ -387,6 +387,18 @@ def check_sequence(req, envs):
     return result(ref, "verified", note="sequence %d..%d contiguous" % (seqs[0], seqs[-1]))
 
 
+UNDERSTOOD_EXTENSIONS = frozenset()  # the reference evaluator implements no extension (docs/08)
+
+
+def unknown_must_understand(env, understood=UNDERSTOOD_EXTENSIONS):
+    """Namespaces in env["extensions"] marked must-understand that this evaluator does not implement (docs/08 3.2)."""
+    ext = env.get("extensions")
+    if not isinstance(ext, dict):
+        return []
+    return sorted(ns for ns, body in ext.items()
+                  if isinstance(body, dict) and body.get("must_understand_indicator") is True and ns not in understood)
+
+
 def evaluate_requirement(req, envs, tr, release):
     ct = req["check_type"]
     if ct == "chain_integrity":
@@ -403,6 +415,13 @@ def evaluate_requirement(req, envs, tr, release):
     per = []
     for env in envs:
         if tree is not None and not holds(tree, env, tr):
+            continue
+        blocked = unknown_must_understand(env)
+        if blocked:
+            # A gap in the reader, not a finding about the record (docs/08 3.2).
+            per.append(result(req["requirement_id"], "not_evaluated", "instrument_failure", "extension_not_understood",
+                              "verifier", "must-understand extension not implemented: " + ", ".join(blocked),
+                              [env.get("envelope_id", "?")]))
             continue
         if ct == "field_presence":
             per.append(check_field(req, env, tr))
