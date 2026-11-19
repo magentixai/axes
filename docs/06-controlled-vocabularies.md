@@ -234,6 +234,7 @@ Closed sets, lower_snake, American (docs/20).
 | `correlation_divergence` | `indeterminate` / `divergence` / `artifact` (the parties computed different cores; never pick a side) |
 | `profile_conflict` | `indeterminate` / `divergence` / `verifier` |
 | `profile_unsupported`, `predicate_unparseable`, `value_ladder_unsupported`, `check_type_unsupported`, `evaluator_fault`, `requirement_profile_hash_unpinned` | `not_evaluated` / `instrument_failure` / `verifier` |
+| `extension_not_understood` | `not_evaluated` / `instrument_failure` / `verifier` (an envelope in scope carries an extension marked `must_understand_indicator: true` that the reader does not implement; docs/08; added 2026-11-20) |
 | `external_evidence_stale` | `not_evaluated` / - / `network` |
 
 ## 3. Naming-convention decisions (route to catalogue)

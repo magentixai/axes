@@ -99,6 +99,9 @@ def anchored(**kw):
 
 
 COMMIT = 'equals(/event_kind, "commit_succeeded")'
+EXT_IGNORABLE = {"com.example.claims": {"extension_ref": "https://example.com/axes-extensions/claims/1",
+                                         "extension_version": "1", "claim_reference_id": "CLM-2026-0419"}}
+EXT_MUST = {"com.example.claims": dict(EXT_IGNORABLE["com.example.claims"], must_understand_indicator=True)}
 CASES = [
     # name, subject envs, profile requirements, (state, reason, condition, subject), origin
     ("presence_required_present", [env()], [req("r", field_path="/authority/delegator_id")], ("verified", None, None, "artifact"), "D6 required field present"),
@@ -129,6 +132,9 @@ CASES = [
     ("settlement_matches", [env(settlement=SETTLE)], [req("r", check_type="settlement_commitment", field_path="/settlement", subject_type="envelope")], ("verified", None, None, "artifact"), "x402#3220 section 13"),
     ("settlement_under_report", [env(settlement=UNDER)], [req("r", check_type="settlement_commitment", field_path="/settlement", subject_type="envelope")], ("contradicted", "divergence", "settlement_commitment_mismatch", "artifact"), "x402#3220 section 13 rule (a): the only under-report detector"),
     ("settlement_not_observed", [env(settlement={"settlement_submitter_id": "x"})], [req("r", check_type="settlement_commitment", field_path="/settlement", subject_type="envelope")], ("indeterminate", "absence", "settlement_not_observed", "artifact"), "x402#3226: a verify is not a settlement"),
+    ("extension_ignorable", [env(extensions=EXT_IGNORABLE)], [req("r", field_path="/authority/delegator_id")], ("verified", None, None, "artifact"), "docs/08 3.2: an extension without must_understand is ignored for evaluation"),
+    ("extension_not_understood", [env(extensions=EXT_MUST)], [req("r", field_path="/authority/delegator_id")], ("not_evaluated", "instrument_failure", "extension_not_understood", "verifier"), "docs/08 3.2: a must-understand extension the reader does not implement blocks evaluation, never a finding"),
+    ("extension_chain_intact", [env(extensions=EXT_MUST), env(event_kind="policy_check_performed", extensions=EXT_MUST)], [req("r", check_type="chain_integrity")], ("verified", None, None, "artifact"), "docs/08 3.1: integrity checks run over extensions regardless"),
 ]
 
 

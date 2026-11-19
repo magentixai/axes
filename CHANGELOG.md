@@ -4,6 +4,11 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-11-20 - minimum extension model (docs/08, D-059)
+- docs/08 is now normative text: `extensions` holds reversed-DNS namespaces with `extension_ref`, `extension_version` and `must_understand_indicator`; extensions are inside the hash, never override the core and never hold stored trust conclusions
+- readers always run integrity checks; a requirement over an envelope with a must-understand extension the reader does not implement is `not_evaluated` / `extension_not_understood` (new condition code in docs/06)
+- the reference evaluator and the SDK copy implement this; it understands no extensions. Three two-sided vectors added (`extension_ignorable`, `extension_not_understood`, `extension_chain_intact`). Published evaluation results are unchanged
+
 ### 2026-11-20 - field catalogue reconciled with the gt-v2.1 corpus (D-052 to D-058)
 Seven places where the catalogue and the published corpus disagreed are settled in the corpus's favour. No envelope, hash, vector or draft text changes.
 - `sequence_number` replaces `event_sequence_number` in the catalogue; `sequence_stream_id` and top-level `idempotency_key` are recommended now and mandatory from the next corpus release (D-052, D-057)
