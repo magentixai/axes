@@ -4,6 +4,10 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-11-20 - envelope schema for the corpus as it stands (not normative)
+- `schema/envelope-corpus-gt-v2.1.schema.json`, generated from both gt-v2.1 corpora by `tools/generate_corpus_schema.py`: top-level members strict (only corpus members and `extensions`), required where every envelope has them, integers within the value domain, `_at` and `_hash` patterns, `se_version` and `execution_phase` per D-054 and D-055. Blocks stay open. CI checks the file is current and all 152 envelopes validate
+- the normative SE v0.1 envelope schema remains blocked on redaction-tolerant hashing and catalogue completion, as `schema/README.md` states
+
 ### 2026-11-20 - minimum extension model (docs/08, D-059)
 - docs/08 is now normative text: `extensions` holds reversed-DNS namespaces with `extension_ref`, `extension_version` and `must_understand_indicator`; extensions are inside the hash, never override the core and never hold stored trust conclusions
 - readers always run integrity checks; a requirement over an envelope with a must-understand extension the reader does not implement is `not_evaluated` / `extension_not_understood` (new condition code in docs/06)
