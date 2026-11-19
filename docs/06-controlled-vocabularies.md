@@ -235,6 +235,9 @@ Closed sets, lower_snake, American (docs/20).
 | `profile_conflict` | `indeterminate` / `divergence` / `verifier` |
 | `profile_unsupported`, `predicate_unparseable`, `value_ladder_unsupported`, `check_type_unsupported`, `evaluator_fault`, `requirement_profile_hash_unpinned` | `not_evaluated` / `instrument_failure` / `verifier` |
 | `extension_not_understood` | `not_evaluated` / `instrument_failure` / `verifier` (an envelope in scope carries an extension marked `must_understand_indicator: true` that the reader does not implement; docs/08; added 2026-11-20) |
+| `envelope_signature_invalid` | `contradicted` / `divergence` / `artifact` (the signature does not verify over the recomputed hash, or is not a signature; docs/23; added 2026-11-20) |
+| `signing_key_unresolved` | `indeterminate` / `absence` / `operator` (the signing key is not in the verifier's key set; docs/23; added 2026-11-20) |
+| `signature_profile_unsupported` | `not_evaluated` / `instrument_failure` / `verifier` (docs/23; added 2026-11-20) |
 | `external_evidence_stale` | `not_evaluated` / - / `network` |
 
 ## 3. Naming-convention decisions (route to catalogue)

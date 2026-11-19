@@ -4,6 +4,12 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-11-20 - envelope signature profile (docs/23, D-060)
+- `axes:envelope_signature_ed25519@1`: Ed25519 over the RFC 8785 bytes of a domain-tagged object holding the recomputed envelope hash; profile, key id and basis status inside the hash; public keys from a signing key set
+- new condition codes `envelope_signature_invalid`, `signing_key_unresolved`, `signature_profile_unsupported` (docs/06 and draft Appendix C)
+- `tools/axes_ed25519.py` (RFC 8032 reference algorithm, standard library, checked against RFC 8032 tests 1 to 3), `tools/axes_signature.py`, and seven two-sided vectors in `vectors/signatures/` (generated, checked in CI). Go's `crypto/ed25519` agrees with every vector
+- the gt-v2.1 corpus keeps its stub signatures; the next corpus release signs for real
+
 ### 2026-11-20 - envelope schema for the corpus as it stands (not normative)
 - `schema/envelope-corpus-gt-v2.1.schema.json`, generated from both gt-v2.1 corpora by `tools/generate_corpus_schema.py`: top-level members strict (only corpus members and `extensions`), required where every envelope has them, integers within the value domain, `_at` and `_hash` patterns, `se_version` and `execution_phase` per D-054 and D-055. Blocks stay open. CI checks the file is current and all 152 envelopes validate
 - the normative SE v0.1 envelope schema remains blocked on redaction-tolerant hashing and catalogue completion, as `schema/README.md` states

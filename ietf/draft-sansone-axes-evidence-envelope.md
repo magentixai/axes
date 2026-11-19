@@ -620,7 +620,7 @@ The following are known gaps. Reviews and counter-proposals are welcome.
 1. Redaction-tolerant hashing. The intended direction is salted per-field hash commitments, the approach of SD-JWT {{RFC9901}} with an RFC 8785 disclosure encoding ({{redaction}}). Each value marked redactable at emission is represented inside the hashed envelope by a digest over a salt, the field name and the value; the salt and value travel separately as a disclosure. The envelope hash, the chain and every anchor then verify whether or not a disclosure is shown, an envelope with no redactable field hashes exactly as it does today, and any holder can redact without the emitter's key. Open: the byte form of the disclosure under RFC 8785, salt length and encoding, nested objects and array elements, decoy digests, and which fields each module marks redactable. Before the construction is normative it needs two-sided vectors for nested objects, arrays, duplicate disclosures, missing and altered salts, a disclosure substituted from another envelope, and low-entropy values. This gates the envelope schema.
 2. The full envelope JSON Schema and field catalogue (two of sixteen planned modules are published for challenge). Key names in the published corpus and in the catalogue have not yet been reconciled in every case.
 3. The extension model. A minimum form is now in the repository (docs/08): reversed-DNS namespaces under `extensions`, inside the hash scope, and a requirement over an envelope carrying a must-understand extension the reader does not implement is `not_evaluated` with condition `extension_not_understood`. Open: a namespace registry, and whether must-understand should be scoped to named requirements.
-4. The envelope signature profile over the canonical bytes (JWS or COSE). The corpus signatures are stubs.
+4. The envelope signature profile. One profile is now specified in the repository (docs/23): Ed25519 over the RFC 8785 bytes of a domain-tagged object holding the recomputed envelope hash, with vectors. Open: COSE or JWS encodings, key rotation, and real signatures in the next corpus release (the gt-v2.1 signatures are stubs).
 5. The amendment model for superseding envelopes.
 6. Whether `recorded_at`, which is written by the recipient, should be authenticated by a countersignature from the recipient rather than sit in the emitter's hash scope. It is in scope today; any change would land only in an announced release.
 7. An anchor profile for transparency logs (COSE Receipts with `RFC9162_SHA256`). A profile for a permissionless on-chain registry exists in the reference tooling.
@@ -827,6 +827,7 @@ Each condition code names a class of condition and always appears with the same 
 | `settlement_commitment_mismatch` | `divergence` | `artifact` |
 | `cap_exceeded` | `divergence` | `artifact` |
 | `correlation_hash_mismatch` | `divergence` | `artifact` |
+| `envelope_signature_invalid` | `divergence` | `artifact` |
 {: title="Condition codes with state `contradicted`"}
 
 | Condition | Reason | Subject |
@@ -850,6 +851,7 @@ Each condition code names a class of condition and always appears with the same 
 | `correlation_divergence` | `divergence` | `artifact` |
 | `nonce_unbindable` | `absence` | `operator` |
 | `binding_salt_absent` | `absence` | `operator` |
+| `signing_key_unresolved` | `absence` | `operator` |
 {: title="Condition codes with state `indeterminate`"}
 
 | Condition | Reason | Subject |
@@ -867,6 +869,7 @@ Each condition code names a class of condition and always appears with the same 
 | `evaluator_fault` | `instrument_failure` | `verifier` |
 | `requirement_profile_hash_unpinned` | `instrument_failure` | `verifier` |
 | `extension_not_understood` | `instrument_failure` | `verifier` |
+| `signature_profile_unsupported` | `instrument_failure` | `verifier` |
 | `external_evidence_stale` | (none) | `network` |
 {: title="Condition codes with state `not_evaluated`"}
 

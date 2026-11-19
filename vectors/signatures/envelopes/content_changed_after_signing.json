@@ -1,0 +1,22 @@
+{
+  "se_version": "0.1-draft",
+  "implementation_profile_ref": "example:test_emitter@1",
+  "event_kind": "commit_failed",
+  "envelope_id": "env:sigtest/0001",
+  "occurred_at": "2026-11-20T10:00:00.000Z",
+  "emitted_at": "2026-11-20T10:00:00.100Z",
+  "recorded_at": "2026-11-20T10:00:00.200Z",
+  "organization_id": "org:example",
+  "tenant_id": "tenant:example",
+  "sequence_number": 1,
+  "integrity": {
+    "hash_algorithm": "SHA-256",
+    "canonicalization_version": "RFC8785-JCS",
+    "previous_envelope_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "signing_key_id": "key:example/rfc8032-test-1",
+    "envelope_signature_profile_ref": "axes:envelope_signature_ed25519@1",
+    "envelope_signature_basis_status": "demonstrated",
+    "envelope_hash": "ddb75855b267862175c582b0ba9ee1cebed3f6db8a97fa7aa896d26352248719",
+    "envelope_signature": "yr-xL42c3lngZpXGAO71kld5P5sn60vEzV-WxqbZ9SOBjtj9cB277ESIrxFKPlmX0Ssfb0qDnlBwg1i26IHECg"
+  }
+}

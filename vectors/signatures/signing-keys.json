@@ -1,0 +1,11 @@
+{
+  "signing_key_set_id": "keyset:example/rfc8032-test",
+  "signing_keys": [
+    {
+      "signing_key_id": "key:example/rfc8032-test-1",
+      "public_key_algorithm": "Ed25519",
+      "public_key_value": "11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo",
+      "key_source_note": "RFC 8032 section 7.1 TEST 1; the secret is public. Test only."
+    }
+  ]
+}
