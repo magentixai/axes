@@ -10,7 +10,7 @@
 
 | # | Canonical key | Type | Req | Maturity | Conf |
 |---|---|---|---|---|---|
-| 1.1 | `se_version` | string (semver-tagged) | M | core | C0 |
+| 1.1 | `se_version` | string (literal, D-054) | M | core | C0 |
 | 1.2 | `envelope_id` | string (UUIDv7 recommended) | M | core | C0 |
 | 1.3 | `event_kind` | string (controlled vocab) | M | core | C0 |
 | 1.4 | `occurred_at` | RFC 3339 timestamp | M | core | C0 |
@@ -25,11 +25,12 @@
 | 1.13 | `span_id` | string | M | core | C1 |
 | 1.14 | `parent_span_id` | string \| null | C | core | C1 |
 | 1.15 | `lineage_id` | string | C | core | C3 |
-| 1.16 | `event_sequence_number` | integer (monotonic) | M | core | C1 |
-| 1.17 | `sequence_stream_id` | string | M | core | C1 |
-| 1.18 | `idempotency_key` | string | M | core | C0 |
+| 1.16 | `sequence_number` | integer (monotonic, D-052, D-053) | M | core | C1 |
+| 1.17 | `sequence_stream_id` | string | R (M from next corpus release, D-052) | core | C1 |
+| 1.18 | `idempotency_key` | string | R (M from next corpus release, D-057) | core | C0 |
 | 1.19 | `correlation_keys[]` | array of typed objects | C | core | C4 |
-| 1.20 | `execution_phase` | string (controlled vocab) | M | core | C1 |
+| 1.20 | `execution_phase` | string (controlled vocab, D-055) | M | core | C1 |
+| 1.20a | `execution_reality_mode` | string (controlled vocab, D-055) | R (M from next corpus release) | core | C1 |
 | 1.21 | `execution_mode` | string (controlled vocab) | C | core | C1 |
 | 1.22 | `supersedes_envelope_id` / `amendment_reason` | string / string | C | core | C1 |
 | 1.23 | `extensions` | namespaced object | O | core | C0 |
@@ -38,9 +39,9 @@
 
 ## 1.1 `se_version`
 
-**Definition.** The exact version of the SE envelope specification this envelope conforms to (e.g. `se-0.1.0`).
+**Definition.** The exact version of the SE envelope specification this envelope conforms to. The published value is `0.1-draft` (D-054).
 **Purpose.** Lets any verifier or consumer select the correct schema, vocabularies and canonicalisation rules - including years later, from an evidence archive.
-**Rules.** MUST identify a published spec version; MUST sit inside the hash scope. Consumers encountering an unknown version follow `unknown_field_policy` (docs/08), never guess.
+**Rules.** MUST identify a published spec version; MUST sit inside the hash scope. Compared as an exact string, never parsed (D-054). Consumers encountering an unknown version follow `unknown_field_policy` (docs/08), never guess.
 **Canonicalisation registry.** Companion field `integrity.canonicalization_version` (`canonicalisation_version` in gt-v2.0; docs/19, D-024) is the closed registry identifier **`RFC8785-JCS`**. What it dereferences to (RFC 8785 revision, UTF-8 output, UTF-16 code-unit member sort, no Unicode normalisation, digest algorithm and encoding declared separately) is stated in [docs/09](../09-canonicalisation-and-hashing.md). The earlier form `RFC8785` is retired. A change in any of those properties is a new identifier.
 **Report / audit usage.** Report manifests state the version(s) of every envelope relied on; mixed-version evidence sets are disclosed.
 **Misinterpretations.** This is the *spec* version, not the emitter's software version (Module 02) and not the schema-file URI.
@@ -76,7 +77,7 @@ The custody axis records who produced the finding, when, and how far confirmed. 
 **Definitions.** `occurred_at`: when the evidenced event happened in the world. `emitted_at`: when the emitter created this envelope. `recorded_at`: when the receiving store durably persisted it (stamped by the recipient, outside emitter control).
 **Purpose.** The three-point time model makes capture latency and pipeline delay *measurable* instead of invisible: `emitted_at − occurred_at` = capture lag; `recorded_at − emitted_at` = pipeline lag. Forensic ordering uses `occurred_at`; evidence-pipeline health uses the other two. Named derivations live in the catalogue, not as stored envelope fields, unless the derivation crosses a boundary the consumer cannot reproduce or the executing system computed the value and **acted on it** (then store it with `assertion_basis: derived` and `evidence_origin: runtime`; divergence from independent recomputation is how a miscalculating agent is detected).
 **Anchoring lag (landed in gt-v2.1, tag `corpus/2026-10-12-gt-v2.1`).** Catalogue replacement: **remove** the stored derived field (`anchoring_latency_ms` on corpus tag `corpus/2026-08-08-gt-v2`; `anchoring_latency` on the retired default-branch lineage) and **add** `anchor_requested_at` (ISO 8601 UTC). Named derivation: **`anchored_at − anchor_requested_at` = anchoring lag**. gt-v2.1 carries `anchor_requested_at` and no stored latency; gt-v2.0 (tag `corpus/2026-08-08-gt-v2`) still carries `anchoring_latency_ms`, which is not a catalogue-conformant measurement. Unit stays out of the key (D-017). `declared_heartbeat_interval_s` became `declared_heartbeat_interval` in the same release, an ISO 8601 duration (`PT60S`). **`size_bytes` is exempt:** bytes is the canonical unit for size with no realistic alternative; applying the rule there would be pedantry.
-**Rules.** RFC 3339 UTC with millisecond precision or better. `occurred_at ≤ emitted_at` (violations are evidence-quality signals, not silent corrections). `recorded_at` lives outside the emitter hash scope (it is the recipient's assertion - its integrity is the store's chain-of-custody problem, Module 14 / [docs/09a](../09a-hash-scope-and-exclusions.md)).
+**Rules.** RFC 3339 UTC with millisecond precision or better. `occurred_at ≤ emitted_at` (violations are evidence-quality signals, not silent corrections). `recorded_at` is inside the emitter hash scope, as in every published corpus and [docs/09a](../09a-hash-scope-and-exclusions.md) (D-056). A recipient that needs its own receipt time adds a recipient countersignature (docs/09a option D, planned); it never rewrites the emitter's record.
 **Misinterpretations.** None of the three is "the trusted time" by itself - trusted time requires `timestamp_source` plus external anchoring (Module 14). Backfilled evidence shows honest old `occurred_at` with new `emitted_at`, never rewritten timestamps.
 **Sources.** REQ-TECH-002; REQ-IA-002; GAP-EXEC-003; BPO-011.
 
@@ -130,11 +131,11 @@ The custody axis records who produced the finding, when, and how far confirmed. 
 **Misinterpretations.** Sharing a lineage_id shares *correlation*, never *access*: dereference across boundaries is governed by the Access & Restriction Model.
 **Sources.** REQ-EXEC-016; REQ-TECH-007; doctrine §3.7.
 
-## 1.16 `event_sequence_number` · 1.17 `sequence_stream_id`
+## 1.16 `sequence_number` · 1.17 `sequence_stream_id`
 
 **Definition.** A strictly monotonic counter within a declared stream (`sequence_stream_id` names the stream - typically one per emitter instance).
 **Purpose.** Gap detection with arithmetic instead of inference: missing sequence numbers are *provable* absences. With heartbeats and `emission_fail_posture` (Module 10) this completes silence semantics - the difference between "nothing happened" and "nothing was recorded".
-**Rules.** Both mandatory. Monotonic within stream; resets only with a new `sequence_stream_id` (restart = new stream, disclosed, never a silent renumber). Duplicate numbers within a stream are integrity signals.
+**Rules.** `sequence_number` mandatory and an integer (D-053); `sequence_stream_id` recommended now and mandatory from the next corpus release (D-052). Until it is present, a stream is one emitter instance within one `trace_id`. Monotonic within stream; resets only with a new `sequence_stream_id` (restart = new stream, disclosed, never a silent renumber). Duplicate numbers within a stream are integrity signals.
 **Report / audit usage.** Population completeness: contiguous sequences + source-system reconciliation are the two proofs behind any "coverage 14/14" claim (TRK-012; the Golden Trace's `population_basis: independently_reconciled`).
 **Sources.** REQ-IA-002; REQ-TECH-007; GAP-EXEC-006; TRK-012.
 
@@ -142,8 +143,8 @@ The custody axis records who produced the finding, when, and how far confirmed. 
 
 **Definition.** Deduplication key for at-least-once delivery: redelivery of the same envelope carries the same key.
 **Purpose.** Lossless pipelines (SE-C5) require duplicate-safe ingestion; duplicate-payment detection also leans on it (BPO-011).
-**Rules.** Mandatory. Stable across retries of the same emission; distinct for distinct envelopes. On boundary-crossing events, key custody/pass-through is evidenced (GAP-TECH-009, Module 08).
-**Misinterpretations.** Deduplicates *delivery*, not *business actions* - a legitimately repeated action is two envelopes with two keys; the *target operation's* idempotency is Module 05 territory.
+**Rules.** Recommended now, mandatory from the next corpus release (D-057). Stable across retries of the same emission; distinct for distinct envelopes. On boundary-crossing events, key custody/pass-through is evidenced (GAP-TECH-009, Module 08).
+**Misinterpretations.** Deduplicates *delivery*, not *business actions* - a legitimately repeated action is two envelopes with two keys; the *target operation's* idempotency is `operation.idempotency_key` (Module 05; the per-check keys in the corpus are the same kind). The two keys have different meanings and neither substitutes for the other (D-057).
 **Sources.** Ingest doctrine; REQ-TECH-019; GAP-TECH-009; BPO-011.
 
 ## 1.19 `correlation_keys[]`
@@ -154,12 +155,12 @@ The custody axis records who produced the finding, when, and how far confirmed. 
 **Privacy.** This is the module's most privacy-sensitive field; it exists precisely so envelopes can correlate *without* embedding personal data.
 **Sources.** GAP-IA-004; TRK-010; GAP-BPO-007; BLD-006.
 
-## 1.20 `execution_phase` · 1.21 `execution_mode`
+## 1.20 `execution_phase` · 1.20a `execution_reality_mode` · 1.21 `execution_mode`
 
-**Definition.** `execution_phase`: the reality status of the execution - `live`, `shadow`, `simulation`, `dry_run`, `test`. `execution_mode`: the operating manner - e.g. `autonomous`, `supervised`, `replay`, `batch`.
+**Definition.** `execution_phase`: where in the action lifecycle this envelope sits - `advisory`, `approval`, `execution`, `commit` (the corpus values; D-055). `execution_reality_mode`: the reality status of the execution - `live`, `shadow`, `simulation`, `dry_run`, `test`. `execution_mode`: the operating manner - e.g. `autonomous`, `supervised`, `replay`, `batch`.
 **Purpose.** The two-field split (External Assurance semantics, TRK-002) prevents the most dangerous conflation in the corpus: evidence from a simulation being read as evidence of live execution - or a live commit being dismissed as a test. Every report banner states phase; regulator packs disclose phase mix.
-**Rules.** `execution_phase` mandatory (no default - silence is not "live"). `execution_mode` conditional-recommended. A `live` phase envelope crossing a commit boundary triggers the full Module 06 requirements.
-**Misinterpretations.** `environment_id: production` does not imply `execution_phase: live` - shadow mode in production is exactly the case that forced the split (GAP-EXEC-001).
+**Rules.** `execution_phase` mandatory. `execution_reality_mode` recommended now and mandatory from the next corpus release; it has no default - silence is not "live". `execution_mode` conditional-recommended. A `live` envelope crossing a commit boundary triggers the full Module 06 requirements.
+**Misinterpretations.** `environment_id: production` does not imply `execution_reality_mode: live` - shadow mode in production is exactly the case that forced the split (GAP-EXEC-001).
 **Sources.** GAP-EXEC-001; GAP-TECH-002; TRK-002; harmonisation §2.9.
 
 ## 1.22 `supersedes_envelope_id` · `amendment_reason`

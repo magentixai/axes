@@ -59,7 +59,7 @@ Source: `SE_v0_1_Internal_Assurance_Data_Element_Compression.md` requirements re
 | ID | Requirement | Priority | Layer | Schema implication |
 |---|---|---|---|---|
 | REQ-IA-001 | Distinguish the agent being evidenced from the emitter collecting the evidence | High | open_se | emitter_id/type, emitter_independence_level, capture_point, evidence_collection_method |
-| REQ-IA-002 | Support monotonic event sequencing and gap detection | High | open_se + derived | event_sequence_number, emitter_stream_id, sequence_gap indicator/count/locations, late_arrival_indicator, duplicate_event_count |
+| REQ-IA-002 | Support monotonic event sequencing and gap detection | High | open_se + derived | sequence_number, emitter_stream_id, sequence_gap indicator/count/locations, late_arrival_indicator, duplicate_event_count |
 | REQ-IA-003 | State evidence completeness, gaps, and reliance boundary before assurance conclusions | High | derived | overall_evidence_completeness_rating, known_limitations, reliance_boundary |
 | REQ-IA-004 | Report claims must trace back to evidence references | High | derived + open_se | claim_id, claim_type, claim_evidence_refs, claim_confidence, claim_limitations (SEReportClaim) |
 | REQ-IA-005 | Control evidence distinguishing design, operation, failure, bypass, not-observed, not-applicable | High | open_se (conditional) | Control Evidence structure; control_result vocab incl. operated_with_compensating_control; compensating_control_ref |
@@ -116,7 +116,7 @@ Source: `SE_v0_1_Technical_Group_Data_Element_Compression.md`
 | REQ-TECH-004 | Correlate committed actions to system-of-record or external confirmation | Core | open_se | system_of_record_correlation_id, commit_confirmation_ref, external_confirmation_ref, before/after_state_ref+hash |
 | REQ-TECH-005 | Workload identity, service account, credential scope, token lifetime context | Conditional core | open_se | workload_identity_id/issuer/audience, credential_id/type/scope_ref/expires_at/rotation_status |
 | REQ-TECH-006 | Declared vs observed topology references for drift detection | Recommended | open_se + derived | declared/observed_topology_ref; derived drift assessment |
-| REQ-TECH-007 | Event ordering: trace, span, causation, correlation, sequence | Core | open_se | trace_id, span_id, parent_span_id, lineage_id, causation_id, correlation_id, event_sequence_number, monotonic_sequence_stream_id |
+| REQ-TECH-007 | Event ordering: trace, span, causation, correlation, sequence | Core | open_se | trace_id, span_id, parent_span_id, lineage_id, causation_id, correlation_id, sequence_number, monotonic_sequence_stream_id |
 | REQ-TECH-008 | Retries, timeouts, fallback, DLQ, replay, backfill status | Core/conditional | open_se | retry_count, timeout_indicator, fallback_event_id, dlq_indicator/ref, backpressure_indicator |
 | REQ-TECH-009 | Security signals as observations with refs and confidence, never attack verdicts | Core | open_se + derived | prompt_injection/credential_risk/privilege_expansion/sandbox_escape/data_exfiltration signals + confidence |
 | REQ-TECH-010 | Untrusted content exposure, taint source, taint propagation | Recommended | open_se | untrusted_content_exposure, taint_indicator/source_ref/propagation_ref, input/output_trust_classification |

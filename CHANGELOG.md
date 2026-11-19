@@ -4,6 +4,16 @@ All notable changes to the AXES specification and repository.
 
 ## [Unreleased - SE v0.1 Public Working Draft]
 
+### 2026-11-20 - field catalogue reconciled with the gt-v2.1 corpus (D-052 to D-058)
+Seven places where the catalogue and the published corpus disagreed are settled in the corpus's favour. No envelope, hash, vector or draft text changes.
+- `sequence_number` replaces `event_sequence_number` in the catalogue; `sequence_stream_id` and top-level `idempotency_key` are recommended now and mandatory from the next corpus release (D-052, D-057)
+- naming rule N3: `_number` is an integer for ordinal counters, a string for business numbers (D-053)
+- `se_version` is the literal `0.1-draft`, compared as a string (D-054)
+- `execution_phase` is the lifecycle stage (`advisory`, `approval`, `execution`, `commit`); the live / shadow / simulation meaning moves to a new key, `execution_reality_mode` (D-055)
+- the catalogue now says `recorded_at` is inside the hash, as docs/09a and every corpus already do (D-056)
+- `ARBITR` is removed from the `evidence_origin` reconciliation list (D-058)
+- `docs/19-key-change-index.md` lists each change and what an implementer does
+
 ### 2026-11-01 - draft-sansone-axes-evidence-envelope-00 built for submission
 - The -00 was rebuilt from `main` at `156b7a8` (after PR #22), dated 1 November 2026. The XML upload file and its text and HTML renderings are now committed in `ietf/` as the exact bytes submitted, kept byte for byte by `.gitattributes`. The v2 and v3 renderings are identical and idnits 3.3.0 gives the expected one warning and three comments.
 - Author address now states the country (Mauritius), so the Datatracker takes the metadata from the XML without manual edits; the -00 files and their hashes in `ietf/README.md` are rebuilt accordingly.
