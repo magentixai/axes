@@ -134,6 +134,10 @@ jobs:
         run: python tools/anchoring/check_schema_and_aliases.py
       - name: Corpus schema current; both corpora validate (A5)
         run: python tools/generate_corpus_schema.py --check
+      - name: Ed25519 matches RFC 8032; signature vectors current and two-sided (A3)
+        run: |
+          python tools/axes_ed25519.py
+          python tools/generate_signature_vectors.py --check
       - name: Naming rules (docs/20)
         run: python tools/check_key_naming.py schema examples/anchoring examples/x402-b2b-vat anchors profiles tools/x402/vectors --baseline tools/naming_baseline.json
       - name: x402 correlation recipe self-test (WO20)

@@ -1,0 +1,53 @@
+{
+  "signature_profile_ref": "axes:envelope_signature_ed25519@1",
+  "signing_key_set_ref": "signing-keys.json",
+  "vectors": {
+    "signed_valid.json": {
+      "verification_state": "verified",
+      "verification_subject_type": "artifact",
+      "origin_note": "signature verifies"
+    },
+    "content_changed_after_signing.json": {
+      "verification_state": "contradicted",
+      "verification_subject_type": "artifact",
+      "origin_note": "a forger can recompute the hash but not the signature",
+      "verification_reason_code": "divergence",
+      "verification_condition_code": "envelope_signature_invalid"
+    },
+    "signature_bytes_changed.json": {
+      "verification_state": "contradicted",
+      "verification_subject_type": "artifact",
+      "origin_note": "one bit of the signature changed",
+      "verification_reason_code": "divergence",
+      "verification_condition_code": "envelope_signature_invalid"
+    },
+    "signature_not_base64url.json": {
+      "verification_state": "contradicted",
+      "verification_subject_type": "artifact",
+      "origin_note": "demonstrated basis with a value that is not a signature",
+      "verification_reason_code": "divergence",
+      "verification_condition_code": "envelope_signature_invalid"
+    },
+    "signing_key_unresolved.json": {
+      "verification_state": "indeterminate",
+      "verification_subject_type": "operator",
+      "origin_note": "key not in the signing key set",
+      "verification_reason_code": "absence",
+      "verification_condition_code": "signing_key_unresolved"
+    },
+    "profile_unsupported.json": {
+      "verification_state": "not_evaluated",
+      "verification_subject_type": "verifier",
+      "origin_note": "a profile this verifier does not implement",
+      "verification_reason_code": "instrument_failure",
+      "verification_condition_code": "signature_profile_unsupported"
+    },
+    "stubbed_as_in_gt_v2_1.json": {
+      "verification_state": "indeterminate",
+      "verification_subject_type": "operator",
+      "origin_note": "the gt-v2.1 corpus marks its stub signatures stubbed",
+      "verification_reason_code": "absence",
+      "verification_condition_code": "basis_not_demonstrated"
+    }
+  }
+}
