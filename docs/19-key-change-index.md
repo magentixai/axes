@@ -4,6 +4,21 @@ Every key, value or structure that changes between corpus releases is listed her
 
 Change types: `renamed` · `restructured` · `removed` · `added` · `value_tightened`.
 
+## Catalogue reconciliation with gt-v2.1 (2026-11-20, D-052 to D-058, no corpus change)
+
+The catalogue moved to match the corpus. No published envelope, hash or vector changes.
+
+| Earlier (catalogue) | Now | Change type | Why | Decision | What an implementer does |
+|---|---|---|---|---|---|
+| `event_sequence_number` | `sequence_number` | `renamed` | The corpus name, verified by four parties | D-052 | Read `sequence_number`; nothing changes in corpus data |
+| `sequence_stream_id` mandatory | recommended; mandatory from the next corpus release | `value_tightened` (deferred) | Not in any published corpus | D-052 | Emit it now if you can; treat absence as one stream per emitter instance per trace |
+| `_number` always a string (N3) | integer for ordinal counters, string for business numbers | `value_tightened` | Corpus carries `sequence_number` as an integer | D-053 | Keep `sequence_number` an integer |
+| `se_version` example `se-0.1.0` | literal `0.1-draft`, compared as a string | `value_tightened` | Corpus value | D-054 | Compare exactly; never parse |
+| `execution_phase` = `live` / `shadow` / ... | `execution_phase` = lifecycle stage; `execution_reality_mode` = `live` / `shadow` / ... | `added` | One key carried two concepts | D-055 | Read lifecycle from `execution_phase`; emit `execution_reality_mode` |
+| `recorded_at` outside the hash (catalogue text) | inside the hash | `value_tightened` | Matches docs/09a and every corpus | D-056 | Include `recorded_at` when hashing, as the reference verifier already does |
+| `idempotency_key` (top level only) | top level = delivery; `operation.idempotency_key` = target operation | `added` | Two meanings were conflated | D-057 | Use each for its own purpose |
+| `evidence_origin` list included `ARBITR` | removed | `removed` | Vendor neutrality | D-058 | Identify ingesting products by party identifier |
+
 ## gt-v2.0 to gt-v2.1 (released in gt-v2.1, tag `corpus/2026-10-12-gt-v2.1`, D-018)
 
 ### Anchoring block (Module 14, WO18 A2)

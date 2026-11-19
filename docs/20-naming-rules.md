@@ -35,7 +35,7 @@ A scalar key is `<qualifier>_..._<property>_<class word>`. The **class word** is
 | `_from`, `_until` | Instants bounding validity; only as `effective_from`, `effective_until` | |
 | `_duration`, `_interval`, `_lag`, `_latency`, `_timeout` | ISO 8601 duration (N4) | `declared_heartbeat_interval: "PT60S"` |
 | `_count` | Non-negative integer | `erp_expected_count` |
-| `_number` | Ordinal or business number, as a string | `sequence_number`, `serial_number` |
+| `_number` | Ordinal counter as an integer (`sequence_number`); business number as a string, so leading zeros survive (`serial_number`) (D-053) | `sequence_number`, `serial_number` |
 | `_index` | Integer position | `payment_index` |
 | `_ratio` | Decimal string in [0, 1] | `evidence_coverage_ratio` |
 | `_value` | Measured value; its unit is a sibling `_unit` | `measured_value` |
