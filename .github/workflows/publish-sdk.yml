@@ -1,0 +1,77 @@
+# Build, check and publish the axes-sdk Python package (sdk/python).
+#
+# Pull requests and pushes to main: build the sdist and wheel, check them with
+# twine, and install the wheel outside the repository to prove `pip install`
+# works with nothing else from AXES present.
+#
+# A tag `sdk-v<version>` (for example sdk-v0.1.1): the same checks, then
+# publish to PyPI with Trusted Publishing (OIDC). No token is stored in the
+# repository. Publishing works once the PyPI project `axes-sdk` lists this
+# repository, this workflow file and the `pypi` environment as a trusted
+# publisher; until then the publish job fails and nothing is uploaded.
+name: SDK package
+
+on:
+  pull_request:
+    paths: ["sdk/python/**", ".github/workflows/publish-sdk.yml"]
+  push:
+    branches: [main]
+    paths: ["sdk/python/**", ".github/workflows/publish-sdk.yml"]
+    tags: ["sdk-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and check the distribution
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Build sdist and wheel
+        run: |
+          python -m pip install --upgrade build twine
+          python -m build sdk/python --outdir dist
+
+      - name: Metadata check
+        run: python -m twine check --strict dist/*
+
+      - name: Tag matches the package version
+        if: startsWith(github.ref, 'refs/tags/sdk-v')
+        run: |
+          want="${GITHUB_REF_NAME#sdk-v}"
+          got="$(python -c "import tomllib;print(tomllib.load(open('sdk/python/pyproject.toml','rb'))['project']['version'])")"
+          test "$want" = "$got" || { echo "tag $want but pyproject says $got"; exit 1; }
+
+      - name: The wheel installs and verifies a corpus with nothing else from AXES
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install dist/*.whl
+          cd /tmp
+          /tmp/clean/bin/axes-sdk verify-stream "$GITHUB_WORKSPACE/examples/golden-trace/out/envelopes.jsonl"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: axes-sdk-dist
+          path: dist/
+
+  publish:
+    name: Publish to PyPI
+    if: startsWith(github.ref, 'refs/tags/sdk-v')
+    needs: [build]
+    runs-on: ubuntu-24.04
+    environment: pypi
+    permissions:
+      id-token: write  # Trusted Publishing; no stored token
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: axes-sdk-dist
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@release/v1

@@ -18,6 +18,8 @@ Version 0.1.1 (alpha) implements the mechanisms specified in [draft-sansone-axes
 pip install ./sdk/python
 ```
 
+Not on PyPI yet. The `SDK package` workflow builds and checks the package on every change and publishes it as `axes-sdk` when a tag `sdk-v<version>` is pushed, once PyPI Trusted Publishing is configured for this repository.
+
 The only runtime dependency is [`jcs`](https://pypi.org/project/jcs/), the RFC 8785 library the AXES reference tooling uses. Python 3.9 or later.
 
 ## Use
